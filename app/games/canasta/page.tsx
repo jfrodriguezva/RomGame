@@ -1,0 +1,130 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import BackHomeButton from "@/components/BackHomeButton";
+import LevelSelector from "@/components/LevelSelector";
+import { CANASTA_LEVELS, TICK_MS, CATCH_RADIUS } from "@/data/levels/canasta";
+import { playSound } from "@/lib/audio";
+import { useProgressStore } from "@/lib/progressStore";
+
+interface FallingStar {
+  id: number;
+  x: number;
+  y: number;
+}
+
+let nextId = 0;
+
+export default function CanastaPage() {
+  const [level, setLevel] = useState(1);
+  const config = CANASTA_LEVELS.find((l) => l.level === level)!;
+  const [basketX, setBasketX] = useState(50);
+  const [stars, setStars] = useState<FallingStar[]>([]);
+  const [caught, setCaught] = useState(0);
+  const addStars = useProgressStore((s) => s.addStars);
+  const registerPlay = useProgressStore((s) => s.registerPlay);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  function moveBasketTo(clientX: number) {
+    const rect = trackRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const pct = ((clientX - rect.left) / rect.width) * 100;
+    setBasketX(Math.max(8, Math.min(92, pct)));
+  }
+
+  useEffect(() => {
+    registerPlay("canasta");
+    setBasketX(50);
+    setStars([]);
+    setCaught(0);
+
+    const spawnInterval = setInterval(() => {
+      setStars((prev) => [
+        ...prev,
+        { id: nextId++, x: 10 + Math.random() * 80, y: 0 },
+      ]);
+    }, config.spawnMs);
+
+    return () => clearInterval(spawnInterval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level]);
+
+  useEffect(() => {
+    const tick = setInterval(() => {
+      setStars((prev) => {
+        const next: FallingStar[] = [];
+        for (const star of prev) {
+          const ny = star.y + config.fallSpeed;
+          if (ny >= 88 && Math.abs(star.x - basketX) < CATCH_RADIUS) {
+            setCaught((c) => c + 1);
+            playSound("correct");
+            continue;
+          }
+          if (ny >= 100) {
+            continue;
+          }
+          next.push({ ...star, y: ny });
+        }
+        return next;
+      });
+    }, TICK_MS);
+    return () => clearInterval(tick);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level, basketX]);
+
+  useEffect(() => {
+    if (caught > 0 && caught % 12 === 0) {
+      addStars("canasta", 1);
+      playSound("win");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [caught]);
+
+  return (
+    <div className="relative min-h-full flex-1 overflow-hidden bg-gradient-to-b from-yellow-100 via-white to-white pb-10">
+      <BackHomeButton />
+      <main className="mx-auto w-full max-w-2xl px-4 pt-20 sm:px-6">
+        <h1 className="mb-2 text-center text-2xl font-extrabold text-amber-600 sm:text-3xl">
+          🧺 Atrapa las estrellas
+        </h1>
+        <p className="mb-4 text-center text-slate-500">Atrapadas: {caught}</p>
+        <div className="mb-4">
+          <LevelSelector
+            levels={CANASTA_LEVELS.map((l) => l.level)}
+            active={level}
+            onSelect={setLevel}
+          />
+        </div>
+      </main>
+
+      <div
+        ref={trackRef}
+        className="relative mx-auto h-[45vh] max-w-2xl touch-none select-none"
+        onPointerDown={(e) => moveBasketTo(e.clientX)}
+        onPointerMove={(e) => {
+          if (e.buttons === 1 || e.pointerType === "touch") moveBasketTo(e.clientX);
+        }}
+      >
+        {stars.map((star) => (
+          <span
+            key={star.id}
+            className="absolute -translate-x-1/2 -translate-y-1/2 text-3xl transition-[top] duration-75 ease-linear"
+            style={{ left: `${star.x}%`, top: `${star.y}%` }}
+          >
+            ⭐
+          </span>
+        ))}
+        <span
+          className="absolute -translate-x-1/2 text-6xl transition-[left] duration-100 ease-linear"
+          style={{ left: `${basketX}%`, top: "85%" }}
+        >
+          🧺
+        </span>
+      </div>
+
+      <p className="mt-4 text-center text-sm text-slate-400">
+        Toca o desliza donde quieras que vaya la canasta
+      </p>
+    </div>
+  );
+}
