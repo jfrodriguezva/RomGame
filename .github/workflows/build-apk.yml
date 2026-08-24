@@ -43,6 +43,9 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Ensure gradlew is executable
+        run: chmod +x android/gradlew
+
       - name: Sync Capacitor web assets
         run: npx cap sync android
 
