@@ -1,4 +1,4 @@
-import { generateLevels, lerp, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phased } from "@/lib/levels";
 
 export interface Point {
   x: number;
@@ -62,6 +62,10 @@ export interface TrazosLevel {
   tolerance: number;
 }
 
-export const TRAZOS_LEVELS: TrazosLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  tolerance: lerp(14, 4, t),
+/**
+ * Resaques metalicos: la mano se afina despacio. La tolerancia baja de
+ * dieciocho pixeles a cuatro a lo largo de los cien niveles.
+ */
+export const TRAZOS_LEVELS: TrazosLevel[] = levels100((_, level) => ({
+  tolerance: phased(level, [18, 16, 15, 13, 12, 11, 9, 8, 7, 6, 4]),
 }));

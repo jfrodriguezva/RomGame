@@ -86,6 +86,7 @@ export default function NumerosPage() {
         <p className="mb-4 text-center text-slate-500">Toca el número {next <= config.count ? next : config.count}</p>
         <div className="mb-4">
           <LevelSelector
+            gameId="numeros"
             levels={NUMEROS_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

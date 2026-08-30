@@ -1,12 +1,15 @@
 {
-  "name": "Mundo de Juegos",
-  "short_name": "Juegos",
-  "description": "Plataforma de minijuegos para niños",
+  "name": "Mi Ambiente — juegos Montessori",
+  "short_name": "Mi Ambiente",
+  "description": "Ambiente Montessori para niños de 3 a 6 años: 46 materiales, 100 niveles cada uno y una pizarra de dibujo libre.",
+  "lang": "es",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#6366f1",
+  "background_color": "#fdfaf5",
+  "theme_color": "#fdfaf5",
   "orientation": "any",
+  "categories": ["education", "kids"],
   "icons": [
     {
       "src": "/icon.svg",

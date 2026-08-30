@@ -97,6 +97,7 @@ export default function VocalesPage() {
         </h1>
         <div className="mb-6">
           <LevelSelector
+            gameId="vocales"
             levels={VOCALES_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

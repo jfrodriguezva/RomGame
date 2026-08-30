@@ -92,6 +92,7 @@ export default function CarrerasPage() {
         <p className="mb-4 text-center text-slate-500">Estrellas atrapadas: {score}</p>
         <div className="mb-4">
           <LevelSelector
+            gameId="carreras"
             levels={CARRERAS_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

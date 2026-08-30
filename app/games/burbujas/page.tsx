@@ -93,6 +93,7 @@ export default function BurbujasPage() {
         <p className="mb-4 text-center text-slate-500">Reventadas: {popped}</p>
         <div className="mb-6">
           <LevelSelector
+            gameId="burbujas"
             levels={BURBUJAS_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

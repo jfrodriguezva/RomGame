@@ -91,7 +91,7 @@ export default function RpsPage() {
           🪨📄✂️ Piedra, papel o tijera
         </h1>
         <div className="mb-6">
-          <LevelSelector levels={RPS_LEVELS.map((l) => l.level)} active={level} onSelect={setLevel} />
+          <LevelSelector gameId="rps" levels={RPS_LEVELS.map((l) => l.level)} active={level} onSelect={setLevel} />
         </div>
 
         <div className="mb-8 flex h-28 w-full items-center justify-center gap-8">

@@ -1,12 +1,12 @@
-import { generateLevels, lerpInt, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phasedInt } from "@/lib/levels";
 
 export interface LaberintoLevel {
   level: number;
   size: number;
 }
 
-export const LABERINTO_LEVELS: LaberintoLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  size: lerpInt(4, 16, t),
+export const LABERINTO_LEVELS: LaberintoLevel[] = levels100((_, level) => ({
+  size: phasedInt(level, [4, 5, 6, 7, 8, 9, 11, 13, 15, 17, 20]),
 }));
 
 export interface MazeCell {

@@ -1,4 +1,4 @@
-import { generateLevels, lerpInt, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phasedInt } from "@/lib/levels";
 
 export interface Personaje {
   id: string;
@@ -44,6 +44,9 @@ export interface AdivinaLevel {
   poolSize: number;
 }
 
-export const ADIVINA_LEVELS: AdivinaLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  poolSize: lerpInt(4, PERSONAJES.length, t),
+export const ADIVINA_LEVELS: AdivinaLevel[] = levels100((_, level) => ({
+  poolSize: Math.min(
+    PERSONAJES.length,
+    phasedInt(level, [4, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16])
+  ),
 }));

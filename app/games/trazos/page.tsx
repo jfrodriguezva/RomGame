@@ -78,6 +78,7 @@ export default function TrazosPage() {
         </p>
         <div className="mb-6">
           <LevelSelector
+            gameId="trazos"
             levels={TRAZOS_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

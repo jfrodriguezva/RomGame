@@ -2,39 +2,46 @@
 
 import { motion } from "framer-motion";
 import { useMemo } from "react";
+import { useSettings } from "@/lib/settings";
 
-const SHAPES = [
-  { emoji: "☁️", size: 70 },
-  { emoji: "⭐", size: 40 },
-  { emoji: "🎈", size: 50 },
-  { emoji: "🌸", size: 44 },
-  { emoji: "☁️", size: 90 },
-  { emoji: "🦋", size: 38 },
-  { emoji: "⭐", size: 30 },
-  { emoji: "🎈", size: 46 },
+/**
+ * Fondo del ambiente. Formas suaves, lentas y muy tenues: acompañan sin robar
+ * la atención. Con el "modo calma" activado desaparecen por completo.
+ */
+const FORMAS = [
+  { emoji: "🌿", size: 88 },
+  { emoji: "🍃", size: 56 },
+  { emoji: "🌾", size: 70 },
+  { emoji: "🪴", size: 62 },
+  { emoji: "🍂", size: 48 },
+  { emoji: "🌼", size: 52 },
 ];
 
 export default function AnimatedBackground() {
+  const calma = useSettings((s) => s.calma);
+
   const items = useMemo(
     () =>
-      SHAPES.map((s, i) => ({
+      FORMAS.map((s, i) => ({
         ...s,
-        top: 5 + ((i * 37) % 90),
-        left: (i * 53) % 95,
-        duration: 14 + (i % 5) * 3,
-        delay: i * 0.6,
+        top: 8 + ((i * 41) % 84),
+        left: (i * 61) % 92,
+        duration: 22 + (i % 4) * 6,
+        delay: i * 1.4,
       })),
     []
   );
 
+  if (calma) return null;
+
   return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden opacity-40">
+    <div className="pointer-events-none fixed inset-0 overflow-hidden opacity-[0.13]">
       {items.map((item, i) => (
         <motion.span
           key={i}
           className="absolute select-none"
           style={{ top: `${item.top}%`, left: `${item.left}%`, fontSize: item.size }}
-          animate={{ y: [0, -18, 0], x: [0, 10, 0], rotate: [0, 6, -6, 0] }}
+          animate={{ y: [0, -14, 0], rotate: [0, 4, -4, 0] }}
           transition={{
             duration: item.duration,
             delay: item.delay,

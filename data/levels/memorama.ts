@@ -1,10 +1,13 @@
-import { generateLevels, lerpInt, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phasedInt } from "@/lib/levels";
 
 export interface MemoramaLevel {
   level: number;
   pairs: number;
 }
 
-export const MEMORAMA_LEVELS: MemoramaLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  pairs: lerpInt(3, 15, t),
+/**
+ * Memoria a distancia. Empieza con tres parejas y termina con dieciseis.
+ */
+export const MEMORAMA_LEVELS: MemoramaLevel[] = levels100((_, level) => ({
+  pairs: phasedInt(level, [3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16]),
 }));

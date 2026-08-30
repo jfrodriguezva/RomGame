@@ -1,4 +1,4 @@
-import { generateLevels, lerp, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phased } from "@/lib/levels";
 
 export type RpsChoice = "piedra" | "papel" | "tijera";
 
@@ -13,6 +13,6 @@ export interface RpsLevel {
   counterChance: number; // probabilidad de que la CPU intente adivinar tu jugada frecuente
 }
 
-export const RPS_LEVELS: RpsLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  counterChance: lerp(0, 0.65, t),
+export const RPS_LEVELS: RpsLevel[] = levels100((_, level) => ({
+  counterChance: phased(level, [0, 0.05, 0.12, 0.2, 0.28, 0.36, 0.44, 0.52, 0.6, 0.68, 0.75]),
 }));

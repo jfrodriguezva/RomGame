@@ -98,6 +98,7 @@ export default function MemoramaPage() {
         </h1>
         <div className="mb-6">
           <LevelSelector
+            gameId="memorama"
             levels={MEMORAMA_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

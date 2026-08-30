@@ -138,6 +138,7 @@ export default function DiferenciasPage() {
         </p>
         <div className="mb-6">
           <LevelSelector
+            gameId="diferencias"
             levels={DIFERENCIAS_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

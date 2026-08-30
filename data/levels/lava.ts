@@ -1,4 +1,4 @@
-import { generateLevels, lerp, lerpInt, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phased, phasedInt } from "@/lib/levels";
 
 export interface LavaLevel {
   level: number;
@@ -6,9 +6,9 @@ export interface LavaLevel {
   gapEvery: number; // cada cuántas baldosas aparece un hueco de lava
 }
 
-export const LAVA_LEVELS: LavaLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  speed: lerp(2.4, 6.5, t),
-  gapEvery: lerpInt(6, 3, t),
+export const LAVA_LEVELS: LavaLevel[] = levels100((_, level) => ({
+  speed: phased(level, [2.2, 2.6, 3.0, 3.5, 4.0, 4.5, 5.0, 5.6, 6.2, 6.8, 7.5]),
+  gapEvery: phasedInt(level, [8, 7, 7, 6, 6, 5, 5, 4, 4, 3, 3]),
 }));
 
 export const TILE_WIDTH = 56;

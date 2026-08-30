@@ -69,6 +69,7 @@ export default function GloboPage() {
         </p>
         <div className="mb-4">
           <LevelSelector
+            gameId="globo"
             levels={GLOBO_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

@@ -1,40 +1,171 @@
-import { CATEGORY_INFO, CATEGORY_ORDER, gamesByCategory } from "@/data/games";
+"use client";
+
+import Link from "next/link";
+import { useMemo } from "react";
+import { motion } from "framer-motion";
 import GameCard from "@/components/GameCard";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Mascot from "@/components/Mascot";
+import { games, gamesByArea, getGame, rutaDeJuego, TOTAL_NIVELES } from "@/data/games";
+import { AREAS, AREAS_AMBIENTE, AREAS_EXTRA } from "@/lib/montessori";
+import { useProgressStore } from "@/lib/progressStore";
+import { useSettings } from "@/lib/settings";
 
 export default function Home() {
-  return (
-    <div className="relative min-h-full flex-1 bg-gradient-to-b from-amber-50 via-orange-50 to-white">
-      <AnimatedBackground />
-      <main className="relative mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
-        <div className="mb-2 flex items-center justify-center gap-3">
-          <Mascot size={56} />
-          <h1 className="text-center text-3xl font-extrabold text-amber-700 sm:text-4xl">
-            Mundo de Juegos
-          </h1>
-        </div>
-        <p className="mb-10 text-center text-base text-amber-800/70 sm:text-lg">
-          Elige un juego para aprender jugando
-        </p>
+  const porJuego = useProgressStore((s) => s.games);
+  const nombre = useSettings((s) => s.nombre);
 
-        {CATEGORY_ORDER.map((category) => {
-          const list = gamesByCategory(category);
-          const info = CATEGORY_INFO[category];
-          return (
-            <section key={category} className="mb-12">
-              <h2 className="mb-4 flex items-center gap-2 text-xl font-extrabold text-amber-900 sm:text-2xl">
-                <span>{info.emoji}</span> {info.label}
-              </h2>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 md:grid-cols-4">
-                {list.map((game) => (
-                  <GameCard key={game.id} game={game} />
-                ))}
-              </div>
-            </section>
-          );
-        })}
+  const resumen = useMemo(() => {
+    const entradas = Object.entries(porJuego);
+    const estrellas = entradas.reduce((acc, [, p]) => acc + p.stars, 0);
+    const niveles = entradas.reduce((acc, [, p]) => acc + p.completed.length, 0);
+    const ultimo = entradas
+      .filter(([id]) => getGame(id))
+      .sort((a, b) => b[1].lastPlayedAt - a[1].lastPlayedAt)[0];
+    return {
+      estrellas,
+      niveles,
+      ultimo: ultimo ? { juego: getGame(ultimo[0])!, progreso: ultimo[1] } : null,
+    };
+  }, [porJuego]);
+
+  const saludo = nombre ? `Hola, ${nombre}` : "Hola";
+
+  return (
+    <div className="relative min-h-full flex-1">
+      <AnimatedBackground />
+
+      <main className="relative mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6">
+        <header className="mb-6 flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Mascot size={46} />
+            <div>
+              <p className="text-sm font-semibold text-stone-400">{saludo}</p>
+              <h1 className="text-2xl font-extrabold leading-tight text-stone-700 sm:text-3xl">
+                Mi ambiente
+              </h1>
+            </div>
+          </div>
+          <Link
+            href="/padres"
+            className="mt-1 rounded-2xl bg-white/80 px-3 py-2 text-xs font-bold text-stone-500 shadow-sm ring-1 ring-black/5 active:scale-95"
+          >
+            Mamá y papá
+          </Link>
+        </header>
+
+        {/* Elige tú, cuando quieras: nadie empuja al niño a una actividad. */}
+        <section className="mb-8 grid gap-3 sm:grid-cols-2">
+          <Link href="/pizarra">
+            <motion.div
+              whileTap={{ scale: 0.97 }}
+              className="flex h-full items-center gap-4 rounded-3xl bg-gradient-to-br from-[#f7f0e4] to-[#efe3cc] p-5 shadow-[0_2px_12px_rgba(120,90,50,0.1)] ring-1 ring-black/5"
+            >
+              <span className="text-5xl">🖍️</span>
+              <span className="leading-tight">
+                <span className="block text-lg font-extrabold text-[#7a6234]">
+                  La pizarra grande
+                </span>
+                <span className="block text-sm text-stone-500">
+                  Dibuja libre, sin niveles y sin prisa
+                </span>
+              </span>
+            </motion.div>
+          </Link>
+
+          {resumen.ultimo ? (
+            <Link href={rutaDeJuego(resumen.ultimo.juego)}>
+              <motion.div
+                whileTap={{ scale: 0.97 }}
+                className="flex h-full items-center gap-4 rounded-3xl bg-white/85 p-5 shadow-[0_2px_12px_rgba(80,60,40,0.07)] ring-1 ring-black/5"
+              >
+                <span className="text-5xl">{resumen.ultimo.juego.emoji}</span>
+                <span className="leading-tight">
+                  <span className="block text-[11px] font-bold uppercase tracking-wide text-stone-400">
+                    seguir donde te quedaste
+                  </span>
+                  <span className="block text-lg font-extrabold text-stone-700">
+                    {resumen.ultimo.juego.title}
+                  </span>
+                  {!resumen.ultimo.juego.libre && (
+                    <span className="block text-sm text-stone-500">
+                      nivel {resumen.ultimo.progreso.unlockedLevel}
+                    </span>
+                  )}
+                </span>
+              </motion.div>
+            </Link>
+          ) : (
+            <div className="flex h-full items-center gap-4 rounded-3xl bg-white/60 p-5 ring-1 ring-black/5">
+              <span className="text-4xl">🧺</span>
+              <span className="text-sm leading-snug text-stone-500">
+                Toma el material que quieras. Puedes repetirlo las veces que necesites: aquí no
+                se pierde ni se gana.
+              </span>
+            </div>
+          )}
+        </section>
+
+        <div className="mb-8 flex flex-wrap items-center justify-center gap-2 text-center text-xs font-bold text-stone-500">
+          <span className="rounded-full bg-white/70 px-3 py-1.5 ring-1 ring-black/5">
+            {games.length} materiales
+          </span>
+          <span className="rounded-full bg-white/70 px-3 py-1.5 ring-1 ring-black/5">
+            {TOTAL_NIVELES.toLocaleString("es-MX")} niveles
+          </span>
+          <span className="rounded-full bg-white/70 px-3 py-1.5 ring-1 ring-black/5">
+            {resumen.niveles} completados
+          </span>
+          <span className="rounded-full bg-amber-50 px-3 py-1.5 text-amber-600 ring-1 ring-amber-200/70">
+            ★ {resumen.estrellas}
+          </span>
+        </div>
+
+        {AREAS_AMBIENTE.map((areaId) => (
+          <AreaSection key={areaId} areaId={areaId} />
+        ))}
+
+        <div className="my-10 flex items-center gap-3">
+          <span className="h-px flex-1 bg-stone-200" />
+          <span className="text-xs font-bold uppercase tracking-wider text-stone-400">
+            además
+          </span>
+          <span className="h-px flex-1 bg-stone-200" />
+        </div>
+
+        {AREAS_EXTRA.map((areaId) => (
+          <AreaSection key={areaId} areaId={areaId} />
+        ))}
+
+        <footer className="mt-12 text-center text-xs leading-relaxed text-stone-400">
+          Inspirado en el método Montessori: el niño elige, repite y se corrige solo.
+          <br />
+          Todo el progreso se guarda únicamente en este dispositivo.
+        </footer>
       </main>
     </div>
+  );
+}
+
+function AreaSection({ areaId }: { areaId: keyof typeof AREAS }) {
+  const area = AREAS[areaId];
+  const lista = gamesByArea(areaId);
+  if (lista.length === 0) return null;
+
+  return (
+    <section className="mb-10">
+      <div className="mb-3 flex items-baseline gap-2">
+        <span className="text-xl">{area.emoji}</span>
+        <h2 className={`text-lg font-extrabold sm:text-xl ${area.text}`}>{area.label}</h2>
+        <span className="text-xs text-stone-400">{lista.length}</span>
+      </div>
+      <p className="mb-4 text-sm text-stone-500">{area.proposito}</p>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+        {lista.map((game) => (
+          <GameCard key={game.id} game={game} />
+        ))}
+      </div>
+    </section>
   );
 }

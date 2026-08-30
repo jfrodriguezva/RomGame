@@ -143,6 +143,7 @@ export default function LavaPage() {
         </div>
         <div className="pointer-events-auto mb-4 flex justify-center">
           <LevelSelector
+            gameId="lava"
             levels={LAVA_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

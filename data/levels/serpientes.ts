@@ -1,4 +1,4 @@
-import { generateLevels, lerpInt, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phasedInt } from "@/lib/levels";
 
 export interface SerpientesLevel {
   level: number;
@@ -7,9 +7,9 @@ export interface SerpientesLevel {
   cols: number;
 }
 
-export const SERPIENTES_LEVELS: SerpientesLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  length: lerpInt(20, 64, t),
-  linksCount: lerpInt(2, 10, t),
+export const SERPIENTES_LEVELS: SerpientesLevel[] = levels100((_, level) => ({
+  length: phasedInt(level, [18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78]),
+  linksCount: phasedInt(level, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
   cols: 6,
 }));
 

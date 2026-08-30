@@ -268,6 +268,7 @@ export default function AranaPage() {
         </p>
         <div className="mb-6">
           <LevelSelector
+            gameId="arana"
             levels={ARANA_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

@@ -1,4 +1,4 @@
-import { generateLevels, lerp, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phased, phasedInt } from "@/lib/levels";
 
 export interface CanastaLevel {
   level: number;
@@ -6,9 +6,9 @@ export interface CanastaLevel {
   spawnMs: number;
 }
 
-export const CANASTA_LEVELS: CanastaLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  fallSpeed: lerp(0.6, 2.4, t),
-  spawnMs: Math.round(lerp(1500, 480, t)),
+export const CANASTA_LEVELS: CanastaLevel[] = levels100((_, level) => ({
+  fallSpeed: phased(level, [0.55, 0.75, 0.95, 1.15, 1.35, 1.6, 1.85, 2.1, 2.4, 2.7, 3.1]),
+  spawnMs: phasedInt(level, [1700, 1550, 1400, 1250, 1100, 970, 850, 740, 640, 550, 460]),
 }));
 
 export const TICK_MS = 50;

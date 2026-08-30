@@ -1,4 +1,4 @@
-import { generateLevels, lerp, lerpInt, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phasedInt } from "@/lib/levels";
 
 export interface BurbujasLevel {
   level: number;
@@ -6,9 +6,9 @@ export interface BurbujasLevel {
   maxBubbles: number;
 }
 
-export const BURBUJAS_LEVELS: BurbujasLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  spawnMs: Math.round(lerp(1200, 380, t)),
-  maxBubbles: lerpInt(6, 18, t),
+export const BURBUJAS_LEVELS: BurbujasLevel[] = levels100((_, level) => ({
+  spawnMs: phasedInt(level, [1400, 1250, 1120, 1000, 900, 800, 710, 620, 540, 460, 380]),
+  maxBubbles: phasedInt(level, [5, 6, 7, 8, 9, 11, 13, 15, 17, 20, 24]),
 }));
 
 export const BUBBLE_COLORS = [

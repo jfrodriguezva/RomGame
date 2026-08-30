@@ -129,6 +129,7 @@ export default function SerpientesPage() {
         <p className="mb-3 text-center text-slate-500">{message}</p>
         <div className="mb-4">
           <LevelSelector
+            gameId="serpientes"
             levels={SERPIENTES_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

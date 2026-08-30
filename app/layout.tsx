@@ -13,9 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mundo de Juegos",
-  description: "Plataforma de minijuegos para niños",
+  title: "Mi Ambiente — juegos Montessori",
+  description:
+    "Ambiente Montessori digital para niños de 3 a 6 años: 43 materiales con 100 niveles cada uno y una pizarra de dibujo libre.",
   manifest: "/manifest.json",
+  appleWebApp: { capable: true, title: "Mi Ambiente", statusBarStyle: "default" },
 };
 
 export const viewport = {
@@ -23,7 +25,8 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#6366f1",
+  viewportFit: "cover" as const,
+  themeColor: "#fdfaf5",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -32,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col select-none">{children}</body>
+      <body className="flex min-h-full select-none flex-col bg-[#fdfaf5]">{children}</body>
     </html>
   );
 }

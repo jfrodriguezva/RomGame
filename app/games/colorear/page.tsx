@@ -1,99 +1,143 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import BackHomeButton from "@/components/BackHomeButton";
-import LevelSelector from "@/components/LevelSelector";
+import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import GameShell from "@/components/GameShell";
 import StarReward from "@/components/StarReward";
 import ConfettiOverlay from "@/components/ConfettiOverlay";
-import { COLOREAR_LEVELS, COLOREAR_PALETTE } from "@/data/levels/colorear";
+import { COLOREAR_LEVELS, type ColorearLevel, dibujoDeNivel } from "@/data/levels/colorear";
+import { useMaterial } from "@/lib/useMaterial";
+import { fraseNivelCompleto } from "@/lib/montessori";
 import { playSound } from "@/lib/audio";
-import { useProgressStore } from "@/lib/progressStore";
+import { vibrar, HAPTIC } from "@/lib/haptics";
+
+/**
+ * Paleta de 24 colores en tonos naturales.
+ *
+ * Un niño de tres años no necesita un selector de color continuo: necesita
+ * pocos colores buenos y bien separados entre sí, como en una caja de ceras.
+ */
+const PALETA = [
+  "#e05c4f", "#e8804a", "#efb04a", "#f2d55c", "#c9d15a", "#8fbf6a",
+  "#5aa87a", "#4f9e94", "#4f8fb0", "#5077b5", "#6a6fb5", "#8a68ad",
+  "#b0679f", "#d2698c", "#e08a9c", "#f0b3b0", "#c9a87c", "#a3785a",
+  "#7a5a44", "#4a4a4a", "#8a8f96", "#c8ccd2", "#ffffff", "#2f2a26",
+];
 
 export default function ColorearPage() {
-  const [level, setLevel] = useState(1);
-  const config = COLOREAR_LEVELS.find((l) => l.level === level)!;
-  const [colors, setColors] = useState<Record<string, string>>({});
-  const [selectedColor, setSelectedColor] = useState(COLOREAR_PALETTE[0]);
-  const [showWin, setShowWin] = useState(false);
-  const addStars = useProgressStore((s) => s.addStars);
-  const unlockNextLevel = useProgressStore((s) => s.unlockNextLevel);
-  const registerPlay = useProgressStore((s) => s.registerPlay);
+  const material = useMaterial<ColorearLevel>("colorear", COLOREAR_LEVELS);
+  const { config, level, logrado, nota } = material;
+
+  const dibujo = useMemo(() => dibujoDeNivel(level), [level]);
+  const [color, setColor] = useState(PALETA[0]);
+  const [pintado, setPintado] = useState<Record<string, string>>({});
+
+  const paleta = PALETA.slice(0, config.colores);
 
   useEffect(() => {
-    setColors({});
-    setShowWin(false);
-    registerPlay("colorear");
+    setPintado({});
+    setColor(paleta[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level]);
 
-  const allColored = config.zones.every((z) => colors[z.id]);
+  const listas = Object.keys(pintado).length;
+  const total = dibujo.regiones.length;
 
-  useEffect(() => {
-    if (allColored) {
-      playSound("win");
-      addStars("colorear", 1);
-      unlockNextLevel("colorear", Math.min(level + 1, COLOREAR_LEVELS.length));
-      setShowWin(true);
-      const t = setTimeout(() => setShowWin(false), 1800);
-      return () => clearTimeout(t);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allColored]);
-
-  function paintZone(id: string) {
-    setColors((prev) => ({ ...prev, [id]: selectedColor }));
+  function pintar(id: string) {
+    // Volver a pintar una zona nunca es un error: se puede cambiar de opinión.
+    setPintado((prev) => {
+      const siguiente = { ...prev, [id]: color };
+      if (Object.keys(siguiente).length === total) {
+        setTimeout(() => material.completar(), 350);
+      }
+      return siguiente;
+    });
     playSound("click");
+    vibrar(HAPTIC.toque);
   }
 
   return (
-    <div className="min-h-full flex-1 bg-gradient-to-b from-fuchsia-100 via-white to-white pb-10">
-      <BackHomeButton />
-      <ConfettiOverlay show={showWin} />
-      <StarReward show={showWin} message="¡Qué bonito dibujo!" />
-      <main className="mx-auto flex w-full max-w-xl flex-col items-center px-4 pt-20 sm:px-6">
-        <h1 className="mb-4 text-center text-2xl font-extrabold text-pink-500 sm:text-3xl">
-          🎨 Colorear
-        </h1>
-        <div className="mb-6">
-          <LevelSelector
-            levels={COLOREAR_LEVELS.map((l) => l.level)}
-            active={level}
-            onSelect={setLevel}
-          />
-        </div>
+    <GameShell
+      slug="colorear"
+      level={level}
+      levels={COLOREAR_LEVELS.map((l) => l.level)}
+      onLevel={material.setLevel}
+      consigna={
+        config.esMandala ? "Pinta el mandala a tu gusto" : `Pinta ${dibujo.nombre.toLowerCase()}`
+      }
+      nota={nota}
+      acciones={
+        <>
+          <button
+            onClick={() => setPintado({})}
+            className="rounded-2xl bg-white px-4 py-2.5 text-sm font-bold text-stone-500 ring-1 ring-stone-200 active:scale-95"
+          >
+            Empezar de nuevo
+          </button>
+          <span className="text-sm font-bold text-stone-400">
+            {listas} / {total}
+          </span>
+        </>
+      }
+    >
+      <ConfettiOverlay show={logrado} />
+      <StarReward
+        show={logrado}
+        message={fraseNivelCompleto(level)}
+        stars={material.estrellas}
+        level={level}
+        onNext={material.esUltimo ? undefined : material.siguiente}
+        onRepeat={() => {
+          setPintado({});
+          material.repetir();
+        }}
+      />
 
-        <svg viewBox="0 0 300 280" className="mb-6 w-full max-w-sm rounded-3xl bg-white shadow-xl">
-          {config.zones.map((z) => (
-            <circle
-              key={z.id}
-              cx={z.cx}
-              cy={z.cy}
-              r={z.r}
-              fill={colors[z.id] ?? "#f1f5f9"}
-              stroke="#94a3b8"
-              strokeWidth={2}
-              onClick={() => paintZone(z.id)}
-              className="cursor-pointer"
+      <div className="mb-4 rounded-[2rem] bg-white p-3 shadow-sm ring-1 ring-black/5">
+        <svg viewBox="0 0 200 200" className="h-auto w-full" role="img" aria-label={dibujo.nombre}>
+          {dibujo.regiones.map((r) => (
+            <path
+              key={r.id}
+              d={r.d}
+              fill={pintado[r.id] ?? "#ffffff"}
+              stroke="#57504a"
+              strokeWidth={1.4}
+              strokeLinejoin="round"
+              onPointerDown={() => pintar(r.id)}
+              className="cursor-pointer transition-[fill] duration-150"
+            />
+          ))}
+          {dibujo.detalles?.map((d, i) => (
+            <path
+              key={`detalle-${i}`}
+              d={d}
+              fill="none"
+              stroke="#57504a"
+              strokeWidth={1.8}
+              strokeLinecap="round"
+              pointerEvents="none"
             />
           ))}
         </svg>
+      </div>
 
-        <div className="flex flex-wrap justify-center gap-2">
-          {COLOREAR_PALETTE.map((c) => (
-            <button
-              key={c}
-              onClick={() => setSelectedColor(c)}
-              className="h-10 w-10 rounded-full shadow active:scale-90"
-              style={{
-                backgroundColor: c,
-                outline: selectedColor === c ? "3px solid #1e293b" : "none",
-                outlineOffset: 2,
-              }}
-              aria-label={`color ${c}`}
-            />
-          ))}
-        </div>
-      </main>
-    </div>
+      <div className="grid grid-cols-8 gap-2">
+        {paleta.map((c) => (
+          <motion.button
+            key={c}
+            onClick={() => {
+              setColor(c);
+              playSound("click");
+            }}
+            whileTap={{ scale: 0.88 }}
+            aria-label={`Color ${c}`}
+            className={`aspect-square rounded-full ring-1 ring-black/10 transition ${
+              color === c ? "scale-110 ring-4 ring-stone-500" : ""
+            }`}
+            style={{ backgroundColor: c }}
+          />
+        ))}
+      </div>
+    </GameShell>
   );
 }

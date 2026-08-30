@@ -99,6 +99,7 @@ export default function ToyStoryPage() {
           </div>
           <div className="mb-8">
             <LevelSelector
+            gameId="toystory"
               levels={TOYSTORY_LEVELS.map((l) => l.level)}
               active={level}
               onSelect={setLevel}

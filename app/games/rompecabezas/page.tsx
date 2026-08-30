@@ -85,6 +85,7 @@ export default function RompecabezasPage() {
         <div className="mb-4 text-6xl">{PUZZLE_IMAGES[(level - 1) % PUZZLE_IMAGES.length]}</div>
         <div className="mb-6">
           <LevelSelector
+            gameId="rompecabezas"
             levels={PUZZLE_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

@@ -127,7 +127,7 @@ export default function GatoPage() {
           ⭕ Gato
         </h1>
         <div className="mb-4">
-          <LevelSelector levels={GATO_LEVELS.map((l) => l.level)} active={level} onSelect={setLevel} />
+          <LevelSelector gameId="gato" levels={GATO_LEVELS.map((l) => l.level)} active={level} onSelect={setLevel} />
         </div>
         <p className="mb-4 text-lg font-bold text-slate-600">{message}</p>
         <div className="grid grid-cols-3 gap-2">

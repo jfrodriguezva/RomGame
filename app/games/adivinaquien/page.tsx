@@ -84,6 +84,7 @@ export default function AdivinaQuienPage() {
 
         <div className="mb-4">
           <LevelSelector
+            gameId="adivinaquien"
             levels={ADIVINA_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

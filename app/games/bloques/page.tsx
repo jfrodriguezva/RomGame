@@ -85,6 +85,7 @@ export default function BloquesPage() {
         </p>
         <div className="mb-6">
           <LevelSelector
+            gameId="bloques"
             levels={BLOQUES_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

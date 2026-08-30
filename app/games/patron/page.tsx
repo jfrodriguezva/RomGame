@@ -86,6 +86,7 @@ export default function PatronPage() {
         </h1>
         <div className="mb-6">
           <LevelSelector
+            gameId="patron"
             levels={PATRON_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

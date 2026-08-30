@@ -67,6 +67,7 @@ export default function ContarPage() {
         </h1>
         <div className="mb-6">
           <LevelSelector
+            gameId="contar"
             levels={CONTAR_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

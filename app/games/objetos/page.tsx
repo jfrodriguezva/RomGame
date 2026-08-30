@@ -102,6 +102,7 @@ export default function ObjetosPage() {
         </h1>
         <div className="mb-4">
           <LevelSelector
+            gameId="objetos"
             levels={OBJETOS_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

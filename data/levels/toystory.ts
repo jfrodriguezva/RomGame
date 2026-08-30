@@ -1,5 +1,5 @@
 import type { ToyStoryCharacter } from "@/phaser/ToyStoryScene";
-import { generateLevels, lerp, lerpInt, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phased, phasedInt } from "@/lib/levels";
 
 export const TOYSTORY_CHARACTERS: ToyStoryCharacter[] = [
   { id: "woody", emoji: "🤠", color: "#ca8a04" },
@@ -13,7 +13,7 @@ export interface ToyStoryLevel {
   enemyCount: number;
 }
 
-export const TOYSTORY_LEVELS: ToyStoryLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  enemySpeed: lerp(45, 140, t),
-  enemyCount: lerpInt(1, 6, t),
+export const TOYSTORY_LEVELS: ToyStoryLevel[] = levels100((_, level) => ({
+  enemySpeed: phased(level, [42, 52, 62, 73, 84, 96, 108, 121, 135, 150, 166]),
+  enemyCount: phasedInt(level, [1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 7]),
 }));

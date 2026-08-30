@@ -1,4 +1,4 @@
-import { generateLevels, lerp, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phased, phasedInt } from "@/lib/levels";
 
 export interface Point {
   x: number;
@@ -82,7 +82,7 @@ export interface VocalesLevel {
   options: number;
 }
 
-export const VOCALES_LEVELS: VocalesLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  tolerance: lerp(14, 5, t),
-  options: Math.min(5, Math.round(3 + t * 2)),
+export const VOCALES_LEVELS: VocalesLevel[] = levels100((_, level) => ({
+  tolerance: phased(level, [18, 16, 15, 13, 12, 11, 9, 8, 7, 6, 5]),
+  options: phasedInt(level, [2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5]),
 }));

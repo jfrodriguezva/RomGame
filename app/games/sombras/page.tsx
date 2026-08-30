@@ -90,6 +90,7 @@ export default function SombrasPage() {
         </h1>
         <div className="mb-6">
           <LevelSelector
+            gameId="sombras"
             levels={SOMBRAS_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

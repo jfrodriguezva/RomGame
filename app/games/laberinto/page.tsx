@@ -70,6 +70,7 @@ export default function LaberintoPage() {
         </h1>
         <div className="mb-6">
           <LevelSelector
+            gameId="laberinto"
             levels={LABERINTO_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

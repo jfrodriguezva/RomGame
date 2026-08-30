@@ -1,12 +1,15 @@
 {
-  "name": "romgame",
-  "version": "0.1.0",
+  "name": "mi-ambiente",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 40000",
     "build": "next build",
     "start": "next start -p 40000",
-    "lint": "eslint"
+    "lint": "eslint",
+    "export": "node scripts/build-android.mjs --solo-web",
+    "android": "node scripts/build-android.mjs",
+    "android:abrir": "npx cap open android"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.0",

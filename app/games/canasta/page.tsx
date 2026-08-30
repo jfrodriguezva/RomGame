@@ -90,6 +90,7 @@ export default function CanastaPage() {
         <p className="mb-4 text-center text-slate-500">Atrapadas: {caught}</p>
         <div className="mb-4">
           <LevelSelector
+            gameId="canasta"
             levels={CANASTA_LEVELS.map((l) => l.level)}
             active={level}
             onSelect={setLevel}

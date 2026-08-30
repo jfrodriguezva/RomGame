@@ -1,12 +1,12 @@
-import { generateLevels, lerpInt, DEFAULT_LEVEL_COUNT } from "@/lib/levels";
+import { levels100, phasedInt } from "@/lib/levels";
 
 export interface BloquesLevel {
   level: number;
   count: number;
 }
 
-export const BLOQUES_LEVELS: BloquesLevel[] = generateLevels(DEFAULT_LEVEL_COUNT, (t) => ({
-  count: lerpInt(3, 14, t),
+export const BLOQUES_LEVELS: BloquesLevel[] = levels100((_, level) => ({
+  count: phasedInt(level, [3, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14]),
 }));
 
 export const BLOQUE_COLORS = [

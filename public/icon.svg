@@ -1,10 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#fbbf24"/>
-      <stop offset="1" stop-color="#f472b6"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="96" fill="url(#g)"/>
-  <text x="50%" y="58%" font-size="280" text-anchor="middle" dominant-baseline="middle">🧒</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Mi Ambiente">
+  <rect width="512" height="512" rx="112" fill="#fdfaf5"/>
+  <!-- La torre rosa: el material que todo el mundo reconoce -->
+  <rect x="150" y="330" width="150" height="110" rx="10" fill="#e59aae"/>
+  <rect x="168" y="242" width="114" height="88" rx="9" fill="#e08fa5"/>
+  <rect x="184" y="176" width="82" height="66" rx="8" fill="#d9829a"/>
+  <rect x="198" y="130" width="54" height="46" rx="7" fill="#d2758f"/>
+  <rect x="210" y="102" width="30" height="28" rx="6" fill="#c96b86"/>
+  <!-- Una barra numérica al lado, roja y azul -->
+  <rect x="330" y="404" width="34" height="36" rx="6" fill="#c0392b"/>
+  <rect x="364" y="404" width="34" height="36" rx="6" fill="#2c5f9e"/>
+  <rect x="330" y="356" width="34" height="36" rx="6" fill="#c0392b"/>
+  <circle cx="366" cy="150" r="46" fill="#e3c34a"/>
 </svg>
