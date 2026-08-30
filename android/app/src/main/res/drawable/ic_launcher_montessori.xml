@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Icono del lanzador: la torre rosa, el material Montessori que cualquiera
+  reconoce de un vistazo. Va como vector para no depender de un PNG por cada
+  densidad de pantalla. El lienzo es de 108x108 y la zona segura del icono
+  adaptativo es el centro, asi que la torre vive entre y=36 e y=80.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:fillColor="#E7A3B5"
+        android:pathData="M36,68 H72 V80 H36 Z" />
+    <path
+        android:fillColor="#E297AB"
+        android:pathData="M40,57 H68 V68 H40 Z" />
+    <path
+        android:fillColor="#DC8BA1"
+        android:pathData="M44,48 H64 V57 H44 Z" />
+    <path
+        android:fillColor="#D68098"
+        android:pathData="M47,41 H61 V48 H47 Z" />
+    <path
+        android:fillColor="#CF748E"
+        android:pathData="M50,36 H58 V41 H50 Z" />
+</vector>

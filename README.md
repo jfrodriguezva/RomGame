@@ -180,8 +180,11 @@ npm run android  # export + cap sync + gradlew assembleDebug
 El workflow [`build-apk.yml`](.github/workflows/build-apk.yml) hace lo mismo en GitHub Actions y
 sube el APK como artefacto en cada push a `main`.
 
-El APK es de **debug**, sin firmar: sirve para instalarlo en un teléfono propio, no para publicar
-en Play Store.
+El APK es de **debug**, firmado con la clave de depuración de Android: sirve para instalarlo en
+dispositivos propios, no para publicar en Play Store, que exige una firma de release.
+
+Declara un solo permiso, `INTERNET`, que Capacitor añade por omisión para su WebView. La app no
+hace peticiones de red: funciona igual en modo avión.
 
 ---
 

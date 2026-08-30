@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
         output: "export",
         distDir: "out",
         images: { unoptimized: true },
+        // Cada ruta se emite como carpeta con index.html. El servidor local de
+        // Capacitor resuelve directorios, pero no adivina la extension .html:
+        // sin esto, recargar dentro de un juego daria 404 en el APK.
+        trailingSlash: true,
       }
     : {}),
 };

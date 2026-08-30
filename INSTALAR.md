@@ -6,8 +6,13 @@ El archivo que necesitas es **`app-debug.apk`**. Se genera en:
 android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-La app no pide ningún permiso, no usa internet y no envía datos a ninguna parte.
 Requiere **Android 7.0 o superior** (minSdk 24).
+
+Sobre permisos: el APK declara `INTERNET`, que es el permiso que Capacitor
+incluye por omisión para su WebView. La app **no hace ninguna petición de red**:
+todo el contenido viaja dentro del APK y el progreso se guarda en el
+almacenamiento local. Puedes comprobarlo usándola en modo avión: funciona
+igual. No pide cámara, micrófono, ubicación, contactos ni almacenamiento.
 
 ---
 
