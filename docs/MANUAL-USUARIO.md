@@ -1,0 +1,119 @@
+# Mi Ambiente — Manual de usuario
+
+Ambiente Montessori digital para niños de 3 a 6 años: 46 materiales, 100 niveles
+cada uno (4 200 en total) y una pizarra de dibujo libre. Todo en español, sin
+conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
+dispositivo.
+
+## 1. Qué es
+
+Mi Ambiente es una réplica digital de un salón Montessori. Corre como app web
+y se instala como APK de Android para usarse sin internet. No es "otra app de
+juegos": cada decisión de diseño viene de la pedagogía Montessori, no de
+mecánicas de videojuego.
+
+## 2. Qué la hace Montessori
+
+- **Control del error.** Corrige el material, no la app. No hay "perdiste" ni
+  cruces rojas: si la pieza no es la que toca, vuelve al canasto y aparece
+  "Esa todavía no. Busca otra".
+- **Lección de tres periodos.** Los materiales de nomenclatura recorren
+  nombrar → reconocer → evocar a lo largo de los 100 niveles, con el modelo
+  oculto en las últimas etapas.
+- **Aislar la dificultad.** Cada nivel cambia una sola variable. La torre
+  rosa no se "acelera": primero pierde el número de apoyo, luego los tamaños
+  se acercan, luego se invierte la serie.
+- **Vocabulario que crece.** El orden de presentación (p. ej. el triángulo
+  escaleno hasta cerca del nivel 90) vive en los datos, no se improvisa.
+- **Fonética, no nombres de letras.** La app dice "mmm", no "eme".
+- **Repetir no es retroceder.** Las estrellas se dan una sola vez por nivel.
+- **Ambiente preparado, también visual.** Paleta de papel, madera y lino;
+  "modo calma" quita fondo animado y confeti.
+- **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
+
+## 3. Las áreas y los 46 materiales
+
+| Área | Materiales | Qué desarrolla |
+|---|---|---|
+| 🫗 Vida práctica | 4 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 12 | Refinar los sentidos: tamaño, forma, color, sonido |
+| ✍️ Lenguaje | 7 | Del sonido a la letra, y de la letra a la palabra |
+| 🔢 Matemáticas | 5 | Cantidad concreta antes que número abstracto |
+| 🌍 Cultura y naturaleza | 3 | El mundo, los seres vivos y su clasificación |
+| 🎨 Expresión libre | 2 | Crear sin consigna, sin puntaje y sin prisa |
+| 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
+| 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
+
+Catálogo completo con slug, edad orientativa y objetivo pedagógico de cada
+material: `data/games.ts`.
+
+Cuatro actividades son libres a propósito y no tienen niveles: la pizarra
+(`vestir`, `mesa-silencio`, `dado`) y los marcos de vestir.
+
+## 4. La pizarra (`/pizarra`)
+
+Lienzo a pantalla completa para dibujar con el dedo: ocho herramientas
+(lápiz, crayón con textura, marcador translúcido, neón, aerosol, cubeta de
+relleno, sellos, borrador), grosor variable por presión, modo mandala
+(simetría radial de 2/4/6/8 ejes), siete hojas, guías punteadas de letras,
+números y formas, deshacer/rehacer, galería local de 12 dibujos y
+compartir/descargar PNG.
+
+## 5. Los 100 niveles
+
+Cada material recorre 10 etapas de 10 niveles (`lib/levels.ts`). Dentro de
+una etapa la dificultad casi no cambia; al saltar de etapa entra una
+variable nueva. Las etapas tienen nombre: 🌱 Primeros pasos, 🌿 Ya lo
+entiendo… hasta 👑 Maestro.
+
+## 6. La vista "Mamá y papá" (`/padres`)
+
+Ventana para entender qué está trabajando el niño, sin ranking ni
+comparación con otros niños:
+
+- Resumen: niveles logrados, estrellas, materiales tocados, veces jugado.
+- Nombre del niño (para saludarlo al entrar).
+- Interruptores: sonidos, voz, modo calma.
+- Borrar progreso, con confirmación.
+
+## 7. Instalar el APK en una tablet
+
+Archivo: `android/app/build/outputs/apk/debug/app-debug.apk`. Requiere
+Android 7.0+.
+
+**Opción A — copiar el archivo:**
+
+1. Copia el APK a la tablet (USB, Drive, WhatsApp, correo).
+2. Ábrelo desde el explorador de archivos (carpeta *Descargas*).
+3. Activa "Permitir instalar de esta fuente" cuando Android lo pida.
+4. Toca **Instalar**. Si Play Protect avisa, elige **Instalar de todos
+   modos** (normal: no viene de la tienda).
+5. Aparece como **Mi Ambiente** 🦉.
+
+**Opción B — por cable con adb** (con depuración USB activada):
+
+```bash
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+## 8. Antes de dar la tablet al niño
+
+En Ajustes de Android: fijar la pantalla (Seguridad → Fijar apps), brillo
+automático apagado, volumen a la mitad. En la app, en "Mamá y papá": nombre,
+modo calma si se distrae, y apagar la voz si la tablet no tiene voz en
+español instalada.
+
+## 9. Privacidad
+
+La app no hace ninguna petición de red. Todo el contenido viaja dentro del
+APK y el progreso se guarda solo en el dispositivo. Funciona igual en modo
+avión. Declara un único permiso (`INTERNET`, sin uso real, añadido por
+Capacitor por omisión). No pide cámara, micrófono, ubicación, contactos ni
+almacenamiento. Sin cuentas, sin publicidad, sin analítica.
+
+## 10. Límites honestos
+
+- No sustituye el material real: un cubo de madera pesa, rueda y se cae.
+- El progreso vive solo en el dispositivo; se borra si se desinstala la app.
+- Los tiempos y tolerancias (`data/levels/`) están calibrados a ojo, no
+  medidos con usuarios reales.
