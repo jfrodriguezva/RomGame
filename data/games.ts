@@ -80,6 +80,18 @@ export const games: GameDef[] = [
     material: "Gracia y cortesía",
     objetivo: "Reconocer y nombrar emociones propias y ajenas.",
   }),
+  g({
+    id: "pinza",
+    slug: "pinza",
+    title: "Pinza de transferencia",
+    emoji: "🥄",
+    description: "Transfiere de una en una, sin pasarte",
+    area: "practica",
+    edad: [3, 5],
+    material: "Ejercicio de pinza",
+    objetivo: "Precisión motriz, conteo uno a uno y control de la cantidad exacta.",
+    nuevo: true,
+  }),
 
   // ------------------------------------------------------------------- Sensorial
   g({
@@ -312,6 +324,18 @@ export const games: GameDef[] = [
     objetivo: "Separar una palabra en sus partes antes de relacionarla con letras.",
     nuevo: true,
   }),
+  g({
+    id: "el-la",
+    slug: "el-la",
+    title: "El o la",
+    emoji: "💬",
+    description: "Escucha y elige el artículo",
+    area: "lenguaje",
+    edad: [4, 6],
+    material: "Artículos (género gramatical)",
+    objetivo: "Reconocer el género gramatical de sustantivos comunes.",
+    nuevo: true,
+  }),
 
   // ---------------------------------------------------------------- Matemáticas
   g({
@@ -371,6 +395,18 @@ export const games: GameDef[] = [
     edad: [4, 6],
     material: "Cadena de cuentas",
     objetivo: "Orden y sucesión de los números.",
+  }),
+  g({
+    id: "husos",
+    slug: "husos",
+    title: "Los husos",
+    emoji: "🥢",
+    description: "Cuenta y pon los husos que tocan",
+    area: "matematicas",
+    edad: [4, 6],
+    material: "Husos (cajas del 0 al 9)",
+    objetivo: "Corresponder cantidad con número, incluido el concepto de cero.",
+    nuevo: true,
   }),
 
   // ------------------------------------------------------------------- Cultura
@@ -443,6 +479,18 @@ export const games: GameDef[] = [
     edad: [4, 6],
     material: "Los planetas",
     objetivo: "Secuencia y vocabulario del sistema solar.",
+    nuevo: true,
+  }),
+  g({
+    id: "partes-planta",
+    slug: "partes-planta",
+    title: "Partes de la planta",
+    emoji: "🌱",
+    description: "Raíz, tallo, hoja, flor y fruto",
+    area: "cultura",
+    edad: [3, 6],
+    material: "Nomenclatura de botánica",
+    objetivo: "Vocabulario de las partes de una planta y observación de la naturaleza.",
     nuevo: true,
   }),
 

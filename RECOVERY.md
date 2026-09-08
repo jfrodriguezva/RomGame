@@ -7,7 +7,7 @@ releer todo el repo desde cero.
 ## Qué es este proyecto
 
 **Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 50 materiales × 100 niveles (5 000 niveles) + una pizarra de dibujo
+años. 54 materiales × 100 niveles (5 400 niveles) + una pizarra de dibujo
 libre. Todo en español, sin conexión, sin cuentas, sin publicidad, sin
 enviar datos fuera del dispositivo. Es un proyecto personal (no comercial)
 del usuario, pensado para uso familiar.
@@ -58,7 +58,7 @@ del estado real del código, no inventados.
   Tailwind CSS 4 + Zustand 5 (estado/persistencia) + Framer Motion + Phaser 4
   (materiales de movimiento) + Capacitor 8.5 (empaquetado Android) + Serwist
   (PWA en web).
-- **Estructura:** `app/games/<slug>/` un material por carpeta (49) + `app/pizarra`,
+- **Estructura:** `app/games/<slug>/` un material por carpeta (53) + `app/pizarra`,
   `app/padres`, `app/admin`. Componentes compartidos en `components/`
   (`GameShell`, `MaterialQuiz`, `MaterialOrdenar`, `TrazoGuiado`,
   `LevelSelector`). Contenido/curvas de dificultad en `data/` (`games.ts` es
@@ -140,11 +140,11 @@ Decisiones tomadas (no volver a preguntar esto, ya está resuelto):
 
 | Área | Antes | Objetivo | Estado |
 |---|---|---|---|
-| 🌍 Cultura y naturaleza | 3 | 7-8 | **6** — faltan 1-2 |
-| ✍️ Lenguaje | 7 | 9-10 | **8** — falta 1-2 |
-| 🫗 Vida práctica | 4 | 6-7 | sin empezar |
+| 🌍 Cultura y naturaleza | 3 | 7-8 | **7** — dentro del rango ✅ |
+| ✍️ Lenguaje | 7 | 9-10 | **9** — dentro del rango ✅ |
+| 🫗 Vida práctica | 4 | 6-7 | **5** — falta 1-2 |
+| 🔢 Matemáticas | 5 | 7-8 | **6** — falta 1-2 |
 | 🎨 Expresión libre | 2 | 3-4 | sin empezar |
-| 🔢 Matemáticas | 5 | 7-8 | sin empezar |
 | 🔴 Sensorial / 🤝 Compañía / 🤸 Movimiento | 12 / 5 / 8 | ya nutridas | no tocar primero |
 
 Materiales agregados hasta ahora (todos reutilizan componentes existentes,
@@ -156,8 +156,23 @@ sin tocar `components/`):
   colores (no hay emoji de "península", etc.).
 - `sistema-solar` (cultura) — `MaterialOrdenar` de nuevo, orden por
   distancia al Sol.
+- `partes-planta` (cultura) — `MaterialQuiz`, con dos iconos SVG propios
+  (raíz, tallo) donde tampoco hay emoji claro.
 - `silabas` (lenguaje) — patrón "clasificación en canastas" (igual que
   `seres-vivos`, ver nota en `docs/MANUAL-TECNICO.md` sección 4).
+- `el-la` (lenguaje) — mismo patrón de clasificación en canastas, género
+  gramatical.
+- `pinza` (vida práctica) — patrón nuevo "transferencia por cantidad
+  exacta": tomar de a una pieza de una bandeja a otra, pasarse del
+  objetivo es el error.
+- `husos` (matemáticas) — mismo patrón de transferencia, con el caso
+  especial del 0 (confirmar "no lleva ninguno" en vez de tomar piezas).
+
+Con 3 materiales ya en el patrón de canastas (`seres-vivos`, `silabas`,
+`el-la`) y 2 en el de transferencia (`pinza`, `husos`), el próximo material
+de cualquiera de esas dos formas debería extraerse a un componente
+compartido (`MaterialClasificar` / `MaterialTransferir`) en vez de copiar
+la página de nuevo — ver `docs/MANUAL-TECNICO.md` sección 4.
 
 Sobre pulido visual/sonoro (punto 3): todavía no se ha tocado. Cuando se
 retome, la propuesta ya discutida con el usuario es: (a) sistema de
