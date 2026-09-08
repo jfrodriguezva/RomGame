@@ -182,13 +182,29 @@ próximo material de cualquiera de esas dos formas debería extraerse a un
 componente compartido (`MaterialClasificar` / `MaterialTransferir`) en vez
 de copiar la página de nuevo — ver `docs/MANUAL-TECNICO.md` sección 4.
 
-### Punto 3 (pulido visual/sonoro): sigue pendiente, es lo que queda
+### Punto 3 (pulido visual/sonoro): arrancado con el enfoque sistémico
 
-No tocado todavía en el sentido de "rehacer arte por material" — eso no es
-realista para 57 páginas en una sola sesión. El enfoque acordado en su
-lugar es **sistémico**: mejorar los puntos compartidos que tocan TODOS los
-materiales a la vez (`lib/audio.ts`, `GameShell`, `globals.css`) en vez de
-tocar cada `page.tsx` uno por uno. Si se retoma, empezar por ahí.
+Decisión de diseño: **no** se rehace arte por material (no es realista para
+57 páginas en una sesión). En su lugar se mejoran los puntos compartidos que
+tocan TODOS los materiales a la vez con una sola edición:
+
+- **Audio** — `lib/audio.ts`, función `tone()`: ahora capa una segunda voz
+  desafinada ×1.006 sobre cada nota (calidez de "coro"). Un solo cambio,
+  efecto en los 57 materiales.
+- **Textura visual** — `globals.css`, clase `.textura-papel` (ruido
+  fractal SVG inline al 5%, modo `multiply`). Aplicada en
+  `components/GameShell.tsx` (todos los materiales), `app/page.tsx`
+  (portada) y `app/padres/page.tsx`.
+
+No se tocó (deliberado, para no reventar el alcance de una sesión):
+`StarReward`/`ConfettiOverlay` (ya estaban bien logrados, no se identificó
+una mejora clara de bajo riesgo), ilustración custom por material más allá
+de la que ya se hizo al crear los materiales nuevos, y `lib/speech.ts` (la
+tabla de fonemas ya se revisó y está bien).
+
+Si se retoma este punto, el siguiente candidato de mayor apalancamiento es
+seguir por este mismo camino: buscar otro punto único que toque muchos
+materiales a la vez, antes que abrir página por página.
 
 Sobre pulido visual/sonoro (punto 3): todavía no se ha tocado. Cuando se
 retome, la propuesta ya discutida con el usuario es: (a) sistema de

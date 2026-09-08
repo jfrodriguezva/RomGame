@@ -33,7 +33,7 @@ export default function PadresPage() {
   }, [progreso]);
 
   return (
-    <div className="min-h-full flex-1 bg-[#f6f3ed]">
+    <div className="min-h-full flex-1 textura-papel bg-[#f6f3ed]">
       <BackHomeButton />
 
       <main className="mx-auto w-full max-w-2xl px-4 pb-20 pt-20 sm:px-6">

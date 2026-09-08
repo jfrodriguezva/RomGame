@@ -32,7 +32,7 @@ export default function Home() {
   const saludo = nombre ? `Hola, ${nombre}` : "Hola";
 
   return (
-    <div className="relative min-h-full flex-1">
+    <div className="relative min-h-full flex-1 textura-papel">
       <AnimatedBackground />
 
       <main className="relative mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:px-6">

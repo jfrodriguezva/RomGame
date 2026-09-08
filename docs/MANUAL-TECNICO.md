@@ -116,10 +116,20 @@ vive en el dispositivo y se pierde si se desinstala, por diseño.
 No hay ningún `.mp3` en el repo:
 
 - `lib/audio.ts` sintetiza efectos con WebAudio sobre una escala
-  pentatónica.
+  pentatónica. La función interna `tone()` capa dos osciladores por nota (uno
+  a la frecuencia exacta, otro a ×1.006) para dar calidez de "coro" en vez de
+  un tono fino de juguete — como es el único punto de síntesis del archivo,
+  el cambio se siente en los 57 materiales sin tocarlos uno por uno.
 - `lib/speech.ts` usa la síntesis de voz del sistema en español, con tabla
   de fonemas.
 - `lib/haptics.ts` usa `navigator.vibrate`.
+
+**Textura de papel.** `globals.css` define `.textura-papel`: un `::before`
+con ruido fractal (`feTurbulence`) al 5% de opacidad en modo `multiply`,
+generado inline como SVG en un data URI (sin archivo de imagen). Aplicada en
+`GameShell.tsx` (todos los materiales), `app/page.tsx` (portada) y
+`app/padres/page.tsx`. Mismo razonamiento que el audio: un punto de
+aplicación compartido en vez de rehacer el fondo de cada pantalla.
 
 ## 8. Catálogo de datos
 

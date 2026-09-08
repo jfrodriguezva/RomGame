@@ -52,18 +52,27 @@ function tone({ freq, duration, delay = 0, type = "sine", volume = 0.18, slideTo
   const ac = audioCtx();
   if (!ac) return;
   const start = ac.currentTime + delay;
-  const osc = ac.createOscillator();
-  const gain = ac.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, start);
-  if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, start + duration);
-  // Envolvente suave: nada de clics secos, el oído infantil agradece el ataque lento.
-  gain.gain.setValueAtTime(0.0001, start);
-  gain.gain.exponentialRampToValueAtTime(volume, start + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-  osc.connect(gain).connect(ac.destination);
-  osc.start(start);
-  osc.stop(start + duration + 0.05);
+
+  const capa = (multiplo: number, ganancia: number) => {
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq * multiplo, start);
+    if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo * multiplo, start + duration);
+    // Envolvente suave: nada de clics secos, el oído infantil agradece el ataque lento.
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(ganancia, start + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    osc.connect(gain).connect(ac.destination);
+    osc.start(start);
+    osc.stop(start + duration + 0.05);
+  };
+
+  // Una segunda voz, ligerísimamente desafinada, da calidez de "coro" en vez
+  // de sonar a un tono de juguete solo y delgado. Se aplica a todos los
+  // efectos del juego porque viven todos aquí, en este único punto.
+  capa(1, volume);
+  capa(1.006, volume * 0.35);
 }
 
 /** Notas de la escala pentatónica de do: cualquier combinación suena bien. */

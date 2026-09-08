@@ -148,12 +148,19 @@ silencio, los marcos de vestir y el dado de retos. En el ambiente real tampoco l
 No hay un solo `.mp3` en el repositorio y aun así la app suena:
 
 - `lib/audio.ts` sintetiza los efectos con WebAudio sobre una escala pentatónica, con envolvente
-  suave. El sonido de "vuelve a intentar" es una nota grave y breve, nunca un pitido de error.
+  suave y una segunda voz ligeramente desafinada por debajo de cada nota (calidez de "coro" en vez
+  de un tono de juguete solo). El sonido de "vuelve a intentar" es una nota grave y breve, nunca un
+  pitido de error.
 - `lib/speech.ts` usa la síntesis de voz del sistema en español, con una tabla de fonemas para
   decir el sonido de cada letra.
 - `lib/haptics.ts` usa `navigator.vibrate`, que el WebView de Android soporta sin plugin nativo.
 
 Los tres respetan los interruptores de la vista de padres.
+
+**Textura de papel.** El fondo de cada material (`GameShell`) y de la portada lleva un ruido
+fractal casi imperceptible (5% de opacidad) sobre el color plano del área: un solo punto de
+aplicación en `globals.css` (clase `.textura-papel`) para que el fondo deje de ser un color liso y
+se sienta más cerca de "papel" sin tocar las 57 pantallas de material una por una.
 
 ---
 

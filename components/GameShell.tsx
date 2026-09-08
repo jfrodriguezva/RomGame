@@ -40,7 +40,7 @@ export default function GameShell({
   const area = AREAS[game?.area ?? "sensorial"];
 
   return (
-    <div className={`relative min-h-full flex-1 ${area.tint}`}>
+    <div className={`relative min-h-full flex-1 textura-papel ${area.tint}`}>
       <BackHomeButton />
 
       <header className="px-4 pt-4">
