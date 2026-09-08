@@ -73,22 +73,18 @@ Casi todos los materiales bajo `app/games/<slug>` se arman componiendo:
   orden ascendente — ver la nota en `data/levels/ciclo-vida.ts`.
 - **TrazoGuiado** — recorrer un glifo con el dedo (letras de lija, trazos).
 - **LevelSelector** — selector de los 100 niveles en 10 etapas.
-
-Un cuarto patrón, usado por `seres-vivos`, `silabas`, `el-la` y
-`pares-impares` pero aún no extraído a un componente compartido, es la
-**clasificación en canastas**: se arma `useMaterial` a mano dentro de la
-página (sin `MaterialQuiz`/`MaterialOrdenar`), con un objeto pendiente a la
-vez y N canastas donde soltarlo. Con cuatro materiales ya en este patrón,
-extraerlo a un `MaterialClasificar` compartido en `components/` es ya
-trabajo pendiente, no solo una opción a futuro.
-
-Un quinto patrón, usado por `pinza` y `husos`, es la **transferencia por
-cantidad exacta**: una bandeja de origen y una de destino, se toma de a una
-pieza, y pasarse del objetivo cuenta como error (no hay límite superior
-impuesto por la UI, es el mismo material el que "no tiene dónde poner" la
-pieza de más). Tampoco está extraído a un componente — si se agrega un
-tercer material con esta forma, igual que arriba, vale la pena un
-`MaterialTransferir` compartido.
+- **MaterialClasificar** — clasificación en canastas: un objeto pendiente a
+  la vez y N canastas donde soltarlo (¿Vivo o no vivo?, Cuenta las sílabas,
+  El o la, Pares e impares). Cada material solo define de dónde salen los
+  elementos, a qué canasta pertenece cada uno y cómo se dibujan — el
+  control del error, el conteo y el cierre de nivel viven en el
+  componente. Antes de extraerlo (era el "cuarto patrón" de esta lista)
+  cada uno de los cuatro tenía su propia copia de la página.
+- **MaterialTransferir** — transferencia por cantidad exacta: una bandeja
+  de origen y una de destino, se toma de a una pieza, y pasarse del
+  objetivo es el error (Pinza de transferencia, Los husos). Los husos usa
+  el slot `extra` para el compartimento numerado y el botón especial del
+  cero — ver `app/games/husos/page.tsx`.
 
 ## 5. El motor de niveles
 

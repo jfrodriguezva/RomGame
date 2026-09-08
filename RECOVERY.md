@@ -176,11 +176,13 @@ abajo):
   `playNote()` de `lib/audio.ts` (ya existía) y colorea cada barra con el
   tono de una de las 8 áreas del ambiente.
 
-Con 4 materiales en el patrón de canastas (`seres-vivos`, `silabas`,
-`el-la`, `pares-impares`) y 2 en el de transferencia (`pinza`, `husos`), el
-próximo material de cualquiera de esas dos formas debería extraerse a un
-componente compartido (`MaterialClasificar` / `MaterialTransferir`) en vez
-de copiar la página de nuevo — ver `docs/MANUAL-TECNICO.md` sección 4.
+**Actualización: ya extraídos.** `components/MaterialClasificar.tsx` y
+`components/MaterialTransferir.tsx` existen — los 6 materiales de arriba
+(`seres-vivos`, `silabas`, `el-la`, `pares-impares`, `pinza`, `husos`) los
+usan y ya no tienen página propia duplicada. El próximo material de
+cualquiera de esas dos formas debe usar el componente compartido
+directamente, no copiar una página existente — ver
+`docs/MANUAL-TECNICO.md` sección 4 para la firma de cada uno.
 
 ### Punto 3 (pulido visual/sonoro): arrancado con el enfoque sistémico
 
