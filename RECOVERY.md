@@ -7,7 +7,7 @@ releer todo el repo desde cero.
 ## Qué es este proyecto
 
 **Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 54 materiales × 100 niveles (5 400 niveles) + una pizarra de dibujo
+años. 57 materiales × 100 niveles (5 700 niveles) + una pizarra de dibujo
 libre. Todo en español, sin conexión, sin cuentas, sin publicidad, sin
 enviar datos fuera del dispositivo. Es un proyecto personal (no comercial)
 del usuario, pensado para uso familiar.
@@ -58,7 +58,7 @@ del estado real del código, no inventados.
   Tailwind CSS 4 + Zustand 5 (estado/persistencia) + Framer Motion + Phaser 4
   (materiales de movimiento) + Capacitor 8.5 (empaquetado Android) + Serwist
   (PWA en web).
-- **Estructura:** `app/games/<slug>/` un material por carpeta (53) + `app/pizarra`,
+- **Estructura:** `app/games/<slug>/` un material por carpeta (56) + `app/pizarra`,
   `app/padres`, `app/admin`. Componentes compartidos en `components/`
   (`GameShell`, `MaterialQuiz`, `MaterialOrdenar`, `TrazoGuiado`,
   `LevelSelector`). Contenido/curvas de dificultad en `data/` (`games.ts` es
@@ -138,17 +138,21 @@ Decisiones tomadas (no volver a preguntar esto, ya está resuelto):
 
 ### Objetivo de variedad por área (acordado con el usuario)
 
-| Área | Antes | Objetivo | Estado |
+| Área | Antes de esta ronda | Objetivo | Estado |
 |---|---|---|---|
 | 🌍 Cultura y naturaleza | 3 | 7-8 | **7** — dentro del rango ✅ |
 | ✍️ Lenguaje | 7 | 9-10 | **9** — dentro del rango ✅ |
-| 🫗 Vida práctica | 4 | 6-7 | **5** — falta 1-2 |
-| 🔢 Matemáticas | 5 | 7-8 | **6** — falta 1-2 |
-| 🎨 Expresión libre | 2 | 3-4 | sin empezar |
-| 🔴 Sensorial / 🤝 Compañía / 🤸 Movimiento | 12 / 5 / 8 | ya nutridas | no tocar primero |
+| 🫗 Vida práctica | 4 | 6-7 | **6** — dentro del rango ✅ |
+| 🔢 Matemáticas | 5 | 7-8 | **7** — dentro del rango ✅ |
+| 🎨 Expresión libre | 2 | 3-4 | **3** — dentro del rango ✅ |
+| 🔴 Sensorial / 🤝 Compañía / 🤸 Movimiento | 12 / 5 / 8 | ya nutridas | no se tocaron |
 
-Materiales agregados hasta ahora (todos reutilizan componentes existentes,
-sin tocar `components/`):
+**El punto 2 del roadmap (volumen y variedad de contenido) está completo.**
+Las 8 áreas están dentro de su rango objetivo. 46 → 57 materiales en total.
+
+Materiales agregados en total (todos reutilizan componentes existentes, sin
+tocar `components/` — hasta que se extraigan los dos patrones nuevos, ver
+abajo):
 
 - `ciclo-vida` (cultura) — `MaterialOrdenar` reutilizado para secuencia
   temporal, no tamaño.
@@ -158,21 +162,33 @@ sin tocar `components/`):
   distancia al Sol.
 - `partes-planta` (cultura) — `MaterialQuiz`, con dos iconos SVG propios
   (raíz, tallo) donde tampoco hay emoji claro.
-- `silabas` (lenguaje) — patrón "clasificación en canastas" (igual que
-  `seres-vivos`, ver nota en `docs/MANUAL-TECNICO.md` sección 4).
-- `el-la` (lenguaje) — mismo patrón de clasificación en canastas, género
-  gramatical.
+- `silabas` (lenguaje) — patrón "clasificación en canastas".
+- `el-la` (lenguaje) — mismo patrón de canastas, género gramatical.
 - `pinza` (vida práctica) — patrón nuevo "transferencia por cantidad
   exacta": tomar de a una pieza de una bandeja a otra, pasarse del
   objetivo es el error.
 - `husos` (matemáticas) — mismo patrón de transferencia, con el caso
   especial del 0 (confirmar "no lleva ninguno" en vez de tomar piezas).
+- `doblar` (vida práctica) — `MaterialOrdenar` para una secuencia motriz
+  (extendida → mitad → cuarto → guardada), no tamaño ni tiempo.
+- `pares-impares` (matemáticas) — mismo patrón de canastas, paridad.
+- `xilofono` (expresión libre) — libre, sin niveles; reutiliza
+  `playNote()` de `lib/audio.ts` (ya existía) y colorea cada barra con el
+  tono de una de las 8 áreas del ambiente.
 
-Con 3 materiales ya en el patrón de canastas (`seres-vivos`, `silabas`,
-`el-la`) y 2 en el de transferencia (`pinza`, `husos`), el próximo material
-de cualquiera de esas dos formas debería extraerse a un componente
-compartido (`MaterialClasificar` / `MaterialTransferir`) en vez de copiar
-la página de nuevo — ver `docs/MANUAL-TECNICO.md` sección 4.
+Con 4 materiales en el patrón de canastas (`seres-vivos`, `silabas`,
+`el-la`, `pares-impares`) y 2 en el de transferencia (`pinza`, `husos`), el
+próximo material de cualquiera de esas dos formas debería extraerse a un
+componente compartido (`MaterialClasificar` / `MaterialTransferir`) en vez
+de copiar la página de nuevo — ver `docs/MANUAL-TECNICO.md` sección 4.
+
+### Punto 3 (pulido visual/sonoro): sigue pendiente, es lo que queda
+
+No tocado todavía en el sentido de "rehacer arte por material" — eso no es
+realista para 57 páginas en una sola sesión. El enfoque acordado en su
+lugar es **sistémico**: mejorar los puntos compartidos que tocan TODOS los
+materiales a la vez (`lib/audio.ts`, `GameShell`, `globals.css`) en vez de
+tocar cada `page.tsx` uno por uno. Si se retoma, empezar por ahí.
 
 Sobre pulido visual/sonoro (punto 3): todavía no se ha tocado. Cuando se
 retome, la propuesta ya discutida con el usuario es: (a) sistema de

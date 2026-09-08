@@ -92,6 +92,18 @@ export const games: GameDef[] = [
     objetivo: "Precisión motriz, conteo uno a uno y control de la cantidad exacta.",
     nuevo: true,
   }),
+  g({
+    id: "doblar",
+    slug: "doblar",
+    title: "Doblar la tela",
+    emoji: "🧣",
+    description: "Extendida, a la mitad, en cuarto, guardada",
+    area: "practica",
+    edad: [3, 6],
+    material: "Ejercicio de vida práctica (doblado)",
+    objetivo: "Secuencia motriz y orden: cada paso deja lista la tela para el siguiente.",
+    nuevo: true,
+  }),
 
   // ------------------------------------------------------------------- Sensorial
   g({
@@ -408,6 +420,18 @@ export const games: GameDef[] = [
     objetivo: "Corresponder cantidad con número, incluido el concepto de cero.",
     nuevo: true,
   }),
+  g({
+    id: "pares-impares",
+    slug: "pares-impares",
+    title: "Pares e impares",
+    emoji: "🔵",
+    description: "¿Se pueden hacer parejas?",
+    area: "matematicas",
+    edad: [4, 6],
+    material: "Clasificación numérica",
+    objetivo: "Primera noción de paridad, viendo si las cantidades se emparejan.",
+    nuevo: true,
+  }),
 
   // ------------------------------------------------------------------- Cultura
   g({
@@ -519,6 +543,19 @@ export const games: GameDef[] = [
     edad: [3, 6],
     material: "Dibujo dirigido",
     objetivo: "Color, límites y paciencia; también relaja.",
+  }),
+  g({
+    id: "xilofono",
+    slug: "xilofono",
+    title: "Xilófono",
+    emoji: "🎼",
+    description: "Toca y escucha, sin reglas",
+    area: "creativa",
+    edad: [3, 6],
+    material: "Instrumento de exploración sonora",
+    objetivo: "Exploración musical libre; cada barra es un área del ambiente.",
+    libre: true,
+    nuevo: true,
   }),
 
   // ------------------------------------------------------- Juegos en compañía

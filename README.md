@@ -1,7 +1,7 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 3 a 6 años: **54 materiales**, **100 niveles cada uno**
-(5 400 en total) y una pizarra de dibujo libre. Todo en español, sin conexión, sin cuentas, sin
+Un ambiente Montessori digital para niños de 3 a 6 años: **57 materiales**, **100 niveles cada uno**
+(5 700 en total) y una pizarra de dibujo libre. Todo en español, sin conexión, sin cuentas, sin
 publicidad y sin enviar un solo dato fuera del dispositivo.
 
 Corre como app web (Next.js) y se empaqueta como **APK de Android** con Capacitor.
@@ -56,12 +56,12 @@ Los materiales están organizados como el ambiente real, por áreas y no por "ca
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 5 | Coordinación, orden, concentración, independencia |
+| 🫗 Vida práctica | 6 | Coordinación, orden, concentración, independencia |
 | 🔴 Sensorial | 12 | Refinar los sentidos: tamaño, forma, color, sonido |
 | ✍️ Lenguaje | 9 | Del sonido a la letra, y de la letra a la palabra |
-| 🔢 Matemáticas | 6 | Cantidad concreta antes que número abstracto |
+| 🔢 Matemáticas | 7 | Cantidad concreta antes que número abstracto |
 | 🌍 Cultura y naturaleza | 7 | El mundo, los seres vivos y su clasificación |
-| 🎨 Expresión libre | 2 | Crear sin consigna, sin puntaje y sin prisa |
+| 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
 
@@ -100,6 +100,9 @@ variedad de la app a la de las aplicaciones Montessori comerciales más conocida
 - **El o la** — reconocer el género gramatical de un sustantivo, escuchando y clasificando.
 - **Pinza de transferencia** — mover objetos de uno en uno; tomar uno de más también es un error.
 - **Los husos** — corresponder cantidad con número del 0 al 9, incluido el cero como "nada".
+- **Doblar la tela** — extendida, a la mitad, en cuarto, guardada: secuencia motriz real.
+- **Pares e impares** — ¿la cantidad se puede repartir en parejas exactas, o sobra una?
+- **Xilófono** — instrumento libre; cada barra es el color de un área del ambiente.
 
 ---
 

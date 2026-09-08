@@ -33,7 +33,7 @@ app/
   pizarra/               lienzo de dibujo libre
   padres/                progreso, ajustes y acompañamiento
   admin/                 editor de puntos para imágenes propias
-  games/<slug>/           un material por carpeta (53)
+  games/<slug>/           un material por carpeta (56)
 components/
   GameShell.tsx           marco común: header, nivel, consigna, error
   MaterialQuiz.tsx        lección de tres periodos
@@ -67,20 +67,20 @@ Casi todos los materiales bajo `app/games/<slug>` se arman componiendo:
 - **MaterialQuiz** — lección de tres periodos (formas, emociones, animales,
   letras, palabras en inglés, tierra y agua, partes de la planta).
 - **MaterialOrdenar** — seriación. No solo por tamaño (torre rosa, escalera
-  marrón): también sirve para ordenar por secuencia temporal o lógica
-  (ciclo de la mariposa, sistema solar), pasando `invertido: true` fijo en
-  la curva de niveles para que la fila salga en orden ascendente — ver la
-  nota en `data/levels/ciclo-vida.ts`.
+  marrón): también sirve para ordenar por secuencia temporal, lógica o
+  motriz (ciclo de la mariposa, sistema solar, doblar la tela), pasando
+  `invertido: true` fijo en la curva de niveles para que la fila salga en
+  orden ascendente — ver la nota en `data/levels/ciclo-vida.ts`.
 - **TrazoGuiado** — recorrer un glifo con el dedo (letras de lija, trazos).
 - **LevelSelector** — selector de los 100 niveles en 10 etapas.
 
-Un cuarto patrón, usado por `seres-vivos`, `silabas` y `el-la` pero aún no
-extraído a un componente compartido, es la **clasificación en canastas**: se
-arma `useMaterial` a mano dentro de la página (sin
-`MaterialQuiz`/`MaterialOrdenar`), con un objeto pendiente a la vez y N
-canastas donde soltarlo. Con tres materiales ya en este patrón, vale la pena
-extraerlo a un `MaterialClasificar` compartido en `components/` antes de
-agregar un cuarto.
+Un cuarto patrón, usado por `seres-vivos`, `silabas`, `el-la` y
+`pares-impares` pero aún no extraído a un componente compartido, es la
+**clasificación en canastas**: se arma `useMaterial` a mano dentro de la
+página (sin `MaterialQuiz`/`MaterialOrdenar`), con un objeto pendiente a la
+vez y N canastas donde soltarlo. Con cuatro materiales ya en este patrón,
+extraerlo a un `MaterialClasificar` compartido en `components/` es ya
+trabajo pendiente, no solo una opción a futuro.
 
 Un quinto patrón, usado por `pinza` y `husos`, es la **transferencia por
 cantidad exacta**: una bandeja de origen y una de destino, se toma de a una

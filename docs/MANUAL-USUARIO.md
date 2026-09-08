@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 54 materiales, 100 niveles
-cada uno (5 400 en total) y una pizarra de dibujo libre. Todo en español, sin
+Ambiente Montessori digital para niños de 3 a 6 años: 57 materiales, 100 niveles
+cada uno (5 700 en total) y una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
 
@@ -31,18 +31,21 @@ mecánicas de videojuego.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 54 materiales
+## 3. Las áreas y los 57 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 5 | Coordinación, orden, concentración, independencia |
+| 🫗 Vida práctica | 6 | Coordinación, orden, concentración, independencia |
 | 🔴 Sensorial | 12 | Refinar los sentidos: tamaño, forma, color, sonido |
 | ✍️ Lenguaje | 9 | Del sonido a la letra, y de la letra a la palabra |
-| 🔢 Matemáticas | 6 | Cantidad concreta antes que número abstracto |
+| 🔢 Matemáticas | 7 | Cantidad concreta antes que número abstracto |
 | 🌍 Cultura y naturaleza | 7 | El mundo, los seres vivos y su clasificación |
-| 🎨 Expresión libre | 2 | Crear sin consigna, sin puntaje y sin prisa |
+| 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
+
+Todas las áreas están ya dentro del rango de variedad que se acordó como
+objetivo (ver `RECOVERY.md`, sección "Roadmap activo").
 
 Catálogo completo con slug, edad orientativa y objetivo pedagógico de cada
 material: `data/games.ts`.
@@ -66,6 +69,12 @@ Montessori comerciales:
   uno en uno; tomar uno de más es el error.
 - **Los husos** (`husos`, matemáticas) — corresponder cantidad con número
   del 0 al 9, incluido el cero.
+- **Doblar la tela** (`doblar`, vida práctica) — extendida, a la mitad, en
+  cuarto, guardada.
+- **Pares e impares** (`pares-impares`, matemáticas) — ¿la cantidad se
+  reparte en parejas exactas?
+- **Xilófono** (`xilofono`, expresión libre) — instrumento libre; cada
+  barra es el color de un área del ambiente.
 
 Cuatro actividades son libres a propósito y no tienen niveles: la pizarra
 (`vestir`, `mesa-silencio`, `dado`) y los marcos de vestir.
