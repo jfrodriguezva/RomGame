@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 46 materiales, 100 niveles
-cada uno (4 200 en total) y una pizarra de dibujo libre. Todo en español, sin
+Ambiente Montessori digital para niños de 3 a 6 años: 50 materiales, 100 niveles
+cada uno (5 000 en total) y una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
 
@@ -31,21 +31,33 @@ mecánicas de videojuego.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 46 materiales
+## 3. Las áreas y los 50 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
 | 🫗 Vida práctica | 4 | Coordinación, orden, concentración, independencia |
 | 🔴 Sensorial | 12 | Refinar los sentidos: tamaño, forma, color, sonido |
-| ✍️ Lenguaje | 7 | Del sonido a la letra, y de la letra a la palabra |
+| ✍️ Lenguaje | 8 | Del sonido a la letra, y de la letra a la palabra |
 | 🔢 Matemáticas | 5 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 3 | El mundo, los seres vivos y su clasificación |
+| 🌍 Cultura y naturaleza | 6 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 2 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
 
 Catálogo completo con slug, edad orientativa y objetivo pedagógico de cada
 material: `data/games.ts`.
+
+Materiales agregados para acercar la variedad de la app a la de las apps
+Montessori comerciales (área cultura y naturaleza, y lenguaje):
+
+- **El ciclo de la mariposa** (`ciclo-vida`) — ordenar huevo, oruga,
+  crisálida y mariposa; seriación por tiempo, no por tamaño.
+- **Formas de tierra y agua** (`tierra-agua`) — isla, lago, península, cabo,
+  golfo, estrecho, istmo, archipiélago.
+- **El sistema solar** (`sistema-solar`) — ordenar los ocho planetas por
+  distancia al Sol.
+- **Cuenta las sílabas** (`silabas`) — clasificar palabras por sus golpes de
+  voz, conciencia fonológica previa a la letra.
 
 Cuatro actividades son libres a propósito y no tienen niveles: la pizarra
 (`vestir`, `mesa-silencio`, `dado`) y los marcos de vestir.

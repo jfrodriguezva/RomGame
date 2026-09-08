@@ -1,7 +1,7 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 3 a 6 años: **46 materiales**, **100 niveles cada uno**
-(4 200 en total) y una pizarra de dibujo libre. Todo en español, sin conexión, sin cuentas, sin
+Un ambiente Montessori digital para niños de 3 a 6 años: **50 materiales**, **100 niveles cada uno**
+(5 000 en total) y una pizarra de dibujo libre. Todo en español, sin conexión, sin cuentas, sin
 publicidad y sin enviar un solo dato fuera del dispositivo.
 
 Corre como app web (Next.js) y se empaqueta como **APK de Android** con Capacitor.
@@ -58,9 +58,9 @@ Los materiales están organizados como el ambiente real, por áreas y no por "ca
 |---|---|---|
 | 🫗 Vida práctica | 4 | Coordinación, orden, concentración, independencia |
 | 🔴 Sensorial | 12 | Refinar los sentidos: tamaño, forma, color, sonido |
-| ✍️ Lenguaje | 7 | Del sonido a la letra, y de la letra a la palabra |
+| ✍️ Lenguaje | 8 | Del sonido a la letra, y de la letra a la palabra |
 | 🔢 Matemáticas | 5 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 3 | El mundo, los seres vivos y su clasificación |
+| 🌍 Cultura y naturaleza | 6 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 2 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -83,6 +83,19 @@ Réplicas digitales de material Montessori real:
 - **El juego del silencio** — respiración guiada y escucha; sin niveles ni puntaje.
 - **Los continentes** — mapa con los colores del material, y qué animal vive en cada uno.
 - **¿Vivo o no vivo?** — la primera clasificación científica: vivo/no vivo, animal/planta, camina/nada/vuela.
+
+### Los últimos cuatro materiales
+
+Ampliando las áreas más flacas del catálogo (cultura y naturaleza, lenguaje) para acercar la
+variedad de la app a la de las aplicaciones Montessori comerciales más conocidas:
+
+- **El ciclo de la mariposa** — ordenar huevo, oruga, crisálida y mariposa: seriación, pero por
+  tiempo en vez de por tamaño.
+- **Formas de tierra y agua** — isla, lago, península, cabo, golfo, estrecho, istmo y
+  archipiélago, como diagramas planos de dos colores.
+- **El sistema solar** — ordenar los ocho planetas por distancia al Sol.
+- **Cuenta las sílabas** — clasificar palabras por sus golpes de voz, el paso antes de relacionar
+  sonido con letra.
 
 ---
 

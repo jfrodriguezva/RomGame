@@ -7,7 +7,7 @@ releer todo el repo desde cero.
 ## Qué es este proyecto
 
 **Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 46 materiales × 100 niveles (4 200 niveles) + una pizarra de dibujo
+años. 50 materiales × 100 niveles (5 000 niveles) + una pizarra de dibujo
 libre. Todo en español, sin conexión, sin cuentas, sin publicidad, sin
 enviar datos fuera del dispositivo. Es un proyecto personal (no comercial)
 del usuario, pensado para uso familiar.
@@ -17,10 +17,11 @@ del usuario, pensado para uso familiar.
 - **Dueño / autor git:** Juan Francisco Rodriguez Vazquez
   (jfrv.paco@gmail.com)
 - **Rama principal:** `main`
-- **Último commit conocido en este snapshot:** `92aab23` — "Prepara el APK:
-  rutas como carpeta, icono propio y permisos documentados" (2026-08-30)
-- **Estado en ese momento:** working tree limpio, `main` sincronizado 1:1
-  con `origin/main`.
+- **Última sincronización confirmada con `origin/main`:** `92aab23` —
+  "Prepara el APK: rutas como carpeta, icono propio y permisos documentados"
+  (2026-08-30). Desde entonces hay commits locales de documentación y de
+  ampliación de contenido (ver `git log` para el estado real — puede que no
+  se hayan subido con `git push` todavía).
 
 > Estos datos son un snapshot. Al retomar, corre `git status`, `git log -5
 > --oneline` y `git fetch origin` para confirmar el estado real antes de
@@ -57,7 +58,7 @@ del estado real del código, no inventados.
   Tailwind CSS 4 + Zustand 5 (estado/persistencia) + Framer Motion + Phaser 4
   (materiales de movimiento) + Capacitor 8.5 (empaquetado Android) + Serwist
   (PWA en web).
-- **Estructura:** `app/games/<slug>/` un material por carpeta (45) + `app/pizarra`,
+- **Estructura:** `app/games/<slug>/` un material por carpeta (49) + `app/pizarra`,
   `app/padres`, `app/admin`. Componentes compartidos en `components/`
   (`GameShell`, `MaterialQuiz`, `MaterialOrdenar`, `TrazoGuiado`,
   `LevelSelector`). Contenido/curvas de dificultad en `data/` (`games.ts` es
@@ -115,6 +116,74 @@ producto/soporte. La ventaja real de "Mi Ambiente" es que es gratuito, 100%
 privado (sin suscripción, sin telemetría), diseñado nativamente para
 fonética en español (no traducido), y completamente editable por el dueño
 del proyecto.
+
+## Roadmap activo: emparejar a Montessori Preschool (en curso)
+
+El usuario decidió explícitamente, tras la comparación de arriba, **cerrar la
+brecha con Montessori Preschool sin salir del modelo personal/gratuito**.
+Decisiones tomadas (no volver a preguntar esto, ya está resuelto):
+
+1. **Se mantiene personal.** Sin tienda, sin firma de release, sin cuenta de
+   desarrollador. No proponer publicar en Play/App Store salvo que el
+   usuario lo pida de nuevo explícitamente.
+2. **Emparejar volumen y variedad de contenido.** Sí, es el foco activo.
+3. **Emparejar pulido visual/sonoro.** Sí, es el foco activo (después o en
+   paralelo con el punto 2).
+4. **Panel de padres:** no hace falta mejorarlo — es local, el usuario lo
+   revisa a mano.
+5. **Validación pedagógica externa (profesoras certificadas):** no importa,
+   el proyecto no es comercial.
+6. **Actualizaciones automáticas vía tienda:** no aplica (consecuencia del
+   punto 1).
+
+### Objetivo de variedad por área (acordado con el usuario)
+
+| Área | Antes | Objetivo | Estado |
+|---|---|---|---|
+| 🌍 Cultura y naturaleza | 3 | 7-8 | **6** — faltan 1-2 |
+| ✍️ Lenguaje | 7 | 9-10 | **8** — falta 1-2 |
+| 🫗 Vida práctica | 4 | 6-7 | sin empezar |
+| 🎨 Expresión libre | 2 | 3-4 | sin empezar |
+| 🔢 Matemáticas | 5 | 7-8 | sin empezar |
+| 🔴 Sensorial / 🤝 Compañía / 🤸 Movimiento | 12 / 5 / 8 | ya nutridas | no tocar primero |
+
+Materiales agregados hasta ahora (todos reutilizan componentes existentes,
+sin tocar `components/`):
+
+- `ciclo-vida` (cultura) — `MaterialOrdenar` reutilizado para secuencia
+  temporal, no tamaño.
+- `tierra-agua` (cultura) — `MaterialQuiz` con iconos SVG propios de dos
+  colores (no hay emoji de "península", etc.).
+- `sistema-solar` (cultura) — `MaterialOrdenar` de nuevo, orden por
+  distancia al Sol.
+- `silabas` (lenguaje) — patrón "clasificación en canastas" (igual que
+  `seres-vivos`, ver nota en `docs/MANUAL-TECNICO.md` sección 4).
+
+Sobre pulido visual/sonoro (punto 3): todavía no se ha tocado. Cuando se
+retome, la propuesta ya discutida con el usuario es: (a) sistema de
+ilustración SVG propio aplicado primero a los materiales más usados, (b) un
+pase de animación con Framer Motion en transiciones clave, (c) enriquecer
+`lib/audio.ts` (hoy una escala pentatónica simple) y la tabla de fonemas de
+`lib/speech.ts`.
+
+### Cómo seguir agregando materiales (patrón que ya funciona)
+
+1. Elegir una idea Montessori real que encaje en un componente existente:
+   `MaterialQuiz` (nomenclatura / tres periodos), `MaterialOrdenar`
+   (seriación por tamaño **o por secuencia**, fijando `invertido: true` en
+   la curva si el orden debe salir ascendente), o el patrón de
+   clasificación en canastas de `seres-vivos.tsx` (copiar esa página como
+   base si no encaja en los dos componentes de arriba).
+2. Escribir `data/levels/<slug>.ts` con la curva de 100 niveles
+   (`levels100` + `phasedInt`, aislando una dificultad nueva por etapa).
+3. Escribir `app/games/<slug>/page.tsx` conectando el componente.
+4. Agregar la entrada en `data/games.ts` (`id`, `slug`, `title`, `emoji`,
+   `area`, `edad`, `material`, `objetivo`, `nuevo: true`).
+5. Verificar: `npx tsc --noEmit`, `npx eslint <archivos>`, servidor de
+   desarrollo (`npm run dev`, puerto 40000) y confirmar por HTTP que la
+   ruta responde 200 y el título aparece en la portada.
+6. Actualizar conteos en `README.md`, `docs/MANUAL-USUARIO.md`,
+   `docs/MANUAL-TECNICO.md` y este archivo.
 
 ## Cómo retomar trabajo aquí
 
