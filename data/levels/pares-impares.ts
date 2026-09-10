@@ -23,10 +23,13 @@ export interface ParesImparesLevel {
   maxNumero: number;
 }
 
-export const PARES_IMPARES_LEVELS: ParesImparesLevel[] = levels100((_, level) => ({
-  cantidad: phasedInt(level, [3, 4, 5, 5, 6, 7, 8, 8, 9, 10, 10]),
-  maxNumero: phasedInt(level, [4, 4, 5, 6, 6, 7, 8, 8, 9, 9, 9]),
-}));
+export const PARES_IMPARES_LEVELS: ParesImparesLevel[] = levels100((_, level) => {
+  const maxNumero = phasedInt(level, [4, 4, 5, 6, 6, 7, 8, 8, 9, 9, 9]);
+  // Nunca puede haber más tarjetas por ronda que cantidades distintas
+  // disponibles hasta maxNumero (cantidadesPara(maxNumero).length).
+  const cantidad = Math.min(phasedInt(level, [3, 4, 5, 5, 6, 7, 8, 8, 9, 10, 10]), maxNumero - 1);
+  return { cantidad, maxNumero };
+});
 
 export function cantidadesPara(maxNumero: number): CantidadParidad[] {
   return CANTIDADES_PARIDAD.filter((c) => c.cantidad <= maxNumero);

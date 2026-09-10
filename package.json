@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start -p 40000",
     "lint": "eslint",
+    "qa": "tsx scripts/qa-levels.ts",
     "export": "node scripts/build-android.mjs --solo-web",
     "android": "node scripts/build-android.mjs",
     "android:abrir": "npx cap open android"
@@ -32,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.2",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }
