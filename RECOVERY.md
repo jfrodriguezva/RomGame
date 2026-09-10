@@ -7,10 +7,10 @@ releer todo el repo desde cero.
 ## Qué es este proyecto
 
 **Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 57 materiales × 100 niveles (5 700 niveles) + una pizarra de dibujo
-libre. Todo en español, sin conexión, sin cuentas, sin publicidad, sin
-enviar datos fuera del dispositivo. Es un proyecto personal (no comercial)
-del usuario, pensado para uso familiar.
+años. 57 materiales — 52 con 100 niveles cada uno (5 200 niveles) y 5
+actividades libres sin niveles. Todo en español, sin conexión, sin
+cuentas, sin publicidad, sin enviar datos fuera del dispositivo. Es un
+proyecto personal (no comercial) del usuario, pensado para uso familiar.
 
 - **Repo:** `git@github.com:jfrodriguezva/RomGame.git` (GitHub:
   `jfrodriguezva/RomGame`)
@@ -87,9 +87,11 @@ Guardar esto porque no está en comentarios ni se deduce fácil del código:
 - Los niveles **no son una curva lineal**: dentro de una etapa la
   dificultad casi no cambia (repetición cómoda a propósito), y sube de
   golpe al cambiar de etapa. No "suavizar" esto sin que lo pida el usuario.
-- Cuatro actividades son **libres a propósito** (pizarra, juego del
-  silencio, marcos de vestir, dado de retos): no tienen niveles ni deberían
-  tenerlos.
+- Cinco actividades son **libres a propósito** (pizarra, juego del
+  silencio, marcos de vestir, dado de retos, xilófono): no tienen niveles
+  ni deberían tenerlos. `data/games.ts` expone `materialesConNiveles` y
+  `TOTAL_NIVELES` (52 × 100 = 5 200) para no tener que recalcular esto a
+  mano — si se agrega un material, ese número se actualiza solo.
 - El APK es de **debug** intencionalmente (uso familiar/personal, no
   publicación en Play Store). No asumir que hay que migrar a firma de
   release salvo que el usuario lo pida explícitamente.

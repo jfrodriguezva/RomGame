@@ -1,8 +1,9 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 3 a 6 años: **57 materiales**, **100 niveles cada uno**
-(5 700 en total) y una pizarra de dibujo libre. Todo en español, sin conexión, sin cuentas, sin
-publicidad y sin enviar un solo dato fuera del dispositivo.
+Un ambiente Montessori digital para niños de 3 a 6 años: **57 materiales** — 52 con **100 niveles
+cada uno** (5 200 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
+de dibujo libre. Todo en español, sin conexión, sin cuentas, sin publicidad y sin enviar un solo
+dato fuera del dispositivo.
 
 Corre como app web (Next.js) y se empaqueta como **APK de Android** con Capacitor.
 
@@ -138,8 +139,9 @@ export const MEMORAMA_LEVELS = levels100((_, level) => ({
 Cada valor del arreglo es el de una etapa; `phasedInt` interpola entre ellos. Las etapas tienen
 nombre y el niño las ve en el selector: 🌱 Primeros pasos, 🌿 Ya lo entiendo, … 👑 Maestro.
 
-Cuatro actividades son **libres a propósito** y no tienen niveles: la pizarra, el juego del
-silencio, los marcos de vestir y el dado de retos. En el ambiente real tampoco los tienen.
+Cinco actividades son **libres a propósito** y no tienen niveles: la pizarra, el juego del
+silencio, los marcos de vestir, el dado de retos y el xilófono. En el ambiente real tampoco los
+tienen.
 
 ---
 

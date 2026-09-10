@@ -1,7 +1,8 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 57 materiales, 100 niveles
-cada uno (5 700 en total) y una pizarra de dibujo libre. Todo en español, sin
+Ambiente Montessori digital para niños de 3 a 6 años: 57 materiales — 52 con
+100 niveles cada uno (5 200 en total) y 5 actividades libres, sin niveles ni
+puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
 
@@ -76,8 +77,8 @@ Montessori comerciales:
 - **Xilófono** (`xilofono`, expresión libre) — instrumento libre; cada
   barra es el color de un área del ambiente.
 
-Cuatro actividades son libres a propósito y no tienen niveles: la pizarra
-(`vestir`, `mesa-silencio`, `dado`) y los marcos de vestir.
+Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
+juego del silencio, los marcos de vestir, el dado de retos y el xilófono.
 
 ## 4. La pizarra (`/pizarra`)
 
