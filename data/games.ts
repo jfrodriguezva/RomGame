@@ -242,6 +242,18 @@ export const games: GameDef[] = [
     material: "Encajes y puzzles",
     objetivo: "Relación parte-todo y orientación espacial.",
   }),
+  g({
+    id: "textura",
+    slug: "textura",
+    title: "Áspero o liso",
+    emoji: "🤚",
+    description: "Toca con los ojos: ¿pincha o resbala?",
+    area: "sensorial",
+    edad: [3, 6],
+    material: "Tablillas ásperas y lisas",
+    objetivo: "Refinar el tacto: discriminar superficies ásperas y lisas.",
+    nuevo: true,
+  }),
 
   // -------------------------------------------------------------------- Lenguaje
   g({
@@ -348,6 +360,18 @@ export const games: GameDef[] = [
     objetivo: "Reconocer el género gramatical de sustantivos comunes.",
     nuevo: true,
   }),
+  g({
+    id: "mayusculas",
+    slug: "mayusculas",
+    title: "Mayúsculas y minúsculas",
+    emoji: "🔠",
+    description: "Clasifica según cómo se ve la letra",
+    area: "lenguaje",
+    edad: [4, 6],
+    material: "Mayúsculas y minúsculas",
+    objetivo: "Reconocer visualmente las dos formas de una misma letra.",
+    nuevo: true,
+  }),
 
   // ---------------------------------------------------------------- Matemáticas
   g({
@@ -430,6 +454,18 @@ export const games: GameDef[] = [
     edad: [4, 6],
     material: "Clasificación numérica",
     objetivo: "Primera noción de paridad, viendo si las cantidades se emparejan.",
+    nuevo: true,
+  }),
+  g({
+    id: "lados",
+    slug: "lados",
+    title: "¿Cuántos lados tiene?",
+    emoji: "📐",
+    description: "Clasifica figuras por sus lados",
+    area: "matematicas",
+    edad: [4, 6],
+    material: "Geometría: conteo de lados",
+    objetivo: "Relacionar la forma geométrica con su cantidad de lados.",
     nuevo: true,
   }),
 
@@ -515,6 +551,30 @@ export const games: GameDef[] = [
     edad: [3, 6],
     material: "Nomenclatura de botánica",
     objetivo: "Vocabulario de las partes de una planta y observación de la naturaleza.",
+    nuevo: true,
+  }),
+  g({
+    id: "sentidos",
+    slug: "sentidos",
+    title: "Los cinco sentidos",
+    emoji: "🖐️",
+    description: "Vista, oído, olfato, gusto y tacto",
+    area: "cultura",
+    edad: [3, 6],
+    material: "Nomenclatura de los sentidos",
+    objetivo: "Vocabulario de los cinco sentidos y su función.",
+    nuevo: true,
+  }),
+  g({
+    id: "dia-noche",
+    slug: "dia-noche",
+    title: "Día y noche",
+    emoji: "🌗",
+    description: "¿Es de día o de noche?",
+    area: "cultura",
+    edad: [3, 6],
+    material: "Ciclo del día y la noche",
+    objetivo: "Reconocer el ciclo día/noche y qué ocurre en cada uno.",
     nuevo: true,
   }),
 

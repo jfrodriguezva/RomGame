@@ -21,6 +21,10 @@ import { EL_LA_LEVELS, PALABRAS_GENERO } from "../data/levels/el-la";
 import { PARES_IMPARES_LEVELS, cantidadesPara } from "../data/levels/pares-impares";
 import { PINZA_LEVELS } from "../data/levels/pinza";
 import { HUSOS_LEVELS } from "../data/levels/husos";
+import { DIA_NOCHE_LEVELS, COSAS_DIA_NOCHE } from "../data/levels/dia-noche";
+import { LADOS_LEVELS, formasPara as formasParaLados } from "../data/levels/lados";
+import { MAYUSCULAS_LEVELS, letrasPara } from "../data/levels/mayusculas";
+import { TEXTURA_LEVELS, OBJETOS_TEXTURA } from "../data/levels/textura";
 
 let fallas = 0;
 function fallo(msg: string) {
@@ -123,6 +127,37 @@ HUSOS_LEVELS.forEach((c) => {
   if (c.objetivo > POOL_HUSOS) fallo(`husos nivel ${c.level}: objetivo (${c.objetivo}) excede el pool de husos (${POOL_HUSOS})`);
 });
 ok("husos: objetivo siempre 0-9 y nunca excede el pool de husos disponibles");
+
+validarForma("dia-noche", DIA_NOCHE_LEVELS);
+DIA_NOCHE_LEVELS.forEach((c) => {
+  if (c.cantidad > COSAS_DIA_NOCHE.length) {
+    fallo(`dia-noche nivel ${c.level}: pide ${c.cantidad} pero solo hay ${COSAS_DIA_NOCHE.length}`);
+  }
+});
+ok("dia-noche: cantidad nunca excede el banco de cosas");
+
+validarForma("lados", LADOS_LEVELS);
+LADOS_LEVELS.forEach((c) => {
+  const pool = formasParaLados(c.activos).length;
+  if (c.cantidad > pool) fallo(`lados nivel ${c.level}: pide ${c.cantidad} figuras pero solo hay ${pool}`);
+  if (c.activos.length === 0) fallo(`lados nivel ${c.level}: sin categorías activas`);
+});
+ok("lados: cantidad nunca excede las figuras disponibles para los lados activos");
+
+validarForma("mayusculas", MAYUSCULAS_LEVELS);
+MAYUSCULAS_LEVELS.forEach((c) => {
+  const pool = letrasPara(c.letras).length;
+  if (c.cantidad > pool) fallo(`mayusculas nivel ${c.level}: pide ${c.cantidad} letras pero solo hay ${pool}`);
+});
+ok("mayusculas: cantidad nunca excede las letras disponibles");
+
+validarForma("textura", TEXTURA_LEVELS);
+TEXTURA_LEVELS.forEach((c) => {
+  if (c.cantidad > OBJETOS_TEXTURA.length) {
+    fallo(`textura nivel ${c.level}: pide ${c.cantidad} pero solo hay ${OBJETOS_TEXTURA.length}`);
+  }
+});
+ok("textura: cantidad nunca excede el banco de objetos");
 
 // ---------------------------------------------------------------------------
 console.log("");
