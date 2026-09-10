@@ -159,6 +159,7 @@ export default function MaterialQuiz({
       <ConfettiOverlay show={logrado} />
       <StarReward
         show={logrado}
+        slug={slug}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}
         level={level}

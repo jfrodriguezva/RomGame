@@ -40,6 +40,13 @@ export interface AreaInfo {
   ring: string;
   text: string;
   chip: string;
+  /** El mismo tono de `ring`, en hexadecimal plano para usar fuera de Tailwind
+   * (SVG, estilos inline) — por ejemplo, para que la celebración de fin de
+   * nivel se sienta del área del material, no de un color genérico. */
+  acento: string;
+  /** Versión oscura del mismo tono, con contraste suficiente para texto
+   * blanco encima (botones sólidos) — `acento` es demasiado pálido para eso. */
+  acentoOscuro: string;
 }
 
 export const AREAS: Record<Area, AreaInfo> = {
@@ -52,6 +59,8 @@ export const AREAS: Record<Area, AreaInfo> = {
     ring: "ring-[#a9c0a0]",
     text: "text-[#4a6b4d]",
     chip: "bg-[#dbe7d6] text-[#3f5c42]",
+    acento: "#a9c0a0",
+    acentoOscuro: "#4a6b4d",
   },
   sensorial: {
     id: "sensorial",
@@ -62,6 +71,8 @@ export const AREAS: Record<Area, AreaInfo> = {
     ring: "ring-[#d9a7b4]",
     text: "text-[#8a4b5e]",
     chip: "bg-[#f0dbe1] text-[#7d4356]",
+    acento: "#d9a7b4",
+    acentoOscuro: "#8a4b5e",
   },
   lenguaje: {
     id: "lenguaje",
@@ -72,6 +83,8 @@ export const AREAS: Record<Area, AreaInfo> = {
     ring: "ring-[#a7b6d9]",
     text: "text-[#46578a]",
     chip: "bg-[#dde3f0] text-[#3f4f7d]",
+    acento: "#a7b6d9",
+    acentoOscuro: "#46578a",
   },
   matematicas: {
     id: "matematicas",
@@ -82,6 +95,8 @@ export const AREAS: Record<Area, AreaInfo> = {
     ring: "ring-[#e0b586]",
     text: "text-[#8a5a2b]",
     chip: "bg-[#f7e2cd] text-[#7d5227]",
+    acento: "#e0b586",
+    acentoOscuro: "#8a5a2b",
   },
   cultura: {
     id: "cultura",
@@ -92,6 +107,8 @@ export const AREAS: Record<Area, AreaInfo> = {
     ring: "ring-[#93c4ba]",
     text: "text-[#31665c]",
     chip: "bg-[#d6eae5] text-[#2c5c53]",
+    acento: "#93c4ba",
+    acentoOscuro: "#31665c",
   },
   creativa: {
     id: "creativa",
@@ -102,6 +119,8 @@ export const AREAS: Record<Area, AreaInfo> = {
     ring: "ring-[#d8c39a]",
     text: "text-[#7a6234]",
     chip: "bg-[#efe3cc] text-[#6f5930]",
+    acento: "#d8c39a",
+    acentoOscuro: "#7a6234",
   },
   compania: {
     id: "compania",
@@ -112,6 +131,8 @@ export const AREAS: Record<Area, AreaInfo> = {
     ring: "ring-[#bcaed6]",
     text: "text-[#5c4a7d]",
     chip: "bg-[#e5deef] text-[#54427a]",
+    acento: "#bcaed6",
+    acentoOscuro: "#5c4a7d",
   },
   movimiento: {
     id: "movimiento",
@@ -122,6 +143,8 @@ export const AREAS: Record<Area, AreaInfo> = {
     ring: "ring-[#e2a89f]",
     text: "text-[#8c4a3f]",
     chip: "bg-[#f6ddd9] text-[#7f4238]",
+    acento: "#e2a89f",
+    acentoOscuro: "#8c4a3f",
   },
 };
 

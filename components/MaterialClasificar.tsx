@@ -163,6 +163,7 @@ export default function MaterialClasificar<Level extends { level: number }, Item
       <ConfettiOverlay show={logrado} />
       <StarReward
         show={logrado}
+        slug={slug}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}
         level={level}

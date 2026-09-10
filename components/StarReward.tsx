@@ -1,6 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { getGame } from "@/data/games";
+import { AREAS } from "@/lib/montessori";
 
 /**
  * Cierre de nivel.
@@ -8,9 +10,14 @@ import { motion, AnimatePresence } from "framer-motion";
  * No dice "ganaste" ni muestra un puntaje contra nadie: reconoce el trabajo
  * terminado y ofrece dos caminos igual de válidos, repetir o continuar.
  * En Montessori repetir un material no es retroceder, es lo normal.
+ *
+ * El color de la estrella y del botón principal toma el acento del área del
+ * material (`slug`), no un ámbar genérico: la celebración se siente del
+ * mismo ambiente que el material que se acaba de trabajar.
  */
 export default function StarReward({
   show,
+  slug,
   message = "Lo lograste",
   stars = 0,
   level,
@@ -19,6 +26,7 @@ export default function StarReward({
   nextLabel = "Siguiente",
 }: {
   show: boolean;
+  slug?: string;
   message?: string;
   stars?: number;
   level?: number;
@@ -26,6 +34,10 @@ export default function StarReward({
   onRepeat?: () => void;
   nextLabel?: string;
 }) {
+  const area = slug ? AREAS[getGame(slug)?.area ?? "sensorial"] : undefined;
+  const acento = area?.acento ?? "#e0b586";
+  const acentoOscuro = area?.acentoOscuro ?? "#8a5a2b";
+
   return (
     <AnimatePresence>
       {show && (
@@ -41,11 +53,13 @@ export default function StarReward({
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: "spring", stiffness: 260, damping: 22 }}
             className="flex w-full max-w-xs flex-col items-center gap-3 rounded-[2rem] bg-[#fdfaf5] px-7 py-8 text-center shadow-2xl"
+            style={{ boxShadow: `0 0 0 3px ${acento}55, 0 25px 50px -12px rgba(0,0,0,0.25)` }}
           >
             <motion.span
               animate={{ rotate: [0, -8, 8, 0] }}
               transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
               className="text-6xl"
+              style={{ filter: `drop-shadow(0 4px 0 ${acento}77)` }}
             >
               🌟
             </motion.span>
@@ -57,7 +71,7 @@ export default function StarReward({
             )}
 
             {stars > 0 && (
-              <div className="flex gap-1 text-2xl text-amber-400">
+              <div className="flex gap-1 text-2xl" style={{ color: acento }}>
                 {Array.from({ length: stars }).map((_, i) => (
                   <motion.span
                     key={i}
@@ -76,7 +90,8 @@ export default function StarReward({
                 {onNext && (
                   <button
                     onClick={onNext}
-                    className="w-full rounded-2xl bg-stone-700 py-3 text-base font-extrabold text-white shadow active:scale-95"
+                    className="w-full rounded-2xl py-3 text-base font-extrabold text-white shadow active:scale-95"
+                    style={{ backgroundColor: acentoOscuro }}
                   >
                     {nextLabel}
                   </button>
