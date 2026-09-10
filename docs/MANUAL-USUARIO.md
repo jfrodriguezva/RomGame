@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 57 materiales — 52 con
-100 niveles cada uno (5 200 en total) y 5 actividades libres, sin niveles ni
+Ambiente Montessori digital para niños de 3 a 6 años: 62 materiales — 57 con
+100 niveles cada uno (5 700 en total) y 5 actividades libres, sin niveles ni
 puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
@@ -32,21 +32,21 @@ mecánicas de videojuego.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 57 materiales
+## 3. Las áreas y los 62 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
 | 🫗 Vida práctica | 6 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 12 | Refinar los sentidos: tamaño, forma, color, sonido |
-| ✍️ Lenguaje | 9 | Del sonido a la letra, y de la letra a la palabra |
-| 🔢 Matemáticas | 7 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 7 | El mundo, los seres vivos y su clasificación |
+| 🔴 Sensorial | 13 | Refinar los sentidos: tamaño, forma, color, sonido, textura |
+| ✍️ Lenguaje | 10 | Del sonido a la letra, y de la letra a la palabra |
+| 🔢 Matemáticas | 8 | Cantidad concreta antes que número abstracto |
+| 🌍 Cultura y naturaleza | 9 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
 
-Todas las áreas están ya dentro del rango de variedad que se acordó como
-objetivo (ver `RECOVERY.md`, sección "Roadmap activo").
+Todas las áreas superan ya el rango de variedad que se acordó como objetivo
+inicial (ver `RECOVERY.md`, sección "Roadmap activo").
 
 Catálogo completo con slug, edad orientativa y objetivo pedagógico de cada
 material: `data/games.ts`.
@@ -76,6 +76,15 @@ Montessori comerciales:
   reparte en parejas exactas?
 - **Xilófono** (`xilofono`, expresión libre) — instrumento libre; cada
   barra es el color de un área del ambiente.
+- **Áspero o liso** (`textura`, sensorial) — las clásicas tablillas
+  rugosas y lisas.
+- **Mayúsculas y minúsculas** (`mayusculas`, lenguaje) — reconocer las dos
+  formas de una misma letra.
+- **¿Cuántos lados tiene?** (`lados`, matemáticas) — clasifica las figuras
+  del gabinete de geometría por su número de lados.
+- **Los cinco sentidos** (`sentidos`, cultura) — vista, oído, olfato,
+  gusto y tacto.
+- **Día y noche** (`dia-noche`, cultura) — ¿es de día o de noche?
 
 Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
 juego del silencio, los marcos de vestir, el dado de retos y el xilófono.

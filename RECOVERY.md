@@ -7,7 +7,7 @@ releer todo el repo desde cero.
 ## Qué es este proyecto
 
 **Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 57 materiales — 52 con 100 niveles cada uno (5 200 niveles) y 5
+años. 62 materiales — 57 con 100 niveles cada uno (5 700 niveles) y 5
 actividades libres sin niveles. Todo en español, sin conexión, sin
 cuentas, sin publicidad, sin enviar datos fuera del dispositivo. Es un
 proyecto personal (no comercial) del usuario, pensado para uso familiar.
@@ -58,7 +58,7 @@ del estado real del código, no inventados.
   Tailwind CSS 4 + Zustand 5 (estado/persistencia) + Framer Motion + Phaser 4
   (materiales de movimiento) + Capacitor 8.5 (empaquetado Android) + Serwist
   (PWA en web).
-- **Estructura:** `app/games/<slug>/` un material por carpeta (56) + `app/pizarra`,
+- **Estructura:** `app/games/<slug>/` un material por carpeta (61) + `app/pizarra`,
   `app/padres`, `app/admin`. Componentes compartidos en `components/`
   (`GameShell`, `MaterialQuiz`, `MaterialOrdenar`, `TrazoGuiado`,
   `LevelSelector`). Contenido/curvas de dificultad en `data/` (`games.ts` es
@@ -119,6 +119,11 @@ privado (sin suscripción, sin telemetría), diseñado nativamente para
 fonética en español (no traducido), y completamente editable por el dueño
 del proyecto.
 
+> Este veredicto es de la primera comparación (46 materiales, sin QA, sin
+> pulido). El estado real hoy está en la sección de abajo — en volumen de
+> contenido ya no hay brecha real (62 materiales); en pulido visual/sonoro
+> sigue habiendo diferencia, aunque menos que al principio.
+
 ## Roadmap activo: emparejar a Montessori Preschool (en curso)
 
 El usuario decidió explícitamente, tras la comparación de arriba, **cerrar la
@@ -138,23 +143,22 @@ Decisiones tomadas (no volver a preguntar esto, ya está resuelto):
 6. **Actualizaciones automáticas vía tienda:** no aplica (consecuencia del
    punto 1).
 
-### Objetivo de variedad por área (acordado con el usuario)
+### Objetivo de variedad por área — superado en todas
 
-| Área | Antes de esta ronda | Objetivo | Estado |
+| Área | Antes de este trabajo | Objetivo inicial | Estado ahora |
 |---|---|---|---|
-| 🌍 Cultura y naturaleza | 3 | 7-8 | **7** — dentro del rango ✅ |
-| ✍️ Lenguaje | 7 | 9-10 | **9** — dentro del rango ✅ |
+| 🌍 Cultura y naturaleza | 3 | 7-8 | **9** — por encima del rango ✅ |
+| ✍️ Lenguaje | 7 | 9-10 | **10** — dentro del rango ✅ |
 | 🫗 Vida práctica | 4 | 6-7 | **6** — dentro del rango ✅ |
-| 🔢 Matemáticas | 5 | 7-8 | **7** — dentro del rango ✅ |
+| 🔢 Matemáticas | 5 | 7-8 | **8** — dentro del rango ✅ |
 | 🎨 Expresión libre | 2 | 3-4 | **3** — dentro del rango ✅ |
-| 🔴 Sensorial / 🤝 Compañía / 🤸 Movimiento | 12 / 5 / 8 | ya nutridas | no se tocaron |
+| 🔴 Sensorial | 12 | ya nutrida | **13** — se sumó igual (tablillas ásperas y lisas) |
+| 🤝 Compañía / 🤸 Movimiento | 5 / 8 | ya nutridas | no se tocaron |
 
-**El punto 2 del roadmap (volumen y variedad de contenido) está completo.**
-Las 8 áreas están dentro de su rango objetivo. 46 → 57 materiales en total.
+**El punto 2 del roadmap (volumen y variedad de contenido) está completo y
+superado.** 46 → 62 materiales en total (57 con 100 niveles, 5 libres).
 
-Materiales agregados en total (todos reutilizan componentes existentes, sin
-tocar `components/` — hasta que se extraigan los dos patrones nuevos, ver
-abajo):
+Materiales agregados en total (todos reutilizan componentes existentes):
 
 - `ciclo-vida` (cultura) — `MaterialOrdenar` reutilizado para secuencia
   temporal, no tamaño.
@@ -166,9 +170,9 @@ abajo):
   (raíz, tallo) donde tampoco hay emoji claro.
 - `silabas` (lenguaje) — patrón "clasificación en canastas".
 - `el-la` (lenguaje) — mismo patrón de canastas, género gramatical.
-- `pinza` (vida práctica) — patrón nuevo "transferencia por cantidad
-  exacta": tomar de a una pieza de una bandeja a otra, pasarse del
-  objetivo es el error.
+- `pinza` (vida práctica) — patrón "transferencia por cantidad exacta":
+  tomar de a una pieza de una bandeja a otra, pasarse del objetivo es el
+  error.
 - `husos` (matemáticas) — mismo patrón de transferencia, con el caso
   especial del 0 (confirmar "no lleva ninguno" en vez de tomar piezas).
 - `doblar` (vida práctica) — `MaterialOrdenar` para una secuencia motriz
@@ -177,62 +181,84 @@ abajo):
 - `xilofono` (expresión libre) — libre, sin niveles; reutiliza
   `playNote()` de `lib/audio.ts` (ya existía) y colorea cada barra con el
   tono de una de las 8 áreas del ambiente.
+- `textura` (sensorial) — mismo patrón de canastas; las tablillas ásperas
+  y lisas reales.
+- `mayusculas` (lenguaje) — mismo patrón de canastas, la misma letra en
+  sus dos formas.
+- `lados` (matemáticas) — mismo patrón de canastas, reutilizando las
+  figuras SVG de `data/levels/formas.ts` en vez de dibujar de nuevo.
+- `sentidos` (cultura) — `MaterialQuiz`, solo emoji, sin render propio.
+- `dia-noche` (cultura) — mismo patrón de canastas.
 
-**Actualización: ya extraídos.** `components/MaterialClasificar.tsx` y
-`components/MaterialTransferir.tsx` existen — los 6 materiales de arriba
-(`seres-vivos`, `silabas`, `el-la`, `pares-impares`, `pinza`, `husos`) los
-usan y ya no tienen página propia duplicada. El próximo material de
-cualquiera de esas dos formas debe usar el componente compartido
-directamente, no copiar una página existente — ver
-`docs/MANUAL-TECNICO.md` sección 4 para la firma de cada uno.
+`components/MaterialClasificar.tsx` y `components/MaterialTransferir.tsx`
+existen y los usan `seres-vivos`, `silabas`, `el-la`, `pares-impares`,
+`textura`, `mayusculas`, `lados`, `dia-noche` (canastas) y `pinza`, `husos`
+(transferencia) — ninguno tiene ya página propia duplicada. El próximo
+material de cualquiera de esas dos formas debe usar el componente
+compartido directamente — ver `docs/MANUAL-TECNICO.md` sección 4 para la
+firma de cada uno.
 
-### Punto 3 (pulido visual/sonoro): arrancado con el enfoque sistémico
+### Punto 3 (pulido visual/sonoro): arrancado, sigue siendo el más grande
 
 Decisión de diseño: **no** se rehace arte por material (no es realista para
-57 páginas en una sesión). En su lugar se mejoran los puntos compartidos que
-tocan TODOS los materiales a la vez con una sola edición:
+62 páginas en una sesión). En su lugar se mejoran los puntos compartidos
+que tocan muchos materiales a la vez con una sola edición:
 
-- **Audio** — `lib/audio.ts`, función `tone()`: ahora capa una segunda voz
+- **Audio** — `lib/audio.ts`, función `tone()`: capa una segunda voz
   desafinada ×1.006 sobre cada nota (calidez de "coro"). Un solo cambio,
-  efecto en los 57 materiales.
+  efecto en todos los materiales.
 - **Textura visual** — `globals.css`, clase `.textura-papel` (ruido
   fractal SVG inline al 5%, modo `multiply`). Aplicada en
-  `components/GameShell.tsx` (todos los materiales), `app/page.tsx`
-  (portada) y `app/padres/page.tsx`.
+  `components/GameShell.tsx`, `app/page.tsx` y `app/padres/page.tsx`.
+- **Celebración con el color del área** — `lib/montessori.ts` suma
+  `acento`/`acentoOscuro` a cada `AreaInfo`; `StarReward.tsx` acepta un
+  `slug` opcional y los usa. Conectado en los 4 componentes compartidos
+  (~20 materiales); los ~31 materiales de estilo más antiguo que llaman a
+  `StarReward` directo sin `slug` siguen con el color de respaldo — no se
+  tocaron uno por uno para no arriesgar una edición masiva de bajo valor.
 
-No se tocó (deliberado, para no reventar el alcance de una sesión):
-`StarReward`/`ConfettiOverlay` (ya estaban bien logrados, no se identificó
-una mejora clara de bajo riesgo), ilustración custom por material más allá
-de la que ya se hizo al crear los materiales nuevos, y `lib/speech.ts` (la
-tabla de fonemas ya se revisó y está bien).
+No se tocó todavía: ilustración custom por material más allá de la que ya
+trajeron los materiales nuevos, un pase de animación en transiciones, y
+`ConfettiOverlay`. Si se retoma, seguir el mismo criterio: buscar el
+siguiente punto único que toque muchos materiales a la vez (candidato
+natural: llevar el color de área a los ~31 materiales de estilo antiguo que
+`StarReward` todavía no cubre) antes que abrir página por página.
 
-Si se retoma este punto, el siguiente candidato de mayor apalancamiento es
-seguir por este mismo camino: buscar otro punto único que toque muchos
-materiales a la vez, antes que abrir página por página.
+### QA y validación (nuevo esta sesión)
 
-Sobre pulido visual/sonoro (punto 3): todavía no se ha tocado. Cuando se
-retome, la propuesta ya discutida con el usuario es: (a) sistema de
-ilustración SVG propio aplicado primero a los materiales más usados, (b) un
-pase de animación con Framer Motion en transiciones clave, (c) enriquecer
-`lib/audio.ts` (hoy una escala pentatónica simple) y la tabla de fonemas de
-`lib/speech.ts`.
+`npm run qa` (`scripts/qa-levels.ts`) valida las curvas de nivel de los
+materiales agregados en esta sesión: forma correcta, sin `NaN`, y que
+ningún nivel pida más elementos de los que el banco de datos tiene
+disponibles. Encontró un bug real (`pares-impares` pedía más tarjetas de
+las que existían en niveles altos) que ningún build ni prueba manual
+superficial había notado — ver `docs/MANUAL-TECNICO.md` sección 14.
+**Sigue pendiente probar cualquiera de los materiales con las manos en un
+dispositivo real**: todo lo verificado hasta ahora es build + HTTP/HTML +
+curvas de datos, nunca interacción táctil real.
 
 ### Cómo seguir agregando materiales (patrón que ya funciona)
 
 1. Elegir una idea Montessori real que encaje en un componente existente:
    `MaterialQuiz` (nomenclatura / tres periodos), `MaterialOrdenar`
    (seriación por tamaño **o por secuencia**, fijando `invertido: true` en
-   la curva si el orden debe salir ascendente), o el patrón de
-   clasificación en canastas de `seres-vivos.tsx` (copiar esa página como
-   base si no encaja en los dos componentes de arriba).
+   la curva si el orden debe salir ascendente), `MaterialClasificar`
+   (clasificación en canastas) o `MaterialTransferir` (transferencia por
+   cantidad exacta). Los cuatro están en `components/`, con su firma
+   documentada en `docs/MANUAL-TECNICO.md` sección 4.
 2. Escribir `data/levels/<slug>.ts` con la curva de 100 niveles
-   (`levels100` + `phasedInt`, aislando una dificultad nueva por etapa).
+   (`levels100` + `phasedInt`, aislando una dificultad nueva por etapa) —
+   si el material tiene un banco de datos limitado (palabras, figuras...),
+   asegurarse de que `cantidad`/`objetivo` nunca exceda lo disponible en
+   niveles altos (ver el bug real que esto causó en `pares-impares`).
 3. Escribir `app/games/<slug>/page.tsx` conectando el componente.
 4. Agregar la entrada en `data/games.ts` (`id`, `slug`, `title`, `emoji`,
    `area`, `edad`, `material`, `objetivo`, `nuevo: true`).
-5. Verificar: `npx tsc --noEmit`, `npx eslint <archivos>`, servidor de
-   desarrollo (`npm run dev`, puerto 40000) y confirmar por HTTP que la
-   ruta responde 200 y el título aparece en la portada.
+5. Verificar: `npx tsc --noEmit`, `npx eslint <archivos>`, `npm run qa`
+   (agregar la validación del material nuevo en `scripts/qa-levels.ts`),
+   servidor de desarrollo (`npm run dev`, puerto 40000) y confirmar por
+   HTTP que la ruta responde 200 y el título aparece en la portada. Antes
+   de dar el trabajo por cerrado, correr también `npm run export` (el
+   build real que usa el APK) — no solo el dev server.
 6. Actualizar conteos en `README.md`, `docs/MANUAL-USUARIO.md`,
    `docs/MANUAL-TECNICO.md` y este archivo.
 

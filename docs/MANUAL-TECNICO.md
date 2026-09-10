@@ -16,6 +16,7 @@ Repositorio: `git@github.com:jfrodriguezva/RomGame.git`
 | Capacitor (core/android/cli) | ^8.5 | Empaqueta el export estático como APK |
 | Serwist / @serwist/next | ^9.5 | Service worker / PWA en la versión web |
 | ESLint | ^9 | Lint con reglas de React 19 |
+| tsx | ^4 | Ejecuta TypeScript directo (`npm run qa`) |
 
 ## 2. Arranque rápido
 
@@ -33,7 +34,7 @@ app/
   pizarra/               lienzo de dibujo libre
   padres/                progreso, ajustes y acompañamiento
   admin/                 editor de puntos para imágenes propias
-  games/<slug>/           un material por carpeta (56)
+  games/<slug>/           un material por carpeta (61)
 components/
   GameShell.tsx           marco común: header, nivel, consigna, error
   MaterialQuiz.tsx        lección de tres periodos
@@ -127,6 +128,16 @@ generado inline como SVG en un data URI (sin archivo de imagen). Aplicada en
 `app/padres/page.tsx`. Mismo razonamiento que el audio: un punto de
 aplicación compartido en vez de rehacer el fondo de cada pantalla.
 
+**Celebración con el color del área.** `lib/montessori.ts` agrega `acento` y
+`acentoOscuro` (hex plano) a cada `AreaInfo`. `StarReward.tsx` acepta un
+`slug` opcional, resuelve el área con `getGame()` + `AREAS` (igual que
+`GameShell`) y usa esos colores en la estrella y el botón de "Siguiente" en
+vez de un ámbar genérico. Conectado en los 4 componentes compartidos
+(`MaterialQuiz`, `MaterialOrdenar`, `MaterialClasificar`,
+`MaterialTransferir`); los materiales de estilo más antiguo que llaman a
+`StarReward` directamente sin `slug` (~31, ver `RECOVERY.md`) siguen con el
+color de respaldo.
+
 ## 8. Catálogo de datos
 
 `data/games.ts` define `GameDef` (slug, título, emoji, área, edad, material,
@@ -174,6 +185,7 @@ funcione offline como PWA.
 | `npm run build` | Build de producción (Next server) |
 | `npm run start` | Sirve el build de producción |
 | `npm run lint` | ESLint sobre todo el repo |
+| `npm run qa` | Valida las curvas de niveles (ver sección 14) |
 | `npm run export` | Export estático (`CAP_BUILD=1`) |
 | `npm run android` | Export + sync + build del APK debug |
 | `npm run android:abrir` | Abre `android/` en Android Studio |
@@ -181,6 +193,38 @@ funcione offline como PWA.
 ## 13. Deuda técnica conocida
 
 - ESLint (reglas React 19) marca `setState` dentro de `useEffect` en varias
-  páginas. No rompe build ni app; pendiente de limpiar.
+  páginas y en los 4 componentes compartidos. No rompe build ni app;
+  pendiente de limpiar.
 - Tiempos y umbrales en `data/levels/` calibrados a ojo, no medidos con
   usuarios reales.
+- El patrón "clasificación en canastas" ya tiene 4 usos y el de
+  "transferencia por cantidad exacta" 2 (ambos extraídos a componentes, ver
+  sección 4) — pero ni uno ni otro se ha probado interactivamente con un
+  dedo real en un dispositivo, solo por HTTP/HTML.
+- `StarReward` solo toma el color del área en los ~20 materiales que pasan
+  por los 4 componentes compartidos; los ~31 de estilo más antiguo que la
+  llaman directo siguen con el color de respaldo (ver sección 7).
+
+## 14. QA automatizado de niveles
+
+`scripts/qa-levels.ts` (`npm run qa`, usa `tsx`) importa las curvas de
+nivel de los materiales de esta sesión y valida, para los 100 niveles de
+cada uno:
+
+- Forma correcta (100 niveles, campo `level` secuencial, sin `NaN`).
+- Que ningún nivel pida más elementos de los que hay disponibles en el
+  banco de datos correspondiente (`disponibles(config).length`).
+- Reglas propias de cada material (p. ej. `husos`: `objetivo` siempre 0-9).
+- Integridad del catálogo completo: slugs únicos, `id === slug`, edades en
+  rango.
+
+No sustituye probarlo con las manos, pero encontró un bug real la primera
+vez que corrió: `pares-impares` pedía hasta 10 tarjetas por ronda cuando
+como máximo hay 8 cantidades distintas posibles — `MaterialClasificar`
+recorta con `Math.min` en vez de fallar, así que ningún build ni prueba
+manual superficial lo hubiera notado. Arreglado limitando `cantidad` a
+`maxNumero - 1` dentro del generador de niveles, no ajustando la tabla de
+paradas a mano.
+
+Al agregar un material nuevo con curva propia, agregar también su
+validación aquí.

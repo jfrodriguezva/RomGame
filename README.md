@@ -1,7 +1,7 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 3 a 6 años: **57 materiales** — 52 con **100 niveles
-cada uno** (5 200 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
+Un ambiente Montessori digital para niños de 3 a 6 años: **62 materiales** — 57 con **100 niveles
+cada uno** (5 700 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
 de dibujo libre. Todo en español, sin conexión, sin cuentas, sin publicidad y sin enviar un solo
 dato fuera del dispositivo.
 
@@ -58,10 +58,10 @@ Los materiales están organizados como el ambiente real, por áreas y no por "ca
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
 | 🫗 Vida práctica | 6 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 12 | Refinar los sentidos: tamaño, forma, color, sonido |
-| ✍️ Lenguaje | 9 | Del sonido a la letra, y de la letra a la palabra |
-| 🔢 Matemáticas | 7 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 7 | El mundo, los seres vivos y su clasificación |
+| 🔴 Sensorial | 13 | Refinar los sentidos: tamaño, forma, color, sonido, textura |
+| ✍️ Lenguaje | 10 | Del sonido a la letra, y de la letra a la palabra |
+| 🔢 Matemáticas | 8 | Cantidad concreta antes que número abstracto |
+| 🌍 Cultura y naturaleza | 9 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -104,6 +104,11 @@ variedad de la app a la de las aplicaciones Montessori comerciales más conocida
 - **Doblar la tela** — extendida, a la mitad, en cuarto, guardada: secuencia motriz real.
 - **Pares e impares** — ¿la cantidad se puede repartir en parejas exactas, o sobra una?
 - **Xilófono** — instrumento libre; cada barra es el color de un área del ambiente.
+- **Áspero o liso** — las clásicas tablillas rugosas y lisas, en versión digital.
+- **Mayúsculas y minúsculas** — reconocer las dos formas de una misma letra.
+- **¿Cuántos lados tiene?** — reutiliza las figuras del gabinete de geometría, clasificadas por lados.
+- **Los cinco sentidos** — vista, oído, olfato, gusto y tacto.
+- **Día y noche** — ¿es de día o de noche?
 
 ---
 
@@ -162,7 +167,12 @@ Los tres respetan los interruptores de la vista de padres.
 **Textura de papel.** El fondo de cada material (`GameShell`) y de la portada lleva un ruido
 fractal casi imperceptible (5% de opacidad) sobre el color plano del área: un solo punto de
 aplicación en `globals.css` (clase `.textura-papel`) para que el fondo deje de ser un color liso y
-se sienta más cerca de "papel" sin tocar las 57 pantallas de material una por una.
+se sienta más cerca de "papel" sin tocar cada pantalla de material una por una.
+
+**La celebración toma el color del área.** Al cerrar un nivel, la estrella y el botón de
+"Siguiente" usan el acento del área del material (`lib/montessori.ts`, campos `acento` y
+`acentoOscuro`) en vez de un ámbar genérico — se siente del mismo ambiente que se acaba de
+trabajar. Conectado en los 4 componentes compartidos.
 
 ---
 
@@ -177,8 +187,10 @@ app/
   games/<slug>/         un material por carpeta
 components/
   GameShell             marco común: encabezado, nivel, consigna, control del error
-  MaterialQuiz          lección de tres periodos (5 materiales la usan)
-  MaterialOrdenar       seriación (torre rosa, escalera marrón)
+  MaterialQuiz          lección de tres periodos
+  MaterialOrdenar       seriación, por tamaño o por secuencia
+  MaterialClasificar    clasificación en canastas
+  MaterialTransferir    transferencia por cantidad exacta
   TrazoGuiado           recorrer un glifo con el dedo
   LevelSelector         100 niveles en 10 etapas, con lo alcanzado y lo cerrado
 data/
@@ -191,7 +203,9 @@ lib/
   montessori.ts         áreas, tres periodos y lenguaje del control del error
   useMaterial.ts        estado común: nivel, acierto, intento, cierre
   progressStore.ts      progreso local (zustand + localStorage)
-scripts/build-android.mjs
+scripts/
+  build-android.mjs     orquesta export + cap sync + gradle
+  qa-levels.ts           npm run qa — valida las 100 niveles de cada material
 ```
 
 ---
