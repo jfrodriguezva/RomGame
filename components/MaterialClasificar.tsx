@@ -163,7 +163,7 @@ export default function MaterialClasificar<Level extends { level: number }, Item
         </button>
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug={slug} />
       <StarReward
         show={logrado}
         slug={slug}

@@ -160,7 +160,7 @@ export default function MaterialQuiz({
       consigna={consigna}
       nota={nota}
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug={slug} />
       <StarReward
         show={logrado}
         slug={slug}

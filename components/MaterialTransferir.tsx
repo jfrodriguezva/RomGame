@@ -97,7 +97,7 @@ export default function MaterialTransferir<Level extends { level: number; objeti
         </button>
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug={slug} />
       <StarReward
         show={logrado}
         slug={slug}
