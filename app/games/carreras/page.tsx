@@ -84,7 +84,7 @@ export default function CarrerasPage() {
     <div className="min-h-full flex-1 bg-gradient-to-b from-blue-100 via-white to-white pb-10">
       <BackHomeButton />
       <ConfettiOverlay show={showWin} />
-      <StarReward show={showWin} message="¡Buena carrera!" />
+      <StarReward slug="carreras" show={showWin} message="¡Buena carrera!" />
       <main className="mx-auto flex w-full max-w-xl flex-col items-center px-4 pt-20 sm:px-6">
         <h1 className="mb-1 text-center text-2xl font-extrabold text-blue-600 sm:text-3xl">
           🏎️ Carreras

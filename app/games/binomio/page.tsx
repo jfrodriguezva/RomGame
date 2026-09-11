@@ -116,6 +116,7 @@ export default function BinomioPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="binomio"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

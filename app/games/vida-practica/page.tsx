@@ -143,6 +143,7 @@ export default function VidaPracticaPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="vida-practica"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

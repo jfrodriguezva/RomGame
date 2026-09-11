@@ -91,7 +91,7 @@ export default function MemoramaPage() {
     <div className="min-h-full flex-1 bg-gradient-to-b from-pink-100 via-white to-white pb-10">
       <BackHomeButton />
       <ConfettiOverlay show={showWin} />
-      <StarReward show={showWin} message="¡Encontraste todas las parejas!" />
+      <StarReward slug="memorama" show={showWin} message="¡Encontraste todas las parejas!" />
       <main className="mx-auto w-full max-w-2xl px-4 pt-20 sm:px-6">
         <h1 className="mb-4 text-center text-2xl font-extrabold text-rose-500 sm:text-3xl">
           🧠 Memorama

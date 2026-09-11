@@ -57,6 +57,9 @@ export default function MaterialTransferir<Level extends { level: number; objeti
   }, [config]);
 
   useEffect(() => {
+    // reiniciar() reconstruye la bandeja de origen según config.origen, que
+    // cambia con el nivel — no es una derivación pura para el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     reiniciar();
   }, [reiniciar]);
 

@@ -79,6 +79,7 @@ export default function CilindrosPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="cilindros"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

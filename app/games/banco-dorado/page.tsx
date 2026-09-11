@@ -121,6 +121,7 @@ export default function BancoDoradoPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="banco-dorado"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

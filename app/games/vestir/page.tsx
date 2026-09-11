@@ -78,7 +78,7 @@ export default function VestirPage() {
     >
       <BackHomeButton />
       <ConfettiOverlay show={showWin} />
-      <StarReward show={showWin} message="¡Qué princesa tan elegante!" />
+      <StarReward slug="vestir" show={showWin} message="¡Qué princesa tan elegante!" />
       <main className="mx-auto flex w-full max-w-2xl flex-col items-center px-4 pt-20 sm:px-6">
         <h1 className="mb-1 text-center text-2xl font-extrabold text-rose-500 sm:text-3xl">
           👗 Vestir a la princesa

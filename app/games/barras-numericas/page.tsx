@@ -134,6 +134,7 @@ export default function BarrasNumericasPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="barras-numericas"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

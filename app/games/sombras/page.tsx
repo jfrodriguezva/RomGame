@@ -83,7 +83,7 @@ export default function SombrasPage() {
     <div className="min-h-full flex-1 bg-gradient-to-b from-slate-100 via-white to-white pb-10">
       <BackHomeButton />
       <ConfettiOverlay show={showWin} />
-      <StarReward show={showWin} message="¡Encontraste todas las sombras!" />
+      <StarReward slug="sombras" show={showWin} message="¡Encontraste todas las sombras!" />
       <main className="mx-auto flex w-full max-w-xl flex-col items-center px-4 pt-20 sm:px-6">
         <h1 className="mb-4 text-center text-2xl font-extrabold text-slate-600 sm:text-3xl">
           🌗 Empareja sombras

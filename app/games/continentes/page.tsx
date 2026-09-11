@@ -81,6 +81,7 @@ export default function ContinentesPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="continentes"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

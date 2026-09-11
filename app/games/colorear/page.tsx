@@ -82,6 +82,7 @@ export default function ColorearPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="colorear"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

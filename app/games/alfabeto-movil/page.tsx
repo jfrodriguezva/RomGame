@@ -116,6 +116,7 @@ export default function AlfabetoMovilPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="alfabeto-movil"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

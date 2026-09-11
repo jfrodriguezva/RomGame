@@ -75,6 +75,7 @@ export default function LetrasLijaPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="letras-lija"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

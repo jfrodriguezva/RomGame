@@ -87,6 +87,7 @@ export default function SonidosInicialesPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="sonidos-iniciales"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

@@ -80,6 +80,7 @@ export default function TablaCienPage() {
     >
       <ConfettiOverlay show={logrado} />
       <StarReward
+        slug="tabla-cien"
         show={logrado}
         message={fraseNivelCompleto(level)}
         stars={material.estrellas}

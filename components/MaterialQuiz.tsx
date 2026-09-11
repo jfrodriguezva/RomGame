@@ -104,6 +104,10 @@ export default function MaterialQuiz({
   }, [config.opciones, config.parecidas, config.periodo, config.ocultar, disponibles, pregunta]);
 
   useEffect(() => {
+    // Arranca una ronda nueva al cambiar de nivel: nuevaRonda() elige al
+    // azar, habla en voz alta y arma temporizadores — no es una derivación
+    // pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRonda(0);
     nuevaRonda();
     // eslint-disable-next-line react-hooks/exhaustive-deps

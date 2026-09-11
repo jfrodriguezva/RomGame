@@ -56,6 +56,9 @@ export default function MaterialOrdenar({
   }, [serie]);
 
   useEffect(() => {
+    // reiniciar() baraja el canasto al azar y depende de la serie del
+    // nivel actual — no es una derivación pura que se pueda hacer en render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     reiniciar();
   }, [reiniciar]);
 

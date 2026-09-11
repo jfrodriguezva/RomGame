@@ -121,7 +121,7 @@ export default function GatoPage() {
     <div className="min-h-full flex-1 bg-gradient-to-b from-emerald-100 via-white to-white pb-10">
       <BackHomeButton />
       <ConfettiOverlay show={showWin} />
-      <StarReward show={showWin} message="¡Ganaste el gato!" />
+      <StarReward slug="gato" show={showWin} message="¡Ganaste el gato!" />
       <main className="mx-auto flex w-full max-w-md flex-col items-center px-4 pt-20 sm:px-6">
         <h1 className="mb-4 text-center text-2xl font-extrabold text-emerald-600 sm:text-3xl">
           ⭕ Gato

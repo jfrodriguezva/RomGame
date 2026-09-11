@@ -103,6 +103,9 @@ export default function MaterialClasificar<Level extends { level: number }, Item
   }, [config]);
 
   useEffect(() => {
+    // preparar() no es una derivación pura: baraja al azar y depende de
+    // config, que cambia con el nivel — no se puede calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     preparar();
   }, [preparar]);
 

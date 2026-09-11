@@ -121,7 +121,7 @@ export default function SerpientesPage() {
     <div className="min-h-full flex-1 bg-gradient-to-b from-lime-100 via-white to-white pb-10">
       <BackHomeButton />
       <ConfettiOverlay show={showWin} />
-      <StarReward show={showWin} message="¡Llegaste a la meta!" />
+      <StarReward slug="serpientes" show={showWin} message="¡Llegaste a la meta!" />
       <main className="mx-auto flex w-full max-w-xl flex-col items-center px-4 pt-20 sm:px-6">
         <h1 className="mb-1 text-center text-2xl font-extrabold text-lime-700 sm:text-3xl">
           🐍 Serpientes y escaleras
