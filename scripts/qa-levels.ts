@@ -41,6 +41,10 @@ import { HABITAT_LEVELS, animalesPara } from "../data/levels/habitat";
 import { FRUTA_VERDURA_LEVELS, ALIMENTOS } from "../data/levels/fruta-verdura";
 import { DIAS_SEMANA_LEVELS } from "../data/levels/dias-semana";
 import { MESA_LEVELS } from "../data/levels/mesa";
+import { OLFATO_LEVELS, COSAS_OLOR } from "../data/levels/olfato";
+import { ESTACIONES_LEVELS } from "../data/levels/estaciones";
+import { TRANSPORTE_LEVELS, VEHICULOS } from "../data/levels/transporte";
+import { LAVADO_MANOS_LEVELS } from "../data/levels/lavado-manos";
 
 let fallas = 0;
 function fallo(msg: string) {
@@ -290,6 +294,32 @@ MESA_LEVELS.forEach((c) => {
   if (!c.invertido) fallo(`mesa nivel ${c.level}: invertido debería ser true`);
 });
 ok("mesa: cantidad siempre 1-4, invertido siempre true");
+
+validarForma("olfato", OLFATO_LEVELS);
+OLFATO_LEVELS.forEach((c) => {
+  if (c.cantidad > COSAS_OLOR.length) fallo(`olfato nivel ${c.level}: pide ${c.cantidad} pero solo hay ${COSAS_OLOR.length}`);
+});
+ok("olfato: cantidad nunca excede el banco de cosas");
+
+validarForma("estaciones", ESTACIONES_LEVELS);
+ESTACIONES_LEVELS.forEach((c) => {
+  if (c.cantidad < 1 || c.cantidad > 4) fallo(`estaciones nivel ${c.level}: cantidad fuera de 1-4 (${c.cantidad})`);
+  if (!c.invertido) fallo(`estaciones nivel ${c.level}: invertido debería ser true`);
+});
+ok("estaciones: cantidad siempre 1-4, invertido siempre true");
+
+validarForma("transporte", TRANSPORTE_LEVELS);
+TRANSPORTE_LEVELS.forEach((c) => {
+  if (c.cantidad > VEHICULOS.length) fallo(`transporte nivel ${c.level}: pide ${c.cantidad} pero solo hay ${VEHICULOS.length}`);
+});
+ok("transporte: cantidad nunca excede el banco de vehículos");
+
+validarForma("lavado-manos", LAVADO_MANOS_LEVELS);
+LAVADO_MANOS_LEVELS.forEach((c) => {
+  if (c.cantidad < 1 || c.cantidad > 5) fallo(`lavado-manos nivel ${c.level}: cantidad fuera de 1-5 (${c.cantidad})`);
+  if (!c.invertido) fallo(`lavado-manos nivel ${c.level}: invertido debería ser true`);
+});
+ok("lavado-manos: cantidad siempre 1-5, invertido siempre true");
 
 // ---------------------------------------------------------------------------
 console.log("");
