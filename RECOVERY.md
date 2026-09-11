@@ -7,7 +7,7 @@ releer todo el repo desde cero.
 ## Qué es este proyecto
 
 **Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 62 materiales — 57 con 100 niveles cada uno (5 700 niveles) y 5
+años. 71 materiales — 66 con 100 niveles cada uno (6 600 niveles) y 5
 actividades libres sin niveles. Todo en español, sin conexión, sin
 cuentas, sin publicidad, sin enviar datos fuera del dispositivo. Es un
 proyecto personal (no comercial) del usuario, pensado para uso familiar.
@@ -58,7 +58,7 @@ del estado real del código, no inventados.
   Tailwind CSS 4 + Zustand 5 (estado/persistencia) + Framer Motion + Phaser 4
   (materiales de movimiento) + Capacitor 8.5 (empaquetado Android) + Serwist
   (PWA en web).
-- **Estructura:** `app/games/<slug>/` un material por carpeta (61) + `app/pizarra`,
+- **Estructura:** `app/games/<slug>/` un material por carpeta (70) + `app/pizarra`,
   `app/padres`, `app/admin`. Componentes compartidos en `components/`
   (`GameShell`, `MaterialQuiz`, `MaterialOrdenar`, `TrazoGuiado`,
   `LevelSelector`). Contenido/curvas de dificultad en `data/` (`games.ts` es
@@ -121,8 +121,10 @@ del proyecto.
 
 > Este veredicto es de la primera comparación (46 materiales, sin QA, sin
 > pulido). El estado real hoy está en la sección de abajo — en volumen de
-> contenido ya no hay brecha real (62 materiales); en pulido visual/sonoro
-> sigue habiendo diferencia, aunque menos que al principio.
+> contenido ya no hay brecha, está por encima (71 materiales, a pedido
+> explícito del usuario de que fuera "superior a Montessori" en variedad);
+> en pulido visual/sonoro sigue habiendo diferencia, aunque menos que al
+> principio.
 
 ## Roadmap activo: emparejar a Montessori Preschool (en curso)
 
@@ -143,60 +145,43 @@ Decisiones tomadas (no volver a preguntar esto, ya está resuelto):
 6. **Actualizaciones automáticas vía tienda:** no aplica (consecuencia del
    punto 1).
 
-### Objetivo de variedad por área — superado en todas
+### Objetivo de variedad por área — superado ampliamente en todas
 
-| Área | Antes de este trabajo | Objetivo inicial | Estado ahora |
+| Área | Original | Objetivo inicial | Estado ahora |
 |---|---|---|---|
-| 🌍 Cultura y naturaleza | 3 | 7-8 | **9** — por encima del rango ✅ |
-| ✍️ Lenguaje | 7 | 9-10 | **10** — dentro del rango ✅ |
-| 🫗 Vida práctica | 4 | 6-7 | **6** — dentro del rango ✅ |
-| 🔢 Matemáticas | 5 | 7-8 | **8** — dentro del rango ✅ |
+| 🌍 Cultura y naturaleza | 3 | 7-8 | **12** — muy por encima ✅ |
+| ✍️ Lenguaje | 7 | 9-10 | **12** — por encima ✅ |
+| 🔴 Sensorial | 12 | ya nutrida | **15** — se sumó igual |
+| 🔢 Matemáticas | 5 | 7-8 | **9** — por encima ✅ |
+| 🫗 Vida práctica | 4 | 6-7 | **7** — dentro del rango ✅ |
 | 🎨 Expresión libre | 2 | 3-4 | **3** — dentro del rango ✅ |
-| 🔴 Sensorial | 12 | ya nutrida | **13** — se sumó igual (tablillas ásperas y lisas) |
-| 🤝 Compañía / 🤸 Movimiento | 5 / 8 | ya nutridas | no se tocaron |
+| 🤝 Compañía / 🤸 Movimiento | 5 / 8 | ya nutridas | no se tocaron (Phaser, no encajan en el patrón de datos) |
 
 **El punto 2 del roadmap (volumen y variedad de contenido) está completo y
-superado.** 46 → 62 materiales en total (57 con 100 niveles, 5 libres).
+ampliamente superado.** 46 → 71 materiales en total (66 con 100 niveles =
+6 600 niveles, 5 libres). El objetivo pasó de "cerrar la brecha" a
+"quedar por encima" a pedido explícito del usuario.
 
-Materiales agregados en total (todos reutilizan componentes existentes):
+25 materiales agregados en total en esta sesión, todos reutilizando
+componentes existentes (`MaterialQuiz`, `MaterialOrdenar`,
+`MaterialClasificar`, `MaterialTransferir`) — ver el catálogo completo en
+`data/games.ts` (buscar `nuevo: true`) para la lista exacta con área, slug
+y objetivo pedagógico de cada uno. Los más recientes (segunda ronda,
+"superior a Montessori"): `mitades`, `rimas`, `singular-plural`,
+`banderas`, `cuerpo`, `ciclo-agua`, `instrumentos`, `temperatura`,
+`tamanos`.
 
-- `ciclo-vida` (cultura) — `MaterialOrdenar` reutilizado para secuencia
-  temporal, no tamaño.
-- `tierra-agua` (cultura) — `MaterialQuiz` con iconos SVG propios de dos
-  colores (no hay emoji de "península", etc.).
-- `sistema-solar` (cultura) — `MaterialOrdenar` de nuevo, orden por
-  distancia al Sol.
-- `partes-planta` (cultura) — `MaterialQuiz`, con dos iconos SVG propios
-  (raíz, tallo) donde tampoco hay emoji claro.
-- `silabas` (lenguaje) — patrón "clasificación en canastas".
-- `el-la` (lenguaje) — mismo patrón de canastas, género gramatical.
-- `pinza` (vida práctica) — patrón "transferencia por cantidad exacta":
-  tomar de a una pieza de una bandeja a otra, pasarse del objetivo es el
-  error.
-- `husos` (matemáticas) — mismo patrón de transferencia, con el caso
-  especial del 0 (confirmar "no lleva ninguno" en vez de tomar piezas).
-- `doblar` (vida práctica) — `MaterialOrdenar` para una secuencia motriz
-  (extendida → mitad → cuarto → guardada), no tamaño ni tiempo.
-- `pares-impares` (matemáticas) — mismo patrón de canastas, paridad.
-- `xilofono` (expresión libre) — libre, sin niveles; reutiliza
-  `playNote()` de `lib/audio.ts` (ya existía) y colorea cada barra con el
-  tono de una de las 8 áreas del ambiente.
-- `textura` (sensorial) — mismo patrón de canastas; las tablillas ásperas
-  y lisas reales.
-- `mayusculas` (lenguaje) — mismo patrón de canastas, la misma letra en
-  sus dos formas.
-- `lados` (matemáticas) — mismo patrón de canastas, reutilizando las
-  figuras SVG de `data/levels/formas.ts` en vez de dibujar de nuevo.
-- `sentidos` (cultura) — `MaterialQuiz`, solo emoji, sin render propio.
-- `dia-noche` (cultura) — mismo patrón de canastas.
+`components/MaterialClasificar.tsx` (13 materiales) y
+`components/MaterialTransferir.tsx` (2 materiales, `pinza`/`husos`) — ver
+`docs/MANUAL-TECNICO.md` sección 4 para la lista completa y la firma de
+cada componente. Ninguno tiene página propia duplicada.
 
-`components/MaterialClasificar.tsx` y `components/MaterialTransferir.tsx`
-existen y los usan `seres-vivos`, `silabas`, `el-la`, `pares-impares`,
-`textura`, `mayusculas`, `lados`, `dia-noche` (canastas) y `pinza`, `husos`
-(transferencia) — ninguno tiene ya página propia duplicada. El próximo
-material de cualquiera de esas dos formas debe usar el componente
-compartido directamente — ver `docs/MANUAL-TECNICO.md` sección 4 para la
-firma de cada uno.
+**No tocadas, y no hay plan de tocarlas:** 🤝 Compañía y 🤸 Movimiento. Sus
+materiales son escenas de Phaser (canvas/física), no encajan en el patrón
+de datos + componente compartido — agregar ahí es mucho más caro por
+material. Si se quiere seguir creciendo variedad, las áreas de datos
+(cultura, lenguaje, matemáticas, sensorial, práctica) siguen siendo el
+camino barato; Compañía/Movimiento requieren diseño de juego caso por caso.
 
 ### Punto 3 (pulido visual/sonoro): arrancado, sigue siendo el más grande
 
@@ -229,12 +214,14 @@ natural: llevar el color de área a los ~31 materiales de estilo antiguo que
 `npm run qa` (`scripts/qa-levels.ts`) valida las curvas de nivel de los
 materiales agregados en esta sesión: forma correcta, sin `NaN`, y que
 ningún nivel pida más elementos de los que el banco de datos tiene
-disponibles. Encontró un bug real (`pares-impares` pedía más tarjetas de
-las que existían en niveles altos) que ningún build ni prueba manual
-superficial había notado — ver `docs/MANUAL-TECNICO.md` sección 14.
-**Sigue pendiente probar cualquiera de los materiales con las manos en un
-dispositivo real**: todo lo verificado hasta ahora es build + HTTP/HTML +
-curvas de datos, nunca interacción táctil real.
+disponibles. **Encontró 2 bugs reales** de la misma familia
+(`pares-impares` y luego `temperatura`: ambos pedían más elementos por
+ronda de los que su propio banco tenía, copiado de un material con banco
+más grande) que ningún build ni prueba manual superficial hubiera
+notado — ver `docs/MANUAL-TECNICO.md` sección 14 para el detalle y la
+lección aprendida. **Sigue pendiente probar cualquiera de los materiales
+con las manos en un dispositivo real**: todo lo verificado hasta ahora es
+build + HTTP/HTML + curvas de datos, nunca interacción táctil real.
 
 ### Cómo seguir agregando materiales (patrón que ya funciona)
 

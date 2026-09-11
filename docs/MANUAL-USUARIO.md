@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 62 materiales — 57 con
-100 niveles cada uno (5 700 en total) y 5 actividades libres, sin niveles ni
+Ambiente Montessori digital para niños de 3 a 6 años: 71 materiales — 66 con
+100 niveles cada uno (6 600 en total) y 5 actividades libres, sin niveles ni
 puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
@@ -32,15 +32,15 @@ mecánicas de videojuego.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 62 materiales
+## 3. Las áreas y los 71 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 6 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 13 | Refinar los sentidos: tamaño, forma, color, sonido, textura |
-| ✍️ Lenguaje | 10 | Del sonido a la letra, y de la letra a la palabra |
-| 🔢 Matemáticas | 8 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 9 | El mundo, los seres vivos y su clasificación |
+| 🫗 Vida práctica | 7 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 15 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura |
+| ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
+| 🔢 Matemáticas | 9 | Cantidad concreta antes que número abstracto |
+| 🌍 Cultura y naturaleza | 12 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -85,6 +85,20 @@ Montessori comerciales:
 - **Los cinco sentidos** (`sentidos`, cultura) — vista, oído, olfato,
   gusto y tacto.
 - **Día y noche** (`dia-noche`, cultura) — ¿es de día o de noche?
+- **Mitades y enteros** (`mitades`, matemáticas) — primer contacto con la
+  fracción, siempre concreto.
+- **Palabras que riman** (`rimas`, lenguaje) — dos familias fijas de rima.
+- **Singular y plural** (`singular-plural`, lenguaje) — la palabra junto a
+  su cantidad concreta.
+- **Banderas del mundo** (`banderas`, cultura) — seis banderas dibujadas
+  planas.
+- **Partes del cuerpo** (`cuerpo`, cultura) — cabeza, ojo, mano, brazo,
+  pierna y pie.
+- **El ciclo del agua** (`ciclo-agua`, cultura) — sol, nube, lluvia, río.
+- **Instrumentos musicales** (`instrumentos`, sensorial) — nomenclatura.
+- **Caliente o frío** (`temperatura`, sensorial) — sentido térmico.
+- **Grande, mediano o chico** (`tamanos`, vida práctica) — clasificación
+  en tres canastas.
 
 Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
 juego del silencio, los marcos de vestir, el dado de retos y el xilófono.

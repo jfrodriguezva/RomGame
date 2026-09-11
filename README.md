@@ -1,7 +1,7 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 3 a 6 años: **62 materiales** — 57 con **100 niveles
-cada uno** (5 700 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
+Un ambiente Montessori digital para niños de 3 a 6 años: **71 materiales** — 66 con **100 niveles
+cada uno** (6 600 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
 de dibujo libre. Todo en español, sin conexión, sin cuentas, sin publicidad y sin enviar un solo
 dato fuera del dispositivo.
 
@@ -57,11 +57,11 @@ Los materiales están organizados como el ambiente real, por áreas y no por "ca
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 6 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 13 | Refinar los sentidos: tamaño, forma, color, sonido, textura |
-| ✍️ Lenguaje | 10 | Del sonido a la letra, y de la letra a la palabra |
-| 🔢 Matemáticas | 8 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 9 | El mundo, los seres vivos y su clasificación |
+| 🫗 Vida práctica | 7 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 15 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura |
+| ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
+| 🔢 Matemáticas | 9 | Cantidad concreta antes que número abstracto |
+| 🌍 Cultura y naturaleza | 12 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -109,6 +109,15 @@ variedad de la app a la de las aplicaciones Montessori comerciales más conocida
 - **¿Cuántos lados tiene?** — reutiliza las figuras del gabinete de geometría, clasificadas por lados.
 - **Los cinco sentidos** — vista, oído, olfato, gusto y tacto.
 - **Día y noche** — ¿es de día o de noche?
+- **Mitades y enteros** — primer contacto con la fracción, siempre concreto.
+- **Palabras que riman** — dos familias fijas de rima, con emoji.
+- **Singular y plural** — la palabra siempre junto a su cantidad concreta.
+- **Banderas del mundo** — seis banderas dibujadas planas, sin escudo ni detalle.
+- **Partes del cuerpo** — cabeza, ojo, mano, brazo, pierna y pie.
+- **El ciclo del agua** — sol, nube, lluvia, río: secuencia de un proceso natural.
+- **Instrumentos musicales** — tambor, guitarra, piano, trompeta y violín.
+- **Caliente o frío** — sentido térmico.
+- **Grande, mediano o chico** — clasificación en tres canastas, no solo dos.
 
 ---
 

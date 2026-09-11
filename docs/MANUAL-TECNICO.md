@@ -34,7 +34,7 @@ app/
   pizarra/               lienzo de dibujo libre
   padres/                progreso, ajustes y acompañamiento
   admin/                 editor de puntos para imágenes propias
-  games/<slug>/           un material por carpeta (61)
+  games/<slug>/           un material por carpeta (70)
 components/
   GameShell.tsx           marco común: header, nivel, consigna, error
   MaterialQuiz.tsx        lección de tres periodos
@@ -65,22 +65,24 @@ Casi todos los materiales bajo `app/games/<slug>` se arman componiendo:
 - **GameShell** — marco común: encabezado, indicador de nivel, consigna y el
   lenguaje del control del error.
 - **useMaterial** — hook de estado: nivel actual, acierto, intento, cierre.
-- **MaterialQuiz** — lección de tres periodos (formas, emociones, animales,
-  letras, palabras en inglés, tierra y agua, partes de la planta).
+- **MaterialQuiz** — lección de tres periodos (11 materiales: formas,
+  emociones, animales, letras, palabras en inglés, tierra y agua, partes
+  de la planta, sentidos, banderas, cuerpo, instrumentos).
 - **MaterialOrdenar** — seriación. No solo por tamaño (torre rosa, escalera
   marrón): también sirve para ordenar por secuencia temporal, lógica o
-  motriz (ciclo de la mariposa, sistema solar, doblar la tela), pasando
-  `invertido: true` fijo en la curva de niveles para que la fila salga en
-  orden ascendente — ver la nota en `data/levels/ciclo-vida.ts`.
+  motriz (ciclo de la mariposa, sistema solar, doblar la tela, ciclo del
+  agua), pasando `invertido: true` fijo en la curva de niveles para que la
+  fila salga en orden ascendente — ver la nota en `data/levels/ciclo-vida.ts`.
 - **TrazoGuiado** — recorrer un glifo con el dedo (letras de lija, trazos).
 - **LevelSelector** — selector de los 100 niveles en 10 etapas.
 - **MaterialClasificar** — clasificación en canastas: un objeto pendiente a
-  la vez y N canastas donde soltarlo (¿Vivo o no vivo?, Cuenta las sílabas,
-  El o la, Pares e impares). Cada material solo define de dónde salen los
-  elementos, a qué canasta pertenece cada uno y cómo se dibujan — el
-  control del error, el conteo y el cierre de nivel viven en el
-  componente. Antes de extraerlo (era el "cuarto patrón" de esta lista)
-  cada uno de los cuatro tenía su propia copia de la página.
+  la vez y N canastas donde soltarlo (13 materiales: ¿Vivo o no vivo?,
+  Cuenta las sílabas, El o la, Pares e impares, Áspero o liso, Mayúsculas y
+  minúsculas, ¿Cuántos lados tiene?, Día y noche, Mitades y enteros,
+  Palabras que riman, Singular y plural, Caliente o frío, Grande/mediano/
+  chico). Cada material solo define de dónde salen los elementos, a qué
+  canasta pertenece cada uno y cómo se dibujan — el control del error, el
+  conteo y el cierre de nivel viven en el componente.
 - **MaterialTransferir** — transferencia por cantidad exacta: una bandeja
   de origen y una de destino, se toma de a una pieza, y pasarse del
   objetivo es el error (Pinza de transferencia, Los husos). Los husos usa
@@ -218,13 +220,23 @@ cada uno:
 - Integridad del catálogo completo: slugs únicos, `id === slug`, edades en
   rango.
 
-No sustituye probarlo con las manos, pero encontró un bug real la primera
-vez que corrió: `pares-impares` pedía hasta 10 tarjetas por ronda cuando
-como máximo hay 8 cantidades distintas posibles — `MaterialClasificar`
-recorta con `Math.min` en vez de fallar, así que ningún build ni prueba
-manual superficial lo hubiera notado. Arreglado limitando `cantidad` a
-`maxNumero - 1` dentro del generador de niveles, no ajustando la tabla de
-paradas a mano.
+No sustituye probarlo con las manos, pero ya encontró dos bugs reales:
+
+1. `pares-impares` pedía hasta 10 tarjetas por ronda cuando como máximo hay
+   8 cantidades distintas posibles.
+2. `temperatura` pedía hasta 12 objetos por ronda (copiado de un material
+   con banco de 12) cuando su propio banco solo tiene 8.
+
+En ambos casos `MaterialClasificar` recorta con `Math.min` en vez de
+fallar, así que ningún build ni prueba manual superficial lo hubiera
+notado — el nivel simplemente mostraba menos elementos de los previstos,
+cortando la curva de dificultad antes de tiempo. Los dos se arreglaron
+limitando `cantidad` al tamaño real del banco dentro del generador de
+niveles, no ajustando la tabla de paradas a mano.
+
+**Lección:** al copiar el patrón de un material existente para uno nuevo,
+revisar siempre el tamaño del banco de datos propio — no asumir que es el
+mismo que el del material copiado.
 
 Al agregar un material nuevo con curva propia, agregar también su
 validación aquí.
