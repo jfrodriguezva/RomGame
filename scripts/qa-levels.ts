@@ -37,6 +37,10 @@ import { PESO_LEVELS, COSAS_PESO } from "../data/levels/peso";
 import { SABOR_LEVELS, COSAS_SABOR } from "../data/levels/sabor";
 import { CLIMA_LEVELS, ROPA_CLIMA } from "../data/levels/clima";
 import { RUTINA_LEVELS } from "../data/levels/rutina";
+import { HABITAT_LEVELS, animalesPara } from "../data/levels/habitat";
+import { FRUTA_VERDURA_LEVELS, ALIMENTOS } from "../data/levels/fruta-verdura";
+import { DIAS_SEMANA_LEVELS } from "../data/levels/dias-semana";
+import { MESA_LEVELS } from "../data/levels/mesa";
 
 let fallas = 0;
 function fallo(msg: string) {
@@ -258,6 +262,34 @@ RUTINA_LEVELS.forEach((c) => {
   if (!c.invertido) fallo(`rutina nivel ${c.level}: invertido debería ser true`);
 });
 ok("rutina: cantidad siempre 1-4, invertido siempre true");
+
+validarForma("habitat", HABITAT_LEVELS);
+HABITAT_LEVELS.forEach((c) => {
+  const pool = animalesPara(c.activos).length;
+  if (c.cantidad > pool) fallo(`habitat nivel ${c.level}: pide ${c.cantidad} animales pero solo hay ${pool}`);
+  if (c.activos.length === 0) fallo(`habitat nivel ${c.level}: sin hábitats activos`);
+});
+ok("habitat: cantidad nunca excede los animales disponibles para los hábitats activos");
+
+validarForma("fruta-verdura", FRUTA_VERDURA_LEVELS);
+FRUTA_VERDURA_LEVELS.forEach((c) => {
+  if (c.cantidad > ALIMENTOS.length) fallo(`fruta-verdura nivel ${c.level}: pide ${c.cantidad} pero solo hay ${ALIMENTOS.length}`);
+});
+ok("fruta-verdura: cantidad nunca excede el banco de alimentos");
+
+validarForma("dias-semana", DIAS_SEMANA_LEVELS);
+DIAS_SEMANA_LEVELS.forEach((c) => {
+  if (c.cantidad < 1 || c.cantidad > 7) fallo(`dias-semana nivel ${c.level}: cantidad fuera de 1-7 (${c.cantidad})`);
+  if (!c.invertido) fallo(`dias-semana nivel ${c.level}: invertido debería ser true`);
+});
+ok("dias-semana: cantidad siempre 1-7, invertido siempre true");
+
+validarForma("mesa", MESA_LEVELS);
+MESA_LEVELS.forEach((c) => {
+  if (c.cantidad < 1 || c.cantidad > 4) fallo(`mesa nivel ${c.level}: cantidad fuera de 1-4 (${c.cantidad})`);
+  if (!c.invertido) fallo(`mesa nivel ${c.level}: invertido debería ser true`);
+});
+ok("mesa: cantidad siempre 1-4, invertido siempre true");
 
 // ---------------------------------------------------------------------------
 console.log("");
