@@ -157,20 +157,31 @@ Decisiones tomadas (no volver a preguntar esto, ya está resuelto):
 | 🎨 Expresión libre | 2 | 3-4 | **3** — dentro del rango ✅ |
 | 🤝 Compañía / 🤸 Movimiento | 5 / 8 | ya nutridas | no se tocaron (Phaser, no encajan en el patrón de datos) |
 
-**El punto 2 del roadmap (volumen y variedad de contenido) está completo y
-ampliamente superado.** 46 → 90 materiales en total (85 con 100 niveles =
-8 500 niveles, 5 libres), en 5 rondas dentro de esta sesión.
+**✅ CERRADO por instrucción explícita del usuario ("termina").** El punto
+2 del roadmap (volumen y variedad de contenido) está completo, ampliamente
+superado, y **formalmente concluido para esta sesión** — no es una pausa,
+es un cierre. 46 → 90 materiales en total (85 con 100 niveles = 8 500
+niveles, 5 libres), en 5 rondas.
 
-**Señal real de acercarse al límite de ideas auténticas (importante para
-la siguiente sesión):** la ronda 5 rindió solo 5 materiales frente a los
-7-11 de las rondas anteriores, porque varias ideas candidatas (contar
-hacia atrás, comparativos de tamaño, secuencias de patrones AB-AB,
-sonidos fuertes/suaves) se descartaron por sentirse forzadas o
-redundantes con algo que ya existe. Esto no es un límite técnico — es que
-las ideas Montessori genuinas y no repetidas para los componentes
-existentes empiezan a escasear. Antes de otra ronda, vale la pena que
-quien retome esto revise si de verdad hay una idea nueva antes de forzarla
-solo por sumar número.
+**Por qué se cerró aquí y no se forzó una sexta ronda:** la ronda 5 ya
+había rendido solo 5 materiales frente a los 7-11 de las rondas
+anteriores — varias ideas candidatas (contar hacia atrás, comparativos de
+tamaño, secuencias de patrones AB-AB, sonidos fuertes/suaves) se
+descartaron por sentirse forzadas o redundantes. Esa señal, más la
+instrucción directa de concluir, es la razón de cerrar aquí en vez de
+seguir empujando el número.
+
+**Si alguien quiere retomar esto de verdad más adelante**, el candidato
+más honesto no es "otra idea de canastas" — es una nueva forma de
+interacción para 🎨 Expresión libre (estancada en 3 desde la ronda 1:
+`pizarra`, `colorear`, `xilofono`), que no encaja en
+`MaterialQuiz`/`MaterialOrdenar`/`MaterialClasificar`/`MaterialTransferir`
+porque no es clasificación ni secuencia. Ejemplo concreto: "Collage
+libre" — colocar stickers/formas libremente en un lienzo, sin arrastrar
+(tocar para colocar, tocar para borrar). Es trabajo de ingeniería real
+(una interacción nueva), no el patrón rápido de datos + componente
+existente que rindió las 5 rondas de hoy — por eso no se intentó en esta
+sesión.
 
 **Decisión explícita del usuario sobre cómo seguir (no volver a preguntar
 esto):** cuando se preguntó "¿en variedad ya está igual a Montessori?" la
@@ -181,8 +192,11 @@ seguir agregando materiales Montessori auténticos en lotes, sin perseguir
 un número fijo, aceptando que probablemente nunca se llegue a "1000".**
 Más tarde, en la misma sesión, dio instrucción expresa de **"continúa con
 lote de materiales hasta que se repitan"** — es decir, seguir hasta notar
-la señal de arriba, no parar antes ni forzar después. No hace falta volver
-a plantear esta pregunta.
+la señal de arriba, no parar antes ni forzar después. Cuando esa señal
+apareció (ronda 5, ver abajo), el usuario confirmó explícitamente
+**"termina"**: cerrar el punto 2 ahí, no seguir sumando. No hace falta
+volver a plantear esta pregunta ni reabrir el punto 2 sin que el usuario
+lo pida de nuevo.
 
 **Calibración honesta sobre "superior a Montessori" (importante, no
 repetir el error):** Montessori Preschool anuncia +1000 actividades
@@ -229,20 +243,29 @@ que tocan muchos materiales a la vez con una sola edición:
   fractal SVG inline al 5%, modo `multiply`). Aplicada en
   `components/GameShell.tsx`, `app/page.tsx` y `app/padres/page.tsx`.
 - **Celebración con el color del área** — `lib/montessori.ts` suma
-  `acento`/`acentoOscuro` a cada `AreaInfo`; `StarReward.tsx` acepta un
-  `slug` opcional y los usa. **Ya cubre los 90 materiales con niveles**:
-  primero se conectó en los 4 componentes compartidos, y en una segunda
-  pasada se agregó `slug="<slug>"` a los 31 materiales de estilo antiguo
-  que llaman a `StarReward` directo — edición mecánica, un `Edit` por
-  archivo, verificada con tsc + build + una muestra en el servidor. Ya no
-  queda ningún material sin el color de su área en la celebración.
-- **ESLint `react-hooks/set-state-in-effect`** — resuelto en los 4
-  componentes compartidos con un comentario de supresión justificado (el
-  efecto no es una derivación pura: mezcla aleatoriedad, voz o
-  temporizadores). Los ~31 materiales de estilo antiguo tienen cada uno su
-  propia instancia del mismo patrón, con su propia lógica — **no
-  resuelto**, deliberadamente: arreglar los 31 a la vez es mucho más
-  riesgoso que el núcleo compartido y no se intentó.
+  `acento`/`acentoOscuro` a cada `AreaInfo`. `StarReward.tsx` y
+  `ConfettiOverlay.tsx` aceptan un `slug` opcional y lo usan. **Los 90
+  materiales con niveles ya tienen `StarReward` con el color del área**
+  (4 componentes compartidos + los 31 de estilo antiguo, uno por uno).
+  **`ConfettiOverlay` solo lo tiene en los 4 componentes compartidos por
+  ahora** — los ~37 materiales que lo llaman directo (los mismos 31 de
+  `StarReward` más `dado`/`lava`) siguen con la paleta genérica; es el
+  siguiente candidato obvio de "más de lo mismo" si se retoma este punto.
+- **ESLint, ya sin ningún error real pendiente en `app/games/`.**
+  `react-hooks/set-state-in-effect` resuelto con supresión justificada en
+  los 4 componentes compartidos **y en los 31 materiales de estilo
+  antiguo** (antes decía "no resuelto, deliberadamente" — se hizo en esta
+  misma sesión, ver más abajo). De paso salieron dos bugs de verdad, no
+  solo el patrón de siempre: `patron.tsx` y `serpientes.tsx` llamaban a una
+  función antes de su declaración textual (funcionaba por el hoisting de
+  `function`, pero el linter de React 19 lo marca — se reordenó el código,
+  cero cambio de comportamiento), y `rps.tsx` usaba `Math.random()` dentro
+  de una función que el linter no puede probar que solo se llama desde un
+  clic (`react-hooks/purity`, documentado con supresión). También se
+  corrigió una violación de pureza real en `ConfettiOverlay.tsx`: generaba
+  las piezas del confeti con `Math.random()` dentro de `useMemo(..., [])`,
+  que sí corre en fase de render — se cambió a un inicializador perezoso de
+  `useState`, el lugar correcto para cómputo único que puede ser impuro.
 
 No se tocó todavía: ilustración custom por material más allá de la que ya
 trajeron los materiales nuevos, un pase de animación en transiciones, y

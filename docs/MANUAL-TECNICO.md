@@ -143,6 +143,12 @@ primero se conectó en los 4 componentes compartidos, y después se agregó
 `StarReward` directamente. Si se agrega un material nuevo de estilo
 antiguo (fuera de los 4 componentes), no olvidar pasar `slug`.
 
+`ConfettiOverlay.tsx` sigue el mismo criterio (acepta `slug`, arma una
+paleta de 4 tonos con `mezclar()` entre `acento`/`acentoOscuro` y blanco),
+pero solo está conectado en los 4 componentes compartidos — los ~37
+materiales que lo llaman directo siguen con la paleta genérica de 6 tonos
+naturales.
+
 ## 8. Catálogo de datos
 
 `data/games.ts` define `GameDef` (slug, título, emoji, área, edad, material,
@@ -197,20 +203,29 @@ funcione offline como PWA.
 
 ## 13. Deuda técnica conocida
 
-- ESLint (reglas React 19) marca `setState` dentro de `useEffect` en varias
-  páginas. **Resuelto en los 4 componentes compartidos** con un comentario
-  `eslint-disable-next-line react-hooks/set-state-in-effect` justificando
-  por qué el efecto es necesario (la función que arranca no es una
-  derivación pura: mezcla aleatoriedad, voz o temporizadores). **Sigue
-  pendiente** en los ~31 materiales de estilo antiguo que no pasan por los
-  4 componentes — cada uno tiene su propia instancia del mismo patrón, con
-  su propia lógica; no se tocaron porque arreglar los 31 a la vez es mucho
-  más riesgoso que el núcleo compartido. No rompe build ni app.
+- **ESLint: resuelto en `app/games/`.** `react-hooks/set-state-in-effect`
+  tenía instancias en los 4 componentes compartidos y en ~28 de los 31
+  materiales de estilo antiguo (algunos con 2). Todas llevan ahora un
+  comentario `eslint-disable-next-line` justificando por qué el efecto es
+  necesario (genera contenido al azar, habla, o celebra con un
+  temporizador — ninguna es una derivación pura calculable en el render).
+  De paso se corrigieron dos bugs reales, no solo se documentó el patrón
+  conocido: `patron.tsx`/`serpientes.tsx` llamaban una función antes de su
+  declaración textual (el linter de React 19 lo marca aunque `function`
+  hoistea y funcionaba bien — se reordenó el código) y `rps.tsx` tenía
+  `Math.random()` en una función que el linter no puede probar que solo
+  se llama desde un clic (`react-hooks/purity`, documentado). También se
+  corrigió `ConfettiOverlay.tsx`, que sí violaba pureza de verdad
+  (`Math.random()` dentro de `useMemo(..., [])`, que corre en render) —
+  cambiado a inicializador perezoso de `useState`.
 - Tiempos y umbrales en `data/levels/` calibrados a ojo, no medidos con
   usuarios reales.
 - Ninguno de los 90 materiales se ha probado interactivamente con un dedo
   real en un dispositivo — todo lo verificado hasta ahora es build +
   HTTP/HTML + curvas de datos (`npm run qa`).
+- `ConfettiOverlay` toma el color del área solo en los 4 componentes
+  compartidos; los ~37 materiales que lo llaman directo (los 31 de
+  `StarReward` más `dado`/`lava`) siguen con la paleta genérica.
 - `StarReward` ya toma el color del área en los 90 materiales con niveles
   (ver sección 7) — resuelto.
 
