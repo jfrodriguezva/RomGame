@@ -1,7 +1,7 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 3 a 6 años: **71 materiales** — 66 con **100 niveles
-cada uno** (6 600 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
+Un ambiente Montessori digital para niños de 3 a 6 años: **78 materiales** — 73 con **100 niveles
+cada uno** (7 300 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
 de dibujo libre. Todo en español, sin conexión, sin cuentas, sin publicidad y sin enviar un solo
 dato fuera del dispositivo.
 
@@ -57,11 +57,11 @@ Los materiales están organizados como el ambiente real, por áreas y no por "ca
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 7 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 15 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura |
+| 🫗 Vida práctica | 9 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 17 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura, peso, sabor |
 | ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
-| 🔢 Matemáticas | 9 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 12 | El mundo, los seres vivos y su clasificación |
+| 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
+| 🌍 Cultura y naturaleza | 14 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -118,6 +118,13 @@ variedad de la app a la de las aplicaciones Montessori comerciales más conocida
 - **Instrumentos musicales** — tambor, guitarra, piano, trompeta y violín.
 - **Caliente o frío** — sentido térmico.
 - **Grande, mediano o chico** — clasificación en tres canastas, no solo dos.
+- **¿Qué hora es?** — las doce horas en punto, con un reloj dibujado a mano.
+- **¿Qué come?** — herbívoro, carnívoro u omnívoro.
+- **Estados del agua** — sólido, líquido o gas.
+- **Pesado o ligero** — sentido bárico.
+- **Dulce o salado** — sentido gustativo.
+- **¿Qué me pongo?** — vestirse según el clima: sol o lluvia.
+- **La rutina de la mañana** — despertar, vestirse, desayunar, ir a la escuela.
 
 ---
 

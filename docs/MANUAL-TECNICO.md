@@ -34,7 +34,7 @@ app/
   pizarra/               lienzo de dibujo libre
   padres/                progreso, ajustes y acompañamiento
   admin/                 editor de puntos para imágenes propias
-  games/<slug>/           un material por carpeta (70)
+  games/<slug>/           un material por carpeta (77)
 components/
   GameShell.tsx           marco común: header, nivel, consigna, error
   MaterialQuiz.tsx        lección de tres periodos
@@ -65,24 +65,27 @@ Casi todos los materiales bajo `app/games/<slug>` se arman componiendo:
 - **GameShell** — marco común: encabezado, indicador de nivel, consigna y el
   lenguaje del control del error.
 - **useMaterial** — hook de estado: nivel actual, acierto, intento, cierre.
-- **MaterialQuiz** — lección de tres periodos (11 materiales: formas,
+- **MaterialQuiz** — lección de tres periodos (12 materiales: formas,
   emociones, animales, letras, palabras en inglés, tierra y agua, partes
-  de la planta, sentidos, banderas, cuerpo, instrumentos).
+  de la planta, sentidos, banderas, cuerpo, instrumentos, el reloj).
 - **MaterialOrdenar** — seriación. No solo por tamaño (torre rosa, escalera
   marrón): también sirve para ordenar por secuencia temporal, lógica o
   motriz (ciclo de la mariposa, sistema solar, doblar la tela, ciclo del
-  agua), pasando `invertido: true` fijo en la curva de niveles para que la
-  fila salga en orden ascendente — ver la nota en `data/levels/ciclo-vida.ts`.
+  agua, rutina de la mañana), pasando `invertido: true` fijo en la curva de
+  niveles para que la fila salga en orden ascendente — ver la nota en
+  `data/levels/ciclo-vida.ts`.
 - **TrazoGuiado** — recorrer un glifo con el dedo (letras de lija, trazos).
 - **LevelSelector** — selector de los 100 niveles en 10 etapas.
 - **MaterialClasificar** — clasificación en canastas: un objeto pendiente a
-  la vez y N canastas donde soltarlo (13 materiales: ¿Vivo o no vivo?,
-  Cuenta las sílabas, El o la, Pares e impares, Áspero o liso, Mayúsculas y
-  minúsculas, ¿Cuántos lados tiene?, Día y noche, Mitades y enteros,
-  Palabras que riman, Singular y plural, Caliente o frío, Grande/mediano/
-  chico). Cada material solo define de dónde salen los elementos, a qué
-  canasta pertenece cada uno y cómo se dibujan — el control del error, el
-  conteo y el cierre de nivel viven en el componente.
+  la vez y N canastas donde soltarlo. Ya 18 materiales lo usan (¿Vivo o no
+  vivo?, Cuenta las sílabas, El o la, Pares e impares, Áspero o liso,
+  Mayúsculas y minúsculas, ¿Cuántos lados tiene?, Día y noche, Mitades y
+  enteros, Palabras que riman, Singular y plural, Caliente o frío,
+  Grande/mediano/chico, ¿Qué come?, Estados del agua, Pesado o ligero,
+  Dulce o salado, ¿Qué me pongo?). Cada material solo define de dónde
+  salen los elementos, a qué canasta pertenece cada uno y cómo se dibujan
+  — el control del error, el conteo y el cierre de nivel viven en el
+  componente. Es, con diferencia, el patrón más reutilizado del repo.
 - **MaterialTransferir** — transferencia por cantidad exacta: una bandeja
   de origen y una de destino, se toma de a una pieza, y pasarse del
   objetivo es el error (Pinza de transferencia, Los husos). Los husos usa
@@ -240,3 +243,8 @@ mismo que el del material copiado.
 
 Al agregar un material nuevo con curva propia, agregar también su
 validación aquí.
+
+La tercera ronda de materiales (`reloj`, `dieta-animal`, `estados-agua`,
+`peso`, `sabor`, `clima`, `rutina`) aplicó `Math.min(..., banco.length)`
+directamente en cada curva desde el principio, siguiendo la lección de
+arriba, y pasó `npm run qa` limpia al primer intento.

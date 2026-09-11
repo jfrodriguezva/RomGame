@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 71 materiales — 66 con
-100 niveles cada uno (6 600 en total) y 5 actividades libres, sin niveles ni
+Ambiente Montessori digital para niños de 3 a 6 años: 78 materiales — 73 con
+100 niveles cada uno (7 300 en total) y 5 actividades libres, sin niveles ni
 puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
@@ -32,15 +32,15 @@ mecánicas de videojuego.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 71 materiales
+## 3. Las áreas y los 78 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 7 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 15 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura |
+| 🫗 Vida práctica | 9 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 17 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura, peso, sabor |
 | ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
-| 🔢 Matemáticas | 9 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 12 | El mundo, los seres vivos y su clasificación |
+| 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
+| 🌍 Cultura y naturaleza | 14 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -99,6 +99,15 @@ Montessori comerciales:
 - **Caliente o frío** (`temperatura`, sensorial) — sentido térmico.
 - **Grande, mediano o chico** (`tamanos`, vida práctica) — clasificación
   en tres canastas.
+- **¿Qué hora es?** (`reloj`, matemáticas) — las doce horas en punto.
+- **¿Qué come?** (`dieta-animal`, cultura) — herbívoro, carnívoro u
+  omnívoro.
+- **Estados del agua** (`estados-agua`, cultura) — sólido, líquido o gas.
+- **Pesado o ligero** (`peso`, sensorial) — sentido bárico.
+- **Dulce o salado** (`sabor`, sensorial) — sentido gustativo.
+- **¿Qué me pongo?** (`clima`, vida práctica) — vestirse según el clima.
+- **La rutina de la mañana** (`rutina`, vida práctica) — despertar,
+  vestirse, desayunar, ir a la escuela.
 
 Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
 juego del silencio, los marcos de vestir, el dado de retos y el xilófono.
