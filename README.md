@@ -1,7 +1,7 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 3 a 6 años: **78 materiales** — 73 con **100 niveles
-cada uno** (7 300 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
+Un ambiente Montessori digital para niños de 3 a 6 años: **85 materiales** — 80 con **100 niveles
+cada uno** (8 000 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
 de dibujo libre. Todo en español, sin conexión, sin cuentas, sin publicidad y sin enviar un solo
 dato fuera del dispositivo.
 
@@ -57,11 +57,11 @@ Los materiales están organizados como el ambiente real, por áreas y no por "ca
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 9 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 17 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura, peso, sabor |
+| 🫗 Vida práctica | 10 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 19 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura, peso, sabor |
 | ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
 | 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 14 | El mundo, los seres vivos y su clasificación |
+| 🌍 Cultura y naturaleza | 18 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -125,6 +125,13 @@ variedad de la app a la de las aplicaciones Montessori comerciales más conocida
 - **Dulce o salado** — sentido gustativo.
 - **¿Qué me pongo?** — vestirse según el clima: sol o lluvia.
 - **La rutina de la mañana** — despertar, vestirse, desayunar, ir a la escuela.
+- **Los colores** — nomenclatura de las tabletas de color.
+- **Cuerpos geométricos** — esfera, cubo, cono, cilindro, pirámide, con sombreado.
+- **El tiempo** — soleado, lluvioso, nublado, ventoso, nevado, con tormenta.
+- **Los días de la semana** — lunes a domingo, en orden.
+- **¿Dónde vive?** — selva, desierto, océano o polo.
+- **Fruta o verdura** — primera clasificación botánica.
+- **Poner la mesa** — mantel, plato, cubiertos, vaso.
 
 ---
 

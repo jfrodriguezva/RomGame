@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 78 materiales — 73 con
-100 niveles cada uno (7 300 en total) y 5 actividades libres, sin niveles ni
+Ambiente Montessori digital para niños de 3 a 6 años: 85 materiales — 80 con
+100 niveles cada uno (8 000 en total) y 5 actividades libres, sin niveles ni
 puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
@@ -32,15 +32,15 @@ mecánicas de videojuego.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 78 materiales
+## 3. Las áreas y los 85 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 9 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 17 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura, peso, sabor |
+| 🫗 Vida práctica | 10 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 19 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura, peso, sabor |
 | ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
 | 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 14 | El mundo, los seres vivos y su clasificación |
+| 🌍 Cultura y naturaleza | 18 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -108,6 +108,16 @@ Montessori comerciales:
 - **¿Qué me pongo?** (`clima`, vida práctica) — vestirse según el clima.
 - **La rutina de la mañana** (`rutina`, vida práctica) — despertar,
   vestirse, desayunar, ir a la escuela.
+- **Los colores** (`colores`, sensorial) — tabletas de color.
+- **Cuerpos geométricos** (`solidos`, sensorial) — esfera, cubo, cono,
+  cilindro, pirámide.
+- **El tiempo** (`tiempo`, cultura) — soleado, lluvioso, nublado, ventoso,
+  nevado, con tormenta.
+- **Los días de la semana** (`dias-semana`, cultura) — lunes a domingo.
+- **¿Dónde vive?** (`habitat`, cultura) — selva, desierto, océano, polo.
+- **Fruta o verdura** (`fruta-verdura`, cultura) — clasificación botánica.
+- **Poner la mesa** (`mesa`, vida práctica) — mantel, plato, cubiertos,
+  vaso.
 
 Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
 juego del silencio, los marcos de vestir, el dado de retos y el xilófono.
