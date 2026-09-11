@@ -43,6 +43,9 @@ export default function ContinentesPage() {
   }, [config.modo, config.opciones]);
 
   useEffect(() => {
+    // nuevaRonda() elige al azar y habla en voz alta: no es una derivación
+    // pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRonda(0);
     nuevaRonda();
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -35,6 +35,9 @@ export default function ColorearPage() {
   const paleta = PALETA.slice(0, config.colores);
 
   useEffect(() => {
+    // Reinicia el dibujo y la paleta al cambiar de nivel: sincroniza con
+    // una prop que cambia, no es una derivación pura del render actual.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPintado({});
     setColor(paleta[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps

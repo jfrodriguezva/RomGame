@@ -23,6 +23,9 @@ export default function TrazosPage() {
 
   useEffect(() => {
     registerPlay("trazos");
+    // Reinicia el trazo al cambiar de nivel o de figura: sincroniza con
+    // props que cambian, no es una derivación pura del render actual.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgress(0);
     setShowWin(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -34,6 +37,9 @@ export default function TrazosPage() {
     if (isWin) {
       playSound("win");
       addStars("trazos", 1);
+      // Celebra el trazo logrado y avanza de figura con un temporizador:
+      // efecto legítimo, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       setTimeout(() => {
         setShowWin(false);

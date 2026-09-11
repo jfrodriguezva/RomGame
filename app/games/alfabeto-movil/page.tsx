@@ -45,6 +45,9 @@ export default function AlfabetoMovilPage() {
   }, [config.extras, config.largo]);
 
   useEffect(() => {
+    // nuevaRonda() elige palabra al azar, habla y baraja el canasto: no es
+    // una derivación pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRonda(0);
     nuevaRonda();
     // eslint-disable-next-line react-hooks/exhaustive-deps

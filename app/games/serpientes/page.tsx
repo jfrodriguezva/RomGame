@@ -26,12 +26,6 @@ export default function SerpientesPage() {
   const addStars = useProgressStore((s) => s.addStars);
   const registerPlay = useProgressStore((s) => s.registerPlay);
 
-  useEffect(() => {
-    registerPlay("serpientes");
-    resetGame();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [level]);
-
   function resetGame() {
     setLinks(buildBoard(config.length, config.linksCount));
     setPlayerPos(1);
@@ -39,6 +33,15 @@ export default function SerpientesPage() {
     setTurn("player");
     setMessage("¡Tira el dado!");
   }
+
+  useEffect(() => {
+    registerPlay("serpientes");
+    // Arma un tablero nuevo al azar para el nivel: no es una derivación
+    // pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    resetGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level]);
 
   function applyLink(pos: number): number {
     const link = links.get(pos);

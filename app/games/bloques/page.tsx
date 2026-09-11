@@ -30,6 +30,9 @@ export default function BloquesPage() {
   useEffect(() => {
     const sizes = Array.from({ length: config.count }, (_, i) => i + 1);
     const shuffledSizes = shuffle(sizes);
+    // Baraja los bloques al azar para el nivel actual: no es una
+    // derivación pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setBlocks(
       shuffledSizes.map((size, i) => ({
         size,
@@ -49,6 +52,9 @@ export default function BloquesPage() {
       playSound("win");
       addStars("bloques", 1);
       unlockNextLevel("bloques", Math.min(level + 1, BLOQUES_LEVELS.length));
+      // Celebra el acierto y lo oculta con un temporizador: efecto
+      // legítimo respondiendo a isWin, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       const t = setTimeout(() => setShowWin(false), 1800);
       return () => clearTimeout(t);

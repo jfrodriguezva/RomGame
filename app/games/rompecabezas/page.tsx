@@ -28,11 +28,14 @@ export default function RompecabezasPage() {
   const registerPlay = useProgressStore((s) => s.registerPlay);
 
   useEffect(() => {
-    let order = shuffle(Array.from({ length: total }, (_, i) => i));
+    const order = shuffle(Array.from({ length: total }, (_, i) => i));
     // asegura que no arranque ya resuelto
     if (order.every((v, i) => v === i) && total > 1) {
       [order[0], order[1]] = [order[1], order[0]];
     }
+    // Baraja el tablero al azar para el nivel: no es una derivación pura
+    // que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setBoard(order);
     setSelected(null);
     setShowWin(false);
@@ -47,6 +50,9 @@ export default function RompecabezasPage() {
       playSound("win");
       addStars("rompecabezas", 1);
       unlockNextLevel("rompecabezas", Math.min(level + 1, PUZZLE_LEVELS.length));
+      // Celebra el acierto y lo oculta con un temporizador: efecto
+      // legítimo respondiendo a isWin, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       const t = setTimeout(() => setShowWin(false), 1800);
       return () => clearTimeout(t);

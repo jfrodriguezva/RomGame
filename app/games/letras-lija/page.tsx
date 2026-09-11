@@ -34,6 +34,9 @@ export default function LetrasLijaPage() {
   }, [config.pool]);
 
   useEffect(() => {
+    // nuevaLetra() elige al azar y habla el fonema: no es una derivación
+    // pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRonda(0);
     nuevaLetra();
     // eslint-disable-next-line react-hooks/exhaustive-deps

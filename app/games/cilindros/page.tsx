@@ -35,6 +35,9 @@ export default function CilindrosPage() {
   }, [config.cantidad, config.desde]);
 
   useEffect(() => {
+    // preparar() baraja la bandeja al azar: no es una derivación pura
+    // para el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     preparar();
   }, [preparar]);
 

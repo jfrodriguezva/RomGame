@@ -32,6 +32,9 @@ export default function TablaCienPage() {
   }, [config.guia, config.hasta, config.huecos]);
 
   useEffect(() => {
+    // preparar() elige las fichas faltantes al azar: no es una derivación
+    // pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     preparar();
   }, [preparar]);
 

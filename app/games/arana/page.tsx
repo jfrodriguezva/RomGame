@@ -165,6 +165,9 @@ export default function AranaPage() {
       playSound("win");
       addStars("arana", 1);
       unlockNextLevel("arana", Math.min(level + 1, ARANA_LEVELS.length));
+      // Celebra el acierto y lo oculta con un temporizador: efecto
+      // legítimo respondiendo a isWin, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       const t = setTimeout(() => setShowWin(false), 1800);
       return () => clearTimeout(t);

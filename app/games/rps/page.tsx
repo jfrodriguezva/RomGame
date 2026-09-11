@@ -27,13 +27,18 @@ export default function RpsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // pickCpuChoice() solo se llama desde play(), un manejador de clic —
+  // nunca durante el render — así que el azar aquí es seguro aunque el
+  // linter no pueda rastrear esa garantía estáticamente.
   function pickCpuChoice(freq: Record<RpsChoice, number>): RpsChoice {
+    // eslint-disable-next-line react-hooks/purity
     if (Math.random() < config.counterChance) {
       const mostUsed = (Object.keys(freq) as RpsChoice[]).sort((a, b) => freq[b] - freq[a])[0];
       const counter = RPS_CHOICES.find((c) => c.beats === mostUsed);
       if (counter) return counter.id;
     }
     const all: RpsChoice[] = ["piedra", "papel", "tijera"];
+    // eslint-disable-next-line react-hooks/purity
     return all[Math.floor(Math.random() * all.length)];
   }
 

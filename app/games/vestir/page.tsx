@@ -43,6 +43,9 @@ export default function VestirPage() {
     if (isComplete && !celebratedOutfits.has(outfitKey)) {
       playSound("win");
       addStars("vestir", 1);
+      // Celebra el vestuario completo la primera vez que se arma: efecto
+      // legítimo respondiendo a isComplete, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       setCelebratedOutfits((prev) => new Set(prev).add(outfitKey));
       const t = setTimeout(() => setShowWin(false), 1600);

@@ -35,6 +35,9 @@ export default function MemoramaPage() {
   const registerPlay = useProgressStore((s) => s.registerPlay);
 
   useEffect(() => {
+    // Arma y baraja el mazo del nivel: no es una derivación pura que se
+    // pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDeck(buildDeck(currentLevel.pairs));
     setFlipped([]);
     setMatched([]);
@@ -50,6 +53,9 @@ export default function MemoramaPage() {
       playSound("win");
       addStars("memorama", 1);
       unlockNextLevel("memorama", Math.min(level + 1, MEMORAMA_LEVELS.length));
+      // Celebra el acierto y lo oculta con un temporizador: efecto
+      // legítimo respondiendo a isWin, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       const t = setTimeout(() => setShowWin(false), 1800);
       return () => clearTimeout(t);

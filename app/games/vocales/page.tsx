@@ -69,6 +69,9 @@ export default function VocalesPage() {
     if (phase === "trace" && isTraceDone) {
       playSound("win");
       addStars("vocales", 1);
+      // Celebra el trazo logrado y avanza de ronda con un temporizador:
+      // efecto legítimo, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       setTimeout(() => {
         setShowWin(false);

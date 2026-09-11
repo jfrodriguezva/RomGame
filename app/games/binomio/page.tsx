@@ -56,6 +56,9 @@ export default function BinomioPage() {
   }, [config.modeloVisible, config.vistazo, modelo]);
 
   useEffect(() => {
+    // preparar() arma el patrón al azar (y puede armar un temporizador de
+    // memorización): no es una derivación pura para el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     const limpiar = preparar();
     return limpiar;
   }, [preparar]);

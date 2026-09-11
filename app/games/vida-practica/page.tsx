@@ -63,6 +63,9 @@ export default function VidaPracticaPage() {
   }, [config.cantidad, par]);
 
   useEffect(() => {
+    // preparar() baraja el ejercicio del nivel al azar: no es una
+    // derivación pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     preparar();
   }, [preparar]);
 

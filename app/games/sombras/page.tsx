@@ -26,6 +26,9 @@ export default function SombrasPage() {
 
   useEffect(() => {
     const chosen = pickRandom(SOMBRAS_POOL, config.pairs);
+    // Elige y baraja el nivel al azar: no es una derivación pura que se
+    // pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLeft(shuffle(chosen));
     setRight(shuffle(chosen));
     setMatched(new Set());
@@ -42,6 +45,9 @@ export default function SombrasPage() {
       playSound("win");
       addStars("sombras", 1);
       unlockNextLevel("sombras", Math.min(level + 1, SOMBRAS_LEVELS.length));
+      // Celebra el acierto y lo oculta con un temporizador: efecto
+      // legítimo respondiendo a isWin, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       const t = setTimeout(() => setShowWin(false), 1800);
       return () => clearTimeout(t);

@@ -26,20 +26,6 @@ export default function PatronPage() {
   const unlockNextLevel = useProgressStore((s) => s.unlockNextLevel);
   const registerPlay = useProgressStore((s) => s.registerPlay);
 
-  useEffect(() => {
-    startLevel();
-    registerPlay("patron");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [level]);
-
-  function startLevel() {
-    const seq = randomSequence(config.sequenceLength, config.buttons);
-    setSequence(seq);
-    setPlayerIndex(0);
-    setShowWin(false);
-    playSequence(seq);
-  }
-
   function playSequence(seq: number[]) {
     setShowing(true);
     seq.forEach((btn, i) => {
@@ -51,6 +37,23 @@ export default function PatronPage() {
     });
     setTimeout(() => setShowing(false), seq.length * 700);
   }
+
+  function startLevel() {
+    const seq = randomSequence(config.sequenceLength, config.buttons);
+    setSequence(seq);
+    setPlayerIndex(0);
+    setShowWin(false);
+    playSequence(seq);
+  }
+
+  useEffect(() => {
+    // Arranca una secuencia nueva al azar para el nivel: no es una
+    // derivación pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    startLevel();
+    registerPlay("patron");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level]);
 
   function handlePress(btn: number) {
     if (showing) return;

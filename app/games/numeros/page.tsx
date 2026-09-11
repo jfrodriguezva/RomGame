@@ -44,6 +44,9 @@ export default function NumerosPage() {
   const registerPlay = useProgressStore((s) => s.registerPlay);
 
   useEffect(() => {
+    // Genera los puntos del nivel: no es una derivación pura que se
+    // pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDots(buildDots(config.count));
     setNext(1);
     setShowWin(false);
@@ -58,6 +61,9 @@ export default function NumerosPage() {
       playSound("win");
       addStars("numeros", 1);
       unlockNextLevel("numeros", Math.min(level + 1, NUMEROS_LEVELS.length));
+      // Celebra el acierto y lo oculta con un temporizador: efecto
+      // legítimo respondiendo a isWin, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       const t = setTimeout(() => setShowWin(false), 1800);
       return () => clearTimeout(t);

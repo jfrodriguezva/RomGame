@@ -60,6 +60,9 @@ export default function ObjetosPage() {
 
   useEffect(() => {
     const chosen = pickRandom(OBJETOS_POOL, config.targetCount);
+    // Elige los objetivos al azar y arma la escena del nivel: no es una
+    // derivación pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTargets(chosen);
     setScene(buildScene(chosen, config.totalOnScreen));
     setFound(new Set());
@@ -75,6 +78,9 @@ export default function ObjetosPage() {
       playSound("win");
       addStars("objetos", 1);
       unlockNextLevel("objetos", Math.min(level + 1, OBJETOS_LEVELS.length));
+      // Celebra el acierto y lo oculta con un temporizador: efecto
+      // legítimo respondiendo a isWin, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       const t = setTimeout(() => setShowWin(false), 1800);
       return () => clearTimeout(t);

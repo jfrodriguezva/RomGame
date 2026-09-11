@@ -65,7 +65,10 @@ export default function CarrerasPage() {
   }, []);
 
   useEffect(() => {
+    // Sincroniza la escena de Phaser (un sistema externo) con el nivel
+    // actual y reinicia el marcador: no es una derivación pura.
     sceneRef.current?.setLevelConfig(config);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setScore(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level]);
@@ -73,6 +76,9 @@ export default function CarrerasPage() {
   useEffect(() => {
     if (score > 0 && score % 10 === 0) {
       addStars("carreras", 1);
+      // Celebra cada 10 puntos y lo oculta con un temporizador: efecto
+      // legítimo, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       playSound("win");
       setTimeout(() => setShowWin(false), 1400);

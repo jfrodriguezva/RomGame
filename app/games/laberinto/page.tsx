@@ -20,6 +20,9 @@ export default function LaberintoPage() {
   const registerPlay = useProgressStore((s) => s.registerPlay);
 
   useEffect(() => {
+    // Genera un laberinto al azar para el nivel: no es una derivación
+    // pura que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMaze(generateMaze(config.size));
     setPos({ r: 0, c: 0 });
     setShowWin(false);
@@ -35,6 +38,9 @@ export default function LaberintoPage() {
       playSound("win");
       addStars("laberinto", 1);
       unlockNextLevel("laberinto", Math.min(level + 1, LABERINTO_LEVELS.length));
+      // Celebra el acierto y lo oculta con un temporizador: efecto
+      // legítimo respondiendo a isWin, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       const t = setTimeout(() => setShowWin(false), 1800);
       return () => clearTimeout(t);

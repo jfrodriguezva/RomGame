@@ -86,6 +86,9 @@ export default function GatoPage() {
     const w = winner(board);
     if (w === "X") {
       playSound("win");
+      // Celebra la victoria al detectarla en el tablero: efecto
+      // legítimo, no una derivación pura para el render.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMessage("¡Ganaste! 🎉");
       setWins((n) => {
         const next = n + 1;

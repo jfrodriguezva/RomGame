@@ -65,6 +65,9 @@ export default function DiferenciasPage() {
   const registerPlay = useProgressStore((s) => s.registerPlay);
 
   useEffect(() => {
+    // Genera una escena al azar para el nivel: no es una derivación pura
+    // que se pueda calcular en el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setScene(buildScene(config.totalItems, config.diffCount));
     setFound(new Set());
     setShowWin(false);
@@ -80,6 +83,9 @@ export default function DiferenciasPage() {
       playSound("win");
       addStars("diferencias", 1);
       unlockNextLevel("diferencias", Math.min(level + 1, DIFERENCIAS_LEVELS.length));
+      // Celebra el acierto y lo oculta con un temporizador: efecto
+      // legítimo respondiendo a isWin, no una derivación pura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWin(true);
       const t = setTimeout(() => setShowWin(false), 1800);
       return () => clearTimeout(t);
