@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 85 materiales — 80 con
-100 niveles cada uno (8 000 en total) y 5 actividades libres, sin niveles ni
+Ambiente Montessori digital para niños de 3 a 6 años: 90 materiales — 85 con
+100 niveles cada uno (8 500 en total) y 5 actividades libres, sin niveles ni
 puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
@@ -32,15 +32,15 @@ mecánicas de videojuego.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 85 materiales
+## 3. Las áreas y los 90 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 10 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 19 | Refinar los sentidos: tamaño, forma, color, sonido, textura, temperatura, peso, sabor |
+| 🫗 Vida práctica | 11 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 20 | Los cinco sentidos, más peso y temperatura |
 | ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
 | 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 18 | El mundo, los seres vivos y su clasificación |
+| 🌍 Cultura y naturaleza | 21 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -118,6 +118,17 @@ Montessori comerciales:
 - **Fruta o verdura** (`fruta-verdura`, cultura) — clasificación botánica.
 - **Poner la mesa** (`mesa`, vida práctica) — mantel, plato, cubiertos,
   vaso.
+- **Huele bien o mal** (`olfato`, sensorial) — sentido olfativo.
+- **Las estaciones del año** (`estaciones`, cultura) — primavera a
+  invierno, en orden.
+- **Oficios y profesiones** (`oficios`, cultura) — bombero, doctora,
+  cocinero, maestra, policía, granjera.
+- **Medios de transporte** (`transporte`, cultura) — tierra, aire o agua.
+- **Lavarse las manos** (`lavado-manos`, vida práctica) — mojar, jabón,
+  tallar, enjuagar, secar.
+
+Con este material, el catálogo cubre los cinco sentidos con al menos un
+material práctico cada uno: vista, oído, olfato, gusto y tacto.
 
 Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
 juego del silencio, los marcos de vestir, el dado de retos y el xilófono.

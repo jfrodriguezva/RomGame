@@ -7,7 +7,7 @@ releer todo el repo desde cero.
 ## Qué es este proyecto
 
 **Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 85 materiales — 80 con 100 niveles cada uno (8 000 niveles) y 5
+años. 90 materiales — 85 con 100 niveles cada uno (8 500 niveles) y 5
 actividades libres sin niveles. Todo en español, sin conexión, sin
 cuentas, sin publicidad, sin enviar datos fuera del dispositivo. Es un
 proyecto personal (no comercial) del usuario, pensado para uso familiar.
@@ -58,7 +58,7 @@ del estado real del código, no inventados.
   Tailwind CSS 4 + Zustand 5 (estado/persistencia) + Framer Motion + Phaser 4
   (materiales de movimiento) + Capacitor 8.5 (empaquetado Android) + Serwist
   (PWA en web).
-- **Estructura:** `app/games/<slug>/` un material por carpeta (84) + `app/pizarra`,
+- **Estructura:** `app/games/<slug>/` un material por carpeta (89) + `app/pizarra`,
   `app/padres`, `app/admin`. Componentes compartidos en `components/`
   (`GameShell`, `MaterialQuiz`, `MaterialOrdenar`, `TrazoGuiado`,
   `LevelSelector`). Contenido/curvas de dificultad en `data/` (`games.ts` es
@@ -149,17 +149,28 @@ Decisiones tomadas (no volver a preguntar esto, ya está resuelto):
 
 | Área | Original | Objetivo inicial | Estado ahora |
 |---|---|---|---|
-| 🌍 Cultura y naturaleza | 3 | 7-8 | **18** — muy por encima ✅ |
+| 🌍 Cultura y naturaleza | 3 | 7-8 | **21** — muy por encima ✅ |
+| 🔴 Sensorial | 12 | ya nutrida | **20** — se sumó bastante ✅ |
 | ✍️ Lenguaje | 7 | 9-10 | **12** — por encima ✅ |
-| 🔴 Sensorial | 12 | ya nutrida | **19** — se sumó bastante ✅ |
 | 🔢 Matemáticas | 5 | 7-8 | **10** — por encima ✅ |
-| 🫗 Vida práctica | 4 | 6-7 | **10** — por encima ✅ |
+| 🫗 Vida práctica | 4 | 6-7 | **11** — por encima ✅ |
 | 🎨 Expresión libre | 2 | 3-4 | **3** — dentro del rango ✅ |
 | 🤝 Compañía / 🤸 Movimiento | 5 / 8 | ya nutridas | no se tocaron (Phaser, no encajan en el patrón de datos) |
 
 **El punto 2 del roadmap (volumen y variedad de contenido) está completo y
-ampliamente superado.** 46 → 85 materiales en total (80 con 100 niveles =
-8 000 niveles, 5 libres), en 4 rondas dentro de esta sesión.
+ampliamente superado.** 46 → 90 materiales en total (85 con 100 niveles =
+8 500 niveles, 5 libres), en 5 rondas dentro de esta sesión.
+
+**Señal real de acercarse al límite de ideas auténticas (importante para
+la siguiente sesión):** la ronda 5 rindió solo 5 materiales frente a los
+7-11 de las rondas anteriores, porque varias ideas candidatas (contar
+hacia atrás, comparativos de tamaño, secuencias de patrones AB-AB,
+sonidos fuertes/suaves) se descartaron por sentirse forzadas o
+redundantes con algo que ya existe. Esto no es un límite técnico — es que
+las ideas Montessori genuinas y no repetidas para los componentes
+existentes empiezan a escasear. Antes de otra ronda, vale la pena que
+quien retome esto revise si de verdad hay una idea nueva antes de forzarla
+solo por sumar número.
 
 **Decisión explícita del usuario sobre cómo seguir (no volver a preguntar
 esto):** cuando se preguntó "¿en variedad ya está igual a Montessori?" la
@@ -168,50 +179,46 @@ reales sin meta numérica / cambiar la métrica a niveles totales / bajar la
 calidad para acercarse más al número). **Eligió el primero explícitamente:
 seguir agregando materiales Montessori auténticos en lotes, sin perseguir
 un número fijo, aceptando que probablemente nunca se llegue a "1000".**
-No hace falta volver a plantear esta pregunta — si se retoma este trabajo,
-seguir agregando lotes de calidad es la instrucción vigente hasta que el
-usuario diga lo contrario.
+Más tarde, en la misma sesión, dio instrucción expresa de **"continúa con
+lote de materiales hasta que se repitan"** — es decir, seguir hasta notar
+la señal de arriba, no parar antes ni forzar después. No hace falta volver
+a plantear esta pregunta.
 
 **Calibración honesta sobre "superior a Montessori" (importante, no
 repetir el error):** Montessori Preschool anuncia +1000 actividades
-distintas; nosotros tenemos 85 materiales distintos (con 100 niveles de
+distintas; nosotros tenemos 90 materiales distintos (con 100 niveles de
 profundidad cada uno, que ellos probablemente no tienen de la misma
 forma). Si se cuenta "tipos de actividad distintos" (la métrica justa, la
-que ellos usan en su propio marketing), **seguimos muy por debajo** — y
-tras 4 rondas de materiales genuinos, las ideas Montessori auténticas
-claras y no redundantes se agotan cada vez más rápido; rondas futuras
-probablemente rindan menos materiales por ronda, no más. Donde sí estamos
-a la par o mejor es en **cobertura de las 8 áreas del currículo Montessori
-clásico** — esa es la métrica que se superó, no el conteo bruto.
+que ellos usan en su propio marketing), **seguimos muy por debajo**.
+Donde sí estamos a la par o mejor es en **cobertura de las 8 áreas del
+currículo Montessori clásico** — esa es la métrica que se superó, no el
+conteo bruto.
 
-32 materiales en las primeras 3 rondas, más 7 de una cuarta ronda
-(`colores`, `solidos`, `tiempo`, `dias-semana`, `habitat`,
-`fruta-verdura`, `mesa`) — 39 materiales nuevos en total esta sesión,
-todos reutilizando componentes existentes (`MaterialQuiz`,
-`MaterialOrdenar`, `MaterialClasificar`, `MaterialTransferir`). Ver el
-catálogo completo en `data/games.ts` (buscar `nuevo: true`) para la lista
-exacta con área, slug y objetivo pedagógico de cada uno — dejó de
-listarse material por material aquí porque ya no es el lugar práctico
-para mantenerlo actualizado.
+44 materiales nuevos en total esta sesión, en 5 rondas, todos reutilizando
+componentes existentes (`MaterialQuiz`, `MaterialOrdenar`,
+`MaterialClasificar`, `MaterialTransferir`). Ver el catálogo completo en
+`data/games.ts` (buscar `nuevo: true`) para la lista exacta con área, slug
+y objetivo pedagógico de cada uno — dejó de listarse material por material
+aquí porque ya no es el lugar práctico para mantenerlo actualizado.
 
-`components/MaterialClasificar.tsx` (21 materiales, el patrón más
-reutilizado del repo, algunos ya con hasta 4 canastas activas) y
-`components/MaterialTransferir.tsx` (2 materiales, `pinza`/`husos`) — ver
-`docs/MANUAL-TECNICO.md` sección 4 para la lista completa y la firma de
-cada componente. Ninguno tiene página
-propia duplicada.
+`components/MaterialClasificar.tsx` (el patrón más reutilizado del repo,
+ya pasó de 20 materiales; algunos usan hasta 4 canastas activas por
+nivel) y `components/MaterialTransferir.tsx` (2 materiales, `pinza`/
+`husos`) — ver `docs/MANUAL-TECNICO.md` sección 4 para el comando que da
+la lista exacta en cualquier momento. Ninguno tiene página propia
+duplicada.
 
 **No tocadas, y no hay plan de tocarlas:** 🤝 Compañía y 🤸 Movimiento. Sus
 materiales son escenas de Phaser (canvas/física), no encajan en el patrón
 de datos + componente compartido — agregar ahí es mucho más caro por
 material. Si se quiere seguir creciendo variedad, las áreas de datos
-(cultura, lenguaje, matemáticas, sensorial, práctica) siguen siendo el
-camino barato; Compañía/Movimiento requieren diseño de juego caso por caso.
+siguen siendo el camino barato, pero ver la señal de arriba antes de
+forzar una ronda más.
 
 ### Punto 3 (pulido visual/sonoro): arrancado, sigue siendo el más grande
 
 Decisión de diseño: **no** se rehace arte por material (no es realista para
-85 páginas en una sesión, y cada ronda de materiales nuevos agranda la
+90 páginas en una sesión, y cada ronda de materiales nuevos agranda la
 brecha). En su lugar se mejoran los puntos compartidos
 que tocan muchos materiales a la vez con una sola edición:
 
@@ -223,17 +230,28 @@ que tocan muchos materiales a la vez con una sola edición:
   `components/GameShell.tsx`, `app/page.tsx` y `app/padres/page.tsx`.
 - **Celebración con el color del área** — `lib/montessori.ts` suma
   `acento`/`acentoOscuro` a cada `AreaInfo`; `StarReward.tsx` acepta un
-  `slug` opcional y los usa. Conectado en los 4 componentes compartidos
-  (~20 materiales); los ~31 materiales de estilo más antiguo que llaman a
-  `StarReward` directo sin `slug` siguen con el color de respaldo — no se
-  tocaron uno por uno para no arriesgar una edición masiva de bajo valor.
+  `slug` opcional y los usa. **Ya cubre los 90 materiales con niveles**:
+  primero se conectó en los 4 componentes compartidos, y en una segunda
+  pasada se agregó `slug="<slug>"` a los 31 materiales de estilo antiguo
+  que llaman a `StarReward` directo — edición mecánica, un `Edit` por
+  archivo, verificada con tsc + build + una muestra en el servidor. Ya no
+  queda ningún material sin el color de su área en la celebración.
+- **ESLint `react-hooks/set-state-in-effect`** — resuelto en los 4
+  componentes compartidos con un comentario de supresión justificado (el
+  efecto no es una derivación pura: mezcla aleatoriedad, voz o
+  temporizadores). Los ~31 materiales de estilo antiguo tienen cada uno su
+  propia instancia del mismo patrón, con su propia lógica — **no
+  resuelto**, deliberadamente: arreglar los 31 a la vez es mucho más
+  riesgoso que el núcleo compartido y no se intentó.
 
 No se tocó todavía: ilustración custom por material más allá de la que ya
 trajeron los materiales nuevos, un pase de animación en transiciones, y
 `ConfettiOverlay`. Si se retoma, seguir el mismo criterio: buscar el
-siguiente punto único que toque muchos materiales a la vez (candidato
-natural: llevar el color de área a los ~31 materiales de estilo antiguo que
-`StarReward` todavía no cubre) antes que abrir página por página.
+siguiente punto único que toque muchos materiales a la vez antes que abrir
+página por página — con StarReward y el ESLint del núcleo ya resueltos,
+el candidato natural es limpiar el ESLint de los 31 materiales antiguos
+uno por uno (ya no hay atajo sistémico para eso) o empezar la ilustración
+custom.
 
 ### QA y validación (nuevo esta sesión)
 
@@ -245,14 +263,14 @@ materiales (`pares-impares` y `temperatura`: ambos pedían más elementos
 por ronda de los que su propio banco tenía, copiado de un material con
 banco más grande) que ningún build ni prueba manual superficial hubiera
 notado — ver `docs/MANUAL-TECNICO.md` sección 14 para el detalle. La
-tercera y cuarta ronda aplicaron `Math.min(..., banco.length)` desde el
-diseño y pasaron limpias al primer intento — la lección se quedó
-aprendida.
+tercera, cuarta y quinta ronda aplicaron `Math.min(..., banco.length)`
+desde el diseño y pasaron limpias al primer intento — la lección se quedó
+aprendida de verdad.
 
 **Sigue pendiente probar cualquiera de los materiales con las manos en un
-dispositivo real**: todo lo verificado hasta ahora, en las cuatro rondas,
+dispositivo real**: todo lo verificado hasta ahora, en las cinco rondas,
 es build + HTTP/HTML + curvas de datos, nunca interacción táctil real. Con
-85 materiales acumulados sin ni un minuto de uso real, esto pesa cada vez
+90 materiales acumulados sin ni un minuto de uso real, esto pesa cada vez
 más — es la validación más importante que falta, y no la puede hacer un
 agente de código.
 

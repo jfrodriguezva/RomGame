@@ -34,7 +34,7 @@ app/
   pizarra/               lienzo de dibujo libre
   padres/                progreso, ajustes y acompañamiento
   admin/                 editor de puntos para imágenes propias
-  games/<slug>/           un material por carpeta (84)
+  games/<slug>/           un material por carpeta (89)
 components/
   GameShell.tsx           marco común: header, nivel, consigna, error
   MaterialQuiz.tsx        lección de tres periodos
@@ -65,26 +65,26 @@ Casi todos los materiales bajo `app/games/<slug>` se arman componiendo:
 - **GameShell** — marco común: encabezado, indicador de nivel, consigna y el
   lenguaje del control del error.
 - **useMaterial** — hook de estado: nivel actual, acierto, intento, cierre.
-- **MaterialQuiz** — lección de tres periodos. 15 materiales (formas,
-  emociones, animales, letras, palabras en inglés, tierra y agua, partes
-  de la planta, sentidos, banderas, cuerpo, instrumentos, el reloj, los
-  colores, cuerpos geométricos, el tiempo).
+- **MaterialQuiz** — lección de tres periodos. El listado de qué materiales
+  lo usan crece seguido; `grep -rl "components/MaterialQuiz" app/games`
+  da la lista exacta en cualquier momento.
 - **MaterialOrdenar** — seriación. No solo por tamaño (torre rosa, escalera
   marrón): también sirve para ordenar por secuencia temporal, lógica o
   motriz (ciclo de la mariposa, sistema solar, doblar la tela, ciclo del
-  agua, rutina de la mañana, días de la semana, poner la mesa), pasando
-  `invertido: true` fijo en la curva de niveles para que la fila salga en
-  orden ascendente — ver la nota en `data/levels/ciclo-vida.ts`.
+  agua, rutina de la mañana, días de la semana, poner la mesa, las
+  estaciones del año, lavarse las manos), pasando `invertido: true` fijo
+  en la curva de niveles para que la fila salga en orden ascendente — ver
+  la nota en `data/levels/ciclo-vida.ts`.
 - **TrazoGuiado** — recorrer un glifo con el dedo (letras de lija, trazos).
 - **LevelSelector** — selector de los 100 niveles en 10 etapas.
 - **MaterialClasificar** — clasificación en canastas: un objeto pendiente a
-  la vez y N canastas donde soltarlo. Ya 21 materiales lo usan (el listado
-  completo cambia seguido — buscar `MaterialClasificar` en `app/games/` da
-  la lista exacta en cualquier momento). Cada material solo define de
-  dónde salen los elementos, a qué canasta pertenece cada uno y cómo se
-  dibujan — el control del error, el conteo y el cierre de nivel viven en
-  el componente. Es, con diferencia, el patrón más reutilizado del repo;
-  algunos ya usan hasta 4 canastas activas por nivel (¿Dónde vive?, con
+  la vez y N canastas donde soltarlo. Es, con diferencia, el patrón más
+  reutilizado del repo (`grep -rl "components/MaterialClasificar"
+  app/games` da la lista exacta y cuántos son en cualquier momento — ya
+  pasó de 20). Cada material solo define de dónde salen los elementos, a
+  qué canasta pertenece cada uno y cómo se dibujan — el control del error,
+  el conteo y el cierre de nivel viven en el componente. Algunos ya usan
+  hasta 4 canastas activas por nivel (¿Dónde vive?, con
   selva/desierto/océano/polo entrando de a poco por etapa).
 - **MaterialTransferir** — transferencia por cantidad exacta: una bandeja
   de origen y una de destino, se toma de a una pieza, y pasarse del
@@ -137,11 +137,11 @@ aplicación compartido en vez de rehacer el fondo de cada pantalla.
 `acentoOscuro` (hex plano) a cada `AreaInfo`. `StarReward.tsx` acepta un
 `slug` opcional, resuelve el área con `getGame()` + `AREAS` (igual que
 `GameShell`) y usa esos colores en la estrella y el botón de "Siguiente" en
-vez de un ámbar genérico. Conectado en los 4 componentes compartidos
-(`MaterialQuiz`, `MaterialOrdenar`, `MaterialClasificar`,
-`MaterialTransferir`); los materiales de estilo más antiguo que llaman a
-`StarReward` directamente sin `slug` (~31, ver `RECOVERY.md`) siguen con el
-color de respaldo.
+vez de un ámbar genérico. **Ya cubre los 90 materiales con niveles**:
+primero se conectó en los 4 componentes compartidos, y después se agregó
+`slug="<slug>"` a los 31 materiales de estilo más antiguo que llaman a
+`StarReward` directamente. Si se agrega un material nuevo de estilo
+antiguo (fuera de los 4 componentes), no olvidar pasar `slug`.
 
 ## 8. Catálogo de datos
 
@@ -198,17 +198,21 @@ funcione offline como PWA.
 ## 13. Deuda técnica conocida
 
 - ESLint (reglas React 19) marca `setState` dentro de `useEffect` en varias
-  páginas y en los 4 componentes compartidos. No rompe build ni app;
-  pendiente de limpiar.
+  páginas. **Resuelto en los 4 componentes compartidos** con un comentario
+  `eslint-disable-next-line react-hooks/set-state-in-effect` justificando
+  por qué el efecto es necesario (la función que arranca no es una
+  derivación pura: mezcla aleatoriedad, voz o temporizadores). **Sigue
+  pendiente** en los ~31 materiales de estilo antiguo que no pasan por los
+  4 componentes — cada uno tiene su propia instancia del mismo patrón, con
+  su propia lógica; no se tocaron porque arreglar los 31 a la vez es mucho
+  más riesgoso que el núcleo compartido. No rompe build ni app.
 - Tiempos y umbrales en `data/levels/` calibrados a ojo, no medidos con
   usuarios reales.
-- El patrón "clasificación en canastas" ya tiene 4 usos y el de
-  "transferencia por cantidad exacta" 2 (ambos extraídos a componentes, ver
-  sección 4) — pero ni uno ni otro se ha probado interactivamente con un
-  dedo real en un dispositivo, solo por HTTP/HTML.
-- `StarReward` solo toma el color del área en los ~20 materiales que pasan
-  por los 4 componentes compartidos; los ~31 de estilo más antiguo que la
-  llaman directo siguen con el color de respaldo (ver sección 7).
+- Ninguno de los 90 materiales se ha probado interactivamente con un dedo
+  real en un dispositivo — todo lo verificado hasta ahora es build +
+  HTTP/HTML + curvas de datos (`npm run qa`).
+- `StarReward` ya toma el color del área en los 90 materiales con niveles
+  (ver sección 7) — resuelto.
 
 ## 14. QA automatizado de niveles
 
@@ -244,9 +248,8 @@ mismo que el del material copiado.
 Al agregar un material nuevo con curva propia, agregar también su
 validación aquí.
 
-La tercera ronda de materiales (`reloj`, `dieta-animal`, `estados-agua`,
-`peso`, `sabor`, `clima`, `rutina`) y la cuarta (`colores`, `solidos`,
-`tiempo`, `dias-semana`, `habitat`, `fruta-verdura`, `mesa`) aplicaron
+La tercera, cuarta y quinta ronda de materiales aplicaron
 `Math.min(..., banco.length)` directamente en cada curva desde el
-principio, siguiendo la lección de arriba, y ambas pasaron `npm run qa`
-limpias al primer intento.
+principio, siguiendo la lección de arriba, y las tres pasaron `npm run qa`
+limpias al primer intento — la lección se quedó aprendida de verdad, no
+solo documentada.
