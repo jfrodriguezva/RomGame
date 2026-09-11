@@ -31,6 +31,12 @@ import { SINGULAR_PLURAL_LEVELS, PALABRAS_NUMERO } from "../data/levels/singular
 import { CICLO_AGUA_LEVELS } from "../data/levels/ciclo-agua";
 import { TEMPERATURA_LEVELS, COSAS_TEMPERATURA } from "../data/levels/temperatura";
 import { TAMANOS_LEVELS, COSAS_TAMANO } from "../data/levels/tamanos";
+import { DIETA_ANIMAL_LEVELS, ANIMALES_DIETA } from "../data/levels/dieta-animal";
+import { ESTADOS_AGUA_LEVELS, COSAS_ESTADO } from "../data/levels/estados-agua";
+import { PESO_LEVELS, COSAS_PESO } from "../data/levels/peso";
+import { SABOR_LEVELS, COSAS_SABOR } from "../data/levels/sabor";
+import { CLIMA_LEVELS, ROPA_CLIMA } from "../data/levels/clima";
+import { RUTINA_LEVELS } from "../data/levels/rutina";
 
 let fallas = 0;
 function fallo(msg: string) {
@@ -211,6 +217,47 @@ TAMANOS_LEVELS.forEach((c) => {
   }
 });
 ok("tamanos: cantidad nunca excede el banco de cosas");
+
+validarForma("dieta-animal", DIETA_ANIMAL_LEVELS);
+DIETA_ANIMAL_LEVELS.forEach((c) => {
+  if (c.cantidad > ANIMALES_DIETA.length) {
+    fallo(`dieta-animal nivel ${c.level}: pide ${c.cantidad} pero solo hay ${ANIMALES_DIETA.length}`);
+  }
+});
+ok("dieta-animal: cantidad nunca excede el banco de animales");
+
+validarForma("estados-agua", ESTADOS_AGUA_LEVELS);
+ESTADOS_AGUA_LEVELS.forEach((c) => {
+  if (c.cantidad > COSAS_ESTADO.length) {
+    fallo(`estados-agua nivel ${c.level}: pide ${c.cantidad} pero solo hay ${COSAS_ESTADO.length}`);
+  }
+});
+ok("estados-agua: cantidad nunca excede el banco de cosas");
+
+validarForma("peso", PESO_LEVELS);
+PESO_LEVELS.forEach((c) => {
+  if (c.cantidad > COSAS_PESO.length) fallo(`peso nivel ${c.level}: pide ${c.cantidad} pero solo hay ${COSAS_PESO.length}`);
+});
+ok("peso: cantidad nunca excede el banco de cosas");
+
+validarForma("sabor", SABOR_LEVELS);
+SABOR_LEVELS.forEach((c) => {
+  if (c.cantidad > COSAS_SABOR.length) fallo(`sabor nivel ${c.level}: pide ${c.cantidad} pero solo hay ${COSAS_SABOR.length}`);
+});
+ok("sabor: cantidad nunca excede el banco de cosas");
+
+validarForma("clima", CLIMA_LEVELS);
+CLIMA_LEVELS.forEach((c) => {
+  if (c.cantidad > ROPA_CLIMA.length) fallo(`clima nivel ${c.level}: pide ${c.cantidad} pero solo hay ${ROPA_CLIMA.length}`);
+});
+ok("clima: cantidad nunca excede el banco de ropa");
+
+validarForma("rutina", RUTINA_LEVELS);
+RUTINA_LEVELS.forEach((c) => {
+  if (c.cantidad < 1 || c.cantidad > 4) fallo(`rutina nivel ${c.level}: cantidad fuera de 1-4 (${c.cantidad})`);
+  if (!c.invertido) fallo(`rutina nivel ${c.level}: invertido debería ser true`);
+});
+ok("rutina: cantidad siempre 1-4, invertido siempre true");
 
 // ---------------------------------------------------------------------------
 console.log("");
