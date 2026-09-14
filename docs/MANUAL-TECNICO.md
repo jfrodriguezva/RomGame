@@ -232,6 +232,11 @@ funcione offline como PWA.
   HTTP/HTML + curvas de datos (`npm run qa`).
 - `StarReward` y `ConfettiOverlay` ya toman el color del área en los 90
   materiales con niveles (ver sección 7) — resuelto.
+- **Punto 3 del roadmap (pulido visual/sonoro) cerrado.** `app/layout.tsx`
+  envuelve toda la app en `<MotionConfig reducedMotion="user">`: cada
+  animación de framer-motion, en los 90 materiales, respeta la
+  preferencia de accesibilidad del sistema con una sola edición. Ver
+  `RECOVERY.md` para el detalle completo de lo que se cerró.
 
 ## 14. QA automatizado de niveles
 

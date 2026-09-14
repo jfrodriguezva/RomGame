@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { MotionConfig } from "framer-motion";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Mi Ambiente — juegos Montessori",
   description:
-    "Ambiente Montessori digital para niños de 3 a 6 años: 43 materiales con 100 niveles cada uno y una pizarra de dibujo libre.",
+    "Ambiente Montessori digital para niños de 3 a 6 años: 90 materiales con 100 niveles cada uno y una pizarra de dibujo libre.",
   manifest: "/manifest.json",
   appleWebApp: { capable: true, title: "Mi Ambiente", statusBarStyle: "default" },
 };
@@ -35,7 +36,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full select-none flex-col bg-[#fdfaf5]">{children}</body>
+      <body className="flex min-h-full select-none flex-col bg-[#fdfaf5]">
+        {/* Respeta "reducir movimiento" del sistema: cambia las animaciones
+            de framer-motion por su transición mas corta en toda la app,
+            una sola vez, sin tocar cada material. */}
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      </body>
     </html>
   );
 }

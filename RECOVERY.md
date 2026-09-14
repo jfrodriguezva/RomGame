@@ -229,7 +229,7 @@ material. Si se quiere seguir creciendo variedad, las áreas de datos
 siguen siendo el camino barato, pero ver la señal de arriba antes de
 forzar una ronda más.
 
-### Punto 3 (pulido visual/sonoro): arrancado, sigue siendo el más grande
+### Punto 3 (pulido visual/sonoro): CERRADO por instrucción explícita del usuario ("termina")
 
 Decisión de diseño: **no** se rehace arte por material (no es realista para
 90 páginas en una sesión, y cada ronda de materiales nuevos agranda la
@@ -265,14 +265,33 @@ que tocan muchos materiales a la vez con una sola edición:
   las piezas del confeti con `Math.random()` dentro de `useMemo(..., [])`,
   que sí corre en fase de render — se cambió a un inicializador perezoso de
   `useState`, el lugar correcto para cómputo único que puede ser impuro.
+- **Transición de la consigna** — `components/GameShell.tsx` anima el
+  texto de instrucción con un fundido + desplazamiento de 6px al cambiar
+  de ronda (`AnimatePresence`/`motion.p`), en vez de aparecer de golpe.
+- **`prefers-reduced-motion` — un solo `<MotionConfig reducedMotion="user">`
+  en `app/layout.tsx` envolviendo toda la app.** Framer Motion no
+  respetaba la preferencia de accesibilidad del sistema en ningún
+  material (ni una referencia en todo el repo antes de esto); ahora cada
+  animación de cada material — springs de `StarReward`, confeti,
+  transiciones de `MaterialQuiz`/`MaterialOrdenar`/`MaterialClasificar`/
+  `MaterialTransferir`, la consigna, mandalas de la pizarra — respeta
+  automáticamente la preferencia del sistema operativo, sin tocar un
+  solo material. Es la edición más "sistémica" que quedaba: una sola
+  línea, efecto en los 90.
+- **Conteo de materiales desactualizado en metadata pública** —
+  `app/layout.tsx` (descripción SEO/PWA) y `public/manifest.json` decían
+  "43" y "46" materiales respectivamente, arrastrado de rondas
+  anteriores; corregido a 90 en ambos.
 
-No se tocó todavía: ilustración custom por material más allá de la que ya
-trajeron los materiales nuevos, y un pase de animación en transiciones
-más allá de lo que ya trae `StarReward`/`ConfettiOverlay`. Con el color de
-área y el ESLint ya resueltos en los 90 materiales, **ya no queda ningún
-"atajo sistémico" obvio pendiente** — lo que sigue (ilustración,
-animación) es trabajo genuino de diseño material por material, no una
-edición que se pueda aplicar de una vez a todos.
+Sigue sin tocarse, y **se cierra el punto 3 sin hacerlo**: ilustración
+custom por material más allá de la que ya trajeron los materiales
+nuevos. No es un atajo sistémico — es diseño genuino material por
+material (90 páginas), fuera de alcance de una sesión de este proyecto
+personal. Con el color de área, el ESLint, la animación de consigna y
+`prefers-reduced-motion` ya resueltos en los 90 materiales, **no queda
+ninguna edición compartida más que aplicar de una sola vez** — cualquier
+mejora visual/sonora que siga es trabajo por material, no otra ronda de
+este punto.
 
 ### QA y validación (nuevo esta sesión)
 
