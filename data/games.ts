@@ -1005,6 +1005,18 @@ export const games: GameDef[] = [
     nuevo: true,
   }),
   g({
+    id: "domino",
+    slug: "domino",
+    title: "Dominó de imágenes",
+    emoji: "🁣",
+    description: "Encaja tu ficha con el dibujo, no con el número",
+    area: "compania",
+    edad: [4, 6],
+    material: "Juego de mesa",
+    objetivo: "Correspondencia visual y esperar el turno, en el formato clásico de dominó.",
+    nuevo: true,
+  }),
+  g({
     id: "serpientes",
     slug: "serpientes",
     title: "Serpientes y escaleras",
