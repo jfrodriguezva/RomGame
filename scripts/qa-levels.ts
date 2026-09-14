@@ -43,6 +43,13 @@ import { OLFATO_LEVELS, COSAS_OLOR } from "../data/levels/olfato";
 import { ESTACIONES_LEVELS } from "../data/levels/estaciones";
 import { TRANSPORTE_LEVELS, VEHICULOS } from "../data/levels/transporte";
 import { LAVADO_MANOS_LEVELS } from "../data/levels/lavado-manos";
+import { MEMORIA_TURNOS_LEVELS } from "../data/levels/memoria-turnos";
+import { MEMORAMA_FACES } from "../data/assets";
+import { QUE_FALTA_LEVELS, OBJETOS_POOL } from "../data/levels/que-falta";
+import { OCA_LEVELS } from "../data/levels/oca";
+import { DOMINO_LEVELS } from "../data/levels/domino";
+import { BINGO_LEVELS } from "../data/levels/bingo";
+import { CONECTA4_LEVELS } from "../data/levels/conecta4";
 
 let fallas = 0;
 function fallo(msg: string) {
@@ -306,6 +313,60 @@ LAVADO_MANOS_LEVELS.forEach((c) => {
   if (!c.invertido) fallo(`lavado-manos nivel ${c.level}: invertido debería ser true`);
 });
 ok("lavado-manos: cantidad siempre 1-5, invertido siempre true");
+
+// ---------------------------------------------------------------------------
+// 4. Los 6 juegos de mesa (ronda de "genera los puntos dos, cuatro y cinco")
+// ---------------------------------------------------------------------------
+validarForma("memoria-turnos", MEMORIA_TURNOS_LEVELS);
+MEMORIA_TURNOS_LEVELS.forEach((c) => {
+  if (c.pairs > MEMORAMA_FACES.length) {
+    fallo(`memoria-turnos nivel ${c.level}: pide ${c.pairs} parejas pero solo hay ${MEMORAMA_FACES.length} caras`);
+  }
+});
+ok("memoria-turnos: parejas nunca exceden el banco de caras");
+
+validarForma("que-falta", QUE_FALTA_LEVELS);
+QUE_FALTA_LEVELS.forEach((c) => {
+  if (c.cantidad > OBJETOS_POOL.length) {
+    fallo(`que-falta nivel ${c.level}: pide ${c.cantidad} objetos pero solo hay ${OBJETOS_POOL.length}`);
+  }
+});
+ok("que-falta: cantidad nunca excede el banco de objetos");
+
+validarForma("oca", OCA_LEVELS);
+OCA_LEVELS.forEach((c) => {
+  const necesarias = c.ocasCount + c.pozosCount + c.puentesPares * 2;
+  const disponibles = c.length - 2;
+  if (necesarias > disponibles) {
+    fallo(`oca nivel ${c.level}: pide ${necesarias} casillas especiales pero solo hay ${disponibles} libres`);
+  }
+});
+ok("oca: casillas especiales nunca exceden las casillas libres del tablero");
+
+validarForma("domino", DOMINO_LEVELS);
+DOMINO_LEVELS.forEach((c) => {
+  const totalFichas = (c.imagenes * (c.imagenes + 1)) / 2;
+  if (c.fichasPorJugador * 2 > totalFichas) {
+    fallo(`domino nivel ${c.level}: reparte ${c.fichasPorJugador * 2} fichas pero el mazo solo tiene ${totalFichas}`);
+  }
+});
+ok("domino: fichas repartidas nunca exceden el mazo posible para esa cantidad de imágenes");
+
+validarForma("bingo", BINGO_LEVELS);
+BINGO_LEVELS.forEach((c) => {
+  if (c.tamano * c.tamano > OBJETOS_POOL.length) {
+    fallo(`bingo nivel ${c.level}: cartón de ${c.tamano * c.tamano} celdas pero solo hay ${OBJETOS_POOL.length} imágenes`);
+  }
+});
+ok("bingo: el cartón nunca excede el banco de imágenes");
+
+validarForma("conecta4", CONECTA4_LEVELS);
+CONECTA4_LEVELS.forEach((c) => {
+  if (c.cols < 4 || c.filas < 4) {
+    fallo(`conecta4 nivel ${c.level}: tablero ${c.filas}x${c.cols} es demasiado chico para 4 en línea`);
+  }
+});
+ok("conecta4: el tablero siempre alcanza para 4 en línea");
 
 // ---------------------------------------------------------------------------
 console.log("");

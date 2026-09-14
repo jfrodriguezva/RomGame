@@ -13,10 +13,19 @@ export interface DominoLevel {
   fichasPorJugador: number;
 }
 
-export const DOMINO_LEVELS: DominoLevel[] = levels100((_, level) => ({
-  imagenes: phasedInt(level, [3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7]),
-  fichasPorJugador: phasedInt(level, [3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7]),
-}));
+export const DOMINO_LEVELS: DominoLevel[] = levels100((_, level) => {
+  const imagenes = phasedInt(level, [3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 7]);
+  // El total de fichas posibles crece con las imágenes (triangular: N(N+1)/2).
+  // La cantidad deseada por jugador nunca puede pedir más de la mitad de
+  // ese total — si no, se repite el bug real de pares-impares: pedir más
+  // banco del que existe en niveles intermedios.
+  const totalFichas = (imagenes * (imagenes + 1)) / 2;
+  const deseado = phasedInt(level, [3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7]);
+  return {
+    imagenes,
+    fichasPorJugador: Math.min(deseado, Math.floor(totalFichas / 2)),
+  };
+});
 
 export interface Ficha {
   id: number;
