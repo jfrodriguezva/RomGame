@@ -87,6 +87,7 @@ export default function MaterialTransferir<Level extends { level: number; objeti
       levels={levels.map((l) => l.level)}
       onLevel={material.setLevel}
       consigna={consigna(config)}
+      hablarConsigna
       nota={nota}
       acciones={
         <button

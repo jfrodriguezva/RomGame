@@ -82,6 +82,7 @@ export default function QueFaltaPage() {
       levels={QUE_FALTA_LEVELS.map((l) => l.level)}
       onLevel={material.setLevel}
       consigna={fase === "memorizar" ? "Memoriza la bandeja" : "¿Qué falta?"}
+      hablarConsigna
       nota={nota}
     >
       <ConfettiOverlay show={logrado} slug="que-falta" />

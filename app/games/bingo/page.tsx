@@ -84,6 +84,7 @@ export default function BingoPage() {
       levels={BINGO_LEVELS.map((l) => l.level)}
       onLevel={material.setLevel}
       consigna={config.lineaSolo ? "Completa una línea" : "Llena todo el cartón"}
+      hablarConsigna
       nota={nota}
     >
       <ConfettiOverlay show={logrado} slug="bingo" />

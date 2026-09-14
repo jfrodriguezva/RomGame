@@ -1,11 +1,12 @@
 "use client";
 
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BackHomeButton from "./BackHomeButton";
 import LevelSelector from "./LevelSelector";
 import { getGame } from "@/data/games";
 import { AREAS } from "@/lib/montessori";
+import { hablar } from "@/lib/speech";
 import type { Nota } from "@/lib/useMaterial";
 
 /**
@@ -21,6 +22,7 @@ export default function GameShell({
   levels,
   onLevel,
   consigna,
+  hablarConsigna = false,
   nota,
   children,
   acciones,
@@ -31,6 +33,11 @@ export default function GameShell({
   levels?: number[];
   onLevel?: (n: number) => void;
   consigna?: string;
+  /** Dice la consigna en voz alta cuando cambia (nuevo nivel/ronda). Solo
+   * para materiales que no manejan su propia voz — MaterialQuiz, por
+   * ejemplo, ya tiene sus propios llamados de hablar() sincronizados con
+   * las tres etapas, y hablar la consigna aquí encima sonaría doble. */
+  hablarConsigna?: boolean;
   nota?: Nota | null;
   children: ReactNode;
   acciones?: ReactNode;
@@ -38,6 +45,10 @@ export default function GameShell({
 }) {
   const game = getGame(slug);
   const area = AREAS[game?.area ?? "sensorial"];
+
+  useEffect(() => {
+    if (hablarConsigna && consigna) hablar(consigna);
+  }, [consigna, hablarConsigna]);
 
   return (
     <div className={`relative min-h-full flex-1 textura-papel ${area.tint}`}>

@@ -65,6 +65,7 @@ export default function OrificiosPage() {
       levels={ORIFICIOS_LEVELS.map((l) => l.level)}
       onLevel={material.setLevel}
       consigna="Encaja la figura en su agujero exacto"
+      hablarConsigna
       nota={nota}
     >
       <ConfettiOverlay show={logrado} slug="orificios" />

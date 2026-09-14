@@ -153,6 +153,7 @@ export default function MaterialClasificar<Level extends { level: number }, Item
       levels={levels.map((l) => l.level)}
       onLevel={material.setLevel}
       consigna={consigna(config)}
+      hablarConsigna
       nota={nota}
       acciones={
         <button

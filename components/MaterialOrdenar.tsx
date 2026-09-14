@@ -85,6 +85,7 @@ export default function MaterialOrdenar({
       levels={levels.map((l) => l.level)}
       onLevel={material.setLevel}
       consigna={config.invertido ? consignaInvertida : consigna}
+      hablarConsigna
       nota={nota}
       acciones={
         <button
