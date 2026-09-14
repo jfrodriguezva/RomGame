@@ -264,6 +264,16 @@ dispositivos propios, no para publicar en Play Store, que exige una firma de rel
 Declara un solo permiso, `INTERNET`, que Capacitor añade por omisión para su WebView. La app no
 hace peticiones de red: funciona igual en modo avión.
 
+**Si `gradlew` falla en Windows** con `Unsupported class file major version …`: el `JAVA_HOME`
+activo es más nuevo de lo que soporta Gradle 8.14.3 (probado: falla con JDK 25, funciona con
+JDK 21). Si tienes Android Studio instalado, casi siempre trae un JDK 21 propio en
+`C:\Program Files\Android\openjdk\jdk-21.0.8` — apunta `JAVA_HOME` ahí antes de compilar. Si
+además `gradlew` falla al *descargar* la distribución de Gradle con un error de certificado SSL
+(`PKIX path building failed`), descarga el zip a mano (`curl -L --ssl-no-revoke -o
+gradle-8.14.3-all.zip https://services.gradle.org/distributions/gradle-8.14.3-all.zip`) y
+colócalo en la carpeta que `gradlew` ya haya creado bajo
+`~/.gradle/wrapper/dists/gradle-8.14.3-all/<hash>/` antes de reintentar.
+
 ---
 
 ## Imágenes y sonidos propios
