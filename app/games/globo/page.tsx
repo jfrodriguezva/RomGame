@@ -13,6 +13,22 @@ interface Balloon {
   y: number;
 }
 
+/** true si algún globo llegó al piso en este tick: se usa fuera del
+ * updater para no meter efectos secundarios (sonido, reiniciar racha)
+ * dentro de una función que React puede invocar más de una vez. */
+function avanzarGlobos(prev: Balloon[], fallSpeed: number): { siguientes: Balloon[]; cayo: boolean } {
+  let cayo = false;
+  const siguientes = prev.map((b) => {
+    const next = b.y + fallSpeed;
+    if (next >= 92) {
+      cayo = true;
+      return { ...b, y: 15 };
+    }
+    return { ...b, y: next };
+  });
+  return { siguientes, cayo };
+}
+
 function balloonsIniciales(count: number): Balloon[] {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
@@ -28,6 +44,7 @@ export default function GloboPage() {
   const [taps, setTaps] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
   const streakRef = useRef(0);
+  const balloonsRef = useRef<Balloon[]>([]);
   const addStars = useProgressStore((s) => s.addStars);
   const registerPlay = useProgressStore((s) => s.registerPlay);
 
@@ -35,24 +52,22 @@ export default function GloboPage() {
     registerPlay("globo");
     // Reinicia los globos y el marcador al cambiar de nivel: sincroniza con
     // una prop que cambia, no es una derivación pura del render actual.
+    const iniciales = balloonsIniciales(config.balloonCount);
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setBalloons(balloonsIniciales(config.balloonCount));
+    setBalloons(iniciales);
+    balloonsRef.current = iniciales;
     setTaps(0);
     streakRef.current = 0;
     setBestStreak(0);
 
     const interval = setInterval(() => {
-      setBalloons((prev) =>
-        prev.map((b) => {
-          const next = b.y + config.fallSpeed;
-          if (next >= 92) {
-            playSound("wrong");
-            streakRef.current = 0;
-            return { ...b, y: 15 };
-          }
-          return { ...b, y: next };
-        })
-      );
+      const { siguientes, cayo } = avanzarGlobos(balloonsRef.current, config.fallSpeed);
+      balloonsRef.current = siguientes;
+      setBalloons(siguientes);
+      if (cayo) {
+        playSound("wrong");
+        streakRef.current = 0;
+      }
     }, TICK_MS);
 
     return () => clearInterval(interval);
@@ -68,9 +83,11 @@ export default function GloboPage() {
   }, [taps]);
 
   function handleTap(id: number) {
-    setBalloons((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, y: Math.max(b.y - config.bounceStrength, 5) } : b))
+    const siguientes = balloonsRef.current.map((b) =>
+      b.id === id ? { ...b, y: Math.max(b.y - config.bounceStrength, 5) } : b
     );
+    balloonsRef.current = siguientes;
+    setBalloons(siguientes);
     setTaps((t) => t + 1);
     streakRef.current += 1;
     setBestStreak((b) => Math.max(b, streakRef.current));
