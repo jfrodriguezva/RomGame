@@ -930,6 +930,20 @@ export const games: GameDef[] = [
     nuevo: true,
   }),
   g({
+    id: "collage",
+    slug: "collage",
+    title: "Collage libre",
+    emoji: "🖼️",
+    description: "Coloca estampas donde quieras",
+    area: "creativa",
+    edad: [2, 6],
+    material: "Collage y composición libre",
+    objetivo:
+      "Composición espacial libre y motricidad fina de precisión, narrando su propia escena sin instrucciones.",
+    libre: true,
+    nuevo: true,
+  }),
+  g({
     id: "colorear",
     slug: "colorear",
     title: "Colorear",

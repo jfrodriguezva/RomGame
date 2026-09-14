@@ -34,7 +34,7 @@ app/
   pizarra/               lienzo de dibujo libre
   padres/                progreso, ajustes y acompañamiento
   admin/                 editor de puntos para imágenes propias
-  games/<slug>/           un material por carpeta (89)
+  games/<slug>/           un material por carpeta (90)
 components/
   GameShell.tsx           marco común: header, nivel, consigna, error
   MaterialQuiz.tsx        lección de tres periodos
@@ -227,14 +227,14 @@ funcione offline como PWA.
   ajeno (React/framer-motion minificados).
 - Tiempos y umbrales en `data/levels/` calibrados a ojo, no medidos con
   usuarios reales.
-- Ninguno de los 90 materiales se ha probado interactivamente con un dedo
+- Ninguno de los 91 materiales se ha probado interactivamente con un dedo
   real en un dispositivo — todo lo verificado hasta ahora es build +
   HTTP/HTML + curvas de datos (`npm run qa`).
 - `StarReward` y `ConfettiOverlay` ya toman el color del área en los 90
   materiales con niveles (ver sección 7) — resuelto.
 - **Punto 3 del roadmap (pulido visual/sonoro) cerrado.** `app/layout.tsx`
   envuelve toda la app en `<MotionConfig reducedMotion="user">`: cada
-  animación de framer-motion, en los 90 materiales, respeta la
+  animación de framer-motion, en los 91 materiales, respeta la
   preferencia de accesibilidad del sistema con una sola edición. Ver
   `RECOVERY.md` para el detalle completo de lo que se cerró.
 

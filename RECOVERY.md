@@ -7,7 +7,7 @@ releer todo el repo desde cero.
 ## Qué es este proyecto
 
 **Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 90 materiales — 85 con 100 niveles cada uno (8 500 niveles) y 5
+años. 91 materiales — 85 con 100 niveles cada uno (8 500 niveles) y 6
 actividades libres sin niveles. Todo en español, sin conexión, sin
 cuentas, sin publicidad, sin enviar datos fuera del dispositivo. Es un
 proyecto personal (no comercial) del usuario, pensado para uso familiar.
@@ -154,14 +154,21 @@ Decisiones tomadas (no volver a preguntar esto, ya está resuelto):
 | ✍️ Lenguaje | 7 | 9-10 | **12** — por encima ✅ |
 | 🔢 Matemáticas | 5 | 7-8 | **10** — por encima ✅ |
 | 🫗 Vida práctica | 4 | 6-7 | **11** — por encima ✅ |
-| 🎨 Expresión libre | 2 | 3-4 | **3** — dentro del rango ✅ |
+| 🎨 Expresión libre | 2 | 3-4 | **4** — dentro del rango ✅ |
 | 🤝 Compañía / 🤸 Movimiento | 5 / 8 | ya nutridas | no se tocaron (Phaser, no encajan en el patrón de datos) |
 
-**✅ CERRADO por instrucción explícita del usuario ("termina").** El punto
-2 del roadmap (volumen y variedad de contenido) está completo, ampliamente
-superado, y **formalmente concluido para esta sesión** — no es una pausa,
-es un cierre. 46 → 90 materiales en total (85 con 100 niveles = 8 500
-niveles, 5 libres), en 5 rondas.
+**✅ CERRADO por instrucción explícita del usuario ("termina"), reabierto una
+vez a pedido explícito para cerrar el hueco de verdad.** El punto 2 del
+roadmap (volumen y variedad de contenido) se dio por completo tras 5
+rondas (46 → 90 materiales, ver abajo). El usuario pidió explícitamente
+retomarlo una sexta vez para construir el único candidato honesto que
+había quedado documentado (ver más abajo): **`collage` — Collage
+libre**, la interacción nueva para 🎨 Expresión libre que no encajaba en
+ningún componente reutilizable. 90 → **91 materiales** (85 con 100
+niveles = 8 500 niveles, **6 libres** — `collage` se suma a `pizarra`,
+`xilofono`, `mesa-silencio` y los otros dos existentes, sin niveles por
+diseño: imponerle una condición de "completo" a una actividad
+deliberadamente sin consigna sería forzado).
 
 **Por qué se cerró aquí y no se forzó una sexta ronda:** la ronda 5 ya
 había rendido solo 5 materiales frente a los 7-11 de las rondas
@@ -171,17 +178,18 @@ descartaron por sentirse forzadas o redundantes. Esa señal, más la
 instrucción directa de concluir, es la razón de cerrar aquí en vez de
 seguir empujando el número.
 
-**Si alguien quiere retomar esto de verdad más adelante**, el candidato
-más honesto no es "otra idea de canastas" — es una nueva forma de
-interacción para 🎨 Expresión libre (estancada en 3 desde la ronda 1:
-`pizarra`, `colorear`, `xilofono`), que no encaja en
-`MaterialQuiz`/`MaterialOrdenar`/`MaterialClasificar`/`MaterialTransferir`
-porque no es clasificación ni secuencia. Ejemplo concreto: "Collage
-libre" — colocar stickers/formas libremente en un lienzo, sin arrastrar
-(tocar para colocar, tocar para borrar). Es trabajo de ingeniería real
-(una interacción nueva), no el patrón rápido de datos + componente
-existente que rindió las 5 rondas de hoy — por eso no se intentó en esta
-sesión.
+**Construido en la ronda 6, a pedido explícito.** `app/games/collage/page.tsx`
++ `data/collage.ts` (5 categorías de estampas, 5 escenas de fondo en CSS
+puro, sin imágenes). Interacción: tocar el lienzo coloca la estampa
+elegida en ese punto (con rotación y escala aleatorias para que no se
+sientan clonadas), tocar una estampa ya puesta la quita — sin arrastrar,
+igual de simple que el sello de la pizarra. `libre: true` como
+`pizarra`/`xilofono`: sin niveles, sin meta, sin condición de "completo"
+— sería forzado imponerle una en una actividad que es, por diseño, sin
+consigna. No reutiliza `MaterialQuiz`/`MaterialOrdenar`/
+`MaterialClasificar`/`MaterialTransferir` porque ninguno modela
+"posición libre en un plano 2D"; es la única pieza de ingeniería nueva
+de las 6 rondas, no el patrón rápido de datos + componente existente.
 
 **Decisión explícita del usuario sobre cómo seguir (no volver a preguntar
 esto):** cuando se preguntó "¿en variedad ya está igual a Montessori?" la
@@ -200,7 +208,7 @@ lo pida de nuevo.
 
 **Calibración honesta sobre "superior a Montessori" (importante, no
 repetir el error):** Montessori Preschool anuncia +1000 actividades
-distintas; nosotros tenemos 90 materiales distintos (con 100 niveles de
+distintas; nosotros tenemos 91 materiales distintos (con 100 niveles de
 profundidad cada uno, que ellos probablemente no tienen de la misma
 forma). Si se cuenta "tipos de actividad distintos" (la métrica justa, la
 que ellos usan en su propio marketing), **seguimos muy por debajo**.

@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 90 materiales — 85 con
-100 niveles cada uno (8 500 en total) y 5 actividades libres, sin niveles ni
+Ambiente Montessori digital para niños de 3 a 6 años: 91 materiales — 85 con
+100 niveles cada uno (8 500 en total) y 6 actividades libres, sin niveles ni
 puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
@@ -32,7 +32,7 @@ mecánicas de videojuego.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 90 materiales
+## 3. Las áreas y los 91 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
@@ -41,7 +41,7 @@ mecánicas de videojuego.
 | ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
 | 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
 | 🌍 Cultura y naturaleza | 21 | El mundo, los seres vivos y su clasificación |
-| 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
+| 🎨 Expresión libre | 4 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
 
@@ -76,6 +76,10 @@ Montessori comerciales:
   reparte en parejas exactas?
 - **Xilófono** (`xilofono`, expresión libre) — instrumento libre; cada
   barra es el color de un área del ambiente.
+- **Collage libre** (`collage`, expresión libre) — tocar el lienzo coloca
+  una estampa (flores, animales, cielo, vehículos...), tocar una estampa
+  puesta la quita; cinco escenas de fondo para elegir. Sin arrastrar, sin
+  niveles, sin meta: composición espacial libre.
 - **Áspero o liso** (`textura`, sensorial) — las clásicas tablillas
   rugosas y lisas.
 - **Mayúsculas y minúsculas** (`mayusculas`, lenguaje) — reconocer las dos
@@ -130,8 +134,9 @@ Montessori comerciales:
 Con este material, el catálogo cubre los cinco sentidos con al menos un
 material práctico cada uno: vista, oído, olfato, gusto y tacto.
 
-Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
-juego del silencio, los marcos de vestir, el dado de retos y el xilófono.
+Seis actividades son libres a propósito y no tienen niveles: la pizarra, el
+juego del silencio, los marcos de vestir, el dado de retos, el xilófono y el
+collage libre.
 
 ## 4. La pizarra (`/pizarra`)
 

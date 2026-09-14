@@ -1,7 +1,7 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 3 a 6 años: **90 materiales** — 85 con **100 niveles
-cada uno** (8 500 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
+Un ambiente Montessori digital para niños de 3 a 6 años: **91 materiales** — 85 con **100 niveles
+cada uno** (8 500 en total) y 6 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
 de dibujo libre. Todo en español, sin conexión, sin cuentas, sin publicidad y sin enviar un solo
 dato fuera del dispositivo.
 
@@ -62,7 +62,7 @@ Los materiales están organizados como el ambiente real, por áreas y no por "ca
 | ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
 | 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
 | 🌍 Cultura y naturaleza | 21 | El mundo, los seres vivos y su clasificación |
-| 🎨 Expresión libre | 3 | Crear sin consigna, sin puntaje y sin prisa |
+| 🎨 Expresión libre | 4 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
 
