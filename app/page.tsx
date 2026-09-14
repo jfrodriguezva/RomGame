@@ -16,6 +16,7 @@ export default function Home() {
   const porJuego = useProgressStore((s) => s.games);
   const nombre = useSettings((s) => s.nombre);
   const edad = useSettings((s) => s.edad);
+  const setAjuste = useSettings((s) => s.set);
   const [areaActiva, setAreaActiva] = useState<Area | "todas">(AREA_ORDER[0]);
 
   const resumen = useMemo(() => {
@@ -53,12 +54,21 @@ export default function Home() {
               </h1>
             </div>
           </div>
-          <Link
-            href="/padres"
-            className="mt-1 rounded-2xl bg-white/80 px-3 py-2 text-xs font-bold text-stone-500 shadow-sm ring-1 ring-black/5 active:scale-95"
-          >
-            Mamá y papá
-          </Link>
+          <div className="mt-1 flex items-center gap-2">
+            <button
+              onClick={() => setAjuste("edad", null)}
+              aria-label="Cambiar edad"
+              className="rounded-2xl bg-white/80 px-3 py-2 text-xs font-bold text-stone-500 shadow-sm ring-1 ring-black/5 active:scale-95"
+            >
+              {edad} años ✏️
+            </button>
+            <Link
+              href="/padres"
+              className="rounded-2xl bg-white/80 px-3 py-2 text-xs font-bold text-stone-500 shadow-sm ring-1 ring-black/5 active:scale-95"
+            >
+              Mamá y papá
+            </Link>
+          </div>
         </header>
 
         {/* Elige tú, cuando quieras: nadie empuja al niño a una actividad. */}
