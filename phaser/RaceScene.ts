@@ -5,9 +5,12 @@ export interface RaceLevelConfig {
   obstacleEveryMs: number;
 }
 
+const RIVAL_COLORS = ["#ef4444", "#f97316", "#a855f7", "#ec4899"];
+
 export default class RaceScene extends Phaser.Scene {
   private car!: Phaser.Physics.Arcade.Sprite;
   private items!: Phaser.Physics.Arcade.Group;
+  private laneLines: Phaser.GameObjects.TileSprite[] = [];
   private moveDir = 0;
   private config: RaceLevelConfig;
   private score = 0;
@@ -19,20 +22,54 @@ export default class RaceScene extends Phaser.Scene {
   }
 
   preload() {
-    this.makeTexture("car", "#3b82f6", 46, 70);
-    this.makeTexture("rival", "#ef4444", 46, 70);
-    this.makeTexture("coin", "#facc15", 30, 30, true);
+    this.makeCarTexture("car", "#3b82f6");
+    RIVAL_COLORS.forEach((color, i) => this.makeCarTexture(`rival-${i}`, color));
+    this.makeCoinTexture("coin");
+    this.makeDashTexture("dash");
   }
 
-  private makeTexture(key: string, color: string, w: number, h: number, circle = false) {
+  /** Un coche legible (carrocería, parabrisas, luces, llantas), no un rectángulo plano. */
+  private makeCarTexture(key: string, bodyColor: string, w = 46, h = 70) {
     const g = this.add.graphics();
-    g.fillStyle(Phaser.Display.Color.HexStringToColor(color).color, 1);
-    if (circle) {
-      g.fillCircle(w / 2, h / 2, w / 2);
-    } else {
-      g.fillRoundedRect(0, 0, w, h, 10);
-    }
+    const body = Phaser.Display.Color.HexStringToColor(bodyColor).color;
+
+    g.fillStyle(0x0f172a, 1);
+    g.fillRoundedRect(-3, h * 0.16, 9, h * 0.24, 3);
+    g.fillRoundedRect(w - 6, h * 0.16, 9, h * 0.24, 3);
+    g.fillRoundedRect(-3, h * 0.6, 9, h * 0.24, 3);
+    g.fillRoundedRect(w - 6, h * 0.6, 9, h * 0.24, 3);
+
+    g.fillStyle(body, 1);
+    g.fillRoundedRect(0, 4, w, h - 8, 14);
+
+    g.fillStyle(0xdbeafe, 0.95);
+    g.fillRoundedRect(w * 0.16, h * 0.12, w * 0.68, h * 0.24, 6);
+    g.fillRoundedRect(w * 0.16, h * 0.62, w * 0.68, h * 0.16, 6);
+
+    g.fillStyle(0xfde68a, 1);
+    g.fillCircle(w * 0.2, h * 0.08, 3.5);
+    g.fillCircle(w * 0.8, h * 0.08, 3.5);
+
     g.generateTexture(key, w, h);
+    g.destroy();
+  }
+
+  private makeCoinTexture(key: string, size = 30) {
+    const g = this.add.graphics();
+    g.fillStyle(Phaser.Display.Color.HexStringToColor("#facc15").color, 1);
+    g.fillCircle(size / 2, size / 2, size / 2);
+    g.lineStyle(2, 0xb45309, 1);
+    g.strokeCircle(size / 2, size / 2, size / 2 - 2);
+    g.generateTexture(key, size, size);
+    g.destroy();
+  }
+
+  /** Línea punteada que se desplaza en `update()` para que el camino se sienta en movimiento. */
+  private makeDashTexture(key: string) {
+    const g = this.add.graphics();
+    g.fillStyle(0xcbd5e1, 1);
+    g.fillRect(0, 0, 6, 26);
+    g.generateTexture(key, 6, 46);
     g.destroy();
   }
 
@@ -40,11 +77,10 @@ export default class RaceScene extends Phaser.Scene {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    // carriles de fondo
     this.add.rectangle(width / 2, height / 2, width, height, 0x334155);
-    for (let i = 1; i < 3; i++) {
-      this.add.rectangle((width / 3) * i, height / 2, 4, height, 0x64748b);
-    }
+    this.laneLines = [1, 2].map((i) =>
+      this.add.tileSprite((width / 3) * i, height / 2, 6, height, "dash")
+    );
 
     this.car = this.physics.add.sprite(width / 2, height - 90, "car");
     this.car.setCollideWorldBounds(true);
@@ -76,14 +112,20 @@ export default class RaceScene extends Phaser.Scene {
     const lane = Phaser.Math.Between(0, 2);
     const x = width / 6 + lane * (width / 3);
     const isCoin = Math.random() < 0.55;
-    const item = this.items.create(x, -40, isCoin ? "coin" : "rival") as Phaser.Physics.Arcade.Sprite;
+    const texture = isCoin ? "coin" : `rival-${Phaser.Math.Between(0, RIVAL_COLORS.length - 1)}`;
+    const item = this.items.create(x, -40, texture) as Phaser.Physics.Arcade.Sprite;
     item.setData("type", isCoin ? "coin" : "obstacle");
     item.setVelocityY(this.config.scrollSpeed);
   }
 
-  update() {
+  update(_time: number, delta: number) {
     const speed = 260;
     this.car.setVelocityX(this.moveDir * speed);
+
+    const dy = (this.config.scrollSpeed * delta) / 1000;
+    this.laneLines.forEach((line) => {
+      line.tilePositionY -= dy;
+    });
 
     this.items.children.forEach((child) => {
       const sprite = child as Phaser.Physics.Arcade.Sprite;

@@ -33,6 +33,8 @@ export default class ToyStoryScene extends Phaser.Scene {
   private flag!: Phaser.Physics.Arcade.Sprite;
   private playerLabel!: Phaser.GameObjects.Text;
   private won = false;
+  private wasGrounded = true;
+  private idleBob?: Phaser.Tweens.Tween;
 
   constructor(character: ToyStoryCharacter, config: ToyStoryLevelConfig) {
     super("toystory");
@@ -41,11 +43,12 @@ export default class ToyStoryScene extends Phaser.Scene {
   }
 
   preload() {
-    this.makeTexture("ground", "#166534", 2000, 40);
-    this.makeTexture("platform", "#65a30d", 140, 24);
-    this.makeTexture("enemy", "#dc2626", 40, 40, true);
-    this.makeTexture("flag", "#f59e0b", 12, 60);
+    this.makeGroundTexture("ground", 2000, 40);
+    this.makePlatformTexture("platform", 140, 24);
+    this.makeEnemyTexture("enemy", 40);
+    this.makeFlagTexture("flag");
     this.makeTexture("player", this.character.color, 42, 42, true);
+    this.makeCloudTexture("cloud");
   }
 
   private makeTexture(key: string, color: string, w: number, h: number, circle = false) {
@@ -60,15 +63,93 @@ export default class ToyStoryScene extends Phaser.Scene {
     g.destroy();
   }
 
+  /** Tierra con una franja de pasto arriba, no un bloque plano de un solo color. */
+  private makeGroundTexture(key: string, w: number, h: number) {
+    const g = this.add.graphics();
+    g.fillStyle(0x92400e, 1);
+    g.fillRect(0, 10, w, h - 10);
+    g.fillStyle(0x22c55e, 1);
+    g.fillRect(0, 0, w, 14);
+    g.fillStyle(0x16a34a, 1);
+    for (let x = 0; x < w; x += 14) g.fillTriangle(x, 14, x + 7, 4, x + 14, 14);
+    g.generateTexture(key, w, h);
+    g.destroy();
+  }
+
+  private makePlatformTexture(key: string, w: number, h: number) {
+    const g = this.add.graphics();
+    g.fillStyle(0x4d7c0f, 1);
+    g.fillRoundedRect(0, 0, w, h, 8);
+    g.fillStyle(0x84cc16, 1);
+    g.fillRoundedRect(0, 0, w, 6, { tl: 8, tr: 8, bl: 0, br: 0 });
+    g.generateTexture(key, w, h);
+    g.destroy();
+  }
+
+  /** Una carita simple en vez de un círculo rojo liso: lee como personaje. */
+  private makeEnemyTexture(key: string, size: number) {
+    const g = this.add.graphics();
+    g.fillStyle(0xdc2626, 1);
+    g.fillCircle(size / 2, size / 2, size / 2);
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(size * 0.32, size * 0.42, size * 0.13);
+    g.fillCircle(size * 0.68, size * 0.42, size * 0.13);
+    g.fillStyle(0x1f2937, 1);
+    g.fillCircle(size * 0.32, size * 0.42, size * 0.06);
+    g.fillCircle(size * 0.68, size * 0.42, size * 0.06);
+    g.generateTexture(key, size, size);
+    g.destroy();
+  }
+
+  private makeFlagTexture(key: string) {
+    const w = 40;
+    const h = 60;
+    const g = this.add.graphics();
+    g.fillStyle(0x78350f, 1);
+    g.fillRect(w / 2 - 2, 0, 4, h);
+    g.fillStyle(0xf59e0b, 1);
+    g.fillTriangle(w / 2, 4, w / 2 + 28, 12, w / 2, 24);
+    g.generateTexture(key, w, h);
+    g.destroy();
+  }
+
+  private makeCloudTexture(key: string) {
+    const w = 90;
+    const h = 40;
+    const g = this.add.graphics();
+    g.fillStyle(0xffffff, 0.9);
+    g.fillCircle(28, 24, 18);
+    g.fillCircle(50, 16, 16);
+    g.fillCircle(66, 24, 14);
+    g.fillRoundedRect(14, 22, 62, 14, 10);
+    g.generateTexture(key, w, h);
+    g.destroy();
+  }
+
   create() {
     this.won = false;
     this.hp = MAX_HP;
     this.lastHitAt = 0;
     this.lastInputAt = this.time.now;
+    this.wasGrounded = true;
 
     const worldWidth = 1400;
     const groundY = 460;
     this.physics.world.setBounds(0, 0, worldWidth, 500);
+
+    // Cielo con degradado, sol fijo en la cámara y nubes que se desplazan
+    // más lento que el mundo: sin esto la escena se sentía inmóvil salvo
+    // por el jugador.
+    const sky = this.add.graphics().setScrollFactor(0);
+    sky.fillGradientStyle(0x7dd3fc, 0x7dd3fc, 0xe0f2fe, 0xe0f2fe, 1);
+    sky.fillRect(0, 0, this.scale.width, this.scale.height);
+    this.add.circle(this.scale.width - 44, 44, 22, 0xfde68a).setScrollFactor(0);
+    for (let i = 0; i < 6; i++) {
+      this.add
+        .image(120 + i * 260, 60 + (i % 3) * 40, "cloud")
+        .setScrollFactor(0.35)
+        .setAlpha(0.85);
+    }
 
     const platforms = this.physics.add.staticGroup();
     platforms.create(worldWidth / 2, groundY, "ground").setScale(worldWidth / 2000, 1).refreshBody();
@@ -85,6 +166,7 @@ export default class ToyStoryScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(5);
     this.physics.add.collider(this.player, platforms);
+    this.startIdleBob();
 
     this.enemies = this.physics.add.group();
     for (let i = 0; i < this.config.enemyCount; i++) {
@@ -95,6 +177,16 @@ export default class ToyStoryScene extends Phaser.Scene {
       enemy.setCollideWorldBounds(true);
       enemy.setData("minX", x - 90);
       enemy.setData("maxX", x + 90);
+      this.tweens.add({
+        targets: enemy,
+        scaleY: 0.85,
+        scaleX: 1.1,
+        duration: 260,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut",
+        delay: i * 120,
+      });
     }
     this.physics.add.collider(this.enemies, platforms);
     this.physics.add.overlap(this.player, this.enemies, () => this.handleHit());
@@ -102,11 +194,33 @@ export default class ToyStoryScene extends Phaser.Scene {
     this.flag = this.physics.add.sprite(worldWidth - 60, groundY - 60, "flag");
     this.flag.setImmovable(true);
     this.physics.add.overlap(this.player, this.flag, () => this.handleWin());
+    this.tweens.add({
+      targets: this.flag,
+      angle: 8,
+      duration: 700,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
 
     this.cameras.main.setBounds(0, 0, worldWidth, 500);
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
 
     this.game.events.emit("hp", this.hp);
+  }
+
+  private startIdleBob() {
+    this.idleBob?.stop();
+    this.player.setScale(1, 1);
+    this.idleBob = this.tweens.add({
+      targets: this.player,
+      scaleY: 1.06,
+      scaleX: 0.96,
+      duration: 480,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.easeInOut",
+    });
   }
 
   private handleHit() {
@@ -135,6 +249,8 @@ export default class ToyStoryScene extends Phaser.Scene {
       return;
     }
 
+    const grounded = !!this.player.body?.blocked.down;
+
     const speed = 190;
     let moving = false;
     if (this.cursors.left) {
@@ -149,10 +265,28 @@ export default class ToyStoryScene extends Phaser.Scene {
       this.player.setVelocityX(0);
     }
 
-    if (this.cursors.jump && this.player.body?.blocked.down) {
+    if (this.cursors.jump && grounded) {
       this.player.setVelocityY(-360);
       moving = true;
     }
+
+    // Estirón al saltar, aplastón al aterrizar: sin esto los saltos se
+    // sentían como un simple teletransporte hacia arriba y abajo.
+    if (!grounded) {
+      this.idleBob?.pause();
+      this.player.setScale(0.85, 1.2);
+    } else if (!this.wasGrounded) {
+      this.player.setScale(1.2, 0.82);
+      this.tweens.add({
+        targets: this.player,
+        scaleX: 1,
+        scaleY: 1,
+        duration: 160,
+        ease: "Back.easeOut",
+        onComplete: () => this.startIdleBob(),
+      });
+    }
+    this.wasGrounded = grounded;
 
     if (moving) this.lastInputAt = time;
 

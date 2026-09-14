@@ -95,9 +95,14 @@ export default function LavaPage() {
     stateRef.current = "air";
     setPlayerState("air");
     playSound("click");
+    // La baldosa a revisar es siempre "la siguiente", por índice, nunca por
+    // cuánto haya avanzado el scroll durante la animación: a velocidad baja
+    // JUMP_MS no alcanza a recorrer un ancho de baldosa completo, así que
+    // comprobar por tiempo transcurrido hacía perder el salto casi siempre.
+    const tileIndex =
+      Math.floor((scrollRef.current + PLAYER_X) / TILE_WIDTH) + 1;
     setTimeout(() => {
       if (stateRef.current !== "air") return;
-      const tileIndex = Math.floor((scrollRef.current + PLAYER_X) / TILE_WIDTH);
       const isSafe = track[tileIndex] ?? true;
       if (isSafe) {
         stateRef.current = "ground";

@@ -7,11 +7,24 @@ import { GLOBO_LEVELS, TICK_MS } from "@/data/levels/globo";
 import { playSound } from "@/lib/audio";
 import { useProgressStore } from "@/lib/progressStore";
 
+interface Balloon {
+  id: number;
+  x: number;
+  y: number;
+}
+
+function balloonsIniciales(count: number): Balloon[] {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    x: ((i + 1) / (count + 1)) * 100,
+    y: 20,
+  }));
+}
+
 export default function GloboPage() {
   const [level, setLevel] = useState(1);
   const config = GLOBO_LEVELS.find((l) => l.level === level)!;
-  const [y, setY] = useState(20);
-  const [x] = useState(50);
+  const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [taps, setTaps] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
   const streakRef = useRef(0);
@@ -20,29 +33,31 @@ export default function GloboPage() {
 
   useEffect(() => {
     registerPlay("globo");
-    // Reinicia la altura y el marcador al cambiar de nivel: sincroniza con
+    // Reinicia los globos y el marcador al cambiar de nivel: sincroniza con
     // una prop que cambia, no es una derivación pura del render actual.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setY(20);
+    setBalloons(balloonsIniciales(config.balloonCount));
     setTaps(0);
     streakRef.current = 0;
     setBestStreak(0);
 
     const interval = setInterval(() => {
-      setY((prev) => {
-        const next = prev + config.fallSpeed;
-        if (next >= 92) {
-          playSound("wrong");
-          streakRef.current = 0;
-          return 15;
-        }
-        return next;
-      });
+      setBalloons((prev) =>
+        prev.map((b) => {
+          const next = b.y + config.fallSpeed;
+          if (next >= 92) {
+            playSound("wrong");
+            streakRef.current = 0;
+            return { ...b, y: 15 };
+          }
+          return { ...b, y: next };
+        })
+      );
     }, TICK_MS);
 
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [level]);
+  }, [level, config.balloonCount]);
 
   useEffect(() => {
     if (taps > 0 && taps % 15 === 0) {
@@ -52,8 +67,10 @@ export default function GloboPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taps]);
 
-  function handleTap() {
-    setY((prev) => Math.max(prev - config.bounceStrength, 5));
+  function handleTap(id: number) {
+    setBalloons((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, y: Math.max(b.y - config.bounceStrength, 5) } : b))
+    );
     setTaps((t) => t + 1);
     streakRef.current += 1;
     setBestStreak((b) => Math.max(b, streakRef.current));
@@ -68,7 +85,10 @@ export default function GloboPage() {
           🎈 El globo volador
         </h1>
         <p className="mb-4 text-center text-slate-500">
-          Toques: {taps} · Mejor racha: {bestStreak}
+          {config.balloonCount === 1
+            ? "No dejes caer el globo"
+            : `No dejes caer ninguno de los ${config.balloonCount} globos`}{" "}
+          · Toques: {taps} · Mejor racha: {bestStreak}
         </p>
         <div className="mb-4">
           <LevelSelector
@@ -80,14 +100,17 @@ export default function GloboPage() {
         </div>
       </main>
       <div className="relative mx-auto h-[50vh] max-w-2xl">
-        <button
-          onClick={handleTap}
-          className="absolute -translate-x-1/2 -translate-y-1/2 text-7xl drop-shadow-lg transition-[top] duration-75 ease-linear"
-          style={{ left: `${x}%`, top: `${y}%` }}
-          aria-label="globo"
-        >
-          🎈
-        </button>
+        {balloons.map((b) => (
+          <button
+            key={b.id}
+            onClick={() => handleTap(b.id)}
+            className="absolute -translate-x-1/2 -translate-y-1/2 text-7xl drop-shadow-lg transition-[top] duration-75 ease-linear"
+            style={{ left: `${b.x}%`, top: `${b.y}%` }}
+            aria-label="globo"
+          >
+            🎈
+          </button>
+        ))}
         <div className="absolute inset-x-0 bottom-0 h-3 rounded-full bg-emerald-300" />
       </div>
     </div>

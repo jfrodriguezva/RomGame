@@ -226,19 +226,26 @@ export default function AranaPage() {
       return;
     }
 
-    const newTrail = [...trail, { r, c }];
-    setTrail(newTrail);
-
-    if (newTrail.length >= 3 && neighborsSafe(r, c)) {
-      setRevealed((prev) => floodReveal(newTrail, prev, config.rows, config.cols));
-      setTrail([]);
-      setDragging(false);
-      playSound("correct");
-    }
+    setTrail((prev) => [...prev, { r, c }]);
   }
 
+  /**
+   * El cierre del lazo pasa al soltar el dedo, no a media arrastrada: así
+   * se puede trazar un contorno grande de un solo gesto (como recorrer con
+   * el dedo el borde de un dibujo) en vez de que el primer roce con una
+   * celda revelada corte el trazo a los 3 primeros pasos.
+   */
   function endDrag() {
+    const finalTrail = trailRef.current;
     setDragging(false);
+    draggingRef.current = false;
+    if (finalTrail.length >= 3) {
+      const last = finalTrail[finalTrail.length - 1];
+      if (neighborsSafe(last.r, last.c)) {
+        setRevealed((prev) => floodReveal(finalTrail, prev, config.rows, config.cols));
+        playSound("correct");
+      }
+    }
     setTrail([]);
   }
 
@@ -263,7 +270,8 @@ export default function AranaPage() {
           🕷️ La araña pintora
         </h1>
         <p className="mb-2 text-center text-slate-500">
-          Cuidado con la araña mala 🕸️ — si toca tu trazo, pierdes una vida
+          Arrastra desde una celda brillante ✨ y suelta cerca del borde para
+          descubrir el dibujo — cuidado con la araña mala 🕸️
         </p>
         <p className="mb-3 text-lg">
           {"❤️".repeat(lives)}
@@ -304,6 +312,11 @@ export default function AranaPage() {
               row.map((isRevealed, c) => {
                 const inTrail = trail.some((t) => t.r === r && t.c === c);
                 const hasEnemy = enemies.some((e) => e.r === r && e.c === c);
+                // Pista visual de dónde se puede empezar a arrastrar: sin
+                // esto, un niño que no lee no tiene forma de adivinar que
+                // el trazo solo puede nacer junto al borde ya revelado.
+                const puedeIniciar =
+                  !dragging && !isRevealed && !hasEnemy && neighborsSafe(r, c);
                 return (
                   <div
                     key={`${r}-${c}`}
@@ -315,7 +328,9 @@ export default function AranaPage() {
                         ? "pointer-events-none flex items-center justify-center bg-transparent"
                         : inTrail
                           ? "flex items-center justify-center border border-white/40 bg-amber-300/90"
-                          : "flex items-center justify-center border border-white/40 bg-indigo-300"
+                          : puedeIniciar
+                            ? "flex animate-pulse items-center justify-center border border-white/40 bg-indigo-300 ring-2 ring-white"
+                            : "flex items-center justify-center border border-white/40 bg-indigo-300"
                     }
                   >
                     {hasEnemy && <span className="text-sm">🕷️</span>}
