@@ -168,6 +168,31 @@ tiempo Next corre como servidor normal.
 
 El APK resultante es de **debug**, firmado con la clave de depuración de
 Android — no sirve para publicar en Play Store (exige firma de release).
+`android/app/build/` está en `.gitignore` (regla `build/` en
+`android/.gitignore`): el APK compilado **nunca se commitea**, se
+regenera cada vez (local o en CI). Para dárselo a alguien fuera del
+repo, hay que compilarlo y entregarlo aparte — no está "en el repo" en
+ningún commit.
+
+**Compilar en Windows local (fuera de CI) puede toparse con dos problemas
+del entorno, no del código** — verificado en esta sesión:
+
+1. `gradlew` falla al *descargar* la distribución de Gradle con
+   `PKIX path building failed` (el JDK activo no valida el certificado de
+   `services.gradle.org`, aunque `openssl s_client` sí lo valida bien —
+   no es un proxy corporativo inyectando certificados falsos, es la
+   cadena de confianza del JDK). Arreglo: descargar el zip a mano
+   (`curl -L --ssl-no-revoke -o gradle-8.14.3-all.zip
+   https://services.gradle.org/distributions/gradle-8.14.3-all.zip`) y
+   colocarlo en la carpeta que `gradlew` ya creó bajo
+   `~/.gradle/wrapper/dists/gradle-8.14.3-all/<hash>/` antes de
+   reintentar.
+2. Una vez resuelto lo anterior, `gradlew` puede fallar con
+   `Unsupported class file major version 69` si `JAVA_HOME` apunta a un
+   JDK más nuevo de lo que soporta Gradle 8.14.3 (probado: falla con
+   JDK 25, funciona con JDK 21 — el mismo que ya usa CI, ver sección 10).
+   Si hay Android Studio instalado, casi siempre trae uno propio en
+   `C:\Program Files\Android\openjdk\jdk-21.0.8`.
 
 ## 10. CI en GitHub Actions
 

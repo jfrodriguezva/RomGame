@@ -488,4 +488,19 @@ conversación (no en este archivo, para no comprometerse con ideas que el
 usuario todavía no aprobó). Si se retoma en otra sesión sin ese contexto,
 preguntar directamente qué tipo de juego de mesa le interesa antes de
 construir nada — la ronda 5 (ver arriba) ya mostró el costo de generar
-contenido sin esa validación previa.
+contenido sin esa validación previa. Las opciones ofrecidas fueron:
+Cuatro en línea, El juego de la oca, Dominó de imágenes, Bingo con
+imágenes, Memoria por turnos (2 jugadores vs. CPU) y ¿Qué falta? (Kim's
+Game). Ninguna se construyó.
+
+**Los 16 commits de esta ronda ya están en `origin/main`** (push
+confirmado, sin conflictos). El usuario también pidió el APK para
+probarlo en otro equipo: se compiló localmente y se entregó con
+`SendUserFile` (no vive en el repo — `android/app/build/` está en
+`.gitignore`, ver `docs/MANUAL-TECNICO.md` sección 9 para el detalle
+completo del build y los dos problemas de entorno que salieron al
+compilar en Windows: descarga de Gradle bloqueada por validación SSL
+del JDK, y luego `JAVA_HOME` apuntando a un JDK demasiado nuevo — 25 en
+vez de los 21 que ya usa CI). El workflow `build-apk.yml` también corre
+solo en cada push a `main` y deja el APK como artefacto descargable en
+la pestaña Actions de GitHub, sin necesitar compilar local.
