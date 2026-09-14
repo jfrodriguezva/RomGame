@@ -1029,6 +1029,18 @@ export const games: GameDef[] = [
     nuevo: true,
   }),
   g({
+    id: "conecta4",
+    slug: "conecta4",
+    title: "Cuatro en línea",
+    emoji: "🔵",
+    description: "Alinea cuatro fichas antes que la computadora",
+    area: "compania",
+    edad: [4, 6],
+    material: "Juego de mesa",
+    objetivo: "Planeación simple y anticipar la jugada del otro, aceptando ganar o perder.",
+    nuevo: true,
+  }),
+  g({
     id: "serpientes",
     slug: "serpientes",
     title: "Serpientes y escaleras",
