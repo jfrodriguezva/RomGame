@@ -15,7 +15,6 @@ import { LEVEL_COUNT } from "../lib/levels";
 
 import { CICLO_VIDA_LEVELS } from "../data/levels/ciclo-vida";
 import { SISTEMA_SOLAR_LEVELS } from "../data/levels/sistema-solar";
-import { DOBLAR_LEVELS } from "../data/levels/doblar";
 import { SILABAS_LEVELS, palabrasPara } from "../data/levels/silabas";
 import { EL_LA_LEVELS, PALABRAS_GENERO } from "../data/levels/el-la";
 import { PARES_IMPARES_LEVELS, cantidadesPara } from "../data/levels/pares-impares";
@@ -35,7 +34,6 @@ import { DIETA_ANIMAL_LEVELS, ANIMALES_DIETA } from "../data/levels/dieta-animal
 import { ESTADOS_AGUA_LEVELS, COSAS_ESTADO } from "../data/levels/estados-agua";
 import { PESO_LEVELS, COSAS_PESO } from "../data/levels/peso";
 import { SABOR_LEVELS, COSAS_SABOR } from "../data/levels/sabor";
-import { CLIMA_LEVELS, ROPA_CLIMA } from "../data/levels/clima";
 import { RUTINA_LEVELS } from "../data/levels/rutina";
 import { HABITAT_LEVELS, animalesPara } from "../data/levels/habitat";
 import { FRUTA_VERDURA_LEVELS, ALIMENTOS } from "../data/levels/fruta-verdura";
@@ -102,12 +100,6 @@ SISTEMA_SOLAR_LEVELS.forEach((c) => {
   if (c.cantidad < 1 || c.cantidad > 8) fallo(`sistema-solar nivel ${c.level}: cantidad fuera de 1-8 (${c.cantidad})`);
 });
 ok("sistema-solar: cantidad siempre 1-8");
-
-validarForma("doblar", DOBLAR_LEVELS);
-DOBLAR_LEVELS.forEach((c) => {
-  if (c.cantidad < 1 || c.cantidad > 4) fallo(`doblar nivel ${c.level}: cantidad fuera de 1-4 (${c.cantidad})`);
-});
-ok("doblar: cantidad siempre 1-4");
 
 validarForma("silabas", SILABAS_LEVELS);
 SILABAS_LEVELS.forEach((c) => {
@@ -253,12 +245,6 @@ SABOR_LEVELS.forEach((c) => {
   if (c.cantidad > COSAS_SABOR.length) fallo(`sabor nivel ${c.level}: pide ${c.cantidad} pero solo hay ${COSAS_SABOR.length}`);
 });
 ok("sabor: cantidad nunca excede el banco de cosas");
-
-validarForma("clima", CLIMA_LEVELS);
-CLIMA_LEVELS.forEach((c) => {
-  if (c.cantidad > ROPA_CLIMA.length) fallo(`clima nivel ${c.level}: pide ${c.cantidad} pero solo hay ${ROPA_CLIMA.length}`);
-});
-ok("clima: cantidad nunca excede el banco de ropa");
 
 validarForma("rutina", RUTINA_LEVELS);
 RUTINA_LEVELS.forEach((c) => {
