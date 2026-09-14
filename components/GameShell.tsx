@@ -63,11 +63,22 @@ export default function GameShell({
         </div>
       </header>
 
-      {consigna && (
-        <p className="mx-auto mt-3 max-w-md px-6 text-center text-base font-bold text-stone-600">
-          {consigna}
-        </p>
-      )}
+      {/* Entra con un fundido suave cada vez que cambia el texto: la
+          consigna nueva de cada ronda se siente como un paso, no un salto. */}
+      <AnimatePresence mode="wait">
+        {consigna && (
+          <motion.p
+            key={consigna}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.25 }}
+            className="mx-auto mt-3 max-w-md px-6 text-center text-base font-bold text-stone-600"
+          >
+            {consigna}
+          </motion.p>
+        )}
+      </AnimatePresence>
 
       <main className={`mx-auto w-full ${ancho} px-4 pb-28 pt-3`}>{children}</main>
 

@@ -17,7 +17,7 @@ export default function RpsPage() {
   const [cpuChoice, setCpuChoice] = useState<RpsChoice | null>(null);
   const [result, setResult] = useState<"win" | "lose" | "draw" | null>(null);
   const [history, setHistory] = useState<Record<RpsChoice, number>>({ piedra: 0, papel: 0, tijera: 0 });
-  const [wins, setWins] = useState(0);
+  const [, setWins] = useState(0);
   const [showWin, setShowWin] = useState(false);
   const addStars = useProgressStore((s) => s.addStars);
   const registerPlay = useProgressStore((s) => s.registerPlay);
@@ -52,7 +52,6 @@ export default function RpsPage() {
 
     setTimeout(() => {
       const playerDef = RPS_CHOICES.find((c) => c.id === choice)!;
-      const cpuDef = RPS_CHOICES.find((c) => c.id === cpu)!;
       let outcome: "win" | "lose" | "draw";
       if (choice === cpu) outcome = "draw";
       else if (playerDef.beats === cpu) outcome = "win";

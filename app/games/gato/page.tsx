@@ -44,7 +44,7 @@ export default function GatoPage() {
   const config = GATO_LEVELS.find((l) => l.level === level)!;
   const [board, setBoard] = useState<Cell[]>(Array(9).fill(null));
   const [turn, setTurn] = useState<"player" | "cpu">("player");
-  const [wins, setWins] = useState(0);
+  const [, setWins] = useState(0);
   const [showWin, setShowWin] = useState(false);
   const [message, setMessage] = useState("Tu turno");
   const addStars = useProgressStore((s) => s.addStars);
