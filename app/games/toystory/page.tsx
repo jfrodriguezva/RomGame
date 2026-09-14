@@ -132,7 +132,7 @@ export default function ToyStoryPage() {
 
         <div
           ref={containerRef}
-          className="mb-4 overflow-hidden rounded-3xl shadow-xl"
+          className="mb-4 touch-none overflow-hidden rounded-3xl shadow-xl"
           style={{ width: 360, maxWidth: "100%" }}
         />
 
@@ -142,7 +142,7 @@ export default function ToyStoryPage() {
               onPointerDown={() => press("left", true)}
               onPointerUp={() => press("left", false)}
               onPointerLeave={() => press("left", false)}
-              className="flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-500 text-2xl text-white shadow active:scale-90"
+              className="flex h-16 w-16 touch-none select-none items-center justify-center rounded-2xl bg-orange-500 text-2xl text-white shadow active:scale-90"
             >
               ⬅️
             </button>
@@ -150,7 +150,7 @@ export default function ToyStoryPage() {
               onPointerDown={() => press("right", true)}
               onPointerUp={() => press("right", false)}
               onPointerLeave={() => press("right", false)}
-              className="flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-500 text-2xl text-white shadow active:scale-90"
+              className="flex h-16 w-16 touch-none select-none items-center justify-center rounded-2xl bg-orange-500 text-2xl text-white shadow active:scale-90"
             >
               ➡️
             </button>
@@ -159,7 +159,7 @@ export default function ToyStoryPage() {
             onPointerDown={() => press("jump", true)}
             onPointerUp={() => press("jump", false)}
             onPointerLeave={() => press("jump", false)}
-            className="flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-500 text-2xl text-white shadow active:scale-90"
+            className="flex h-16 w-16 touch-none select-none items-center justify-center rounded-2xl bg-sky-500 text-2xl text-white shadow active:scale-90"
           >
             ⬆️
           </button>

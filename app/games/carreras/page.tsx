@@ -107,7 +107,7 @@ export default function CarrerasPage() {
 
         <div
           ref={containerRef}
-          className="mb-4 overflow-hidden rounded-3xl shadow-xl"
+          className="mb-4 touch-none overflow-hidden rounded-3xl shadow-xl"
           style={{ width: 360, maxWidth: "100%" }}
         />
 
@@ -116,7 +116,7 @@ export default function CarrerasPage() {
             onPointerDown={() => sceneRef.current?.setDirection(-1)}
             onPointerUp={() => sceneRef.current?.setDirection(0)}
             onPointerLeave={() => sceneRef.current?.setDirection(0)}
-            className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500 text-3xl text-white shadow active:scale-90"
+            className="flex h-16 w-16 touch-none select-none items-center justify-center rounded-2xl bg-blue-500 text-3xl text-white shadow active:scale-90"
           >
             ⬅️
           </button>
@@ -124,7 +124,7 @@ export default function CarrerasPage() {
             onPointerDown={() => sceneRef.current?.setDirection(1)}
             onPointerUp={() => sceneRef.current?.setDirection(0)}
             onPointerLeave={() => sceneRef.current?.setDirection(0)}
-            className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500 text-3xl text-white shadow active:scale-90"
+            className="flex h-16 w-16 touch-none select-none items-center justify-center rounded-2xl bg-blue-500 text-3xl text-white shadow active:scale-90"
           >
             ➡️
           </button>

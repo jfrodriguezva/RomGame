@@ -63,7 +63,10 @@ export default function LaberintoPage() {
     playSound("click");
   }
 
-  const cellPx = config.size >= 8 ? 32 : config.size >= 6 ? 40 : 52;
+  // El ancho del tablero se limita a ~336px (cabe en cualquier pantalla de
+  // teléfono) y la celda crece hasta ese límite: en los niveles chicos
+  // (tamaño 4-6) el laberinto se ve mucho más grande que antes.
+  const cellPx = Math.max(16, Math.min(72, Math.floor(336 / config.size)));
 
   return (
     <div className="min-h-full flex-1 bg-gradient-to-b from-emerald-100 via-white to-white pb-10">

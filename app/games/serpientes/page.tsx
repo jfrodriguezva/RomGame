@@ -66,47 +66,58 @@ export default function SerpientesPage() {
     }, 70);
   }
 
+  /**
+   * Antes esto vivía dentro del updater de setState (`setPos(prev => {...
+   * setTimeout(...) ...})`), lo cual es un efecto secundario dentro de una
+   * función que React puede invocar más de una vez (p. ej. en modo
+   * estricto de desarrollo) — el turno avanzaba doble, los sonidos sonaban
+   * doble y el CPU y el jugador se desincronizaban. Ahora movePlayer solo
+   * se llama desde un evento (nunca durante el render), así que lee la
+   * posición actual directo y hace los efectos una sola vez, fuera del
+   * setState.
+   */
   function movePlayer(who: "player" | "cpu", steps: number) {
-    const setPos = who === "player" ? setPlayerPos : setCpuPos;
-    setPos((prev) => {
-      const target = Math.min(config.length, prev + steps);
-      const afterLink = applyLink(target);
-      const link = links.get(target);
-      if (link) {
-        setTimeout(() => {
-          playSound(link.type === "ladder" ? "win" : "wrong");
-        }, 300);
-      }
+    const prev = who === "player" ? playerPos : cpuPos;
+    const target = Math.min(config.length, prev + steps);
+    const link = links.get(target);
+    const afterLink = applyLink(target);
 
-      if (afterLink >= config.length) {
-        setTimeout(() => {
-          if (who === "player") {
-            playSound("win");
-            setMessage("¡Llegaste a la meta! 🏆");
-            addStars("serpientes", 1);
-            setShowWin(true);
-            setTimeout(() => {
-              setShowWin(false);
-              resetGame();
-            }, 1800);
-          } else {
-            setMessage("La computadora llegó primero, ¡otra vez!");
-            setTimeout(resetGame, 1800);
-          }
-        }, 400);
-      } else {
-        setTimeout(() => {
-          if (who === "player") {
-            setTurn("cpu");
-            setMessage("Turno de la computadora");
-          } else {
-            setTurn("player");
-            setMessage("¡Tu turno!");
-          }
-        }, 400);
-      }
-      return afterLink;
-    });
+    if (who === "player") setPlayerPos(afterLink);
+    else setCpuPos(afterLink);
+
+    if (link) {
+      setTimeout(() => {
+        playSound(link.type === "ladder" ? "win" : "wrong");
+      }, 300);
+    }
+
+    if (afterLink >= config.length) {
+      setTimeout(() => {
+        if (who === "player") {
+          playSound("win");
+          setMessage("¡Llegaste a la meta! 🏆");
+          addStars("serpientes", 1);
+          setShowWin(true);
+          setTimeout(() => {
+            setShowWin(false);
+            resetGame();
+          }, 1800);
+        } else {
+          setMessage("La computadora llegó primero, ¡otra vez!");
+          setTimeout(resetGame, 1800);
+        }
+      }, 400);
+    } else {
+      setTimeout(() => {
+        if (who === "player") {
+          setTurn("cpu");
+          setMessage("Turno de la computadora");
+        } else {
+          setTurn("player");
+          setMessage("¡Tu turno!");
+        }
+      }, 400);
+    }
   }
 
   useEffect(() => {
@@ -117,7 +128,10 @@ export default function SerpientesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turn]);
 
-  const cellPx = config.length > 45 ? 40 : 48;
+  // El tablero siempre tiene 6 columnas, así que no hace falta encoger la
+  // celda en niveles largos (solo crecen las filas) — una sola celda
+  // grande cabe en cualquier pantalla y se ve mejor que antes.
+  const cellPx = 54;
   const rows = Math.ceil(config.length / config.cols);
 
   return (

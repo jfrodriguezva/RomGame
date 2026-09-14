@@ -258,7 +258,12 @@ export default function AranaPage() {
     return { r: Number(r), c: Number(c) };
   }
 
-  const cellPx = config.cols >= 10 ? 28 : config.cols >= 8 ? 34 : config.cols >= 6 ? 42 : 50;
+  // El tamaño de celda se calcula por el lado más grande de la cuadrícula,
+  // no un valor fijo: así el tablero se ve grande en todos los niveles sin
+  // desbordar la pantalla en los niveles más grandes (hasta 16 columnas).
+  const ladoMayor = Math.max(config.rows, config.cols);
+  const cellPx =
+    ladoMayor <= 4 ? 64 : ladoMayor <= 6 ? 52 : ladoMayor <= 8 ? 42 : ladoMayor <= 10 ? 34 : ladoMayor <= 13 ? 26 : 21;
 
   return (
     <div className="min-h-full flex-1 bg-gradient-to-b from-purple-100 via-white to-white pb-10">
