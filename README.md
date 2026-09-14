@@ -1,6 +1,6 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 2 a 6 años: **90 materiales** — 85 con **100 niveles
+Un ambiente Montessori digital para niños de 2 a 6 años: **96 materiales** — 91 con **100 niveles
 cada uno** (8 500 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
 de dibujo libre. Se elige la edad del niño antes de ver el menú, para no mezclar contenido de
 lectoescritura con materiales de 2-3 años. Todo en español, sin conexión, sin cuentas, sin
@@ -69,7 +69,7 @@ Los materiales están organizados como el ambiente real, por áreas y no por "ca
 | 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
 | 🌍 Cultura y naturaleza | 22 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 4 | Crear sin consigna, sin puntaje y sin prisa |
-| 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
+| 🤝 Juegos en compañía | 11 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
 
 ### Materiales nuevos en esta versión
@@ -144,6 +144,18 @@ variedad de la app a la de las aplicaciones Montessori comerciales más conocida
 - **Toca la cara** — nomenclatura de la cara tocando directo sobre el dibujo, no eligiendo de una
   lista.
 - **Encaja la figura** — encajes de formas geométricas: la pieza solo entra en su agujero exacto.
+
+**Seis juegos de mesa nuevos**, todos contra la computadora:
+
+- **Memoria por turnos** — versión competitiva del memorama; la computadora recuerda las cartas
+  que ya se voltearon y las usa si le conviene.
+- **¿Qué falta?** — el juego de Kim: memorizar una bandeja de objetos, uno desaparece, decir cuál
+  era.
+- **El juego de la oca** — como serpientes y escaleras pero con tres efectos de casilla: oca (tira
+  otra vez), puente (salta adelante) y pozo (retrocede unos pasos).
+- **Dominó de imágenes** — fichas por dibujo, no por número; la fila solo crece hacia la derecha.
+- **Bingo con imágenes** — se anuncia un dibujo con voz, se busca y se marca en el cartón.
+- **Cuatro en línea** — alinear cuatro fichas antes que la computadora, que sabe ganar y bloquear.
 
 ---
 

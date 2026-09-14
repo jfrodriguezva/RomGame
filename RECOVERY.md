@@ -6,11 +6,11 @@ releer todo el repo desde cero.
 
 ## Qué es este proyecto
 
-**Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 90 materiales — 85 con 100 niveles cada uno (8 500 niveles) y 5
+**Mi Ambiente** — ambiente Montessori digital offline para niños de 2 a 6
+años. 96 materiales — 91 con 100 niveles cada uno (9 100 niveles) y 5
 actividades libres sin niveles. La primera pantalla pide la edad del niño
 (2 a 6 años) antes del menú y filtra el catálogo por ella — ver "Ronda 7"
-más abajo. Todo en español, sin conexión, sin
+y "Ronda 8" más abajo. Todo en español, sin conexión, sin
 cuentas, sin publicidad, sin enviar datos fuera del dispositivo. Es un
 proyecto personal (no comercial) del usuario, pensado para uso familiar.
 
@@ -349,6 +349,81 @@ agente de código.
    build real que usa el APK) — no solo el dev server.
 6. Actualizar conteos en `README.md`, `docs/MANUAL-USUARIO.md`,
    `docs/MANUAL-TECNICO.md` y este archivo.
+
+## Ronda 8: los 3 puntos pendientes de la ronda 7 (juegos de mesa, voz, globo)
+
+Continuación directa de la ronda 7: el usuario pidió generar los puntos
+2, 4 y 5 que habían quedado pendientes ahí, más los manuales
+correspondientes. 90 → **96 materiales** (91 con niveles, 9 100 niveles
+totales; 5 libres, sin cambio).
+
+**Punto 5 — bug de `globo` (mismo patrón que `serpientes`).** `setBalloons`
+tenía `playSound` y el reinicio de racha dentro del updater de `setState`
+en el intervalo de caída — el mismo efecto secundario en una función que
+React puede invocar más de una vez que causó el bug real de `serpientes`
+en la ronda 7. Se movió el cálculo (`avanzarGlobos`) fuera del updater.
+**`burbujas` se revisó también y, a diferencia de lo anotado en la ronda
+7, no tiene este patrón** — `popBubble` no mete ningún efecto dentro de
+un updater; no necesitaba arreglo.
+
+**Punto 2 — las 6 opciones de juegos de mesa ofrecidas en la ronda 7, sin
+excepción, todas construidas** (área `compania`, que pasó de 5 a 11
+materiales):
+
+- `memoria-turnos` — memorama competitivo con CPU que recuerda cartas ya
+  vistas (incluidas las del jugador) y las usa si le conviene.
+- `que-falta` — el juego de Kim: bandeja de objetos, uno desaparece, se
+  adivina cuál. Solo crece la cantidad de objetos, nunca el tiempo para
+  memorizar.
+- `oca` — como `serpientes` pero con tres efectos de casilla (oca = tira
+  otra vez, puente = salta adelante en pares, pozo = retrocede sin
+  llegar nunca al inicio). Reutiliza el `movePlayer` ya corregido en
+  `serpientes` (sin efectos dentro del updater).
+- `domino` — dominó de imágenes simplificado a una sola dirección (la
+  fila solo crece hacia la derecha, nunca hacia los dos lados como el
+  real) para que el modelo mental sea simple.
+- `bingo` — cartón + llamado por voz (`hablar()`); primeras 6 etapas
+  piden una sola línea, después el cartón completo.
+- `conecta4` — el más complejo: detección de 4-en-línea en las 4
+  direcciones y una CPU que primero busca ganar, si no puede bloquea al
+  jugador, y si no hay ninguna de las dos juega al azar.
+
+**Bug real encontrado en `domino` al simular las curvas de los 6 antes de
+darlas por buenas** (mismo tipo que `pares-impares`, ver sección de QA
+más abajo): `fichasPorJugador` pedía más fichas de las que el mazo tenía
+en niveles intermedios porque crecía con una curva independiente de
+`imagenes` en vez de derivarse de ella. Arreglado con un tope explícito;
+los otros 5 se simularon igual y no tenían el problema. Las 6
+validaciones quedaron en `scripts/qa-levels.ts` — ver
+`docs/MANUAL-TECNICO.md` sección 14 para el detalle completo.
+
+**Punto 4 — "todos los juegos más intuitivos".** Se dijo explícitamente
+en la ronda 7 que repasar los ~85 materiales uno por uno no era viable en
+una sesión. En vez de eso se auditaron los 4 componentes compartidos
+buscando huecos estructurales, y apareció uno real y grande: **`GameShell`
+nunca decía la consigna en voz alta.** `MaterialOrdenar` (10 materiales)
+y `MaterialTransferir` (2) no llamaban a `hablar()` en absoluto — cero
+pistas sonoras para un niño que no lee. `MaterialClasificar` (21
+materiales) solo hablaba la confirmación de acierto vía `textoVoz`
+opcional (y 4 de los 21 ni eso), nunca la instrucción inicial. Se agregó
+un prop `hablarConsigna` a `GameShell` (default `false`, para no romper
+`MaterialQuiz`, que ya tiene su propia voz sincronizada a las tres etapas
+y sonaría doble) y se activó en los tres componentes — **33 materiales
+arreglados con una edición en 3 archivos**, el mismo tipo de apalancamiento
+que ya funcionó para color de área, animación y `prefers-reduced-motion`.
+También activado en `orificios`, `que-falta` y `bingo` (los tres
+materiales nuevos de la ronda 7 sin voz propia); no en `cara`, que ya
+habla su objetivo con más detalle y sonaría duplicado.
+
+**Este es el ejemplo a seguir la próxima vez que alguien pida "más
+intuitivo" sin acotar el alcance**: no repasar material por material,
+auditar primero los componentes compartidos — ahí es donde vive el
+apalancamiento real.
+
+**Además, a pedido explícito del usuario:** se compiló y entregó un APK
+de depuración (ver "Ronda 7" para el detalle de los problemas de
+entorno Windows encontrados) y se empujaron todos los commits a
+`origin/main` en cada ronda, sin dejar trabajo sin subir.
 
 ## Cómo retomar trabajo aquí
 

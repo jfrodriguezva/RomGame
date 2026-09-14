@@ -1,6 +1,6 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 2 a 6 años: 90 materiales — 85 con
+Ambiente Montessori digital para niños de 2 a 6 años: 96 materiales — 91 con
 100 niveles cada uno (8 500 en total) y 5 actividades libres, sin niveles ni
 puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
@@ -39,7 +39,7 @@ materiales "para más chicos" — nada se le oculta por arriba, solo por abajo.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 90 materiales
+## 3. Las áreas y los 96 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
@@ -49,7 +49,7 @@ materiales "para más chicos" — nada se le oculta por arriba, solo por abajo.
 | 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
 | 🌍 Cultura y naturaleza | 22 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 4 | Crear sin consigna, sin puntaje y sin prisa |
-| 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
+| 🤝 Juegos en compañía | 11 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
 
 Todas las áreas superan ya el rango de variedad que se acordó como objetivo
@@ -143,6 +143,24 @@ Montessori comerciales:
 
 Con este material, el catálogo cubre los cinco sentidos con al menos un
 material práctico cada uno: vista, oído, olfato, gusto y tacto.
+
+Seis juegos de mesa nuevos, todos contra la computadora, área Juegos en
+compañía:
+
+- **Memoria por turnos** (`memoria-turnos`) — versión competitiva del
+  memorama: la computadora recuerda las cartas que ya se voltearon
+  (incluidas las del jugador) y las usa si le conviene.
+- **¿Qué falta?** (`que-falta`) — el juego de Kim: memorizar una bandeja
+  de objetos, uno desaparece, decir cuál era.
+- **El juego de la oca** (`oca`) — como serpientes y escaleras pero con
+  tres efectos de casilla: oca (tira otra vez), puente (salta adelante)
+  y pozo (retrocede unos pasos, nunca al inicio).
+- **Dominó de imágenes** (`domino`) — fichas por dibujo, no por número;
+  la fila solo crece hacia la derecha para que sea fácil de seguir.
+- **Bingo con imágenes** (`bingo`) — se anuncia un dibujo con voz, se
+  busca y se marca en el cartón.
+- **Cuatro en línea** (`conecta4`) — alinear cuatro fichas antes que la
+  computadora, que sabe ganar y bloquear cuando puede.
 
 Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
 juego del silencio, el dado de retos, el xilófono y el collage libre.
