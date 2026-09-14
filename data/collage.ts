@@ -14,12 +14,15 @@ export const CATEGORIAS_ESTAMPAS: CategoriaEstampas[] = [
   {
     id: "naturaleza",
     nombre: "Naturaleza",
-    items: ["🌸", "🌻", "🌼", "🌷", "🍀", "🌿", "🌳", "🍁", "🍄", "🌾"],
+    items: ["🌸", "🌻", "🌼", "🌷", "🍀", "🌿", "🌳", "🍁", "🍄", "🌾", "🌵", "🌱"],
   },
   {
     id: "animales",
     nombre: "Animales",
-    items: ["🐞", "🦋", "🐢", "🐝", "🐳", "🐬", "🦁", "🐘", "🦒", "🐧", "🦉", "🐝"],
+    items: [
+      "🐞", "🦋", "🐢", "🐝", "🐳", "🐬", "🦁", "🐘", "🦒", "🐧", "🦉",
+      "🐱", "🐶", "🐰", "🦄", "🐸", "🐝",
+    ],
   },
   {
     id: "cielo",
@@ -29,12 +32,22 @@ export const CATEGORIAS_ESTAMPAS: CategoriaEstampas[] = [
   {
     id: "transporte",
     nombre: "Transporte",
-    items: ["🚗", "🚲", "🚀", "✈️", "⛵", "🚂"],
+    items: ["🚗", "🚲", "🚀", "✈️", "⛵", "🚂", "🚁", "🚌"],
+  },
+  {
+    id: "comida",
+    nombre: "Comida",
+    items: ["🍕", "🍦", "🍩", "🍉", "🍓", "🥕", "🍎", "🍭"],
+  },
+  {
+    id: "caritas",
+    nombre: "Caritas",
+    items: ["😀", "😻", "🥳", "👍", "✨", "💫", "❤️", "🎉"],
   },
   {
     id: "otros",
     nombre: "Otros",
-    items: ["❤️", "🎈", "🎀", "⚽", "🍎", "🧸", "🏠", "🎵"],
+    items: ["🎈", "🎀", "⚽", "🧸", "🏠", "🎵", "🎁", "👑"],
   },
 ];
 
@@ -56,6 +69,21 @@ export const ESCENAS: Escena[] = [
     id: "mar",
     nombre: "Mar",
     css: "linear-gradient(to bottom, #bcdcf2 0%, #bcdcf2 50%, #6fb3c9 50%, #4f96ad 100%)",
+  },
+  {
+    id: "playa",
+    nombre: "Playa",
+    css: "linear-gradient(to bottom, #bcdcf2 0%, #bcdcf2 55%, #f1dfae 55%, #f1dfae 100%)",
+  },
+  {
+    id: "atardecer",
+    nombre: "Atardecer",
+    css: "linear-gradient(to bottom, #f6b28c 0%, #f0879b 45%, #a879c4 100%)",
+  },
+  {
+    id: "nieve",
+    nombre: "Nieve",
+    css: "linear-gradient(to bottom, #dceaf5 0%, #dceaf5 60%, #f2f6fa 60%, #f2f6fa 100%)",
   },
   { id: "espacio", nombre: "Espacio", css: "#1b2340" },
 ];

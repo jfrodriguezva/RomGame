@@ -61,6 +61,12 @@ export default function CollagePage() {
     vibrar(HAPTIC.toque);
   }
 
+  function deshacer() {
+    setPuestas((prev) => prev.slice(0, -1));
+    playSound("click");
+    vibrar(HAPTIC.toque);
+  }
+
   return (
     <GameShell slug="collage" consigna="Arma tu escena, sin reglas">
       <div className="mb-3 flex gap-2 overflow-x-auto pb-1 scroll-suave">
@@ -141,12 +147,20 @@ export default function CollagePage() {
       </div>
 
       {puestas.length > 0 && (
-        <button
-          onClick={() => setPuestas([])}
-          className="mx-auto block rounded-2xl bg-white px-4 py-2.5 text-sm font-bold text-stone-500 ring-1 ring-stone-200 active:scale-95"
-        >
-          Empezar de nuevo
-        </button>
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={deshacer}
+            className="rounded-2xl bg-white px-4 py-2.5 text-sm font-bold text-stone-500 ring-1 ring-stone-200 active:scale-95"
+          >
+            ↩︎ Deshacer
+          </button>
+          <button
+            onClick={() => setPuestas([])}
+            className="rounded-2xl bg-white px-4 py-2.5 text-sm font-bold text-stone-500 ring-1 ring-stone-200 active:scale-95"
+          >
+            Empezar de nuevo
+          </button>
+        </div>
       )}
     </GameShell>
   );

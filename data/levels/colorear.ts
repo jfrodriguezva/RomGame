@@ -140,6 +140,54 @@ export const DIBUJOS: Dibujo[] = [
       "M160 134 H186",
     ],
   },
+  {
+    id: "estrella",
+    nombre: "La estrella",
+    regiones: [
+      {
+        id: "cuerpo",
+        d: "M100 16 L122 76 H186 L134 114 L154 176 L100 138 L46 176 L66 114 L14 76 H78 Z",
+      },
+      { id: "brillo", d: "M100 80 a10 10 0 1 0 0.1 0 Z" },
+    ],
+    detalles: ["M100 80 a10 10 0 1 0 0.1 0"],
+  },
+  {
+    id: "corazon",
+    nombre: "El corazón",
+    regiones: [
+      {
+        id: "cuerpo",
+        d: "M100 172 C20 116 24 48 68 40 C86 36 98 50 100 64 C102 50 114 36 132 40 C176 48 180 116 100 172 Z",
+      },
+      { id: "brillo", d: "M72 62 a10 6 0 1 0 0.1 0 Z" },
+    ],
+  },
+  {
+    id: "globo",
+    nombre: "El globo",
+    regiones: [
+      { id: "cuerpo", d: "M100 20 A50 60 0 1 1 99.9 20 Z" },
+      { id: "brillo", d: "M78 56 a8 12 0 1 0 0.1 0 Z" },
+      { id: "nudo", d: "M92 138 L108 138 L100 150 Z" },
+    ],
+    detalles: ["M100 150 Q95 170 100 190"],
+  },
+  {
+    id: "nube",
+    nombre: "La nube",
+    regiones: [
+      { id: "izquierda", d: "M64 122 a34 34 0 1 0 0.1 0 Z" },
+      { id: "centro", d: "M104 94 a44 44 0 1 0 0.1 0 Z" },
+      { id: "derecha", d: "M144 124 a30 30 0 1 0 0.1 0 Z" },
+      { id: "base", d: "M36 130 H164 Q176 130 176 146 Q176 162 164 162 H36 Q24 162 24 146 Q24 130 36 130 Z" },
+    ],
+    detalles: [
+      "M60 178 Q64 188 60 196",
+      "M100 178 Q104 188 100 196",
+      "M140 178 Q144 188 140 196",
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------
