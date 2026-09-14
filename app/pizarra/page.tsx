@@ -139,6 +139,9 @@ export default function PizarraPage() {
     ajustarTamano();
     const obs = new ResizeObserver(ajustarTamano);
     if (canvasRef.current) obs.observe(canvasRef.current);
+    // Carga la galería guardada en localStorage al montar: sincroniza con
+    // un almacenamiento externo, no es una derivación pura del render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGaleria(leerGaleria());
     return () => obs.disconnect();
   }, [ajustarTamano]);

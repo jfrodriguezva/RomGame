@@ -20,6 +20,9 @@ export default function GloboPage() {
 
   useEffect(() => {
     registerPlay("globo");
+    // Reinicia la altura y el marcador al cambiar de nivel: sincroniza con
+    // una prop que cambia, no es una derivación pura del render actual.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setY(20);
     setTaps(0);
     streakRef.current = 0;

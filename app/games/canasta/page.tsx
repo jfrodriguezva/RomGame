@@ -34,6 +34,9 @@ export default function CanastaPage() {
 
   useEffect(() => {
     registerPlay("canasta");
+    // Reinicia la cesta y el marcador al cambiar de nivel: sincroniza con
+    // una prop que cambia, no es una derivación pura del render actual.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setBasketX(50);
     setStars([]);
     setCaught(0);

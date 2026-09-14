@@ -204,12 +204,14 @@ funcione offline como PWA.
 
 ## 13. Deuda técnica conocida
 
-- **ESLint: resuelto en `app/games/`.** `react-hooks/set-state-in-effect`
+- **ESLint: `npm run lint` da 0 errores en todo el repo.** `react-hooks/set-state-in-effect`
   tenía instancias en los 4 componentes compartidos y en ~28 de los 31
-  materiales de estilo antiguo (algunos con 2). Todas llevan ahora un
+  materiales de estilo antiguo (algunos con 2), más `burbujas.tsx`,
+  `canasta.tsx`, `globo.tsx` y `pizarra.tsx`. Todas llevan ahora un
   comentario `eslint-disable-next-line` justificando por qué el efecto es
-  necesario (genera contenido al azar, habla, o celebra con un
-  temporizador — ninguna es una derivación pura calculable en el render).
+  necesario (genera contenido al azar, habla, celebra con un
+  temporizador, o sincroniza con localStorage/una prop que cambia —
+  ninguna es una derivación pura calculable en el render).
   De paso se corrigieron dos bugs reales, no solo se documentó el patrón
   conocido: `patron.tsx`/`serpientes.tsx` llamaban una función antes de su
   declaración textual (el linter de React 19 lo marca aunque `function`
@@ -218,7 +220,11 @@ funcione offline como PWA.
   se llama desde un clic (`react-hooks/purity`, documentado). También se
   corrigió `ConfettiOverlay.tsx`, que sí violaba pureza de verdad
   (`Math.random()` dentro de `useMemo(..., [])`, que corre en render) —
-  cambiado a inicializador perezoso de `useState`.
+  cambiado a inicializador perezoso de `useState`. El build empaquetado
+  de Capacitor en `android/app/src/main/assets/public/` (JS minificado,
+  no fuente) quedó fuera del lint vía `globalIgnores` en
+  `eslint.config.mjs` — antes generaba ~46 errores falsos de código
+  ajeno (React/framer-motion minificados).
 - Tiempos y umbrales en `data/levels/` calibrados a ojo, no medidos con
   usuarios reales.
 - Ninguno de los 90 materiales se ha probado interactivamente con un dedo

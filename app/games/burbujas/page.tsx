@@ -38,6 +38,9 @@ export default function BurbujasPage() {
 
   useEffect(() => {
     registerPlay("burbujas");
+    // Reinicia el marcador y las burbujas al cambiar de nivel: sincroniza
+    // con una prop que cambia, no es una derivación pura del render actual.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPopped(0);
     setBubbles([]);
     setBursts([]);
