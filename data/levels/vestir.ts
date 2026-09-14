@@ -26,7 +26,7 @@ export const VESTIR_ITEMS: VestirItem[] = [
   { id: "zapatos-1", emoji: "👠", slot: "zapatos", setId: 1 },
   { id: "zapatos-2", emoji: "🥿", slot: "zapatos", setId: 1 },
   { id: "accesorio-1", emoji: "💎", slot: "accesorio", setId: 1 },
-  { id: "accesorio-2", emoji: "🦋", slot: "accesorio", setId: 1 },
+  { id: "accesorio-2", emoji: "🧣", slot: "accesorio", setId: 1 },
   // Set 2 - se desbloquea con estrellas
   { id: "corona-3", emoji: "🌸", slot: "corona", setId: 2 },
   { id: "corona-4", emoji: "✨", slot: "corona", setId: 2 },
@@ -34,8 +34,8 @@ export const VESTIR_ITEMS: VestirItem[] = [
   { id: "vestido-4", emoji: "👘", slot: "vestido", setId: 2 },
   { id: "zapatos-3", emoji: "👢", slot: "zapatos", setId: 2 },
   { id: "zapatos-4", emoji: "🩰", slot: "zapatos", setId: 2 },
-  { id: "accesorio-3", emoji: "🌈", slot: "accesorio", setId: 2 },
-  { id: "accesorio-4", emoji: "🎐", slot: "accesorio", setId: 2 },
+  { id: "accesorio-3", emoji: "🕶️", slot: "accesorio", setId: 2 },
+  { id: "accesorio-4", emoji: "👛", slot: "accesorio", setId: 2 },
   // Set 3 - se desbloquea con más estrellas
   { id: "corona-5", emoji: "👸", slot: "corona", setId: 3 },
   { id: "corona-6", emoji: "🦄", slot: "corona", setId: 3 },
@@ -43,8 +43,8 @@ export const VESTIR_ITEMS: VestirItem[] = [
   { id: "vestido-6", emoji: "🐚", slot: "vestido", setId: 3 },
   { id: "zapatos-5", emoji: "💫", slot: "zapatos", setId: 3 },
   { id: "zapatos-6", emoji: "🌟", slot: "zapatos", setId: 3 },
-  { id: "accesorio-5", emoji: "🍰", slot: "accesorio", setId: 3 },
-  { id: "accesorio-6", emoji: "🐬", slot: "accesorio", setId: 3 },
+  { id: "accesorio-5", emoji: "🪄", slot: "accesorio", setId: 3 },
+  { id: "accesorio-6", emoji: "📿", slot: "accesorio", setId: 3 },
 ];
 
 export const VESTIR_SLOTS: VestirItem["slot"][] = [

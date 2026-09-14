@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import BackHomeButton from "@/components/BackHomeButton";
 import ConfettiOverlay from "@/components/ConfettiOverlay";
 import StarReward from "@/components/StarReward";
@@ -105,28 +105,84 @@ export default function VestirPage() {
           ))}
         </div>
 
-        {/* Escenario con la princesa */}
-        <div className="relative mb-3 flex h-64 w-52 flex-col items-center justify-center rounded-3xl bg-white/70 shadow-xl backdrop-blur">
+        {/* Escenario con la princesa: el cuerpo base siempre está ahí, la
+            ropa se agrega encima — antes el cuerpo entero desaparecía al
+            elegir un vestido y quedaba solo un emoji de prenda flotando. */}
+        <div className="relative mb-3 flex h-72 w-56 flex-col items-center justify-center rounded-3xl bg-white/70 shadow-xl backdrop-blur">
           <span className="absolute top-3 text-4xl opacity-60">{background.emoji}</span>
-          <motion.div
-            key={outfitKey}
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            className="relative flex flex-col items-center"
-          >
-            <span className="text-4xl">{outfit.corona?.emoji ?? "😊"}</span>
-            <span className="-mt-2 text-7xl">{outfit.vestido?.emoji ?? "🧍‍♀️"}</span>
-            <span className="-mt-3 text-2xl">{outfit.zapatos?.emoji ?? ""}</span>
-            {outfit.accesorio && (
-              <motion.span
-                initial={{ scale: 0, rotate: -20 }}
-                animate={{ scale: 1, rotate: 0 }}
-                className="absolute -right-6 top-4 text-3xl"
-              >
-                {outfit.accesorio.emoji}
-              </motion.span>
-            )}
-          </motion.div>
+
+          <div className="relative flex h-56 w-40 flex-col items-center justify-end">
+            {/* Cuerpo base: cara + un vestido sencillo, dibujado una sola
+                vez, para que siempre haya "alguien" en el escenario. */}
+            <svg viewBox="0 0 100 170" className="absolute inset-0 h-full w-full">
+              <path d="M30 165 L28 95 Q50 78 72 95 L70 165 Z" fill="#fbcfe8" />
+              <rect x="18" y="60" width="9" height="45" rx="4.5" fill="#f4c9a0" />
+              <rect x="73" y="60" width="9" height="45" rx="4.5" fill="#f4c9a0" />
+              <path d="M18 40 Q50 14 82 40 Q86 58 78 70 Q50 50 22 70 Q14 58 18 40 Z" fill="#7c4a2d" />
+              <circle cx="50" cy="42" r="24" fill="#f4c9a0" />
+              <circle cx="41" cy="42" r="3" fill="#3f342c" />
+              <circle cx="59" cy="42" r="3" fill="#3f342c" />
+              <path d="M40 52 Q50 60 60 52" stroke="#b5654a" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+              <circle cx="34" cy="46" r="4" fill="#f4a6a6" opacity="0.6" />
+              <circle cx="66" cy="46" r="4" fill="#f4a6a6" opacity="0.6" />
+            </svg>
+
+            <AnimatePresence mode="wait">
+              {outfit.corona && (
+                <motion.span
+                  key={outfit.corona.id}
+                  initial={{ scale: 0, y: -10 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={{ scale: 0 }}
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 text-4xl drop-shadow"
+                >
+                  {outfit.corona.emoji}
+                </motion.span>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              {outfit.vestido && (
+                <motion.span
+                  key={outfit.vestido.id}
+                  initial={{ scale: 0.7, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.7, opacity: 0 }}
+                  className="absolute bottom-10 text-8xl drop-shadow"
+                >
+                  {outfit.vestido.emoji}
+                </motion.span>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              {outfit.zapatos && (
+                <motion.span
+                  key={outfit.zapatos.id}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  className="absolute -bottom-1 text-3xl drop-shadow"
+                >
+                  {outfit.zapatos.emoji}
+                </motion.span>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {outfit.accesorio && (
+                <motion.span
+                  key={outfit.accesorio.id}
+                  initial={{ scale: 0, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  exit={{ scale: 0 }}
+                  className="absolute -right-5 top-16 text-3xl drop-shadow"
+                >
+                  {outfit.accesorio.emoji}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         <button
