@@ -34,7 +34,7 @@ app/
   pizarra/               lienzo de dibujo libre
   padres/                progreso, ajustes y acompañamiento
   admin/                 editor de puntos para imágenes propias
-  games/<slug>/           un material por carpeta (90)
+  games/<slug>/           un material por carpeta (89)
 components/
   GameShell.tsx           marco común: header, nivel, consigna, error
   MaterialQuiz.tsx        lección de tres periodos
@@ -70,7 +70,7 @@ Casi todos los materiales bajo `app/games/<slug>` se arman componiendo:
   da la lista exacta en cualquier momento.
 - **MaterialOrdenar** — seriación. No solo por tamaño (torre rosa, escalera
   marrón): también sirve para ordenar por secuencia temporal, lógica o
-  motriz (ciclo de la mariposa, sistema solar, doblar la tela, ciclo del
+  motriz (ciclo de la mariposa, sistema solar, ciclo del
   agua, rutina de la mañana, días de la semana, poner la mesa, las
   estaciones del año, lavarse las manos), pasando `invertido: true` fijo
   en la curva de niveles para que la fila salga en orden ascendente — ver
@@ -227,16 +227,24 @@ funcione offline como PWA.
   ajeno (React/framer-motion minificados).
 - Tiempos y umbrales en `data/levels/` calibrados a ojo, no medidos con
   usuarios reales.
-- Ninguno de los 91 materiales se ha probado interactivamente con un dedo
+- Ninguno de los 90 materiales se ha probado interactivamente con un dedo
   real en un dispositivo — todo lo verificado hasta ahora es build +
   HTTP/HTML + curvas de datos (`npm run qa`).
 - `StarReward` y `ConfettiOverlay` ya toman el color del área en los 90
   materiales con niveles (ver sección 7) — resuelto.
 - **Punto 3 del roadmap (pulido visual/sonoro) cerrado.** `app/layout.tsx`
   envuelve toda la app en `<MotionConfig reducedMotion="user">`: cada
-  animación de framer-motion, en los 91 materiales, respeta la
+  animación de framer-motion, en los 90 materiales, respeta la
   preferencia de accesibilidad del sistema con una sola edición. Ver
   `RECOVERY.md` para el detalle completo de lo que se cerró.
+- **Selector de edad antes del tema.** `lib/settings.ts` agrega el campo
+  `edad: number | null` (persistido, `null` = todavía no elegida).
+  `app/page.tsx` muestra `components/SelectorEdad.tsx` en vez del menú
+  mientras `edad` sea `null`; una vez elegida, filtra `games` por
+  `edad >= game.edad[0]` (solo el mínimo — un niño mayor no pierde acceso a
+  material "más chico"). Se cambia desde `app/padres/page.tsx`. No hizo
+  falta re-etiquetar el catálogo: 8 de los 12 materiales de `lenguaje` ya
+  estaban en `edad: [4, 6]` en vez de `[3, 6]`.
 
 ## 14. QA automatizado de niveles
 

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Mi Ambiente — juegos Montessori",
   description:
-    "Ambiente Montessori digital para niños de 3 a 6 años: 91 materiales con 100 niveles cada uno y una pizarra de dibujo libre.",
+    "Ambiente Montessori digital para niños de 2 a 6 años: 90 materiales con 100 niveles cada uno y una pizarra de dibujo libre.",
   manifest: "/manifest.json",
   appleWebApp: { capable: true, title: "Mi Ambiente", statusBarStyle: "default" },
 };

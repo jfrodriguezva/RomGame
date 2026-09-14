@@ -7,8 +7,10 @@ releer todo el repo desde cero.
 ## Qué es este proyecto
 
 **Mi Ambiente** — ambiente Montessori digital offline para niños de 3 a 6
-años. 91 materiales — 85 con 100 niveles cada uno (8 500 niveles) y 6
-actividades libres sin niveles. Todo en español, sin conexión, sin
+años. 90 materiales — 85 con 100 niveles cada uno (8 500 niveles) y 5
+actividades libres sin niveles. La primera pantalla pide la edad del niño
+(2 a 6 años) antes del menú y filtra el catálogo por ella — ver "Ronda 7"
+más abajo. Todo en español, sin conexión, sin
 cuentas, sin publicidad, sin enviar datos fuera del dispositivo. Es un
 proyecto personal (no comercial) del usuario, pensado para uso familiar.
 
@@ -361,3 +363,129 @@ agente de código.
 5. Antes de generar código, revisar `AGENTS.md`: este repo usa una versión
    de Next.js con cambios respecto al training data del modelo, y pide leer
    `node_modules/next/dist/docs/` antes de escribir código Next.js nuevo.
+
+## Ronda 7: feedback de uso real (bugs, tamaños, contenido, edad)
+
+El usuario probó la app de verdad (no solo build/QA) y volvió con una lista
+larga de problemas concretos y pedidos. Todo lo de abajo está hecho y
+commiteado; nada quedó a medias.
+
+**Bugs reales de gameplay, no solo pulido:**
+
+- **`lava` reescrito por completo.** El primer arreglo (comprobar la
+  baldosa siguiente por índice) no alcanzó — el usuario probó y "seguía
+  fallando". El problema de fondo era el diseño (baldosas discretas +
+  comprobación a tiempo fijo), no un número mal calculado. Se rehizo como
+  el dinosaurio de Chrome: física continua, colisión revisada cada cuadro
+  contra la posición real de las llamaradas, no un cálculo "en qué baldosa
+  vas a caer" hecho una sola vez al saltar. Funciona igual en todos los
+  niveles, sin depender de la velocidad.
+- **`arana` — el lazo se cerraba a mitad del arrastre.** Apenas el trazo
+  llegaba a 3 celdas y tocaba el borde, revelaba esas 3 celdas y reseteaba
+  — obligaba a "pintar" el tablero de a 3 en 3 contra arañas activas,
+  virtualmente imposible de ganar. El cierre pasa a soltar el dedo (un
+  lazo grande de un solo gesto). Además celdas más grandes (hasta 64px,
+  calculadas por el lado mayor de la cuadrícula) a pedido explícito.
+- **`serpientes` — bug real de React, no de diseño.** `movePlayer` tenía
+  sonidos y cambios de turno *dentro* del updater de `setState`, un efecto
+  secundario en una función que React puede invocar más de una vez (modo
+  estricto de desarrollo) — el turno avanzaba doble y los sonidos sonaban
+  doble, desincronizando jugador y CPU. Se reescribió para leer la
+  posición actual directo (no un updater funcional) y hacer los efectos
+  una sola vez, fuera del `setState`. Vale la pena revisar `globo` y
+  `burbujas` por el mismo patrón si algún día fallan de forma similar —
+  no se tocaron esta ronda porque no fueron reportados como rotos.
+- **`toystory` y `carreras` — controles sin `touch-action: none`.** En un
+  teléfono real, un dedo sostenido sobre un botón de mover/saltar puede
+  interpretarse como gesto de scroll y cancelar el toque a medio camino —
+  el control se siente roto aunque la lógica del juego esté bien. Se
+  agregó `touch-none` a los botones y al contenedor del canvas de Phaser
+  en ambos.
+- **`laberinto` — desbordaba la pantalla en niveles grandes.** Un
+  laberinto de 20×20 a 32px por celda mide 640px, más ancho que cualquier
+  teléfono. La celda ahora se calcula para que el tablero mida ~336px como
+  máximo, así que crece en niveles chicos (hasta 72px) sin desbordar en
+  los grandes.
+
+**Pulido visual pedido explícitamente:**
+
+- `toystory` (ToyStoryScene): cielo con degradado, sol y nubes con
+  parallax, pasto texturizado, enemigos con carita, bandera que ondea,
+  estirón al saltar y aplastón al aterrizar.
+- `carreras` (RaceScene): coches con carrocería/parabrisas/llantas reales
+  (4 colores de rival) en vez de rectángulos planos; líneas de carril que
+  se desplazan cada cuadro.
+- `doblar` — antes de eliminarlo (ver abajo) se le agregó patrón a
+  cuadros, líneas de pliegue y sombra apilada, porque "no lo entiendo" era
+  un problema real: un rectángulo liso no evoca tela.
+- `vestir` — antes de eliminarlo, el cuerpo base (cara, pelo, brazos) dejó
+  de desaparecer al elegir un vestido; antes el personaje entero se
+  reemplazaba por la prenda flotando sin cuerpo.
+- `globo` — empieza con 1 globo y sube a 2/3/4 por etapa (antes siempre
+  era un solo globo fijo).
+
+**Pizarra:**
+
+- **Colorear** (nuevo apartado): figuras cerradas de `data/guias.ts`
+  (ahora 13, se sumaron pez/mariposa/flor/nube/árbol) como plantilla
+  sólida para pintar a mano libre con cualquier pincel — distinto de la
+  guía de trazo (punteada, para repasar) y del material `colorear`
+  (regiones que se rellenan tocándolas).
+- **Misión** (nuevo apartado): 12 íconos piden un dibujo sin necesitar
+  leer; "¡Listo!" celebra con confeti y ofrece otra misión al azar. El
+  badge quedaba tapado por la barra superior (`top-3` vs. la barra en
+  `top-0`) — se movió a `top-16`.
+- Letras en minúscula agregadas a las guías (`GUIAS_POR_GRUPO.minusculas`)
+  — el material real de letras de lija enseña minúscula primero.
+
+**Contenido:**
+
+- `collage`: botón "Deshacer" (quita solo la última estampa), 2
+  categorías nuevas (comida, caritas), variantes sumadas a las
+  existentes, 3 escenas nuevas (playa, atardecer, nieve).
+- `colorear`: 4 diseños figurativos nuevos (estrella, corazón, globo,
+  nube), de 8 a 12.
+- **Eliminados a pedido explícito:** `vestir`, `doblar` (doblar la tela) y
+  `clima` (¿qué me pongo?) — los tres de vida práctica. Sin rastro en el
+  catálogo, `scripts/qa-levels.ts` ni las páginas.
+- **Dos materiales nuevos a pedido explícito:**
+  - `cara` (Toca la cara, cultura) — nomenclatura de la cara tocando
+    directo sobre un dibujo (no eligiendo de una lista como
+    `MaterialQuiz`). Los pares (ojo/oreja/ceja/mejilla) comparten un
+    mismo id: tocar cualquiera de los dos cuenta, porque a esta edad no
+    se enseña lateralidad.
+  - `orificios` (Encaja la figura, sensorial) — encajes de formas
+    geométricas: la pieza solo entra en su agujero exacto. Distinto del
+    ya existente `formas` (nomenclatura por nombre); este es
+    discriminación visual pura, sin nombrar nada.
+  - Ninguno de los dos reutiliza los 4 componentes compartidos: ninguno
+    modela "tocar una región dentro de una sola imagen" ni "dibujar cada
+    opción como un recorte real" — son las primeras piezas nuevas de
+    interacción desde `collage` en la ronda 6.
+
+**Home rediseñado:** selector de área (chips con ícono + cantidad) en vez
+de las 8 áreas completas expandidas una tras otra — antes había que hacer
+scroll por todo el catálogo para llegar a la última área. "Ver todas"
+conserva el scroll completo para quien lo prefiera.
+
+**Selector de edad antes del tema (el pedido más grande de la ronda):**
+nueva pantalla de entrada, antes del menú, que pide la edad (2 a 6 años) y
+filtra el catálogo por ella — solo el mínimo de `edad: [min, max]`, así
+que un niño mayor no pierde acceso a material "más chico", pero uno chico
+no ve lo que requiere más edad. No hizo falta re-etiquetar los 90
+materiales uno por uno: el campo `edad` ya existía en cada `GameDef` y ya
+reflejaba en la práctica la secuencia Montessori real (8 de los 12
+materiales de Lenguaje ya estaban en `edad: [4, 6]`, no `[3, 6]`). Se
+puede cambiar después desde "Mamá y papá". Simulación antes de
+implementar: edad 2 → 4 materiales, edad 3 → 50, edad 4 → 89, edad 5/6 →
+90 (todo el catálogo). Ver `docs/MANUAL-TECNICO.md` sección 13 para el
+detalle técnico (`lib/settings.ts`, `components/SelectorEdad.tsx`).
+
+**Pendiente, explícitamente no resuelto esta ronda:** el usuario pidió
+"buscar más juegos de mesa que sean mejores y más interactivos, dame
+muchas opciones" — esto se respondió con una lista de propuestas en la
+conversación (no en este archivo, para no comprometerse con ideas que el
+usuario todavía no aprobó). Si se retoma en otra sesión sin ese contexto,
+preguntar directamente qué tipo de juego de mesa le interesa antes de
+construir nada — la ronda 5 (ver arriba) ya mostró el costo de generar
+contenido sin esa validación previa.

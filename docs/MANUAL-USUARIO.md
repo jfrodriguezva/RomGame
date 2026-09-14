@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
-Ambiente Montessori digital para niños de 3 a 6 años: 91 materiales — 85 con
-100 niveles cada uno (8 500 en total) y 6 actividades libres, sin niveles ni
+Ambiente Montessori digital para niños de 2 a 6 años: 90 materiales — 85 con
+100 niveles cada uno (8 500 en total) y 5 actividades libres, sin niveles ni
 puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
 conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
 dispositivo.
@@ -12,6 +12,13 @@ Mi Ambiente es una réplica digital de un salón Montessori. Corre como app web
 y se instala como APK de Android para usarse sin internet. No es "otra app de
 juegos": cada decisión de diseño viene de la pedagogía Montessori, no de
 mecánicas de videojuego.
+
+Al entrar por primera vez, pide la edad del niño (2 a 6 años) antes de
+mostrar el menú — se puede cambiar después desde "Mamá y papá". Eso filtra
+qué materiales aparecen: un niño de 2-3 años no se topa con lectoescritura
+pensada para 4-6 (8 de los 12 materiales de Lenguaje están marcados desde
+esa edad), pero uno de 5-6 años ve el catálogo completo, incluidos los
+materiales "para más chicos" — nada se le oculta por arriba, solo por abajo.
 
 ## 2. Qué la hace Montessori
 
@@ -32,15 +39,15 @@ mecánicas de videojuego.
   "modo calma" quita fondo animado y confeti.
 - **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## 3. Las áreas y los 91 materiales
+## 3. Las áreas y los 90 materiales
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 11 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 20 | Los cinco sentidos, más peso y temperatura |
+| 🫗 Vida práctica | 8 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 21 | Los cinco sentidos, más peso y temperatura |
 | ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
 | 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 21 | El mundo, los seres vivos y su clasificación |
+| 🌍 Cultura y naturaleza | 22 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 4 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -70,8 +77,6 @@ Montessori comerciales:
   uno en uno; tomar uno de más es el error.
 - **Los husos** (`husos`, matemáticas) — corresponder cantidad con número
   del 0 al 9, incluido el cero.
-- **Doblar la tela** (`doblar`, vida práctica) — extendida, a la mitad, en
-  cuarto, guardada.
 - **Pares e impares** (`pares-impares`, matemáticas) — ¿la cantidad se
   reparte en parejas exactas?
 - **Xilófono** (`xilofono`, expresión libre) — instrumento libre; cada
@@ -109,7 +114,6 @@ Montessori comerciales:
 - **Estados del agua** (`estados-agua`, cultura) — sólido, líquido o gas.
 - **Pesado o ligero** (`peso`, sensorial) — sentido bárico.
 - **Dulce o salado** (`sabor`, sensorial) — sentido gustativo.
-- **¿Qué me pongo?** (`clima`, vida práctica) — vestirse según el clima.
 - **La rutina de la mañana** (`rutina`, vida práctica) — despertar,
   vestirse, desayunar, ir a la escuela.
 - **Los colores** (`colores`, sensorial) — tabletas de color.
@@ -130,13 +134,18 @@ Montessori comerciales:
 - **Medios de transporte** (`transporte`, cultura) — tierra, aire o agua.
 - **Lavarse las manos** (`lavado-manos`, vida práctica) — mojar, jabón,
   tallar, enjuagar, secar.
+- **Toca la cara** (`cara`, cultura) — nomenclatura de la cara tocando
+  directo sobre el dibujo (ojo, nariz, boca, oreja, ceja, mejilla, pelo,
+  mentón), no eligiendo de una lista.
+- **Encaja la figura** (`orificios`, sensorial) — encajes de formas
+  geométricas: la pieza solo entra en su agujero exacto, no en uno
+  parecido.
 
 Con este material, el catálogo cubre los cinco sentidos con al menos un
 material práctico cada uno: vista, oído, olfato, gusto y tacto.
 
-Seis actividades son libres a propósito y no tienen niveles: la pizarra, el
-juego del silencio, los marcos de vestir, el dado de retos, el xilófono y el
-collage libre.
+Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
+juego del silencio, el dado de retos, el xilófono y el collage libre.
 
 ## 4. La pizarra (`/pizarra`)
 

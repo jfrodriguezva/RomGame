@@ -1,9 +1,10 @@
 # Mi Ambiente
 
-Un ambiente Montessori digital para niños de 3 a 6 años: **91 materiales** — 85 con **100 niveles
-cada uno** (8 500 en total) y 6 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
-de dibujo libre. Todo en español, sin conexión, sin cuentas, sin publicidad y sin enviar un solo
-dato fuera del dispositivo.
+Un ambiente Montessori digital para niños de 2 a 6 años: **90 materiales** — 85 con **100 niveles
+cada uno** (8 500 en total) y 5 actividades libres, sin niveles ni puntaje, entre ellas una pizarra
+de dibujo libre. Se elige la edad del niño antes de ver el menú, para no mezclar contenido de
+lectoescritura con materiales de 2-3 años. Todo en español, sin conexión, sin cuentas, sin
+publicidad y sin enviar un solo dato fuera del dispositivo.
 
 Corre como app web (Next.js) y se empaqueta como **APK de Android** con Capacitor.
 
@@ -49,6 +50,11 @@ por la atención. El "modo calma" quita hasta el fondo animado y el confeti.
 **Inglés mínimo, a propósito.** Treinta palabras concretas, de tres en tres, sin gramática ni
 frases. A esta edad se está construyendo la lengua materna.
 
+**La edad se elige antes que el tema.** La primera pantalla pregunta la edad del niño (2 a 6
+años), no el área que quiere explorar. Eso filtra el catálogo por la edad mínima de cada
+material — un niño de 2-3 años no se topa con lectoescritura pensada para más grande, y uno de
+5-6 años ve todo, sin nada oculto "por arriba". Se cambia cuando quieras desde "Mamá y papá".
+
 ---
 
 ## Las áreas
@@ -57,11 +63,11 @@ Los materiales están organizados como el ambiente real, por áreas y no por "ca
 
 | Área | Materiales | Qué desarrolla |
 |---|---|---|
-| 🫗 Vida práctica | 11 | Coordinación, orden, concentración, independencia |
-| 🔴 Sensorial | 20 | Los cinco sentidos, más peso y temperatura |
+| 🫗 Vida práctica | 8 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 21 | Los cinco sentidos, más peso y temperatura |
 | ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
 | 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
-| 🌍 Cultura y naturaleza | 21 | El mundo, los seres vivos y su clasificación |
+| 🌍 Cultura y naturaleza | 22 | El mundo, los seres vivos y su clasificación |
 | 🎨 Expresión libre | 4 | Crear sin consigna, sin puntaje y sin prisa |
 | 🤝 Juegos en compañía | 5 | Turnos, gracia y cortesía |
 | 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
@@ -101,7 +107,6 @@ variedad de la app a la de las aplicaciones Montessori comerciales más conocida
 - **El o la** — reconocer el género gramatical de un sustantivo, escuchando y clasificando.
 - **Pinza de transferencia** — mover objetos de uno en uno; tomar uno de más también es un error.
 - **Los husos** — corresponder cantidad con número del 0 al 9, incluido el cero como "nada".
-- **Doblar la tela** — extendida, a la mitad, en cuarto, guardada: secuencia motriz real.
 - **Pares e impares** — ¿la cantidad se puede repartir en parejas exactas, o sobra una?
 - **Xilófono** — instrumento libre; cada barra es el color de un área del ambiente.
 - **Áspero o liso** — las clásicas tablillas rugosas y lisas, en versión digital.
@@ -123,7 +128,6 @@ variedad de la app a la de las aplicaciones Montessori comerciales más conocida
 - **Estados del agua** — sólido, líquido o gas.
 - **Pesado o ligero** — sentido bárico.
 - **Dulce o salado** — sentido gustativo.
-- **¿Qué me pongo?** — vestirse según el clima: sol o lluvia.
 - **La rutina de la mañana** — despertar, vestirse, desayunar, ir a la escuela.
 - **Los colores** — nomenclatura de las tabletas de color.
 - **Cuerpos geométricos** — esfera, cubo, cono, cilindro, pirámide, con sombreado.
@@ -137,6 +141,9 @@ variedad de la app a la de las aplicaciones Montessori comerciales más conocida
 - **Oficios y profesiones** — bombero, doctora, cocinero, maestra, policía, granjera.
 - **Medios de transporte** — tierra, aire o agua.
 - **Lavarse las manos** — mojar, jabón, tallar, enjuagar, secar.
+- **Toca la cara** — nomenclatura de la cara tocando directo sobre el dibujo, no eligiendo de una
+  lista.
+- **Encaja la figura** — encajes de formas geométricas: la pieza solo entra en su agujero exacto.
 
 ---
 
@@ -173,7 +180,7 @@ Cada valor del arreglo es el de una etapa; `phasedInt` interpola entre ellos. La
 nombre y el niño las ve en el selector: 🌱 Primeros pasos, 🌿 Ya lo entiendo, … 👑 Maestro.
 
 Cinco actividades son **libres a propósito** y no tienen niveles: la pizarra, el juego del
-silencio, los marcos de vestir, el dado de retos y el xilófono. En el ambiente real tampoco los
+silencio, el dado de retos, el xilófono y el collage libre. En el ambiente real tampoco los
 tienen.
 
 ---
