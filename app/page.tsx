@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import GameCard from "@/components/GameCard";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Mascot from "@/components/Mascot";
+import SelectorEdad from "@/components/SelectorEdad";
 import { games, gamesByArea, getGame, rutaDeJuego, TOTAL_NIVELES } from "@/data/games";
 import { AREAS, AREA_ORDER, type Area } from "@/lib/montessori";
 import { useProgressStore } from "@/lib/progressStore";
@@ -14,6 +15,7 @@ import { useSettings } from "@/lib/settings";
 export default function Home() {
   const porJuego = useProgressStore((s) => s.games);
   const nombre = useSettings((s) => s.nombre);
+  const edad = useSettings((s) => s.edad);
   const [areaActiva, setAreaActiva] = useState<Area | "todas">(AREA_ORDER[0]);
 
   const resumen = useMemo(() => {
@@ -31,6 +33,10 @@ export default function Home() {
   }, [porJuego]);
 
   const saludo = nombre ? `Hola, ${nombre}` : "Hola";
+
+  // Primero la edad, después el tema: sin esto un niño de 2-3 años ve el
+  // mismo catálogo completo que uno de 6, lectoescritura incluida.
+  if (edad === null) return <SelectorEdad />;
 
   return (
     <div className="relative min-h-full flex-1 textura-papel">
@@ -109,7 +115,7 @@ export default function Home() {
 
         <div className="mb-8 flex flex-wrap items-center justify-center gap-2 text-center text-xs font-bold text-stone-500">
           <span className="rounded-full bg-white/70 px-3 py-1.5 ring-1 ring-black/5">
-            {games.length} materiales
+            {games.filter((g) => edad >= g.edad[0]).length} materiales para {edad} años
           </span>
           <span className="rounded-full bg-white/70 px-3 py-1.5 ring-1 ring-black/5">
             {TOTAL_NIVELES.toLocaleString("es-MX")} niveles
@@ -141,7 +147,7 @@ export default function Home() {
                 <span className="text-lg leading-none">{area.emoji}</span>
                 {area.label}
                 <span className={activa ? "opacity-70" : "text-stone-400"}>
-                  {gamesByArea(areaId).length}
+                  {gamesByArea(areaId).filter((g) => edad >= g.edad[0]).length}
                 </span>
               </motion.button>
             );
@@ -177,7 +183,8 @@ export default function Home() {
 
 function AreaSection({ areaId }: { areaId: keyof typeof AREAS }) {
   const area = AREAS[areaId];
-  const lista = gamesByArea(areaId);
+  const edad = useSettings((s) => s.edad) ?? 6;
+  const lista = gamesByArea(areaId).filter((g) => edad >= g.edad[0]);
   if (lista.length === 0) return null;
 
   return (

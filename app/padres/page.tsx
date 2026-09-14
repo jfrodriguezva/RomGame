@@ -67,6 +67,30 @@ export default function PadresPage() {
             />
           </label>
 
+          <div className="mb-4">
+            <span className="mb-1 block text-xs font-bold uppercase tracking-wide text-stone-400">
+              ¿Cuántos años tiene?
+            </span>
+            <p className="mb-2 text-xs text-stone-500">
+              Filtra qué materiales ve en el menú principal (por su edad mínima recomendada).
+            </p>
+            <div className="flex gap-2">
+              {[2, 3, 4, 5, 6].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => ajustes.set("edad", n)}
+                  className={`flex h-11 w-11 items-center justify-center rounded-2xl text-sm font-extrabold ${
+                    ajustes.edad === n
+                      ? "bg-stone-700 text-white"
+                      : "bg-stone-100 text-stone-500 ring-1 ring-black/5"
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="grid gap-2">
             <Interruptor
               activo={ajustes.sonido}

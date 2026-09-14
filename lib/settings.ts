@@ -9,6 +9,14 @@ export interface Settings {
   calma: boolean;
   /** Nombre del niño, solo para saludarlo. Nunca sale del dispositivo. */
   nombre: string;
+  /**
+   * Edad del niño, elegida en la primera pantalla antes de ver el resto de
+   * la app. `null` significa que todavía no se eligió — dispara la
+   * pantalla de selección de edad en vez del menú principal. Filtra qué
+   * materiales se muestran (por su `edad` mínima), para que un niño de 2-3
+   * años no se tope con contenido de lectoescritura pensado para 4-6.
+   */
+  edad: number | null;
 }
 
 interface SettingsState extends Settings {
@@ -24,6 +32,7 @@ export const useSettings = create<SettingsState>()(
       vibracion: true,
       calma: false,
       nombre: "",
+      edad: null,
       set: (key, value) => set({ [key]: value } as Partial<SettingsState>),
       toggle: (key) => set((s) => ({ [key]: !s[key] } as Partial<SettingsState>)),
     }),
