@@ -135,7 +135,7 @@ export default function BarrasNumericasPage() {
       consigna={consignas[config.modo]}
       nota={nota}
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="barras-numericas" />
       <StarReward
         slug="barras-numericas"
         show={logrado}

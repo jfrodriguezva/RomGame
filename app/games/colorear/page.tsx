@@ -83,7 +83,7 @@ export default function ColorearPage() {
         </>
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="colorear" />
       <StarReward
         slug="colorear"
         show={logrado}

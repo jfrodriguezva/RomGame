@@ -92,7 +92,7 @@ export default function VocalesPage() {
   return (
     <div className="min-h-full flex-1 bg-gradient-to-b from-red-100 via-white to-white pb-10">
       <BackHomeButton />
-      <ConfettiOverlay show={showWin} />
+      <ConfettiOverlay show={showWin} slug="vocales" />
       <StarReward slug="vocales" show={showWin} message="¡Muy bien trazado!" />
       <main className="mx-auto flex w-full max-w-xl flex-col items-center px-4 pt-20 sm:px-6">
         <h1 className="mb-4 text-center text-2xl font-extrabold text-red-500 sm:text-3xl">

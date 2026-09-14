@@ -88,7 +88,7 @@ export default function SonidosInicialesPage() {
         </button>
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="sonidos-iniciales" />
       <StarReward
         slug="sonidos-iniciales"
         show={logrado}

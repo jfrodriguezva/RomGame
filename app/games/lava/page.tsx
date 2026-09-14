@@ -124,7 +124,7 @@ export default function LavaPage() {
       onPointerDown={jump}
     >
       <BackHomeButton />
-      <ConfettiOverlay show={milestone} />
+      <ConfettiOverlay show={milestone} slug="lava" />
       <main className="pointer-events-none mx-auto w-full max-w-xl px-4 pt-20 sm:px-6">
         <h1 className="mb-1 text-center text-2xl font-extrabold text-orange-700 sm:text-3xl">
           🌋 El piso es lava

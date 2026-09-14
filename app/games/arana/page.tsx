@@ -256,7 +256,7 @@ export default function AranaPage() {
   return (
     <div className="min-h-full flex-1 bg-gradient-to-b from-purple-100 via-white to-white pb-10">
       <BackHomeButton />
-      <ConfettiOverlay show={showWin} />
+      <ConfettiOverlay show={showWin} slug="arana" />
       <StarReward slug="arana" show={showWin} message="¡La araña descubrió el dibujo!" />
       <main className="mx-auto flex w-full max-w-xl flex-col items-center px-4 pt-20 sm:px-6">
         <h1 className="mb-1 text-center text-2xl font-extrabold text-indigo-600 sm:text-3xl">

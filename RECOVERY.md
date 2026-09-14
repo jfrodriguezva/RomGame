@@ -242,15 +242,14 @@ que tocan muchos materiales a la vez con una sola edición:
 - **Textura visual** — `globals.css`, clase `.textura-papel` (ruido
   fractal SVG inline al 5%, modo `multiply`). Aplicada en
   `components/GameShell.tsx`, `app/page.tsx` y `app/padres/page.tsx`.
-- **Celebración con el color del área** — `lib/montessori.ts` suma
-  `acento`/`acentoOscuro` a cada `AreaInfo`. `StarReward.tsx` y
-  `ConfettiOverlay.tsx` aceptan un `slug` opcional y lo usan. **Los 90
-  materiales con niveles ya tienen `StarReward` con el color del área**
-  (4 componentes compartidos + los 31 de estilo antiguo, uno por uno).
-  **`ConfettiOverlay` solo lo tiene en los 4 componentes compartidos por
-  ahora** — los ~37 materiales que lo llaman directo (los mismos 31 de
-  `StarReward` más `dado`/`lava`) siguen con la paleta genérica; es el
-  siguiente candidato obvio de "más de lo mismo" si se retoma este punto.
+- **Celebración con el color del área — resuelto por completo.**
+  `lib/montessori.ts` suma `acento`/`acentoOscuro` a cada `AreaInfo`.
+  `StarReward.tsx` y `ConfettiOverlay.tsx` aceptan un `slug` opcional y lo
+  usan. **Los 90 materiales con niveles ya tienen los dos** con el color
+  de su área: 4 componentes compartidos + los 31 materiales de estilo
+  antiguo (`StarReward`) + los mismos 31 más `dado`/`lava`
+  (`ConfettiOverlay`, que no usan `StarReward` pero sí confeti). Ningún
+  material quedó con la paleta/color genérico.
 - **ESLint, ya sin ningún error real pendiente en `app/games/`.**
   `react-hooks/set-state-in-effect` resuelto con supresión justificada en
   los 4 componentes compartidos **y en los 31 materiales de estilo
@@ -268,13 +267,12 @@ que tocan muchos materiales a la vez con una sola edición:
   `useState`, el lugar correcto para cómputo único que puede ser impuro.
 
 No se tocó todavía: ilustración custom por material más allá de la que ya
-trajeron los materiales nuevos, un pase de animación en transiciones, y
-`ConfettiOverlay`. Si se retoma, seguir el mismo criterio: buscar el
-siguiente punto único que toque muchos materiales a la vez antes que abrir
-página por página — con StarReward y el ESLint del núcleo ya resueltos,
-el candidato natural es limpiar el ESLint de los 31 materiales antiguos
-uno por uno (ya no hay atajo sistémico para eso) o empezar la ilustración
-custom.
+trajeron los materiales nuevos, y un pase de animación en transiciones
+más allá de lo que ya trae `StarReward`/`ConfettiOverlay`. Con el color de
+área y el ESLint ya resueltos en los 90 materiales, **ya no queda ningún
+"atajo sistémico" obvio pendiente** — lo que sigue (ilustración,
+animación) es trabajo genuino de diseño material por material, no una
+edición que se pueda aplicar de una vez a todos.
 
 ### QA y validación (nuevo esta sesión)
 

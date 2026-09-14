@@ -76,7 +76,7 @@ export default function LetrasLijaPage() {
         </button>
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="letras-lija" />
       <StarReward
         slug="letras-lija"
         show={logrado}

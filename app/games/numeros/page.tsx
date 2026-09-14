@@ -83,7 +83,7 @@ export default function NumerosPage() {
   return (
     <div className="min-h-full flex-1 bg-gradient-to-b from-cyan-100 via-white to-white pb-10">
       <BackHomeButton />
-      <ConfettiOverlay show={showWin} />
+      <ConfettiOverlay show={showWin} slug="numeros" />
       <StarReward slug="numeros" show={showWin} message="¡Contaste hasta el final!" />
       <main className="mx-auto w-full max-w-xl px-4 pt-20 sm:px-6">
         <h1 className="mb-2 text-center text-2xl font-extrabold text-teal-600 sm:text-3xl">

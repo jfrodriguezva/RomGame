@@ -144,7 +144,7 @@ export default function VidaPracticaPage() {
         </button>
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="vida-practica" />
       <StarReward
         slug="vida-practica"
         show={logrado}

@@ -119,7 +119,7 @@ export default function ToyStoryPage() {
   return (
     <div className="min-h-full flex-1 bg-gradient-to-b from-sky-100 via-white to-white pb-10">
       <BackHomeButton />
-      <ConfettiOverlay show={showWin} />
+      <ConfettiOverlay show={showWin} slug="toystory" />
       <StarReward slug="toystory" show={showWin} message="¡Llegaste a la meta!" />
       <main className="mx-auto flex w-full max-w-xl flex-col items-center px-4 pt-20 sm:px-6">
         <h1 className="mb-2 text-center text-xl font-extrabold text-orange-600">

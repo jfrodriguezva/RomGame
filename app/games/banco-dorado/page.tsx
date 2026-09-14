@@ -122,7 +122,7 @@ export default function BancoDoradoPage() {
       }
       nota={nota}
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="banco-dorado" />
       <StarReward
         slug="banco-dorado"
         show={logrado}

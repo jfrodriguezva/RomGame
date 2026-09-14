@@ -80,7 +80,7 @@ export default function CilindrosPage() {
         </button>
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="cilindros" />
       <StarReward
         slug="cilindros"
         show={logrado}

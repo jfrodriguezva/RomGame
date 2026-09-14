@@ -100,7 +100,7 @@ export default function ObjetosPage() {
   return (
     <div className="min-h-full flex-1 bg-gradient-to-b from-indigo-100 via-white to-white pb-10">
       <BackHomeButton />
-      <ConfettiOverlay show={showWin} />
+      <ConfettiOverlay show={showWin} slug="objetos" />
       <StarReward slug="objetos" show={showWin} message="¡Encontraste todo!" />
       <main className="mx-auto w-full max-w-2xl px-4 pt-20 sm:px-6">
         <h1 className="mb-2 text-center text-2xl font-extrabold text-indigo-500 sm:text-3xl">

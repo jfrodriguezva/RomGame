@@ -81,7 +81,7 @@ export default function TablaCienPage() {
         </button>
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="tabla-cien" />
       <StarReward
         slug="tabla-cien"
         show={logrado}

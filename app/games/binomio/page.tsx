@@ -117,7 +117,7 @@ export default function BinomioPage() {
         ) : undefined
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="binomio" />
       <StarReward
         slug="binomio"
         show={logrado}

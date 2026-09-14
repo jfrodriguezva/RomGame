@@ -117,7 +117,7 @@ export default function AlfabetoMovilPage() {
         </>
       }
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="alfabeto-movil" />
       <StarReward
         slug="alfabeto-movil"
         show={logrado}

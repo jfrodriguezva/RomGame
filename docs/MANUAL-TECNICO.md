@@ -144,10 +144,11 @@ primero se conectó en los 4 componentes compartidos, y después se agregó
 antiguo (fuera de los 4 componentes), no olvidar pasar `slug`.
 
 `ConfettiOverlay.tsx` sigue el mismo criterio (acepta `slug`, arma una
-paleta de 4 tonos con `mezclar()` entre `acento`/`acentoOscuro` y blanco),
-pero solo está conectado en los 4 componentes compartidos — los ~37
-materiales que lo llaman directo siguen con la paleta genérica de 6 tonos
-naturales.
+paleta de 4 tonos con `mezclar()` entre `acento`/`acentoOscuro` y blanco).
+**Ya cubre los 90 materiales con niveles**: 4 componentes compartidos +
+los 33 materiales que lo llaman directo (los 31 de `StarReward` más
+`dado`/`lava`, que no usan `StarReward` pero sí confeti). Ningún material
+se quedó con la paleta genérica.
 
 ## 8. Catálogo de datos
 
@@ -223,11 +224,8 @@ funcione offline como PWA.
 - Ninguno de los 90 materiales se ha probado interactivamente con un dedo
   real en un dispositivo — todo lo verificado hasta ahora es build +
   HTTP/HTML + curvas de datos (`npm run qa`).
-- `ConfettiOverlay` toma el color del área solo en los 4 componentes
-  compartidos; los ~37 materiales que lo llaman directo (los 31 de
-  `StarReward` más `dado`/`lava`) siguen con la paleta genérica.
-- `StarReward` ya toma el color del área en los 90 materiales con niveles
-  (ver sección 7) — resuelto.
+- `StarReward` y `ConfettiOverlay` ya toman el color del área en los 90
+  materiales con niveles (ver sección 7) — resuelto.
 
 ## 14. QA automatizado de niveles
 

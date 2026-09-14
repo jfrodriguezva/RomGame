@@ -82,7 +82,7 @@ export default function ContinentesPage() {
       nota={nota}
       ancho="max-w-lg"
     >
-      <ConfettiOverlay show={logrado} />
+      <ConfettiOverlay show={logrado} slug="continentes" />
       <StarReward
         slug="continentes"
         show={logrado}

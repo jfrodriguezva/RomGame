@@ -72,7 +72,7 @@ export default function AdivinaQuienPage() {
   return (
     <div className="min-h-full flex-1 bg-gradient-to-b from-teal-100 via-white to-white pb-10">
       <BackHomeButton />
-      <ConfettiOverlay show={showWin} />
+      <ConfettiOverlay show={showWin} slug="adivinaquien" />
       <StarReward slug="adivinaquien" show={showWin} message="¡Adivinaste quién es!" />
       <main className="mx-auto flex w-full max-w-2xl flex-col items-center px-4 pt-20 sm:px-6">
         <h1 className="mb-1 text-center text-2xl font-extrabold text-teal-600 sm:text-3xl">

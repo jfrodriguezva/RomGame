@@ -133,7 +133,7 @@ export default function DiferenciasPage() {
   return (
     <div className="min-h-full flex-1 bg-gradient-to-b from-violet-100 via-white to-white pb-10">
       <BackHomeButton />
-      <ConfettiOverlay show={showWin} />
+      <ConfettiOverlay show={showWin} slug="diferencias" />
       <StarReward slug="diferencias" show={showWin} message="¡Encontraste todas las diferencias!" />
       <main className="mx-auto w-full max-w-3xl px-4 pt-20 sm:px-6">
         <h1 className="mb-2 text-center text-2xl font-extrabold text-purple-500 sm:text-3xl">
