@@ -993,6 +993,18 @@ export const games: GameDef[] = [
     nuevo: true,
   }),
   g({
+    id: "oca",
+    slug: "oca",
+    title: "El juego de la oca",
+    emoji: "🦢",
+    description: "Tira el dado, oca, puente o pozo",
+    area: "compania",
+    edad: [4, 6],
+    material: "Juego de mesa",
+    objetivo: "Esperar el turno y aceptar el azar, con más variedad de casillas que serpientes y escaleras.",
+    nuevo: true,
+  }),
+  g({
     id: "serpientes",
     slug: "serpientes",
     title: "Serpientes y escaleras",
