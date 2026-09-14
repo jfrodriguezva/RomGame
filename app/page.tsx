@@ -1,19 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import GameCard from "@/components/GameCard";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import Mascot from "@/components/Mascot";
 import { games, gamesByArea, getGame, rutaDeJuego, TOTAL_NIVELES } from "@/data/games";
-import { AREAS, AREAS_AMBIENTE, AREAS_EXTRA } from "@/lib/montessori";
+import { AREAS, AREA_ORDER, type Area } from "@/lib/montessori";
 import { useProgressStore } from "@/lib/progressStore";
 import { useSettings } from "@/lib/settings";
 
 export default function Home() {
   const porJuego = useProgressStore((s) => s.games);
   const nombre = useSettings((s) => s.nombre);
+  const [areaActiva, setAreaActiva] = useState<Area | "todas">(AREA_ORDER[0]);
 
   const resumen = useMemo(() => {
     const entradas = Object.entries(porJuego);
@@ -121,21 +122,48 @@ export default function Home() {
           </span>
         </div>
 
-        {AREAS_AMBIENTE.map((areaId) => (
-          <AreaSection key={areaId} areaId={areaId} />
-        ))}
-
-        <div className="my-10 flex items-center gap-3">
-          <span className="h-px flex-1 bg-stone-200" />
-          <span className="text-xs font-bold uppercase tracking-wider text-stone-400">
-            además
-          </span>
-          <span className="h-px flex-1 bg-stone-200" />
+        {/* Selector de área: agrupa las 91 tarjetas detrás de un solo tap en
+            vez de tenerlas todas expandidas una tras otra — antes había que
+            hacer scroll por las 8 áreas completas para llegar a la última. */}
+        <div className="mb-6 flex flex-wrap justify-center gap-2">
+          {AREA_ORDER.map((areaId) => {
+            const area = AREAS[areaId];
+            const activa = areaActiva === areaId;
+            return (
+              <motion.button
+                key={areaId}
+                whileTap={{ scale: 0.94 }}
+                onClick={() => setAreaActiva(areaId)}
+                className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold shadow-sm ring-1 transition ${
+                  activa ? `${area.chip} ring-black/10` : "bg-white/70 text-stone-500 ring-black/5"
+                }`}
+              >
+                <span className="text-lg leading-none">{area.emoji}</span>
+                {area.label}
+                <span className={activa ? "opacity-70" : "text-stone-400"}>
+                  {gamesByArea(areaId).length}
+                </span>
+              </motion.button>
+            );
+          })}
+          <motion.button
+            whileTap={{ scale: 0.94 }}
+            onClick={() => setAreaActiva("todas")}
+            className={`rounded-full px-3.5 py-2 text-sm font-bold shadow-sm ring-1 transition ${
+              areaActiva === "todas"
+                ? "bg-stone-700 text-white ring-black/10"
+                : "bg-white/70 text-stone-500 ring-black/5"
+            }`}
+          >
+            Ver todas
+          </motion.button>
         </div>
 
-        {AREAS_EXTRA.map((areaId) => (
-          <AreaSection key={areaId} areaId={areaId} />
-        ))}
+        {areaActiva === "todas" ? (
+          AREA_ORDER.map((areaId) => <AreaSection key={areaId} areaId={areaId} />)
+        ) : (
+          <AreaSection areaId={areaActiva} />
+        )}
 
         <footer className="mt-12 text-center text-xs leading-relaxed text-stone-400">
           Inspirado en el método Montessori: el niño elige, repite y se corrige solo.
