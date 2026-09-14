@@ -1017,6 +1017,18 @@ export const games: GameDef[] = [
     nuevo: true,
   }),
   g({
+    id: "bingo",
+    slug: "bingo",
+    title: "Bingo con imágenes",
+    emoji: "🎱",
+    description: "Escucha, busca y marca en tu cartón",
+    area: "compania",
+    edad: [3, 6],
+    material: "Juego de mesa",
+    objetivo: "Vocabulario, atención y correspondencia entre lo que se oye y lo que se ve.",
+    nuevo: true,
+  }),
+  g({
     id: "serpientes",
     slug: "serpientes",
     title: "Serpientes y escaleras",
