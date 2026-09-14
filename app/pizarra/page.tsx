@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import ConfettiOverlay from "@/components/ConfettiOverlay";
 import {
   type DibujoGuardado,
   type Herramienta,
@@ -19,7 +20,7 @@ import {
 } from "@/lib/pizarra";
 import { playSound } from "@/lib/audio";
 import { vibrar, HAPTIC } from "@/lib/haptics";
-import { GUIAS, type Guia } from "@/data/guias";
+import { GUIAS, GUIAS_POR_GRUPO, type Guia } from "@/data/guias";
 
 // ---------------------------------------------------------------------------
 // Materiales de la pizarra
@@ -81,6 +82,18 @@ const SELLOS = [
 
 const SIMETRIAS = [1, 2, 4, 6, 8];
 
+/**
+ * Figuras cerradas de `data/guias.ts` que funcionan como dibujo para
+ * colorear (no solo trazo): quedan fuera las líneas abiertas (ondas,
+ * zigzag, espiral, bucles), que son para repasar, no para rellenar.
+ */
+const IMAGENES_COLOREAR = GUIAS_POR_GRUPO.formas.filter(
+  (f) => !["f-ola", "f-zigzag", "f-espiral", "f-bucles"].includes(f.id)
+);
+
+/** Misiones de dibujo libre: un ícono pide un dibujo, sin necesitar leer. */
+const MISIONES = ["☀️", "🏠", "🐟", "🌳", "🐱", "⭐", "🌸", "🦋", "🚗", "🎈", "🐶", "🌈"];
+
 export default function PizarraPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -94,7 +107,12 @@ export default function PizarraPage() {
   const [fondo, setFondo] = useState<(typeof FONDOS)[number]["id"]>("papel");
   const [simetria, setSimetria] = useState(1);
   const [guia, setGuia] = useState<Guia | null>(null);
-  const [panel, setPanel] = useState<"pincel" | "fondo" | "guia" | "galeria" | null>("pincel");
+  const [plantilla, setPlantilla] = useState<Guia | null>(null);
+  const [mision, setMision] = useState<string | null>(null);
+  const [misionLista, setMisionLista] = useState(false);
+  const [panel, setPanel] = useState<
+    "pincel" | "fondo" | "guia" | "colorear" | "mision" | "galeria" | null
+  >("pincel");
   const [galeria, setGaleria] = useState<DibujoGuardado[]>([]);
   const [aviso, setAviso] = useState<string | null>(null);
 
@@ -329,6 +347,27 @@ export default function PizarraPage() {
     setTimeout(() => setAviso(null), 1600);
   }
 
+  /**
+   * Cierra la misión actual: celebra, limpia la hoja para la siguiente y
+   * ofrece otro ícono. Nadie evalúa el dibujo — el niño decide cuándo está
+   * listo, igual que el resto de la app no penaliza ni compara.
+   */
+  function completarMision() {
+    playSound("win");
+    vibrar(HAPTIC.logro);
+    setMisionLista(true);
+    setTimeout(() => setMisionLista(false), 1400);
+    guardarPaso();
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
+    if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Math.random() aquí es seguro: completarMision solo se llama desde el
+    // clic en "¡Listo!", nunca durante el render, pero el linter no puede
+    // probar eso desde la firma de la función.
+    // eslint-disable-next-line react-hooks/purity
+    setMision(MISIONES[Math.floor(Math.random() * MISIONES.length)]);
+  }
+
   // -------------------------------------------------------------------------
 
   return (
@@ -413,6 +452,24 @@ export default function PizarraPage() {
           </svg>
         )}
 
+        {plantilla && (
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="xMidYMid meet"
+            className="pointer-events-none absolute inset-0 h-full w-full p-10 opacity-70"
+            aria-hidden
+          >
+            <path
+              d={plantilla.contenido}
+              fill="none"
+              stroke={esOscuro ? "#ffffff" : "#57504a"}
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+
         <canvas
           ref={canvasRef}
           className="lienzo absolute inset-0 h-full w-full"
@@ -422,6 +479,22 @@ export default function PizarraPage() {
           onPointerCancel={alSoltar}
           onPointerLeave={alSoltar}
         />
+
+        <ConfettiOverlay show={misionLista} slug="pizarra" />
+
+        {mision && (
+          <div className="pointer-events-none absolute right-3 top-3 z-20 flex flex-col items-center gap-1">
+            <span className="flex h-16 w-16 items-center justify-center rounded-3xl bg-white/95 text-4xl shadow-lg ring-1 ring-black/5">
+              {mision}
+            </span>
+            <button
+              onClick={completarMision}
+              className="pointer-events-auto rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-bold text-white shadow active:scale-95"
+            >
+              ¡Listo! 🎉
+            </button>
+          </div>
+        )}
 
         <AnimatePresence>
           {aviso && (
@@ -455,6 +528,8 @@ export default function PizarraPage() {
                   ["pincel", "Pincel"],
                   ["fondo", "Hoja"],
                   ["guia", "Guías"],
+                  ["colorear", "Colorear"],
+                  ["mision", "Misión"],
                   ["galeria", "Galería"],
                 ] as const
               ).map(([id, nombre]) => (
@@ -610,6 +685,69 @@ export default function PizarraPage() {
                         aria-label={g.nombre}
                       >
                         {g.icono}
+                      </button>
+                    ))}
+                  </Fila>
+                </>
+              )}
+
+              {panel === "colorear" && (
+                <>
+                  <p className="mb-2 text-xs text-stone-500">
+                    Elige un dibujo: queda marcado sobre la hoja y lo puedes colorear con
+                    cualquier pintura.
+                  </p>
+                  <Fila>
+                    <button
+                      onClick={() => setPlantilla(null)}
+                      className={`h-14 shrink-0 rounded-2xl px-4 text-xs font-bold ${
+                        plantilla === null ? "bg-stone-700 text-white" : "bg-stone-100 text-stone-500"
+                      }`}
+                    >
+                      Ninguno
+                    </button>
+                    {IMAGENES_COLOREAR.map((img) => (
+                      <button
+                        key={img.id}
+                        onClick={() => setPlantilla(img)}
+                        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl ${
+                          plantilla?.id === img.id
+                            ? "bg-stone-700 text-white"
+                            : "bg-stone-100 text-stone-600"
+                        }`}
+                        aria-label={img.nombre}
+                      >
+                        {img.icono}
+                      </button>
+                    ))}
+                  </Fila>
+                </>
+              )}
+
+              {panel === "mision" && (
+                <>
+                  <p className="mb-2 text-xs text-stone-500">
+                    Toca un ícono: aparece arriba y pide dibujarlo. Cuando termines, toca
+                    &quot;¡Listo!&quot; para pasar a otro.
+                  </p>
+                  <Fila>
+                    {mision && (
+                      <button
+                        onClick={() => setMision(null)}
+                        className="h-14 shrink-0 rounded-2xl bg-stone-100 px-4 text-xs font-bold text-stone-500"
+                      >
+                        Terminar
+                      </button>
+                    )}
+                    {MISIONES.map((icono) => (
+                      <button
+                        key={icono}
+                        onClick={() => setMision(icono)}
+                        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl ${
+                          mision === icono ? "bg-stone-700 ring-2 ring-stone-500" : "bg-stone-100"
+                        }`}
+                      >
+                        {icono}
                       </button>
                     ))}
                   </Fila>

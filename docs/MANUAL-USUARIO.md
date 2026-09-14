@@ -140,6 +140,19 @@ collage libre.
 
 ## 4. La pizarra (`/pizarra`)
 
+Además del lienzo libre, dos apartados nuevos en el cajón de herramientas:
+
+- **Colorear** — elige una figura (casa, sol, estrella, corazón, círculo,
+  cuadrado, triángulo, rombo) y queda marcada sobre la hoja, lista para
+  rellenar con cualquiera de las ocho pinturas. A diferencia del material
+  "Colorear" (que rellena regiones tocándolas), aquí se pinta a mano libre
+  con el pincel encima del contorno, como un libro para colorear real.
+- **Misión** — una galería de íconos (☀️🏠🐟🌳🐱⭐🌸🦋🚗🎈🐶🌈); tocar uno lo
+  fija arriba del lienzo pidiendo "dibuja esto". El niño dibuja libre y
+  toca "¡Listo!" cuando termina: hay confeti y pasa a otra misión. Nadie
+  evalúa el resultado — es estructura y variedad, no una prueba.
+
+
 Lienzo a pantalla completa para dibujar con el dedo: ocho herramientas
 (lápiz, crayón con textura, marcador translúcido, neón, aerosol, cubeta de
 relleno, sellos, borrador), grosor variable por presión, modo mandala
