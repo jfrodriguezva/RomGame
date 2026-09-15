@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BackHomeButton from "@/components/BackHomeButton";
 import LevelSelector from "@/components/LevelSelector";
@@ -18,6 +18,7 @@ export default function RpsPage() {
   const [result, setResult] = useState<"win" | "lose" | "draw" | null>(null);
   const [history, setHistory] = useState<Record<RpsChoice, number>>({ piedra: 0, papel: 0, tijera: 0 });
   const [, setWins] = useState(0);
+  const winsRef = useRef(0);
   const [showWin, setShowWin] = useState(false);
   const addStars = useProgressStore((s) => s.addStars);
   const registerPlay = useProgressStore((s) => s.registerPlay);
@@ -60,15 +61,18 @@ export default function RpsPage() {
 
       if (outcome === "win") {
         playSound("win");
-        setWins((n) => {
-          const next = n + 1;
-          if (next % 3 === 0) {
-            addStars("rps", 1);
-            setShowWin(true);
-            setTimeout(() => setShowWin(false), 1400);
-          }
-          return next;
-        });
+        // Antes esto vivía dentro del updater de setWins, un efecto
+        // secundario (addStars, setShowWin) en una función que React puede
+        // invocar más de una vez — mismo patrón que ya causó bugs reales
+        // en serpientes, globo, canasta y mesa-silencio.
+        const next = winsRef.current + 1;
+        winsRef.current = next;
+        setWins(next);
+        if (next % 3 === 0) {
+          addStars("rps", 1);
+          setShowWin(true);
+          setTimeout(() => setShowWin(false), 1400);
+        }
       } else if (outcome === "lose") {
         playSound("wrong");
       } else {

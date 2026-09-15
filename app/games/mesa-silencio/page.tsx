@@ -42,6 +42,7 @@ export default function MesaSilencioPage() {
   const [minutos, setMinutos] = useState(2);
   const [pista, setPista] = useState(SONIDOS_PARA_ESCUCHAR[0]);
   const faseRef = useRef(0);
+  const restanteRef = useRef(0);
 
   useEffect(() => {
     registerPlay("mesa-silencio");
@@ -50,18 +51,25 @@ export default function MesaSilencioPage() {
   useEffect(() => {
     if (!corriendo) return;
 
+    // Antes el cierre (campana, voz, apagar "corriendo") vivía dentro del
+    // updater de setRestante, un efecto secundario en una función que
+    // React puede invocar más de una vez — el mismo patrón que causó bugs
+    // reales en serpientes, globo y canasta. Ahora lee el tiempo restante
+    // desde una ref y hace esos efectos una sola vez, fuera del setState.
     const fin = setInterval(() => {
-      setRestante((r) => {
-        if (r <= 1) {
-          clearInterval(fin);
-          setCorriendo(false);
-          // La campana cierra el silencio, como en el ambiente.
-          [0, 4, 7].forEach((n, i) => setTimeout(() => playNote(n, 1.6), i * 260));
-          hablar("Muy bien. Puedes moverte otra vez");
-          return 0;
-        }
-        return r - 1;
-      });
+      const siguiente = restanteRef.current - 1;
+      if (siguiente <= 0) {
+        restanteRef.current = 0;
+        setRestante(0);
+        clearInterval(fin);
+        setCorriendo(false);
+        // La campana cierra el silencio, como en el ambiente.
+        [0, 4, 7].forEach((n, i) => setTimeout(() => playNote(n, 1.6), i * 260));
+        hablar("Muy bien. Puedes moverte otra vez");
+      } else {
+        restanteRef.current = siguiente;
+        setRestante(siguiente);
+      }
     }, 1000);
 
     const respiracion = setInterval(() => {
@@ -85,6 +93,7 @@ export default function MesaSilencioPage() {
     callar();
     faseRef.current = 0;
     setFase(0);
+    restanteRef.current = minutos * 60;
     setRestante(minutos * 60);
     setCorriendo(true);
     playNote(4, 1.4);

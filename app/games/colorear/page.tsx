@@ -48,15 +48,17 @@ export default function ColorearPage() {
 
   function pintar(id: string) {
     // Volver a pintar una zona nunca es un error: se puede cambiar de opinión.
-    setPintado((prev) => {
-      const siguiente = { ...prev, [id]: color };
-      if (Object.keys(siguiente).length === total) {
-        setTimeout(() => material.completar(), 350);
-      }
-      return siguiente;
-    });
+    // Antes material.completar() se programaba dentro del updater de
+    // setPintado, un efecto secundario en una función que React puede
+    // invocar más de una vez — mismo patrón que ya causó bugs reales en
+    // otros materiales (podía duplicar la estrella y la celebración).
+    const siguiente = { ...pintado, [id]: color };
+    setPintado(siguiente);
     playSound("click");
     vibrar(HAPTIC.toque);
+    if (Object.keys(siguiente).length === total) {
+      setTimeout(() => material.completar(), 350);
+    }
   }
 
   return (

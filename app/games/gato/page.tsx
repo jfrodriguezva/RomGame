@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import BackHomeButton from "@/components/BackHomeButton";
 import LevelSelector from "@/components/LevelSelector";
@@ -45,6 +45,7 @@ export default function GatoPage() {
   const [board, setBoard] = useState<Cell[]>(Array(9).fill(null));
   const [turn, setTurn] = useState<"player" | "cpu">("player");
   const [, setWins] = useState(0);
+  const winsRef = useRef(0);
   const [showWin, setShowWin] = useState(false);
   const [message, setMessage] = useState("Tu turno");
   const addStars = useProgressStore((s) => s.addStars);
@@ -90,11 +91,13 @@ export default function GatoPage() {
       // legítimo, no una derivación pura para el render.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setMessage("¡Ganaste! 🎉");
-      setWins((n) => {
-        const next = n + 1;
-        if (next % 3 === 0) addStars("gato", 1);
-        return next;
-      });
+      // Antes addStars vivía dentro del updater de setWins, un efecto
+      // secundario en una función que React puede invocar más de una vez
+      // — mismo patrón que ya causó bugs reales en varios materiales.
+      const next = winsRef.current + 1;
+      winsRef.current = next;
+      setWins(next);
+      if (next % 3 === 0) addStars("gato", 1);
       setShowWin(true);
       setTimeout(() => {
         setShowWin(false);

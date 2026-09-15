@@ -24,12 +24,16 @@ export default function CanastaPage() {
   const addStars = useProgressStore((s) => s.addStars);
   const registerPlay = useProgressStore((s) => s.registerPlay);
   const trackRef = useRef<HTMLDivElement>(null);
+  const starsRef = useRef<FallingStar[]>([]);
+  const basketXRef = useRef(50);
 
   function moveBasketTo(clientX: number) {
     const rect = trackRef.current?.getBoundingClientRect();
     if (!rect) return;
     const pct = ((clientX - rect.left) / rect.width) * 100;
-    setBasketX(Math.max(8, Math.min(92, pct)));
+    const clamped = Math.max(8, Math.min(92, pct));
+    basketXRef.current = clamped;
+    setBasketX(clamped);
   }
 
   useEffect(() => {
@@ -38,42 +42,55 @@ export default function CanastaPage() {
     // una prop que cambia, no es una derivación pura del render actual.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setBasketX(50);
+    basketXRef.current = 50;
     setStars([]);
+    starsRef.current = [];
     setCaught(0);
 
     const spawnInterval = setInterval(() => {
-      setStars((prev) => [
-        ...prev,
-        { id: nextId++, x: 10 + Math.random() * 80, y: 0 },
-      ]);
+      const siguientes = [...starsRef.current, { id: nextId++, x: 10 + Math.random() * 80, y: 0 }];
+      starsRef.current = siguientes;
+      setStars(siguientes);
     }, config.spawnMs);
 
     return () => clearInterval(spawnInterval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level]);
 
+  /**
+   * Antes esto vivía dentro del updater de setStars (`setStars(prev => {...
+   * setCaught(...); playSound(...) ...})`), el mismo efecto secundario
+   * dentro de una función que React puede invocar más de una vez que causó
+   * el bug real en serpientes y en globo — el punto podía sonar doble o
+   * contarse de más. También dependía de `basketX` en el arreglo de
+   * dependencias, así que el intervalo se destruía y se recreaba en cada
+   * movimiento de la cesta al arrastrar. Ahora lee la posición de la cesta
+   * desde una ref (siempre al día, sin recrear el intervalo) y hace el
+   * sonido/conteo una sola vez, fuera del setState.
+   */
   useEffect(() => {
     const tick = setInterval(() => {
-      setStars((prev) => {
-        const next: FallingStar[] = [];
-        for (const star of prev) {
-          const ny = star.y + config.fallSpeed;
-          if (ny >= 88 && Math.abs(star.x - basketX) < CATCH_RADIUS) {
-            setCaught((c) => c + 1);
-            playSound("correct");
-            continue;
-          }
-          if (ny >= 100) {
-            continue;
-          }
-          next.push({ ...star, y: ny });
+      let atrapadas = 0;
+      const siguientes: FallingStar[] = [];
+      for (const star of starsRef.current) {
+        const ny = star.y + config.fallSpeed;
+        if (ny >= 88 && Math.abs(star.x - basketXRef.current) < CATCH_RADIUS) {
+          atrapadas++;
+          continue;
         }
-        return next;
-      });
+        if (ny >= 100) continue;
+        siguientes.push({ ...star, y: ny });
+      }
+      starsRef.current = siguientes;
+      setStars(siguientes);
+      if (atrapadas > 0) {
+        playSound("correct");
+        setCaught((c) => c + atrapadas);
+      }
     }, TICK_MS);
     return () => clearInterval(tick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [level, basketX]);
+  }, [level]);
 
   useEffect(() => {
     if (caught > 0 && caught % 12 === 0) {
