@@ -13,24 +13,42 @@ import androidx.navigation.compose.rememberNavController
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Services
 import com.miambiente.app.theme.MiAmbienteTheme
+import com.miambiente.app.ui.screens.CicloVidaScreen
+import com.miambiente.app.ui.screens.ColoresScreen
+import com.miambiente.app.ui.screens.CuerpoScreen
+import com.miambiente.app.ui.screens.DiaNocheScreen
+import com.miambiente.app.ui.screens.DiasSemanaScreen
+import com.miambiente.app.ui.screens.DietaAnimalScreen
+import com.miambiente.app.ui.screens.ElLaScreen
+import com.miambiente.app.ui.screens.EstacionesScreen
+import com.miambiente.app.ui.screens.EstadosAguaScreen
+import com.miambiente.app.ui.screens.FormasScreen
+import com.miambiente.app.ui.screens.FrutaVerduraScreen
 import com.miambiente.app.ui.screens.GatoScreen
+import com.miambiente.app.ui.screens.HabitatScreen
 import com.miambiente.app.ui.screens.HomeScreen
+import com.miambiente.app.ui.screens.HusosScreen
+import com.miambiente.app.ui.screens.InstrumentosScreen
+import com.miambiente.app.ui.screens.OficiosScreen
+import com.miambiente.app.ui.screens.ParesImparesScreen
+import com.miambiente.app.ui.screens.PinzaScreen
+import com.miambiente.app.ui.screens.RpsScreen
 import com.miambiente.app.ui.screens.SelectorEdadScreen
 import com.miambiente.app.ui.screens.SeresVivosScreen
-import com.miambiente.app.ui.screens.FormasScreen
+import com.miambiente.app.ui.screens.SingularPluralScreen
+import com.miambiente.app.ui.screens.TamanosScreen
 import com.miambiente.app.ui.screens.TorreRosaScreen
+import com.miambiente.app.ui.screens.TransporteScreen
 
 /**
  * Rutas de navegación — equivalente nativo del App Router de Next.js
- * (app/page.tsx, app/games/<slug>/page.tsx).
+ * (app/page.tsx, app/games/<slug>/page.tsx). Cada ruta usa el mismo id
+ * que su GameDef en model/GameDef.kt, así HomeScreen navega con
+ * `navController.navigate(juego.id)` sin necesitar un mapeo aparte.
  */
 object Ruta {
     const val EDAD = "edad"
     const val INICIO = "inicio"
-    const val FORMAS = "formas"
-    const val TORRE_ROSA = "torre-rosa"
-    const val SERES_VIVOS = "seres-vivos"
-    const val GATO = "gato"
 }
 
 class MainActivity : ComponentActivity() {
@@ -56,6 +74,7 @@ class MainActivity : ComponentActivity() {
                     val actual = settings ?: return@CompositionLocalProvider
 
                     val navController = rememberNavController()
+                    val volver: () -> Unit = { navController.popBackStack() }
 
                     NavHost(
                         navController = navController,
@@ -79,10 +98,40 @@ class MainActivity : ComponentActivity() {
                                 },
                             )
                         }
-                        composable(Ruta.FORMAS) { FormasScreen(onVolver = { navController.popBackStack() }) }
-                        composable(Ruta.TORRE_ROSA) { TorreRosaScreen(onVolver = { navController.popBackStack() }) }
-                        composable(Ruta.SERES_VIVOS) { SeresVivosScreen(onVolver = { navController.popBackStack() }) }
-                        composable(Ruta.GATO) { GatoScreen(onVolver = { navController.popBackStack() }) }
+
+                        // --- MaterialQuiz ---
+                        composable("formas") { FormasScreen(volver) }
+                        composable("cuerpo") { CuerpoScreen(volver) }
+                        composable("colores") { ColoresScreen(volver) }
+                        composable("instrumentos") { InstrumentosScreen(volver) }
+                        composable("oficios") { OficiosScreen(volver) }
+
+                        // --- MaterialOrdenar ---
+                        composable("torre-rosa") { TorreRosaScreen(volver) }
+                        composable("dias-semana") { DiasSemanaScreen(volver) }
+                        composable("estaciones") { EstacionesScreen(volver) }
+                        composable("ciclo-vida") { CicloVidaScreen(volver) }
+
+                        // --- MaterialClasificar ---
+                        composable("seres-vivos") { SeresVivosScreen(volver) }
+                        composable("habitat") { HabitatScreen(volver) }
+                        composable("dieta-animal") { DietaAnimalScreen(volver) }
+                        composable("fruta-verdura") { FrutaVerduraScreen(volver) }
+                        composable("el-la") { ElLaScreen(volver) }
+                        composable("pares-impares") { ParesImparesScreen(volver) }
+                        composable("tamanos") { TamanosScreen(volver) }
+                        composable("estados-agua") { EstadosAguaScreen(volver) }
+                        composable("dia-noche") { DiaNocheScreen(volver) }
+                        composable("singular-plural") { SingularPluralScreen(volver) }
+                        composable("transporte") { TransporteScreen(volver) }
+
+                        // --- MaterialTransferir ---
+                        composable("pinza") { PinzaScreen(volver) }
+                        composable("husos") { HusosScreen(volver) }
+
+                        // --- Independientes ---
+                        composable("gato") { GatoScreen(volver) }
+                        composable("rps") { RpsScreen(volver) }
                     }
                 }
             }

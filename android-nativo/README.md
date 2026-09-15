@@ -37,26 +37,33 @@ cosa dentro de un WebView.
 
 ## Qué NO es todavía
 
-**Esto es la primera ronda, no el puerto completo.** Hay 96 materiales en
-la versión web; aquí hay 4, elegidos para probar cada patrón de
-interacción de punta a punta:
+**Esto sigue sin ser el puerto completo.** Hay 96 materiales en la versión
+web; aquí hay **24**, ya con los 4 patrones de interacción extraídos como
+composables reutilizables en `ui/materials/` (`MaterialQuiz`,
+`MaterialOrdenar`, `MaterialClasificar`, `MaterialTransferir`), todos con
+arrastre real (`pointerInput` + `detectDragGestures`) donde el material
+original lo usa. Faltan 72.
 
-| Material nativo | Patrón que prueba | Equivalente web |
-|---|---|---|
-| `formas` (Gabinete de figuras) | Nomenclatura (Quiz) | `MaterialQuiz` |
-| `torre-rosa` (Torre rosa) | Seriación, con arrastre real | `MaterialOrdenar` |
-| `seres-vivos` (¿Vivo o no vivo?) | Clasificación, con arrastre real | `MaterialClasificar` |
-| `gato` (Gato) | Material independiente, sin patrón compartido | `app/games/gato` |
+| Patrón | Materiales nativos |
+|---|---|
+| `MaterialQuiz` (nomenclatura) | `formas`, `cuerpo`, `colores`, `instrumentos`, `oficios` |
+| `MaterialOrdenar` (seriación, con arrastre) | `torre-rosa`, `dias-semana`, `estaciones`, `ciclo-vida` |
+| `MaterialClasificar` (con arrastre a canastas) | `seres-vivos`, `habitat`, `dieta-animal`, `fruta-verdura`, `el-la`, `pares-impares`, `tamanos`, `estados-agua`, `dia-noche`, `singular-plural`, `transporte` |
+| `MaterialTransferir` (cantidad exacta, con arrastre) | `pinza`, `husos` |
+| Independientes (sin patrón compartido) | `gato`, `rps` |
 
-Con **un solo ejemplo de cada patrón**, se dejó la lógica de nivel/acierto
-local en cada pantalla en vez de extraer un `MaterialQuiz`/`MaterialOrdenar`
-genérico reutilizable — en la versión web esos componentes nacieron de ver
-el patrón repetirse muchas veces, no al revés. Extraerlos ahora, con un
-solo caso de cada uno, sería adivinar la forma correcta sin evidencia.
-Cuando haya un segundo material de cada patrón, ahí corresponde.
+Simplificaciones conocidas, pendientes de mejorar en una pasada futura:
+- `MaterialQuiz` solo implementa el periodo de "reconocer" (elegir el
+  nombre correcto); la lección de tres periodos completa (nombrar,
+  reconocer, evocar) de la versión web no está portada aún.
+- En `MaterialOrdenar`, el tamaño de la serie (`n`) es fijo por pantalla en
+  vez de escalar con el nivel alcanzado (sí escala en `MaterialQuiz` vía
+  `curvaOpciones`); es una limitación de que el nivel vive dentro del
+  composable y no es visible al armar sus parámetros de entrada.
 
 El selector de edad y el menú principal (con filtro por edad y áreas) sí
-están completos y navegables.
+están completos y navegables, y ya filtran/organizan los 24 materiales
+reales.
 
 ## Cómo seguir agregando materiales
 
@@ -64,11 +71,14 @@ están completos y navegables.
    siendo la versión web) y su curva en `data/levels/<slug>.ts`.
 2. Portar la curva a Kotlin usando `phased`/`phasedInt` de
    `model/Levels.kt` — son la misma función, mismo comportamiento.
-3. Si es el segundo material que usa un patrón ya visto (Quiz, Ordenar,
-   Clasificar, Transferir), extraer un composable reutilizable en vez de
-   copiar la pantalla anterior — es la señal de que ya no es prematuro.
+3. Usar el composable ya extraído en `ui/materials/` que corresponda
+   (`MaterialQuiz`, `MaterialOrdenar`, `MaterialClasificar`,
+   `MaterialTransferir`) — los 4 patrones ya están extraídos, no hace
+   falta copiar una pantalla existente como base.
 4. Agregar la entrada en `model/GameDef.kt` (`CATALOGO`).
-5. Registrar la pantalla en `MainActivity.kt` (`Ruta` + `composable(...)`).
+5. Registrar la pantalla en `MainActivity.kt` — el `composable(...)` usa
+   el mismo id que el `GameDef`, no hace falta tocar `Ruta` para
+   materiales (esa clase ya solo tiene `EDAD`/`INICIO`).
 6. Verificar: `./gradlew compileDebugKotlin` primero (rápido), después
    `./gradlew assembleDebug` para el APK completo.
 
@@ -80,6 +90,6 @@ los problemas de JDK/SSL encontrados en Windows y cómo se resolvieron.
 
 ```bash
 export JAVA_HOME="C:/Program Files/Android/openjdk/jdk-21.0.8"   # no el JDK 25 por defecto
-./gradlew assembleDebug
+./gradlew assembleDebug --no-daemon --max-workers=2   # flags de memoria: esta máquina ya mató el build 2 veces sin ellas
 # APK en app/build/outputs/apk/debug/app-debug.apk
 ```
