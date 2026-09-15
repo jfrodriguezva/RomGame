@@ -65,6 +65,13 @@ android {
         getByName("main") {
             kotlin.srcDirs("src/main/kotlin")
         }
+        getByName("test") {
+            kotlin.srcDirs("src/test/kotlin")
+        }
+    }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
     }
 }
 
@@ -89,4 +96,9 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // Pruebas internas de la lógica pura (curvas de nivel, detección de
+    // ganador de los juegos de mesa, generación del set de dominó) — JVM
+    // puro, sin emulador: corren en segundos con `./gradlew testDebugUnitTest`.
+    testImplementation("junit:junit:4.13.2")
 }

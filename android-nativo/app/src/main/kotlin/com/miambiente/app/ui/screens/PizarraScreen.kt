@@ -16,6 +16,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -654,7 +655,18 @@ private fun CajonHerramientas(
 
 @Composable
 private fun Fila(contenido: @Composable () -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) { contenido() }
+    // Bug real encontrado probando en el emulador: sin scroll horizontal
+    // propio, una fila con más opciones de las que caben en el ancho de
+    // pantalla (las 80 guías, los 16 colores) simplemente se recortaba —
+    // el resto quedaba dibujado fuera de la vista, inalcanzable. El
+    // equivalente web (`overflow-x-auto`) sí lo tenía; aquí faltaba.
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(bottom = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) { contenido() }
 }
 
 @Composable

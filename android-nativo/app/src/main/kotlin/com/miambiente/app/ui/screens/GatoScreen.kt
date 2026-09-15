@@ -33,7 +33,7 @@ import com.miambiente.app.ui.GameShell
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private fun ganador(tablero: List<String?>): String? {
+internal fun ganador(tablero: List<String?>): String? {
     val lineas = listOf(
         listOf(0, 1, 2), listOf(3, 4, 5), listOf(6, 7, 8),
         listOf(0, 3, 6), listOf(1, 4, 7), listOf(2, 5, 8),

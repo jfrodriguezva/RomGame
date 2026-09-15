@@ -48,6 +48,12 @@ fun MemoriaTurnosScreen(onVolver: () -> Unit) {
     var puntosCpu by remember { mutableStateOf(0) }
     var bloqueado by remember { mutableStateOf(false) }
 
+    fun reiniciar() {
+        cartas = (EMOJIS + EMOJIS).mapIndexed { i, e -> CartaTurno(i, e) }.shuffled()
+        volteadas = emptySet(); encontradas = emptySet()
+        turno = "jugador"; puntosJugador = 0; puntosCpu = 0; bloqueado = false
+    }
+
     fun jugar(a: Int, b: Int) {
         bloqueado = true
         scope.launch {
@@ -83,6 +89,15 @@ fun MemoriaTurnosScreen(onVolver: () -> Unit) {
             val a = disponibles.random()
             val b = disponibles.filter { it != a }.random()
             jugar(a, b)
+        }
+    }
+
+    // Antes se quedaba en el mensaje final para siempre — los demás
+    // juegos de turnos (Gato, Cuatro en línea) sí se reinician solos.
+    LaunchedEffect(encontradas.size) {
+        if (encontradas.size == cartas.size) {
+            delay(2200)
+            reiniciar()
         }
     }
 

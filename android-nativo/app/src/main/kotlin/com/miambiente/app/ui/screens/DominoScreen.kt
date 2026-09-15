@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -34,18 +35,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val IMAGENES = listOf("🐶", "🐱", "🐰", "🦋", "🌸")
-private data class Ficha(val id: Int, val a: Int, val b: Int)
+internal data class Ficha(val id: Int, val a: Int, val b: Int)
 
 /** Genera el set doble-4: todas las parejas a<=b entre las 5 imágenes (15 fichas). */
-private fun setCompleto(): List<Ficha> {
+internal fun setCompleto(): List<Ficha> {
     var id = 0
     val fichas = mutableListOf<Ficha>()
     for (a in IMAGENES.indices) for (b in a until IMAGENES.size) fichas.add(Ficha(id++, a, b))
     return fichas
 }
 
-private fun encaja(f: Ficha, extremo: Int) = f.a == extremo || f.b == extremo
-private fun otroLado(f: Ficha, extremo: Int) = if (f.a == extremo) f.b else f.a
+internal fun encaja(f: Ficha, extremo: Int) = f.a == extremo || f.b == extremo
+internal fun otroLado(f: Ficha, extremo: Int) = if (f.a == extremo) f.b else f.a
 
 /**
  * Dominó de imágenes — reglas reales del dominó (no la versión simplificada
@@ -176,8 +177,14 @@ fun DominoScreen(onVolver: () -> Unit) {
                 }
             }
             Text("Tu mano", fontSize = 12.sp)
-            Row(modifier = Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                manoJugador.forEach { f ->
+            // LazyRow (no Row): la mano puede crecer al robar del pozo —
+            // con Row simple, fichas de más quedaban fuera de la pantalla
+            // sin forma de alcanzarlas (mismo bug que la pizarra).
+            LazyRow(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(manoJugador, key = { it.id }) { f ->
                     Row(
                         modifier = Modifier
                             .clip(RoundedCornerShape(10.dp))

@@ -7,6 +7,64 @@ tenía un bug real en el selector de edad en un dispositivo físico, y el
 usuario pidió una versión nativa completa, con drag-and-drop real y
 funciones nativas del sistema en vez de simularlas dentro de un WebView.
 
+## Auditoría de bugs reportados (Pizarra + juegos de mesa)
+
+El usuario reportó dos problemas jugando de verdad: en la pizarra no se
+podía llegar a todas las letras, y "cuatro en línea falla, falla en
+muchos". Se investigó cada uno hasta la causa real, no hasta el primer
+síntoma:
+
+- **Pizarra — bug real, confirmado y corregido**: el `Fila` (la fila
+  horizontal de herramientas/colores/guías/estampas) no tenía scroll
+  horizontal propio. Con 8 herramientas o 16 colores no se notaba (casi
+  alcanzaban en pantalla), pero con las **80 guías** (27 minúsculas + 27
+  mayúsculas + 10 números + 16 formas) el resto simplemente se dibujaba
+  fuera de la pantalla, inalcanzable — exactamente lo reportado. Mismo
+  bug encontrado también en `DominoScreen` (la fila "Tu mano" podía
+  crecer al robar del pozo). Corregido en ambos con
+  `Modifier.horizontalScroll(rememberScrollState())`; verificado a mano
+  en el emulador con swipes hasta llegar a "x, y, z" y después a las 17
+  figuras del final de la lista.
+
+- **Cuatro en línea — bug real, confirmado y corregido**: `jugar()`
+  siempre ponía `turno = "cpu"`, incluso en la jugada que ganaba la
+  partida. El efecto que mueve a la computadora no comprobaba si el
+  juego ya había terminado, solo miraba de quién era el turno — así que
+  la computadora alcanzaba a mover una vez más *después* de que el
+  jugador ya hubiera ganado, y esa jugada extra interrumpía a medio
+  camino el efecto que iba a mostrar "¡Ganaste!" y reiniciar el tablero.
+  `GatoScreen` (mismo patrón de dos jugadores) sí tenía el freno
+  correcto desde el principio; ahora `Conecta4Screen` calcula
+  `ganoJugador`/`ganoCpu`/`empate`/`terminado` una vez por recomposición
+  (igual que Gato) y **ambos** efectos los respetan.
+
+- **Auditoría del mismo patrón en los 5 materiales con turnos**
+  (`GatoScreen`, `Conecta4Screen`, `DominoScreen`, `MaterialTablero` —
+  oca/serpientes —, `MemoriaTurnosScreen`): los otros cuatro ya estaban
+  bien. De paso se encontró y corrigió que `MemoriaTurnosScreen` no
+  tenía forma de reiniciarse sola al terminar la partida (los demás
+  juegos de turnos sí se reinician solos tras mostrar el resultado).
+
+## Pruebas internas (nuevas)
+
+Se agregó un módulo de pruebas unitarias de verdad (`app/src/test/`,
+JUnit, corre en la JVM sin emulador — `./gradlew testDebugUnitTest`,
+~1 minuto) para la lógica pura que más costó encontrar rota a mano:
+
+- `LevelsTest`: la curva `phased`/`phasedInt` nunca se sale de 1–10 en
+  etapa, nunca decrece, y toca exactamente la parada esperada.
+- `Conecta4LogicTest`: las 4 direcciones de `hayGanador` (horizontal,
+  vertical, las dos diagonales), que 3 en línea no ganan todavía, y que
+  fichas mezcladas no cuentan — el mismo tipo de prueba que habría
+  hecho evidente el bug de arriba si hubiera existido antes.
+- `GatoLogicTest`, `DominoLogicTest`: detección de ganador de gato, y
+  que el set de dominó doble-4 tiene exactamente las 15 fichas
+  correctas sin repetidos.
+
+27 pruebas, las 27 pasan. Las funciones de lógica relevantes se
+marcaron `internal` (antes `private`) para que las pruebas puedan
+llamarlas directo sin necesitar Robolectric ni el emulador.
+
 ## Validado en emulador real (no solo "compila")
 
 Se armó un AVD local (`MiAmbienteTablet`, API 36, x86_64) y se instaló el

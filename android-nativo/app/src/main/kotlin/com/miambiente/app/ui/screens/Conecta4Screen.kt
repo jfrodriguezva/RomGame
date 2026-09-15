@@ -28,10 +28,12 @@ import com.miambiente.app.ui.GameShell
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private const val COLS = 5
-private const val FILAS = 4
+internal const val CONECTA4_COLS = 5
+internal const val CONECTA4_FILAS = 4
+private const val COLS = CONECTA4_COLS
+private const val FILAS = CONECTA4_FILAS
 
-private fun hayGanador(tablero: List<String?>, ficha: String): Boolean {
+internal fun hayGanador(tablero: List<String?>, ficha: String): Boolean {
     fun en(c: Int, f: Int) = if (c in 0 until COLS && f in 0 until FILAS) tablero[f * COLS + c] else null
     for (c in 0 until COLS) for (f in 0 until FILAS) {
         if (en(c, f) != ficha) continue
@@ -43,7 +45,19 @@ private fun hayGanador(tablero: List<String?>, ficha: String): Boolean {
     return false
 }
 
-/** Cuatro en línea — alinea cuatro fichas antes que la computadora. */
+/**
+ * Cuatro en línea — alinea cuatro fichas antes que la computadora.
+ *
+ * Bug real encontrado jugando en el emulador: `gan`/`empate` antes vivían
+ * *dentro* del efecto que reinicia el tablero, y el efecto que mueve a la
+ * computadora no los conocía en absoluto — solo miraba `turno`. Como
+ * jugar() siempre pone `turno = "cpu"` (incluso en la jugada que gana),
+ * la computadora alcanzaba a mover una vez más después de que el jugador
+ * ya había ganado, y esa jugada extra reiniciaba el efecto de fin de
+ * juego a medio camino. Ahora `gan`/`empate` se calculan una vez por
+ * recomposición (como en Gato, que sí lo hacía bien) y ambos efectos los
+ * respetan.
+ */
 @Composable
 fun Conecta4Screen(onVolver: () -> Unit) {
     val services = LocalServices.current
@@ -53,6 +67,11 @@ fun Conecta4Screen(onVolver: () -> Unit) {
     var tablero by remember { mutableStateOf(List<String?>(COLS * FILAS) { null }) }
     var turno by remember { mutableStateOf("jugador") }
     var mensaje by remember { mutableStateOf("Tu turno") }
+
+    val ganoJugador = hayGanador(tablero, "🔴")
+    val ganoCpu = !ganoJugador && hayGanador(tablero, "🔵")
+    val empate = !ganoJugador && !ganoCpu && tablero.none { it == null }
+    val terminado = ganoJugador || ganoCpu || empate
 
     fun columnaLlena(c: Int) = (0 until FILAS).none { f -> tablero[f * COLS + c] == null }
 
@@ -69,17 +88,14 @@ fun Conecta4Screen(onVolver: () -> Unit) {
     }
 
     fun jugar(c: Int) {
-        if (turno != "jugador") return
+        if (turno != "jugador" || terminado) return
         val nuevo = soltarEn(c, "🔴") ?: return
         services.sound.tocar(Efecto.CLICK)
         tablero = nuevo
         turno = "cpu"
     }
 
-    LaunchedEffect(tablero) {
-        val ganoJugador = hayGanador(tablero, "🔴")
-        val ganoCpu = hayGanador(tablero, "🔵")
-        val empate = tablero.none { it == null }
+    LaunchedEffect(ganoJugador, ganoCpu, empate) {
         if (ganoJugador) {
             services.sound.tocar(Efecto.WIN)
             mensaje = "¡Ganaste! 🎉"
@@ -96,7 +112,7 @@ fun Conecta4Screen(onVolver: () -> Unit) {
     }
 
     LaunchedEffect(turno, tablero) {
-        if (turno != "cpu") return@LaunchedEffect
+        if (turno != "cpu" || terminado) return@LaunchedEffect
         delay(500)
         val columnasLibres = (0 until COLS).filter { !columnaLlena(it) }
         if (columnasLibres.isEmpty()) return@LaunchedEffect
