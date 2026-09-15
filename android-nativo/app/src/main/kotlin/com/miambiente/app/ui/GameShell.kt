@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,7 +55,12 @@ fun GameShell(
         if (consigna != null) services.speech.hablar(consigna)
     }
 
-    Column(modifier = Modifier.fillMaxSize().background(colores.fondo)) {
+    // `enableEdgeToEdge()` (MainActivity) dibuja detrás de las barras del
+    // sistema a propósito — pero sin `safeDrawingPadding()` el contenido
+    // real (botones, zonas de soltar) queda debajo de la barra de
+    // navegación en vez de solo el fondo. Encontrado probando en un
+    // emulador real: una pieza soltada terminaba oculta tras la barra.
+    Column(modifier = Modifier.fillMaxSize().background(colores.fondo).safeDrawingPadding()) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,

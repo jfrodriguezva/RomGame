@@ -7,6 +7,68 @@ tenía un bug real en el selector de edad en un dispositivo físico, y el
 usuario pidió una versión nativa completa, con drag-and-drop real y
 funciones nativas del sistema en vez de simularlas dentro de un WebView.
 
+## Validado en emulador real (no solo "compila")
+
+Se armó un AVD local (`MiAmbienteTablet`, API 36, x86_64) y se instaló el
+APK de verdad — no solo `compileDebugKotlin`/`assembleDebug`. Encontró un
+bug real que ningún build hubiera detectado:
+
+- **`enableEdgeToEdge()` sin `safeDrawingPadding()`**: el contenido de
+  cada pantalla (incluidas las zonas donde se suelta una pieza al
+  arrastrar) se dibujaba detrás de la barra de navegación del sistema en
+  vez de encima — una ficha soltada correctamente podía quedar oculta o
+  fuera de la zona tocable. Corregido en `GameShell.kt`, `HomeScreen.kt`
+  y `SelectorEdadScreen.kt` con `Modifier.safeDrawingPadding()`; afecta
+  las 98 pantallas de una vez por estar en el componente compartido.
+- El resto navegó y funcionó según lo esperado: selector de edad sin
+  trabarse (el bug original reportado en la versión Capacitor), arrastre
+  y suelta confirmados con `adb shell input draganddrop`, conteo de
+  materiales por edad correcto.
+
+## La pizarra grande — reescrita para igualar app/pizarra/page.tsx
+
+La primera versión nativa de este material era un lienzo de un solo
+color y un botón "Borrar todo" — muy por debajo de la web real. Se
+reescribió por completo para tener la misma profundidad:
+
+- **8 herramientas** con la textura exacta de `lib/pizarra.ts` portada
+  literal (mismo jitter de crayón, mismo brillo de neón con capa
+  difuminada, mismo relleno por líneas/flood-fill, mismo aerosol con
+  gotas aleatorias) — no una aproximación.
+- 16 colores, 4 grosores, **modo mandala** (1/2/4/6/8 ejes de simetría con
+  espejo, igual que `conSimetria` en la web).
+- 7 fondos (papel, blanco, cuadros, renglones, puntos, pizarrón, kraft).
+- **Las 80 guías de `data/guias.ts` completas** (27 minúsculas + 27
+  mayúsculas + 10 números + 16 formas) — los paths SVG se parsean tal
+  cual con `androidx.core.graphics.PathParser`, sin reinterpretar cada
+  figura a mano.
+- Plantillas para colorear (mismo subconjunto de 13 formas cerradas que
+  la web, excluyendo las de trazo abierto).
+- Misiones con confeti, deshacer/rehacer (pila de 14 pasos, igual que la
+  web).
+- **Galería como archivos PNG reales** en `filesDir/galeria/` — mejora
+  real sobre la web, que dependía de `localStorage` con un límite de
+  tamaño total compartido con el resto de la app.
+- **Compartir con el selector nativo de Android** (`Intent.ACTION_SEND` +
+  `FileProvider`) — más directo que el truco de descarga de la web,
+  que depende de que el WebView no bloquee el enlace.
+
+Verificado a mano en el emulador: trazo con textura de crayón, mandala de
+6 ejes con neón (funciona), guardado que crea el archivo PNG de verdad
+(confirmado con `run-as ... ls files/galeria/`), pestaña de guías con las
+letras completas, pestaña de colorear con las 13 figuras esperadas.
+
+## El menú principal — recuadros más chicos y la pizarra a la mano
+
+El primer diseño usaba tarjetas cuadradas enormes (`GridCells.Fixed(2)`
++ `aspectRatio(1f)`): en una tablet apenas cabían 2 por pantalla. Ahora:
+
+- `GridCells.Adaptive(minSize = 128.dp)`: caben muchas más tarjetas,
+  más chicas, con menos padding y tipografía más compacta.
+- Sección **"✨ Acceso rápido"** fija arriba de todo, antes del filtro de
+  área: pizarra, xilófono, collage y colorear — las herramientas libres
+  de uso frecuente ya no dependen de elegir la pestaña "Expresión libre".
+
 ## Por qué Kotlin + Jetpack Compose
 
 Es el framework de UI declarativo oficial de Google, activamente
