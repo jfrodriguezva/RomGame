@@ -7,6 +7,42 @@ tenía un bug real en el selector de edad en un dispositivo físico, y el
 usuario pidió una versión nativa completa, con drag-and-drop real y
 funciones nativas del sistema en vez de simularlas dentro de un WebView.
 
+## Segunda pasada: el mismo bug de scroll en los 4 patrones compartidos
+
+Después de corregir el scroll en la pizarra y en dominó, se revisaron
+los **4 composables compartidos** (`MaterialOrdenar`, `MaterialClasificar`,
+`MaterialTransferir` — `MaterialQuiz` ya estaba bien, usa grid) buscando
+el mismo defecto, porque un bug ahí afecta a la vez a los ~40 materiales
+que los usan, no a uno solo:
+
+- `MaterialOrdenar`: **las dos filas** (las ranuras donde va cada pieza,
+  y el canasto de donde se arrastran) no tenían scroll horizontal. Con
+  `n` grande — barras numéricas llega a 10, sistema solar a 8 — las
+  ranuras del final quedaban fuera de pantalla e inalcanzables, no solo
+  apretadas. Corregido en ambas filas.
+- `MaterialClasificar`: la fila de piezas pendientes tampoco tenía scroll.
+- `MaterialTransferir`: la fila del destino (donde se van acumulando las
+  piezas transferidas) tampoco.
+
+Verificado en el emulador con "Los días de la semana" (`n=7`): el
+arrastre sigue funcionando igual después del cambio (confirmado con
+`adb shell input draganddrop`, mensaje "¡Ahí va!" y la pieza movida de
+canasto a ranura correctamente).
+
+**Bug real adicional encontrado y corregido, distinto de todo lo
+anterior**: en `Carreras`, al llegar a los 15 segundos (la meta), los
+obstáculos seguían apareciendo y cayendo para siempre — el efecto de
+física solo comprobaba `chocado`, nunca si ya se había llegado a la
+meta. Resultado: se podía "chocar" (perder) *después* de haber ganado,
+pisándose el mensaje de victoria. Ahora ambos efectos (aparición de
+obstáculos y física) también se detienen al ganar.
+
+Se revisaron además los otros juegos de reflejos (`Burbujas`, `Canasta`,
+`Globo`, `Lava`) por el mismo patrón: en esos no hay forma de "perder"
+(son de puntaje libre, sin choque peligroso), así que aunque la física
+sigue corriendo de fondo después de completar la meta, no produce un
+resultado incorrecto — se dejaron como están.
+
 ## Auditoría de bugs reportados (Pizarra + juegos de mesa)
 
 El usuario reportó dos problemas jugando de verdad: en la pizarra no se

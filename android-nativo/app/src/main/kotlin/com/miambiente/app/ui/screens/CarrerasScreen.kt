@@ -55,6 +55,12 @@ fun CarrerasScreen(onVolver: () -> Unit) {
         chocado = false
     }
 
+    // Bug real: antes estos dos efectos solo miraban `chocado`, así que
+    // los obstáculos seguían apareciendo y moviéndose para siempre incluso
+    // después de llegar a la meta — se podía "perder" después de haber
+    // "ganado". Ahora ambos se detienen también al llegar a `meta`.
+    val ganado = segundos >= meta
+
     LaunchedEffect(chocado) {
         while (!chocado && segundos < meta) {
             delay(1000)
@@ -66,17 +72,17 @@ fun CarrerasScreen(onVolver: () -> Unit) {
         }
     }
 
-    LaunchedEffect(chocado) {
-        while (!chocado) {
+    LaunchedEffect(chocado, ganado) {
+        while (!chocado && !ganado) {
             delay((800 - segundos * 30).coerceAtLeast(350).toLong())
             obstaculos = obstaculos + Obstaculo(siguienteId, (20..300).random().toFloat(), 0f)
             siguienteId++
         }
     }
 
-    LaunchedEffect(chocado) {
+    LaunchedEffect(chocado, ganado) {
         var anterior = withFrameNanos { it }
-        while (!chocado) {
+        while (!chocado && !ganado) {
             val ahora = withFrameNanos { it }
             val dt = ((ahora - anterior) / 1_000_000_000f).coerceAtMost(0.05f)
             anterior = ahora
