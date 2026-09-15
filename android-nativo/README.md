@@ -75,20 +75,90 @@ Simplificaciones conocidas, honestas y documentadas:
   simulación táctil/térmica real — no hay forma de simular temperatura o
   peso en una pantalla; sí se usa vibración real donde aporta (`pinza`,
   aciertos/errores).
-- `domino`, `oca`/`serpientes` (via `MaterialTablero`), `adivinaquien` y
-  `banco-dorado` son versiones simplificadas de sus reglas completas, no
-  el juego de mesa físico exacto.
+- `banco-dorado` sigue siendo una versión simplificada (componer con
+  contadores de unidad/decena/centena, no perlas doradas manipulables).
 - En `MaterialOrdenar`, el tamaño de la serie (`n`) es fijo por pantalla en
   vez de escalar con el nivel alcanzado en todos los casos (sí escala en
   `MaterialQuiz` vía `curvaOpciones`); es una limitación de que el nivel
   vive dentro del composable y no es visible al armar sus parámetros de
   entrada.
-- Los juegos de reflejos/movimiento (`burbujas`, `canasta`, `globo`,
-  `lava`, `carreras`, `toystory`, `arana`, `laberinto`) usan física
-  aproximada con `LaunchedEffect`+`delay`, no un motor de físicas real.
 
 El selector de edad y el menú principal (con filtro por edad y áreas)
 están completos y navegables, y organizan los 98 materiales reales.
+
+## Ronda de profundidad (después de llegar a 98/98)
+
+Cuatro frentes trabajados en paralelo sobre la base ya completa:
+
+**Juegos de mesa, más fieles:**
+- `domino` ahora es dominó real: cadena con dos extremos (no uno), mano
+  repartida, pozo para robar y turnos alternos contra la computadora —
+  antes era una cola de fichas de un solo extremo sin turnos.
+- `MaterialTablero` (usado por `oca` y `serpientes`) pasó de "un jugador
+  solo contra el tablero" a una carrera real de dos fichas por turnos, tú
+  contra la computadora — así sí existe "esperar tu turno y aceptar el
+  resultado", el objetivo pedagógico del material.
+- `adivinaquien` pasó de un solo atributo (color) a dos independientes
+  (color + tamaño), para que de verdad haga falta combinar preguntas en
+  vez de resolverse con una sola.
+
+**Física real en los juegos de movimiento**, con `withFrameNanos`
+(sincronizado al refresco de pantalla) integrando velocidad y posición
+por delta de tiempo real, en vez de incrementos fijos por `delay()`:
+`globo` (gravedad + impulso al tocar), `canasta` (gravedad + velocidad
+inicial distinta por estrella), `carreras` (velocidad que aumenta con el
+tiempo — se pone más difícil de verdad) y `burbujas` (mecido lateral con
+seno del tiempo, no solo sube derecho). `lava`, `toystory` y `arana` no
+tienen movimiento continuo que integrar (son de aparición/toque), así que
+no aplicaba física ahí.
+
+**Accesibilidad — parcial, honesto sobre el límite:**
+- `PiezaArrastrable`/`ZonaSoltar` (el mecanismo de arrastre compartido)
+  ahora aceptan una `descripcion` opcional que expone `contentDescription`
+  a TalkBack.
+- Los dibujos hechos con `Canvas` que antes eran invisibles para un lector
+  de pantalla (formas del gabinete de geometría, reloj analógico, figuras
+  por número de lados, fracciones entera/mitad, figuras de encaje) ahora
+  tienen descripción semántica.
+- `cara` (toca la cara) cambió de un gesto crudo (`pointerInput` +
+  `detectTapGestures`, invisible para TalkBack aunque tuviera texto) a
+  `Modifier.clickable`, que sí se integra con el árbol de accesibilidad y
+  responde a doble toque de un lector de pantalla.
+- **Lo que NO se cubrió**: el resto de los ~90 materiales todavía no
+  tienen `contentDescription` puestos a mano uno por uno (el texto visible
+  de botones y `Text` ya es legible por TalkBack automáticamente, así que
+  no todos estaban rotos, pero no se revisó cada pantalla). Los juegos de
+  reflejos por tiempo (`burbujas`, `globo`, `reflejo-color`, `lava`) siguen
+  sin una alternativa accesible real — son juegos de velocidad/puntería
+  visual por diseño, y una alternativa genuina para un usuario de
+  TalkBack necesitaría un modo de juego distinto, no solo una descripción.
+  El arrastre en general tampoco tiene todavía una acción de accesibilidad
+  alterna (`AccessibilityAction`) tipo "tomar" + "soltar aquí" con doble
+  toque — hoy un usuario de TalkBack puede saber qué es cada pieza, pero
+  no necesariamente completar el arrastre solo con gestos de exploración.
+
+**Ícono y firma de release:**
+- Ícono adaptable de verdad (`mipmap-anydpi-v26/ic_launcher.xml`, capas
+  foreground/background/monochrome) en vez de un solo drawable — con
+  respaldo para API < 26. Ver `app/src/main/res/drawable/ic_launcher_*.xml`.
+- `assembleRelease` ahora produce un **APK firmado real**, no solo debug:
+  se generó un keystore local (`keystore.jks`, con contraseña
+  `MiAmbiente2026!` — cámbiala si esto va a compartirse más allá de esta
+  máquina) y `app/build.gradle.kts` lo conecta solo si
+  `keystore.properties` existe, así que un clon nuevo del repo sigue
+  compilando `assembleDebug` sin necesitar el keystore. El `.jks` y
+  `keystore.properties` están en `.gitignore` — **nunca se subieron a
+  git**; `keystore.properties.example` sí, como plantilla. Si se pierde el
+  keystore, regenerarlo con:
+  ```bash
+  keytool -genkeypair -v -keystore keystore.jks -alias miambiente \
+    -keyalg RSA -keysize 2048 -validity 10950
+  ```
+  (perder el keystore original significa que una futura actualización
+  firmada distinto ya no se puede instalar encima de una anterior sin
+  desinstalar primero — por eso conviene guardar una copia de
+  `keystore.jks` en un lugar seguro fuera del repo, no solo confiar en
+  que sigue en esta máquina).
 
 ## Cómo seguir mejorando
 

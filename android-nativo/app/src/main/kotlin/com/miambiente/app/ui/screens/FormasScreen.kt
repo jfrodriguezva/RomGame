@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.model.phasedInt
@@ -37,10 +39,12 @@ fun FormasScreen(onVolver: () -> Unit) {
 
 @Composable
 private fun FormaVisual(id: String, tamano: androidx.compose.ui.unit.Dp) {
+    val descripcion = FIGURAS.first { it.id == id }.nombre
+    val base = Modifier.size(tamano).semantics { contentDescription = descripcion }
     when (id) {
-        "circulo" -> Box(Modifier.size(tamano).clip(CircleShape).background(Color(0xFFF3DBE3)))
-        "cuadrado" -> Box(Modifier.size(tamano).clip(RoundedCornerShape(4.dp)).background(Color(0xFFF3DBE3)))
-        else -> Canvas(modifier = Modifier.size(tamano)) {
+        "circulo" -> Box(base.clip(CircleShape).background(Color(0xFFF3DBE3)))
+        "cuadrado" -> Box(base.clip(RoundedCornerShape(4.dp)).background(Color(0xFFF3DBE3)))
+        else -> Canvas(modifier = base) {
             val camino = Path().apply {
                 moveTo(size.width / 2, 0f)
                 lineTo(size.width, size.height)

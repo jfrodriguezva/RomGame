@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.materials.DefCanasta
@@ -44,10 +46,12 @@ fun OrificiosScreen(onVolver: () -> Unit) {
 @Composable
 private fun FiguraOrificio(id: String) {
     val color = Color(0xFFE0669C)
+    val nombre = when (id) { "circulo" -> "Círculo"; "cuadrado" -> "Cuadrado"; else -> "Triángulo" }
+    val base = Modifier.size(40.dp).semantics { contentDescription = nombre }
     when (id) {
-        "circulo" -> Box(Modifier.size(40.dp).clip(CircleShape).background(color))
-        "cuadrado" -> Box(Modifier.size(40.dp).clip(RoundedCornerShape(4.dp)).background(color))
-        else -> Canvas(Modifier.size(40.dp)) {
+        "circulo" -> Box(base.clip(CircleShape).background(color))
+        "cuadrado" -> Box(base.clip(RoundedCornerShape(4.dp)).background(color))
+        else -> Canvas(base) {
             drawPath(
                 Path().apply { moveTo(size.width / 2, 0f); lineTo(size.width, size.height); lineTo(0f, size.height); close() },
                 color,

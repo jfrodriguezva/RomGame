@@ -19,6 +19,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.launch
@@ -29,13 +31,26 @@ import kotlinx.coroutines.launch
  * necesite "tomar y soltar" lo reutilice en vez de copiar el mecanismo.
  * Es la mejora nativa insignia sobre la versión web (MaterialOrdenar y
  * MaterialClasificar son por toques allá, por arrastre real aquí).
+ *
+ * `descripcion` es opcional para no romper las llamadas ya existentes,
+ * pero cuando se da, TalkBack puede al menos anunciar QUÉ es cada pieza
+ * u objetivo — el gesto de arrastrar en sí no tiene una alternativa
+ * accesible todavía (eso necesitaría acciones de accesibilidad
+ * personalizadas: "tomar" y luego "soltar aquí" con doble toque, no solo
+ * una descripción). Documentado como limitación real, no resuelta del
+ * todo, en el README.
  */
 @Composable
-fun ZonaSoltar(modifier: Modifier = Modifier, onPosicion: (Rect) -> Unit, contenido: @Composable () -> Unit) {
+fun ZonaSoltar(
+    modifier: Modifier = Modifier,
+    descripcion: String? = null,
+    onPosicion: (Rect) -> Unit,
+    contenido: @Composable () -> Unit,
+) {
     Box(
-        modifier = modifier.onGloballyPositioned { c ->
-            onPosicion(Rect(c.positionInRoot(), c.size.toSize()))
-        },
+        modifier = modifier
+            .onGloballyPositioned { c -> onPosicion(Rect(c.positionInRoot(), c.size.toSize())) }
+            .then(if (descripcion != null) Modifier.semantics { contentDescription = descripcion } else Modifier),
     ) { contenido() }
 }
 
@@ -43,6 +58,7 @@ fun ZonaSoltar(modifier: Modifier = Modifier, onPosicion: (Rect) -> Unit, conten
 fun PiezaArrastrable(
     tamano: Dp,
     clave: Any,
+    descripcion: String? = null,
     onSoltar: (centroRoot: Offset) -> Unit,
     contenido: @Composable () -> Unit,
 ) {
@@ -55,6 +71,7 @@ fun PiezaArrastrable(
     Box(
         modifier = Modifier
             .size(tamano)
+            .then(if (descripcion != null) Modifier.semantics { contentDescription = descripcion } else Modifier)
             .onGloballyPositioned { origenRoot = it.positionInRoot() }
             .graphicsLayer {
                 translationX = offset.value.x

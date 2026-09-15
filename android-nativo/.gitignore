@@ -9,3 +9,10 @@
 .cxx
 local.properties
 app/build/
+
+# Firma de release: nunca se comparte. keystore.properties.example queda
+# como plantilla comiteada; keystore.properties y el .jks son secretos
+# locales — regenerar con el comando en el README si se pierden.
+keystore.properties
+*.jks
+*.keystore

@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
@@ -20,10 +21,18 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/** El globo volador — no dejes que caiga (ritmo y constancia del toque). */
+private const val GRAVEDAD = 220f // dp/s²
+private const val IMPULSO = -340f // dp/s al tocar
+
+/**
+ * El globo volador — física real (gravedad + impulso), no incrementos
+ * fijos por tic: cada cuadro se mide el tiempo real transcurrido
+ * (`withFrameNanos`, sincronizado con la pantalla) y se integra
+ * velocidad y posición como un juego de verdad, no una animación por
+ * pasos discretos.
+ */
 @Composable
 fun GloboScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
@@ -31,22 +40,26 @@ fun GloboScreen(onVolver: () -> Unit) {
     val juego = buscarJuego("globo")!!
 
     var altura by remember { mutableStateOf(300f) }
+    var velocidad by remember { mutableStateOf(0f) }
     var toques by remember { mutableStateOf(0) }
     var caido by remember { mutableStateOf(false) }
     val meta = 20
 
-    LaunchedEffect(caido) {
-        while (!caido) {
-            delay(200)
-            altura += 18f
-            if (altura > 580f) caido = true
-        }
+    fun reiniciar() {
+        altura = 300f; velocidad = 0f; toques = 0; caido = false
     }
 
-    fun reiniciar() {
-        altura = 300f
-        toques = 0
-        caido = false
+    LaunchedEffect(caido) {
+        var anterior = withFrameNanos { it }
+        while (!caido) {
+            val ahora = withFrameNanos { it }
+            val dt = ((ahora - anterior) / 1_000_000_000f).coerceAtMost(0.05f)
+            anterior = ahora
+            velocidad += GRAVEDAD * dt
+            altura += velocidad * dt
+            if (altura < 20f) { altura = 20f; velocidad = 0f }
+            if (altura > 580f) caido = true
+        }
     }
 
     GameShell(
@@ -63,7 +76,7 @@ fun GloboScreen(onVolver: () -> Unit) {
                             reiniciar()
                         } else {
                             services.sound.tocar(Efecto.CLICK)
-                            altura = (altura - 60f).coerceAtLeast(40f)
+                            velocidad = IMPULSO
                             toques++
                             if (toques >= meta) {
                                 services.sound.tocar(Efecto.WIN)

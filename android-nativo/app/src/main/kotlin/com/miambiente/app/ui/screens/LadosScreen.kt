@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.materials.DefCanasta
@@ -46,15 +48,23 @@ fun LadosScreen(onVolver: () -> Unit) {
 @Composable
 private fun FiguraLados(id: String) {
     val color = Color(0xFFA97FC7)
+    val nombre = when {
+        id.startsWith("t") -> "Triángulo, 3 lados"
+        id.startsWith("c1") -> "Cuadrado, 4 lados"
+        id.startsWith("c2") -> "Rectángulo, 4 lados"
+        id.startsWith("p") -> "Pentágono, 5 lados"
+        else -> "Hexágono, 6 lados"
+    }
+    val base = Modifier.semantics { contentDescription = nombre }
     when {
-        id.startsWith("t") -> Canvas(Modifier.size(40.dp)) {
+        id.startsWith("t") -> Canvas(base.size(40.dp)) {
             drawPath(Path().apply { moveTo(size.width / 2, 0f); lineTo(size.width, size.height); lineTo(0f, size.height); close() }, color)
         }
-        id.startsWith("c1") -> Box(Modifier.size(40.dp).clip(RoundedCornerShape(2.dp)).background(color))
-        id.startsWith("c2") -> Box(Modifier.size(width = 48.dp, height = 30.dp).clip(RoundedCornerShape(2.dp)).background(color))
+        id.startsWith("c1") -> Box(base.size(40.dp).clip(RoundedCornerShape(2.dp)).background(color))
+        id.startsWith("c2") -> Box(base.size(width = 48.dp, height = 30.dp).clip(RoundedCornerShape(2.dp)).background(color))
         else -> {
             val lados = if (id.startsWith("p")) 5 else 6
-            Canvas(Modifier.size(40.dp)) {
+            Canvas(base.size(40.dp)) {
                 val radio = size.minDimension / 2
                 val centro = androidx.compose.ui.geometry.Offset(size.width / 2, size.height / 2)
                 val camino = Path()

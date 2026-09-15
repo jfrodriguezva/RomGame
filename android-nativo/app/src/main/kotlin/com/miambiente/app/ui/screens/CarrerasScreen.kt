@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -29,7 +30,11 @@ import kotlinx.coroutines.launch
 
 private data class Obstaculo(val id: Int, val x: Float, var y: Float)
 
-/** Carreras — esquiva y llega a la meta (atención sostenida y respuesta veloz). */
+/**
+ * Carreras — velocidad real por cuadro (`withFrameNanos`) y dificultad
+ * progresiva: los obstáculos caen más rápido mientras más tiempo llevas
+ * esquivando, en vez de una velocidad fija todo el juego.
+ */
 @Composable
 fun CarrerasScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
@@ -63,16 +68,20 @@ fun CarrerasScreen(onVolver: () -> Unit) {
 
     LaunchedEffect(chocado) {
         while (!chocado) {
-            delay(800)
+            delay((800 - segundos * 30).coerceAtLeast(350).toLong())
             obstaculos = obstaculos + Obstaculo(siguienteId, (20..300).random().toFloat(), 0f)
             siguienteId++
         }
     }
 
     LaunchedEffect(chocado) {
+        var anterior = withFrameNanos { it }
         while (!chocado) {
-            delay(50)
-            obstaculos = obstaculos.map { it.also { o -> o.y += 14f } }
+            val ahora = withFrameNanos { it }
+            val dt = ((ahora - anterior) / 1_000_000_000f).coerceAtMost(0.05f)
+            anterior = ahora
+            val velocidad = 260f + segundos * 12f // se acelera con el tiempo
+            obstaculos = obstaculos.map { it.also { o -> o.y += velocidad * dt } }
             val choque = obstaculos.any { it.y in 480f..560f && kotlin.math.abs(it.x - carroX) < 40f }
             if (choque) {
                 services.sound.tocar(Efecto.WRONG)

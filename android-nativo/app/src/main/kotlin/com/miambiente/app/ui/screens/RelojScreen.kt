@@ -8,6 +8,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.model.phasedInt
@@ -33,7 +35,10 @@ fun RelojScreen(onVolver: () -> Unit) {
 
 @Composable
 private fun RelojAnalogico(hora: Int, tamano: androidx.compose.ui.unit.Dp) {
-    Canvas(modifier = Modifier.size(tamano)) {
+    // La descripción sí dice la hora: un niño que ve el reloj también
+    // "lee" la hora de un vistazo, así que TalkBack debe darle la misma
+    // información — no sería un juego jugable de otro modo.
+    Canvas(modifier = Modifier.size(tamano).semantics { contentDescription = "Reloj marcando las $hora en punto" }) {
         val radio = size.minDimension / 2
         val centro = Offset(size.width / 2, size.height / 2)
         drawCircle(color = Color(0xFF3F342C), radius = radio, center = centro, style = Stroke(width = radio * 0.05f))

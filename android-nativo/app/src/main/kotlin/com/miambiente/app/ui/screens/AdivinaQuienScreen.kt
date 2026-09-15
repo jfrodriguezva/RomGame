@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -33,15 +32,22 @@ import com.miambiente.app.ui.GameShell
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private data class Personaje(val emoji: String, val color: String, val animal: Boolean)
+private data class Personaje(val emoji: String, val color: String, val tamano: String)
 
 private val PERSONAJES = listOf(
-    Personaje("🐶", "cafe", true), Personaje("🐱", "gris", true), Personaje("🐰", "blanco", true),
-    Personaje("🐸", "verde", true), Personaje("🐷", "rosa", true), Personaje("🐨", "gris", true),
-    Personaje("🦁", "cafe", true), Personaje("🐹", "cafe", true),
+    Personaje("🐶", "cafe", "grande"), Personaje("🐱", "gris", "chico"),
+    Personaje("🐰", "blanco", "chico"), Personaje("🐸", "verde", "chico"),
+    Personaje("🐷", "rosa", "grande"), Personaje("🐨", "gris", "grande"),
+    Personaje("🦁", "cafe", "grande"), Personaje("🐹", "cafe", "chico"),
 )
+private val COLORES = listOf("cafe", "gris", "blanco", "verde", "rosa")
 
-/** Adivina quién es — deducción por eliminación, filtrando por atributos. */
+/**
+ * Adivina quién es — deducción real por eliminación con DOS atributos
+ * independientes (color y tamaño): hay que combinar ambas preguntas para
+ * acotar al personaje secreto, no solo una (la versión anterior solo
+ * filtraba por color, así que a veces una sola pregunta ya resolvía todo).
+ */
 @Composable
 fun AdivinaQuienScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
@@ -50,12 +56,16 @@ fun AdivinaQuienScreen(onVolver: () -> Unit) {
 
     var secreto by remember { mutableStateOf(PERSONAJES.random()) }
     var colorFiltro by remember(secreto) { mutableStateOf<String?>(null) }
+    var tamanoFiltro by remember(secreto) { mutableStateOf<String?>(null) }
 
-    val visibles = PERSONAJES.filter { colorFiltro == null || it.color == colorFiltro }
+    val visibles = PERSONAJES.filter {
+        (colorFiltro == null || it.color == colorFiltro) && (tamanoFiltro == null || it.tamano == tamanoFiltro)
+    }
 
     fun nuevaRonda() {
         secreto = PERSONAJES.random()
         colorFiltro = null
+        tamanoFiltro = null
     }
 
     fun adivinar(p: Personaje) {
@@ -70,14 +80,18 @@ fun AdivinaQuienScreen(onVolver: () -> Unit) {
 
     GameShell(
         juego = juego,
-        consigna = "Pregunta por color y luego toca quién es",
+        consigna = "Filtra por color y tamaño, luego toca quién es",
         onVolver = onVolver,
         acciones = {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("cafe", "gris", "blanco", "verde", "rosa").forEach { color ->
-                    Button(onClick = { colorFiltro = color }) { Text(color) }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    COLORES.forEach { color -> Button(onClick = { colorFiltro = color }) { Text(color, fontSize = 11.sp) } }
                 }
-                Button(onClick = { colorFiltro = null }) { Text("Todos") }
+                Row(modifier = Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Button(onClick = { tamanoFiltro = "grande" }) { Text("Grande") }
+                    Button(onClick = { tamanoFiltro = "chico" }) { Text("Chico") }
+                    Button(onClick = { colorFiltro = null; tamanoFiltro = null }) { Text("Reiniciar filtro") }
+                }
             }
         },
     ) {

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.materials.DefCanasta
@@ -37,7 +39,8 @@ fun MitadesScreen(onVolver: () -> Unit) {
 
 @Composable
 private fun FiguraFraccion(entera: Boolean) {
-    Canvas(Modifier.size(44.dp)) {
+    val descripcion = if (entera) "Figura entera, círculo completo" else "Figura a la mitad, medio círculo"
+    Canvas(Modifier.size(44.dp).semantics { contentDescription = descripcion }) {
         if (entera) {
             drawArc(color = Color(0xFFE08A3A), startAngle = 0f, sweepAngle = 360f, useCenter = true)
         } else {

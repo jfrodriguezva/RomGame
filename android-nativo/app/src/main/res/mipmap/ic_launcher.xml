@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Respaldo plano para API &lt; 26 (sin soporte de ícono adaptable);
+         API 26+ usa mipmap-anydpi-v26/ic_launcher.xml en su lugar. -->
+    <path android:fillColor="#EFE3CC" android:pathData="M0,0h108v108h-108z" />
+    <path android:fillColor="#7A6234" android:pathData="M54,30 L80,52 V78 H64 V60 H44 V78 H28 V52 Z" />
+    <path android:fillColor="#D9433A" android:pathData="M54,24 L84,50 L78,50 L54,30 L30,50 L24,50 Z" />
+    <path android:fillColor="#8BBF6A" android:pathData="M46,78 V66 H62 V78 Z" />
+</vector>

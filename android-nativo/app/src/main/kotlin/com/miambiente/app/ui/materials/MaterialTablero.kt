@@ -1,9 +1,9 @@
 package com.miambiente.app.ui.materials
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,14 +37,16 @@ import com.miambiente.app.ui.GameShell
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/** Una casilla especial: si el token cae ahí, salta a `destino` (adelante o atrás). */
+/** Una casilla especial: si un token cae ahí, salta a `destino` (adelante o atrás). */
 data class CasillaEspecial(val posicion: Int, val destino: Int, val emoji: String, val mensaje: String)
 
 /**
  * Juego de mesa de recorrido con dado — puerto genérico del patrón
- * compartido por la oca y serpientes y escaleras: tirar el dado, avanzar,
- * y algunas casillas mandan a otra parte del tablero. Un solo jugador
- * contra el tablero (llegar a la meta), no hay turnos contra otro jugador.
+ * compartido por la oca y serpientes y escaleras. Carrera real de dos
+ * jugadores por turnos (tú contra la computadora, cada quien tira su
+ * propio dado y avanza su propia ficha) en vez de un solo jugador
+ * avanzando solo contra el tablero — así sí hay "esperar el turno y
+ * aceptar el resultado", el objetivo pedagógico real de este material.
  */
 @Composable
 fun MaterialTablero(
@@ -56,78 +59,109 @@ fun MaterialTablero(
     val services = LocalServices.current
     val scope = rememberCoroutineScope()
     val colores = coloresDe(juego.area)
+    val colorCpu = Color(0xFFA39A8C)
 
-    var posicion by remember { mutableStateOf(0) }
+    var posJugador by remember { mutableStateOf(0) }
+    var posCpu by remember { mutableStateOf(0) }
     var dado by remember { mutableStateOf<Int?>(null) }
+    var turno by remember { mutableStateOf("jugador") }
     var mensaje by remember { mutableStateOf("Tira el dado para empezar") }
     var tirando by remember { mutableStateOf(false) }
-    var gano by remember { mutableStateOf(false) }
+    var ganador by remember { mutableStateOf<String?>(null) }
+
+    fun mover(esJugador: Boolean, valor: Int) {
+        val posActual = if (esJugador) posJugador else posCpu
+        var destino = (posActual + valor).coerceAtMost(casillas)
+        if (esJugador) posJugador = destino else posCpu = destino
+        val especial = especiales.find { it.posicion == destino }
+        if (especial != null) {
+            services.haptics.vibrar(if (especial.destino > destino) Patron.ACIERTO else Patron.ERROR)
+            if (esJugador) posJugador = especial.destino else posCpu = especial.destino
+        }
+    }
+
+    fun reiniciar() {
+        posJugador = 0; posCpu = 0; dado = null
+        turno = "jugador"; ganador = null
+        mensaje = "Tira el dado para empezar"
+    }
 
     fun tirar() {
-        if (tirando || gano) return
+        if (tirando || ganador != null || turno != "jugador") return
         tirando = true
         scope.launch {
             val valor = (1..6).random()
             dado = valor
             services.sound.tocar(Efecto.CLICK)
-            delay(300)
-            var destino = (posicion + valor).coerceAtMost(casillas)
-            posicion = destino
-            val especial = especiales.find { it.posicion == destino }
-            if (especial != null) {
-                delay(400)
-                mensaje = especial.mensaje
-                services.haptics.vibrar(if (especial.destino > destino) Patron.ACIERTO else Patron.ERROR)
-                delay(500)
-                posicion = especial.destino
-            }
-            if (posicion >= casillas) {
-                gano = true
-                mensaje = "¡Llegaste a la meta!"
+            delay(400)
+            mover(esJugador = true, valor)
+            if (posJugador >= casillas) {
+                ganador = "jugador"
+                mensaje = "¡Llegaste primero! 🎉"
                 services.sound.tocar(Efecto.WIN)
                 services.haptics.vibrar(Patron.LOGRO)
                 scope.launch { services.progress.completarNivel(juego.id, 1) }
-            } else if (especial == null) {
-                mensaje = "Tira otra vez"
+            } else {
+                especiales.find { it.posicion == posJugador }?.let { mensaje = it.mensaje }
+                turno = "cpu"
+                mensaje = if (especiales.none { it.posicion == posJugador }) "Turno de la computadora" else mensaje
             }
             tirando = false
         }
     }
 
-    fun reiniciar() {
-        posicion = 0
-        gano = false
-        mensaje = "Tira el dado para empezar"
+    LaunchedEffect(turno, ganador) {
+        if (turno != "cpu" || ganador != null) return@LaunchedEffect
+        delay(700)
+        val valor = (1..6).random()
+        dado = valor
+        services.sound.tocar(Efecto.CLICK)
+        delay(400)
+        mover(esJugador = false, valor)
+        if (posCpu >= casillas) {
+            ganador = "cpu"
+            mensaje = "Ganó la computadora, ¡otra vez!"
+            services.sound.tocar(Efecto.WRONG)
+        } else {
+            turno = "jugador"
+            mensaje = "Tu turno"
+        }
     }
 
     GameShell(
         juego = juego,
         consigna = mensaje,
-        celebrar = gano,
+        celebrar = ganador == "jugador",
         onVolver = onVolver,
         acciones = {
-            if (gano) {
+            if (ganador != null) {
                 Button(onClick = ::reiniciar) { Text("Jugar de nuevo") }
-            } else {
-                Button(onClick = ::tirar) { Text(if (dado == null) "Tirar dado 🎲" else "Dado: ${dado} — tirar de nuevo") }
+            } else if (turno == "jugador") {
+                Button(onClick = ::tirar) { Text(if (dado == null) "Tirar dado 🎲" else "Dado: $dado — tirar de nuevo") }
             }
         },
     ) {
         Column(Modifier.fillMaxSize().padding(16.dp)) {
+            Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp), modifier = Modifier.padding(bottom = 4.dp)) {
+                Text("Tú", fontSize = 11.sp, color = colorFicha, fontWeight = FontWeight.Bold)
+                Text("Computadora", fontSize = 11.sp, color = colorCpu, fontWeight = FontWeight.Bold)
+            }
             LazyVerticalGrid(columns = GridCells.Fixed(6), modifier = Modifier.fillMaxSize()) {
                 items(casillas + 1) { i ->
                     val especial = especiales.find { it.posicion == i }
                     Box(
                         modifier = Modifier
                             .padding(2.dp)
-                            .background(if (i == casillas) colores.acento else Color.White, RoundedCornerShape(6.dp))
-                            .clickable { },
+                            .background(if (i == casillas) colores.acento else Color.White, RoundedCornerShape(6.dp)),
                         contentAlignment = Alignment.Center,
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(4.dp)) {
                             Text("$i", fontSize = 9.sp, fontWeight = FontWeight.Bold)
                             if (especial != null) Text(especial.emoji, fontSize = 12.sp)
-                            if (posicion == i) Box(Modifier.size(14.dp).clip(CircleShape).background(colorFicha))
+                            Row {
+                                if (posJugador == i) Box(Modifier.size(12.dp).clip(CircleShape).background(colorFicha))
+                                if (posCpu == i) Box(Modifier.size(12.dp).clip(CircleShape).background(colorCpu))
+                            }
                         }
                     }
                 }
