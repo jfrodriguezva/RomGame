@@ -18,17 +18,25 @@ import com.miambiente.app.ui.screens.AnimalesScreen
 import com.miambiente.app.ui.screens.BanderasScreen
 import com.miambiente.app.ui.screens.BarrasNumericasScreen
 import com.miambiente.app.ui.screens.BloquesScreen
+import com.miambiente.app.ui.screens.AdivinaQuienScreen
+import com.miambiente.app.ui.screens.AlfabetoMovilScreen
+import com.miambiente.app.ui.screens.BancoDoradoScreen
+import com.miambiente.app.ui.screens.BinomioScreen
+import com.miambiente.app.ui.screens.BingoScreen
+import com.miambiente.app.ui.screens.CaraScreen
 import com.miambiente.app.ui.screens.CicloAguaScreen
 import com.miambiente.app.ui.screens.CicloVidaScreen
 import com.miambiente.app.ui.screens.CilindrosScreen
 import com.miambiente.app.ui.screens.CollageScreen
 import com.miambiente.app.ui.screens.ColorearScreen
 import com.miambiente.app.ui.screens.ColoresScreen
+import com.miambiente.app.ui.screens.Conecta4Screen
 import com.miambiente.app.ui.screens.ContarScreen
 import com.miambiente.app.ui.screens.ContinentesScreen
 import com.miambiente.app.ui.screens.CuerpoScreen
 import com.miambiente.app.ui.screens.DadoScreen
 import com.miambiente.app.ui.screens.DiaNocheScreen
+import com.miambiente.app.ui.screens.DominoScreen
 import com.miambiente.app.ui.screens.DiasSemanaScreen
 import com.miambiente.app.ui.screens.DietaAnimalScreen
 import com.miambiente.app.ui.screens.DiferenciasScreen
@@ -69,6 +77,7 @@ import com.miambiente.app.ui.screens.PizarraScreen
 import com.miambiente.app.ui.screens.QueFaltaScreen
 import com.miambiente.app.ui.screens.RelojScreen
 import com.miambiente.app.ui.screens.RimasScreen
+import com.miambiente.app.ui.screens.RompecabezasScreen
 import com.miambiente.app.ui.screens.RpsScreen
 import com.miambiente.app.ui.screens.RutinaScreen
 import com.miambiente.app.ui.screens.SaborScreen
@@ -82,6 +91,7 @@ import com.miambiente.app.ui.screens.SistemaSolarScreen
 import com.miambiente.app.ui.screens.SolidosScreen
 import com.miambiente.app.ui.screens.SombrasScreen
 import com.miambiente.app.ui.screens.SonidosInicialesScreen
+import com.miambiente.app.ui.screens.TablaCienScreen
 import com.miambiente.app.ui.screens.TamanosScreen
 import com.miambiente.app.ui.screens.TemperaturaScreen
 import com.miambiente.app.ui.screens.TexturaScreen
@@ -89,6 +99,7 @@ import com.miambiente.app.ui.screens.TierraAguaScreen
 import com.miambiente.app.ui.screens.TiempoScreen
 import com.miambiente.app.ui.screens.TorreRosaScreen
 import com.miambiente.app.ui.screens.TransporteScreen
+import com.miambiente.app.ui.screens.TrazosScreen
 import com.miambiente.app.ui.screens.VidaPracticaScreen
 import com.miambiente.app.ui.screens.VocalesScreen
 import com.miambiente.app.ui.screens.XilofonoScreen
@@ -246,6 +257,17 @@ class MainActivity : ComponentActivity() {
                         composable("colorear") { ColorearScreen(volver) }
                         composable("xilofono") { XilofonoScreen(volver) }
                         composable("mesa-silencio") { MesaSilencioScreen(volver) }
+                        composable("cara") { CaraScreen(volver) }
+                        composable("alfabeto-movil") { AlfabetoMovilScreen(volver) }
+                        composable("trazos") { TrazosScreen(volver) }
+                        composable("rompecabezas") { RompecabezasScreen(volver) }
+                        composable("binomio") { BinomioScreen(volver) }
+                        composable("tabla-cien") { TablaCienScreen(volver) }
+                        composable("banco-dorado") { BancoDoradoScreen(volver) }
+                        composable("bingo") { BingoScreen(volver) }
+                        composable("domino") { DominoScreen(volver) }
+                        composable("conecta4") { Conecta4Screen(volver) }
+                        composable("adivinaquien") { AdivinaQuienScreen(volver) }
                     }
                 }
             }

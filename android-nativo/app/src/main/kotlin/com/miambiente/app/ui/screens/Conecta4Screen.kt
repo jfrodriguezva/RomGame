@@ -1,0 +1,134 @@
+package com.miambiente.app.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.miambiente.app.data.Efecto
+import com.miambiente.app.data.LocalServices
+import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.ui.GameShell
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+private const val COLS = 5
+private const val FILAS = 4
+
+private fun hayGanador(tablero: List<String?>, ficha: String): Boolean {
+    fun en(c: Int, f: Int) = if (c in 0 until COLS && f in 0 until FILAS) tablero[f * COLS + c] else null
+    for (c in 0 until COLS) for (f in 0 until FILAS) {
+        if (en(c, f) != ficha) continue
+        val direcciones = listOf(1 to 0, 0 to 1, 1 to 1, 1 to -1)
+        for ((dc, df) in direcciones) {
+            if ((0 until 4).all { en(c + it * dc, f + it * df) == ficha }) return true
+        }
+    }
+    return false
+}
+
+/** Cuatro en línea — alinea cuatro fichas antes que la computadora. */
+@Composable
+fun Conecta4Screen(onVolver: () -> Unit) {
+    val services = LocalServices.current
+    val scope = rememberCoroutineScope()
+    val juego = buscarJuego("conecta4")!!
+
+    var tablero by remember { mutableStateOf(List<String?>(COLS * FILAS) { null }) }
+    var turno by remember { mutableStateOf("jugador") }
+    var mensaje by remember { mutableStateOf("Tu turno") }
+
+    fun columnaLlena(c: Int) = (0 until FILAS).none { f -> tablero[f * COLS + c] == null }
+
+    fun soltarEn(c: Int, ficha: String): List<String?>? {
+        if (columnaLlena(c)) return null
+        val fila = (FILAS - 1 downTo 0).first { f -> tablero[f * COLS + c] == null }
+        return tablero.toMutableList().also { it[fila * COLS + c] = ficha }
+    }
+
+    fun reiniciar() {
+        tablero = List(COLS * FILAS) { null }
+        turno = "jugador"
+        mensaje = "Tu turno"
+    }
+
+    fun jugar(c: Int) {
+        if (turno != "jugador") return
+        val nuevo = soltarEn(c, "🔴") ?: return
+        services.sound.tocar(Efecto.CLICK)
+        tablero = nuevo
+        turno = "cpu"
+    }
+
+    LaunchedEffect(tablero) {
+        val ganoJugador = hayGanador(tablero, "🔴")
+        val ganoCpu = hayGanador(tablero, "🔵")
+        val empate = tablero.none { it == null }
+        if (ganoJugador) {
+            services.sound.tocar(Efecto.WIN)
+            mensaje = "¡Ganaste! 🎉"
+            scope.launch { services.progress.completarNivel(juego.id, 1) }
+            delay(1800); reiniciar()
+        } else if (ganoCpu) {
+            services.sound.tocar(Efecto.WRONG)
+            mensaje = "Ganó la computadora"
+            delay(1800); reiniciar()
+        } else if (empate) {
+            mensaje = "¡Empate!"
+            delay(1800); reiniciar()
+        }
+    }
+
+    LaunchedEffect(turno, tablero) {
+        if (turno != "cpu") return@LaunchedEffect
+        delay(500)
+        val columnasLibres = (0 until COLS).filter { !columnaLlena(it) }
+        if (columnasLibres.isEmpty()) return@LaunchedEffect
+        val columnaGanadora = columnasLibres.firstOrNull { c -> soltarEn(c, "🔵")?.let { hayGanador(it, "🔵") } == true }
+        val columnaBloqueo = columnasLibres.firstOrNull { c -> soltarEn(c, "🔴")?.let { hayGanador(it, "🔴") } == true }
+        val elegida = columnaGanadora ?: columnaBloqueo ?: columnasLibres.random()
+        tablero = soltarEn(elegida, "🔵") ?: tablero
+        turno = "jugador"
+    }
+
+    GameShell(juego = juego, consigna = mensaje, onVolver = onVolver) {
+        Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            for (f in 0 until FILAS) {
+                Row {
+                    for (c in 0 until COLS) {
+                        val ficha = tablero[f * COLS + c]
+                        Box(
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .background(if (ficha == null) Color.White else Color.Transparent)
+                                .clickable { jugar(c) },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            if (ficha != null) {
+                                Box(Modifier.size(40.dp).clip(CircleShape).background(if (ficha == "🔴") Color(0xFFD9433A) else Color(0xFF3E7AA3)))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

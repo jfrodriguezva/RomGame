@@ -117,6 +117,17 @@ val CATALOGO = listOf(
     GameDef("colorear", "Colorear", "🎨", "Pinta el dibujo", Area.CREATIVA, 3, "Dibujo dirigido", "Color, límites y paciencia; también relaja."),
     GameDef("xilofono", "Xilófono", "🎼", "Toca y escucha, sin reglas", Area.CREATIVA, 3, "Instrumento de exploración sonora", "Exploración musical libre.", libre = true),
     GameDef("mesa-silencio", "El juego del silencio", "🤫", "Respira y escucha", Area.PRACTICA, 3, "Juego del silencio", "Autorregulación, escucha y control voluntario del cuerpo.", libre = true),
+    GameDef("cara", "Toca la cara", "🙂", "Toca la parte que se pide", Area.CULTURA, 2, "Nomenclatura de la cara", "Vocabulario de la cara, tocando directo sobre el dibujo."),
+    GameDef("alfabeto-movil", "Alfabeto móvil", "🔡", "Forma la palabra con letras", Area.LENGUAJE, 4, "Alfabeto móvil", "Escribir antes de saber escribir: componer palabras con sonidos."),
+    GameDef("trazos", "Trazos previos", "〰️", "Sigue la línea punteada", Area.LENGUAJE, 3, "Resaques metálicos", "Mano firme y control del trazo antes de escribir."),
+    GameDef("rompecabezas", "Rompecabezas", "🧩", "Arma la imagen", Area.SENSORIAL, 3, "Encajes y puzzles", "Relación parte-todo y orientación espacial."),
+    GameDef("binomio", "El cubo del binomio", "🧊", "Arma el cubo de colores", Area.SENSORIAL, 4, "Cubo del binomio", "Patrón espacial y orden; base sensorial del álgebra."),
+    GameDef("tabla-cien", "La tabla del cien", "💯", "Coloca del 1 al 100", Area.MATEMATICAS, 4, "Tabla del cien", "Secuencia numérica y estructura de la decena."),
+    GameDef("banco-dorado", "El banco dorado", "🟡", "Unidades, decenas y centenas", Area.MATEMATICAS, 4, "Perlas doradas", "Sistema decimal a la vista: componer números grandes."),
+    GameDef("bingo", "Bingo con imágenes", "🎱", "Escucha, busca y marca en tu cartón", Area.COMPANIA, 3, "Juego de mesa", "Vocabulario, atención y correspondencia."),
+    GameDef("domino", "Dominó de imágenes", "🁣", "Encaja tu ficha con el dibujo", Area.COMPANIA, 4, "Juego de mesa", "Correspondencia visual y esperar el turno."),
+    GameDef("conecta4", "Cuatro en línea", "🔵", "Alinea cuatro fichas antes que la computadora", Area.COMPANIA, 4, "Juego de mesa", "Planeación simple y anticipar la jugada del otro."),
+    GameDef("adivinaquien", "Adivina quién es", "🕵️", "Pregunta y descubre", Area.COMPANIA, 4, "Juego de deducción", "Razonamiento lógico por eliminación."),
 )
 
 fun buscarJuego(id: String): GameDef? = CATALOGO.find { it.id == id }
