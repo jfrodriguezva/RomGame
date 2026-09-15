@@ -128,6 +128,20 @@ val CATALOGO = listOf(
     GameDef("domino", "Dominó de imágenes", "🁣", "Encaja tu ficha con el dibujo", Area.COMPANIA, 4, "Juego de mesa", "Correspondencia visual y esperar el turno."),
     GameDef("conecta4", "Cuatro en línea", "🔵", "Alinea cuatro fichas antes que la computadora", Area.COMPANIA, 4, "Juego de mesa", "Planeación simple y anticipar la jugada del otro."),
     GameDef("adivinaquien", "Adivina quién es", "🕵️", "Pregunta y descubre", Area.COMPANIA, 4, "Juego de deducción", "Razonamiento lógico por eliminación."),
+
+    // --- Movimiento y coordinación (independientes) ---
+    GameDef("laberinto", "Laberinto", "🌀", "Encuentra la salida", Area.MOVIMIENTO, 4, "Control del movimiento", "Planear una ruta y seguirla sin chocar."),
+    GameDef("burbujas", "Burbujas", "🫧", "Truena las burbujas", Area.MOVIMIENTO, 2, "Coordinación ojo-mano", "Precisión del dedo sobre un objetivo en movimiento."),
+    GameDef("canasta", "Atrapa las estrellas", "🧺", "Mueve la canasta", Area.MOVIMIENTO, 3, "Coordinación ojo-mano", "Anticipar una trayectoria y responder a tiempo."),
+    GameDef("globo", "El globo volador", "🎈", "No dejes que caiga", Area.MOVIMIENTO, 3, "Coordinación ojo-mano", "Ritmo y constancia del toque."),
+    GameDef("arana", "La araña pintora", "🕷️", "Descubre la imagen", Area.MOVIMIENTO, 4, "Recorrido y estrategia", "Recorrer un espacio completo evitando obstáculos."),
+    GameDef("lava", "El piso es lava", "🌋", "No toques el suelo", Area.MOVIMIENTO, 4, "Reflejos", "Reacción rápida y control del salto."),
+    GameDef("toystory", "Aventura de juguetes", "🤠", "Salta y explora", Area.MOVIMIENTO, 4, "Recorrido de obstáculos", "Coordinación, ritmo y persistencia ante el reto."),
+    GameDef("carreras", "Carreras", "🏎️", "Esquiva y llega a la meta", Area.MOVIMIENTO, 4, "Reflejos", "Atención sostenida y respuesta veloz."),
+
+    // --- Exclusivos de la versión nativa (no existen en la web) ---
+    GameDef("vibra-adivina", "Vibra y adivina", "📳", "Siente los pulsos y cuenta", Area.SENSORIAL, 4, "Percepción táctil", "Refinar el tacto sintiendo patrones de vibración reales — imposible en la versión web."),
+    GameDef("reflejo-color", "Reflejo de color", "⚡", "Toca en cuanto cambie de color", Area.MOVIMIENTO, 4, "Tiempo de reacción", "Medir el tiempo de reacción real en milisegundos — solo posible con entrada táctil nativa."),
 )
 
 fun buscarJuego(id: String): GameDef? = CATALOGO.find { it.id == id }

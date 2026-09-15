@@ -20,10 +20,14 @@ import com.miambiente.app.ui.screens.BarrasNumericasScreen
 import com.miambiente.app.ui.screens.BloquesScreen
 import com.miambiente.app.ui.screens.AdivinaQuienScreen
 import com.miambiente.app.ui.screens.AlfabetoMovilScreen
+import com.miambiente.app.ui.screens.AranaScreen
 import com.miambiente.app.ui.screens.BancoDoradoScreen
 import com.miambiente.app.ui.screens.BinomioScreen
 import com.miambiente.app.ui.screens.BingoScreen
+import com.miambiente.app.ui.screens.BurbujasScreen
+import com.miambiente.app.ui.screens.CanastaScreen
 import com.miambiente.app.ui.screens.CaraScreen
+import com.miambiente.app.ui.screens.CarrerasScreen
 import com.miambiente.app.ui.screens.CicloAguaScreen
 import com.miambiente.app.ui.screens.CicloVidaScreen
 import com.miambiente.app.ui.screens.CilindrosScreen
@@ -48,12 +52,15 @@ import com.miambiente.app.ui.screens.EstadosAguaScreen
 import com.miambiente.app.ui.screens.FormasScreen
 import com.miambiente.app.ui.screens.FrutaVerduraScreen
 import com.miambiente.app.ui.screens.GatoScreen
+import com.miambiente.app.ui.screens.GloboScreen
 import com.miambiente.app.ui.screens.HabitatScreen
 import com.miambiente.app.ui.screens.HomeScreen
 import com.miambiente.app.ui.screens.HusosScreen
 import com.miambiente.app.ui.screens.InglesScreen
 import com.miambiente.app.ui.screens.InstrumentosScreen
+import com.miambiente.app.ui.screens.LaberintoScreen
 import com.miambiente.app.ui.screens.LadosScreen
+import com.miambiente.app.ui.screens.LavaScreen
 import com.miambiente.app.ui.screens.LavadoManosScreen
 import com.miambiente.app.ui.screens.LetrasLijaScreen
 import com.miambiente.app.ui.screens.MayusculasScreen
@@ -75,6 +82,7 @@ import com.miambiente.app.ui.screens.PesoScreen
 import com.miambiente.app.ui.screens.PinzaScreen
 import com.miambiente.app.ui.screens.PizarraScreen
 import com.miambiente.app.ui.screens.QueFaltaScreen
+import com.miambiente.app.ui.screens.ReflejoColorScreen
 import com.miambiente.app.ui.screens.RelojScreen
 import com.miambiente.app.ui.screens.RimasScreen
 import com.miambiente.app.ui.screens.RompecabezasScreen
@@ -97,9 +105,11 @@ import com.miambiente.app.ui.screens.TemperaturaScreen
 import com.miambiente.app.ui.screens.TexturaScreen
 import com.miambiente.app.ui.screens.TierraAguaScreen
 import com.miambiente.app.ui.screens.TiempoScreen
+import com.miambiente.app.ui.screens.ToystoryScreen
 import com.miambiente.app.ui.screens.TorreRosaScreen
 import com.miambiente.app.ui.screens.TransporteScreen
 import com.miambiente.app.ui.screens.TrazosScreen
+import com.miambiente.app.ui.screens.VibraAdivinaScreen
 import com.miambiente.app.ui.screens.VidaPracticaScreen
 import com.miambiente.app.ui.screens.VocalesScreen
 import com.miambiente.app.ui.screens.XilofonoScreen
@@ -268,6 +278,20 @@ class MainActivity : ComponentActivity() {
                         composable("domino") { DominoScreen(volver) }
                         composable("conecta4") { Conecta4Screen(volver) }
                         composable("adivinaquien") { AdivinaQuienScreen(volver) }
+
+                        // --- Movimiento y coordinación ---
+                        composable("laberinto") { LaberintoScreen(volver) }
+                        composable("burbujas") { BurbujasScreen(volver) }
+                        composable("canasta") { CanastaScreen(volver) }
+                        composable("globo") { GloboScreen(volver) }
+                        composable("arana") { AranaScreen(volver) }
+                        composable("lava") { LavaScreen(volver) }
+                        composable("toystory") { ToystoryScreen(volver) }
+                        composable("carreras") { CarrerasScreen(volver) }
+
+                        // --- Exclusivos de la versión nativa ---
+                        composable("vibra-adivina") { VibraAdivinaScreen(volver) }
+                        composable("reflejo-color") { ReflejoColorScreen(volver) }
                     }
                 }
             }
