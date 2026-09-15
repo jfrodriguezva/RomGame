@@ -21,13 +21,17 @@ import com.miambiente.app.ui.screens.BloquesScreen
 import com.miambiente.app.ui.screens.CicloAguaScreen
 import com.miambiente.app.ui.screens.CicloVidaScreen
 import com.miambiente.app.ui.screens.CilindrosScreen
+import com.miambiente.app.ui.screens.CollageScreen
+import com.miambiente.app.ui.screens.ColorearScreen
 import com.miambiente.app.ui.screens.ColoresScreen
 import com.miambiente.app.ui.screens.ContarScreen
 import com.miambiente.app.ui.screens.ContinentesScreen
 import com.miambiente.app.ui.screens.CuerpoScreen
+import com.miambiente.app.ui.screens.DadoScreen
 import com.miambiente.app.ui.screens.DiaNocheScreen
 import com.miambiente.app.ui.screens.DiasSemanaScreen
 import com.miambiente.app.ui.screens.DietaAnimalScreen
+import com.miambiente.app.ui.screens.DiferenciasScreen
 import com.miambiente.app.ui.screens.ElLaScreen
 import com.miambiente.app.ui.screens.EmocionesScreen
 import com.miambiente.app.ui.screens.EscaleraMarronScreen
@@ -45,16 +49,24 @@ import com.miambiente.app.ui.screens.LadosScreen
 import com.miambiente.app.ui.screens.LavadoManosScreen
 import com.miambiente.app.ui.screens.LetrasLijaScreen
 import com.miambiente.app.ui.screens.MayusculasScreen
+import com.miambiente.app.ui.screens.MemoramaScreen
+import com.miambiente.app.ui.screens.MemoriaTurnosScreen
 import com.miambiente.app.ui.screens.MesaScreen
+import com.miambiente.app.ui.screens.MesaSilencioScreen
 import com.miambiente.app.ui.screens.MitadesScreen
 import com.miambiente.app.ui.screens.NumerosScreen
+import com.miambiente.app.ui.screens.OcaScreen
+import com.miambiente.app.ui.screens.ObjetosScreen
 import com.miambiente.app.ui.screens.OficiosScreen
 import com.miambiente.app.ui.screens.OlfatoScreen
 import com.miambiente.app.ui.screens.OrificiosScreen
 import com.miambiente.app.ui.screens.ParesImparesScreen
 import com.miambiente.app.ui.screens.PartesPlantaScreen
+import com.miambiente.app.ui.screens.PatronScreen
 import com.miambiente.app.ui.screens.PesoScreen
 import com.miambiente.app.ui.screens.PinzaScreen
+import com.miambiente.app.ui.screens.PizarraScreen
+import com.miambiente.app.ui.screens.QueFaltaScreen
 import com.miambiente.app.ui.screens.RelojScreen
 import com.miambiente.app.ui.screens.RimasScreen
 import com.miambiente.app.ui.screens.RpsScreen
@@ -63,6 +75,7 @@ import com.miambiente.app.ui.screens.SaborScreen
 import com.miambiente.app.ui.screens.SelectorEdadScreen
 import com.miambiente.app.ui.screens.SentidosScreen
 import com.miambiente.app.ui.screens.SeresVivosScreen
+import com.miambiente.app.ui.screens.SerpientesScreen
 import com.miambiente.app.ui.screens.SilabasScreen
 import com.miambiente.app.ui.screens.SingularPluralScreen
 import com.miambiente.app.ui.screens.SistemaSolarScreen
@@ -76,7 +89,9 @@ import com.miambiente.app.ui.screens.TierraAguaScreen
 import com.miambiente.app.ui.screens.TiempoScreen
 import com.miambiente.app.ui.screens.TorreRosaScreen
 import com.miambiente.app.ui.screens.TransporteScreen
+import com.miambiente.app.ui.screens.VidaPracticaScreen
 import com.miambiente.app.ui.screens.VocalesScreen
+import com.miambiente.app.ui.screens.XilofonoScreen
 
 /**
  * Rutas de navegación — equivalente nativo del App Router de Next.js
@@ -211,9 +226,26 @@ class MainActivity : ComponentActivity() {
                         composable("tierra-agua") { TierraAguaScreen(volver) }
                         composable("orificios") { OrificiosScreen(volver) }
 
+                        // --- MaterialOrdenar: lote 3 ---
+                        composable("vida-practica") { VidaPracticaScreen(volver) }
+
                         // --- Independientes ---
                         composable("gato") { GatoScreen(volver) }
                         composable("rps") { RpsScreen(volver) }
+                        composable("memorama") { MemoramaScreen(volver) }
+                        composable("que-falta") { QueFaltaScreen(volver) }
+                        composable("diferencias") { DiferenciasScreen(volver) }
+                        composable("objetos") { ObjetosScreen(volver) }
+                        composable("memoria-turnos") { MemoriaTurnosScreen(volver) }
+                        composable("oca") { OcaScreen(volver) }
+                        composable("serpientes") { SerpientesScreen(volver) }
+                        composable("dado") { DadoScreen(volver) }
+                        composable("patron") { PatronScreen(volver) }
+                        composable("pizarra") { PizarraScreen(volver) }
+                        composable("collage") { CollageScreen(volver) }
+                        composable("colorear") { ColorearScreen(volver) }
+                        composable("xilofono") { XilofonoScreen(volver) }
+                        composable("mesa-silencio") { MesaSilencioScreen(volver) }
                     }
                 }
             }

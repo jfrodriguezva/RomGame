@@ -97,9 +97,26 @@ val CATALOGO = listOf(
     GameDef("tierra-agua", "Formas de tierra y agua", "🏝️", "Isla, lago, montaña...", Area.CULTURA, 4, "Formas de tierra y agua", "Vocabulario geográfico y la relación entre tierra y agua."),
     GameDef("orificios", "Encaja la figura", "🕳️", "Cada figura en su agujero exacto", Area.SENSORIAL, 3, "Encajes de formas geométricas", "Discriminación visual precisa."),
 
+    // --- MaterialOrdenar: lote 3 ---
+    GameDef("vida-practica", "Vida práctica", "🫗", "Verter, servir y abotonar", Area.PRACTICA, 3, "Ejercicios de vida práctica", "Movimiento preciso, secuencia de pasos y cuidado del entorno."),
+
     // --- Independientes (sin patrón compartido) ---
     GameDef("gato", "Gato", "⭕", "Tres en línea", Area.COMPANIA, 4, "Juego de mesa", "Anticipar, esperar el turno y aceptar el resultado."),
     GameDef("rps", "Piedra, papel o tijera", "✂️", "El clásico juego de manos", Area.COMPANIA, 4, "Juego de mesa", "Reconocer un patrón simple: qué le gana a qué."),
+    GameDef("memorama", "Juego de memoria", "🧠", "Encuentra las parejas", Area.SENSORIAL, 3, "Juego de memoria a distancia", "Memoria visual y concentración sostenida."),
+    GameDef("que-falta", "¿Qué falta?", "🔍", "Memoriza la bandeja y di qué desapareció", Area.COMPANIA, 3, "Juego de Kim", "Memoria de trabajo y observación."),
+    GameDef("diferencias", "¿Qué es distinto?", "🔍", "Encuentra lo diferente", Area.SENSORIAL, 4, "Pares y contrastes", "Discriminación visual fina y atención al detalle."),
+    GameDef("objetos", "Encuentra los objetos", "🔎", "Busca entre muchos", Area.SENSORIAL, 4, "Búsqueda visual", "Atención selectiva y rastreo visual ordenado."),
+    GameDef("memoria-turnos", "Memoria por turnos", "🧠", "Encuentra más parejas que la computadora", Area.COMPANIA, 4, "Juego de mesa", "Esperar el turno, memoria y aceptar perder o ganar sin drama."),
+    GameDef("oca", "El juego de la oca", "🦢", "Tira el dado, oca, puente o pozo", Area.COMPANIA, 4, "Juego de mesa", "Esperar el turno y aceptar el azar."),
+    GameDef("serpientes", "Serpientes y escaleras", "🐍", "Tira el dado y avanza", Area.COMPANIA, 4, "Juego de mesa", "Contar avanzando y tolerar la sorpresa."),
+    GameDef("dado", "Dado de retos", "🎲", "Tira el dado y muévete", Area.COMPANIA, 3, "Movimiento dirigido", "Escuchar una consigna y ejecutarla con el cuerpo.", libre = true),
+    GameDef("patron", "Las campanas", "🔔", "Repite la melodía", Area.SENSORIAL, 4, "Campanas Montessori", "Memoria auditiva y discriminación de tonos."),
+    GameDef("pizarra", "La pizarra grande", "🖍️", "Dibuja lo que quieras", Area.CREATIVA, 2, "Pizarra y trazo libre", "Expresión libre, trazo amplio y experimentación con el color.", libre = true),
+    GameDef("collage", "Collage libre", "🖼️", "Coloca estampas donde quieras", Area.CREATIVA, 2, "Collage y composición libre", "Composición espacial libre y motricidad fina de precisión.", libre = true),
+    GameDef("colorear", "Colorear", "🎨", "Pinta el dibujo", Area.CREATIVA, 3, "Dibujo dirigido", "Color, límites y paciencia; también relaja."),
+    GameDef("xilofono", "Xilófono", "🎼", "Toca y escucha, sin reglas", Area.CREATIVA, 3, "Instrumento de exploración sonora", "Exploración musical libre.", libre = true),
+    GameDef("mesa-silencio", "El juego del silencio", "🤫", "Respira y escucha", Area.PRACTICA, 3, "Juego del silencio", "Autorregulación, escucha y control voluntario del cuerpo.", libre = true),
 )
 
 fun buscarJuego(id: String): GameDef? = CATALOGO.find { it.id == id }

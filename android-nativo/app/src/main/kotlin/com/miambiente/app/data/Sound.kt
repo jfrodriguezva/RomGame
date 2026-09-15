@@ -12,8 +12,19 @@ import android.media.ToneGenerator
  */
 enum class Efecto { CORRECT, WRONG, WIN, CLICK, STAR }
 
+private val NOTAS_DTMF = intArrayOf(
+    ToneGenerator.TONE_DTMF_1, ToneGenerator.TONE_DTMF_2, ToneGenerator.TONE_DTMF_3,
+    ToneGenerator.TONE_DTMF_4, ToneGenerator.TONE_DTMF_5, ToneGenerator.TONE_DTMF_6,
+    ToneGenerator.TONE_DTMF_7, ToneGenerator.TONE_DTMF_8,
+)
+
 class SoundPlayer {
     private val generador = ToneGenerator(AudioManager.STREAM_MUSIC, 70)
+
+    /** Una nota musical corta — para el xilófono; cada índice suena distinto (tonos DTMF). */
+    fun tocarNota(indice: Int) {
+        generador.startTone(NOTAS_DTMF[indice.coerceIn(0, NOTAS_DTMF.size - 1)], 200)
+    }
 
     fun tocar(efecto: Efecto) {
         val tono = when (efecto) {
