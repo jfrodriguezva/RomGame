@@ -13,13 +13,24 @@ import androidx.navigation.compose.rememberNavController
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Services
 import com.miambiente.app.theme.MiAmbienteTheme
+import com.miambiente.app.ui.screens.AbecedarioScreen
+import com.miambiente.app.ui.screens.AnimalesScreen
+import com.miambiente.app.ui.screens.BanderasScreen
+import com.miambiente.app.ui.screens.BarrasNumericasScreen
+import com.miambiente.app.ui.screens.BloquesScreen
+import com.miambiente.app.ui.screens.CicloAguaScreen
 import com.miambiente.app.ui.screens.CicloVidaScreen
+import com.miambiente.app.ui.screens.CilindrosScreen
 import com.miambiente.app.ui.screens.ColoresScreen
+import com.miambiente.app.ui.screens.ContarScreen
+import com.miambiente.app.ui.screens.ContinentesScreen
 import com.miambiente.app.ui.screens.CuerpoScreen
 import com.miambiente.app.ui.screens.DiaNocheScreen
 import com.miambiente.app.ui.screens.DiasSemanaScreen
 import com.miambiente.app.ui.screens.DietaAnimalScreen
 import com.miambiente.app.ui.screens.ElLaScreen
+import com.miambiente.app.ui.screens.EmocionesScreen
+import com.miambiente.app.ui.screens.EscaleraMarronScreen
 import com.miambiente.app.ui.screens.EstacionesScreen
 import com.miambiente.app.ui.screens.EstadosAguaScreen
 import com.miambiente.app.ui.screens.FormasScreen
@@ -28,17 +39,44 @@ import com.miambiente.app.ui.screens.GatoScreen
 import com.miambiente.app.ui.screens.HabitatScreen
 import com.miambiente.app.ui.screens.HomeScreen
 import com.miambiente.app.ui.screens.HusosScreen
+import com.miambiente.app.ui.screens.InglesScreen
 import com.miambiente.app.ui.screens.InstrumentosScreen
+import com.miambiente.app.ui.screens.LadosScreen
+import com.miambiente.app.ui.screens.LavadoManosScreen
+import com.miambiente.app.ui.screens.LetrasLijaScreen
+import com.miambiente.app.ui.screens.MayusculasScreen
+import com.miambiente.app.ui.screens.MesaScreen
+import com.miambiente.app.ui.screens.MitadesScreen
+import com.miambiente.app.ui.screens.NumerosScreen
 import com.miambiente.app.ui.screens.OficiosScreen
+import com.miambiente.app.ui.screens.OlfatoScreen
+import com.miambiente.app.ui.screens.OrificiosScreen
 import com.miambiente.app.ui.screens.ParesImparesScreen
+import com.miambiente.app.ui.screens.PartesPlantaScreen
+import com.miambiente.app.ui.screens.PesoScreen
 import com.miambiente.app.ui.screens.PinzaScreen
+import com.miambiente.app.ui.screens.RelojScreen
+import com.miambiente.app.ui.screens.RimasScreen
 import com.miambiente.app.ui.screens.RpsScreen
+import com.miambiente.app.ui.screens.RutinaScreen
+import com.miambiente.app.ui.screens.SaborScreen
 import com.miambiente.app.ui.screens.SelectorEdadScreen
+import com.miambiente.app.ui.screens.SentidosScreen
 import com.miambiente.app.ui.screens.SeresVivosScreen
+import com.miambiente.app.ui.screens.SilabasScreen
 import com.miambiente.app.ui.screens.SingularPluralScreen
+import com.miambiente.app.ui.screens.SistemaSolarScreen
+import com.miambiente.app.ui.screens.SolidosScreen
+import com.miambiente.app.ui.screens.SombrasScreen
+import com.miambiente.app.ui.screens.SonidosInicialesScreen
 import com.miambiente.app.ui.screens.TamanosScreen
+import com.miambiente.app.ui.screens.TemperaturaScreen
+import com.miambiente.app.ui.screens.TexturaScreen
+import com.miambiente.app.ui.screens.TierraAguaScreen
+import com.miambiente.app.ui.screens.TiempoScreen
 import com.miambiente.app.ui.screens.TorreRosaScreen
 import com.miambiente.app.ui.screens.TransporteScreen
+import com.miambiente.app.ui.screens.VocalesScreen
 
 /**
  * Rutas de navegación — equivalente nativo del App Router de Next.js
@@ -128,6 +166,50 @@ class MainActivity : ComponentActivity() {
                         // --- MaterialTransferir ---
                         composable("pinza") { PinzaScreen(volver) }
                         composable("husos") { HusosScreen(volver) }
+                        composable("contar") { ContarScreen(volver) }
+
+                        // --- MaterialQuiz: lote 2 ---
+                        composable("animales") { AnimalesScreen(volver) }
+                        composable("solidos") { SolidosScreen(volver) }
+                        composable("sentidos") { SentidosScreen(volver) }
+                        composable("partes-planta") { PartesPlantaScreen(volver) }
+                        composable("banderas") { BanderasScreen(volver) }
+                        composable("sonidos-iniciales") { SonidosInicialesScreen(volver) }
+                        composable("vocales") { VocalesScreen(volver) }
+                        composable("abecedario") { AbecedarioScreen(volver) }
+                        composable("ingles") { InglesScreen(volver) }
+                        composable("emociones") { EmocionesScreen(volver) }
+                        composable("tiempo") { TiempoScreen(volver) }
+                        composable("reloj") { RelojScreen(volver) }
+                        composable("sombras") { SombrasScreen(volver) }
+                        composable("letras-lija") { LetrasLijaScreen(volver) }
+
+                        // --- MaterialOrdenar: lote 2 ---
+                        composable("escalera-marron") { EscaleraMarronScreen(volver) }
+                        composable("bloques") { BloquesScreen(volver) }
+                        composable("cilindros") { CilindrosScreen(volver) }
+                        composable("sistema-solar") { SistemaSolarScreen(volver) }
+                        composable("ciclo-agua") { CicloAguaScreen(volver) }
+                        composable("rutina") { RutinaScreen(volver) }
+                        composable("mesa") { MesaScreen(volver) }
+                        composable("lavado-manos") { LavadoManosScreen(volver) }
+                        composable("barras-numericas") { BarrasNumericasScreen(volver) }
+                        composable("numeros") { NumerosScreen(volver) }
+
+                        // --- MaterialClasificar: lote 2 ---
+                        composable("textura") { TexturaScreen(volver) }
+                        composable("temperatura") { TemperaturaScreen(volver) }
+                        composable("peso") { PesoScreen(volver) }
+                        composable("sabor") { SaborScreen(volver) }
+                        composable("olfato") { OlfatoScreen(volver) }
+                        composable("mayusculas") { MayusculasScreen(volver) }
+                        composable("lados") { LadosScreen(volver) }
+                        composable("mitades") { MitadesScreen(volver) }
+                        composable("rimas") { RimasScreen(volver) }
+                        composable("silabas") { SilabasScreen(volver) }
+                        composable("continentes") { ContinentesScreen(volver) }
+                        composable("tierra-agua") { TierraAguaScreen(volver) }
+                        composable("orificios") { OrificiosScreen(volver) }
 
                         // --- Independientes ---
                         composable("gato") { GatoScreen(volver) }

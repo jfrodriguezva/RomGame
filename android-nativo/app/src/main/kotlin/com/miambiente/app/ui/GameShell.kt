@@ -28,6 +28,7 @@ import com.miambiente.app.theme.Papel
 import com.miambiente.app.theme.TextoSuave
 import com.miambiente.app.theme.Tinta
 import com.miambiente.app.theme.coloresDe
+import com.miambiente.app.ui.materials.ConfettiOverlay
 
 /**
  * Marco común de todos los materiales — equivalente nativo de
@@ -41,6 +42,7 @@ fun GameShell(
     juego: GameDef,
     consigna: String? = null,
     nota: String? = null,
+    celebrar: Boolean = false,
     onVolver: () -> Unit,
     acciones: (@Composable () -> Unit)? = null,
     contenido: @Composable () -> Unit,
@@ -82,7 +84,10 @@ fun GameShell(
             }
         }
 
-        Box(modifier = Modifier.weight(1f).fillMaxWidth()) { contenido() }
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+            contenido()
+            ConfettiOverlay(activo = celebrar)
+        }
 
         if (nota != null) {
             Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {

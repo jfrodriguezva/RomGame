@@ -76,7 +76,11 @@ fun <T> MaterialClasificar(
         juego = juego,
         consigna = if (completo) "¡Clasificaste todo!" else consigna,
         nota = estado.nota,
+        celebrar = estado.logrado,
         onVolver = onVolver,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else null,
     ) {
         Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
             Text("Quedan: ${pendientes.size} · Acertados: $acertados", color = colores.texto)
