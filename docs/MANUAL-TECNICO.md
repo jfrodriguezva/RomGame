@@ -239,6 +239,17 @@ funcione offline como PWA.
 
 ## 13. Deuda técnica conocida
 
+- **Patrón peligroso, ya auditado en todo el repo: nunca meter efectos
+  secundarios dentro del updater de `setState`.** `setAlgo((prev) => {
+  sonidoOEstrella(); return next; })` es un bug real, no solo un estilo
+  descuidado — React puede invocar la función pasada al updater más de
+  una vez (no importa si el llamado viene de un evento o de un efecto),
+  y eso duplica sonidos, estrellas o transiciones de turno. Causó bugs
+  reales en `serpientes`, `globo`, `canasta`, `mesa-silencio`, `rps`,
+  `gato` y `colorear` — todos corregidos leyendo el estado actual desde
+  una ref o el closure del evento y ejecutando los efectos una sola vez,
+  fuera del `setState`. Al escribir un material nuevo con `setInterval`
+  o updaters funcionales, evitar este patrón desde el diseño.
 - **ESLint: `npm run lint` da 0 errores en todo el repo.** `react-hooks/set-state-in-effect`
   tenía instancias en los 4 componentes compartidos y en ~28 de los 31
   materiales de estilo antiguo (algunos con 2), más `burbujas.tsx`,

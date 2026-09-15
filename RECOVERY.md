@@ -366,6 +366,38 @@ en la ronda 7. Se movió el cálculo (`avanzarGlobos`) fuera del updater.
 7, no tiene este patrón** — `popBubble` no mete ningún efecto dentro de
 un updater; no necesitaba arreglo.
 
+**Ronda 9 (mismo día): al reportar el hallazgo de `canasta` con este
+mismo bug, el usuario pidió "corrije todo" — se auditó el patrón
+sistemáticamente en los 96 materiales** (búsqueda de updaters de
+`setState` con `playSound`/`addStars`/`vibrar`/`hablar`/`setTimeout`/
+`material.completar` anidados, más verificación manual de cada
+coincidencia). Aparecieron 4 casos reales más, todos corregidos con el
+mismo método (leer el estado actual desde una ref o el closure del
+evento, nunca desde el argumento del updater; los efectos secundarios
+siempre fuera del `setState`, ejecutados una sola vez):
+
+- `canasta` — el hallazgo original: además del bug, el intervalo de
+  caída dependía de `basketX` y se destruía/recreaba en cada arrastre.
+- `mesa-silencio` — la campana final y la voz de cierre vivían dentro
+  del updater de `setRestante`.
+- `rps` — `addStars` y la celebración de racha dentro del updater de
+  `setWins`.
+- `gato` — mismo caso que `rps`, pero dentro de un `useEffect` en vez
+  de un manejador de clic — **la regla aplica igual sin importar de
+  dónde se llame** `setState`, el riesgo es que React invoque la
+  función pasada al updater más de una vez, no el contexto de la
+  llamada.
+- `colorear` — `material.completar()` se programaba con `setTimeout`
+  dentro del updater de `setPintado`, pudiendo duplicar la estrella y
+  la celebración de nivel completo.
+
+Revisados y confirmados limpios sin necesitar cambios: `adivinaquien`,
+`patron`, `memorama`, `oca`, `domino`, `conecta4`, `memoria-turnos`,
+`serpientes` (ya corregido en ronda 7) y `globo` (ya corregido arriba).
+**Con esto, el patrón se considera cerrado para todo el catálogo
+actual** — cualquier material nuevo debería seguir el mismo cuidado
+desde el diseño, no como corrección posterior.
+
 **Punto 2 — las 6 opciones de juegos de mesa ofrecidas en la ronda 7, sin
 excepción, todas construidas** (área `compania`, que pasó de 5 a 11
 materiales):
