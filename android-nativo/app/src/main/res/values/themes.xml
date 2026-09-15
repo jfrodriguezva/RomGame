@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.MiAmbiente" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#FDFAF5</item>
+        <item name="android:windowBackground">#FDFAF5</item>
+    </style>
+</resources>
