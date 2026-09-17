@@ -3,6 +3,7 @@ package com.miambiente.app.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
@@ -215,9 +217,14 @@ fun DamasScreen(onVolver: () -> Unit) {
     ) {
         Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Tú: ${tablero.count { it.esJugador }} · Computadora: ${tablero.count { !it.esJugador }}", fontSize = 12.sp)
+            // El tablero (304dp) cabe en casi cualquier celular, pero se
+            // envuelve en scroll horizontal de todas formas: en pantallas
+            // muy angostas o en modo multi-ventana, antes se recortaba en
+            // silencio en vez de poder desplazarse para verlo completo.
             Column(
                 modifier = Modifier
                     .padding(top = 8.dp)
+                    .horizontalScroll(rememberScrollState())
                     .shadow(6.dp, RoundedCornerShape(8.dp))
                     .clip(RoundedCornerShape(8.dp)),
             ) {

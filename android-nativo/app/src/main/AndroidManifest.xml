@@ -13,7 +13,19 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MiAmbiente"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden">
+            <!--
+                Bug real reportado: "todo esta en una sola vista, eso debe
+                aplicarse para telefonos". Antes `screenOrientation="portrait"`
+                bloqueaba cualquier giro sin importar el sensor del
+                dispositivo. Se quito para que gire libre (tablet y
+                celular), y se declara `configChanges` para que Android NO
+                destruya y recree la Activity al girar — sin esto, cada
+                `remember { mutableStateOf(...) }` de cada material (la
+                partida de damas a medias, el solitario repartido, el
+                dibujo de la pizarra) se perderia con cada giro.
+            -->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

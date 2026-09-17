@@ -17,6 +17,9 @@ private fun patronMs(p: Patron): LongArray = when (p) {
 }
 
 class Haptics(context: Context) {
+    /** Gatea desde Ajustes ("Vibración"); `Services` lo mantiene al día. */
+    @Volatile var activo: Boolean = true
+
     private val vibrator: Vibrator? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val manager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
         manager?.defaultVibrator
@@ -26,6 +29,7 @@ class Haptics(context: Context) {
     }
 
     fun vibrar(patron: Patron) {
+        if (!activo) return
         val v = vibrator ?: return
         if (!v.hasVibrator()) return
         val timings = patronMs(patron)

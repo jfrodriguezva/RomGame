@@ -80,6 +80,9 @@ private fun crearPistaEstatica(datos: ShortArray): AudioTrack =
         .apply { write(datos, 0, datos.size) }
 
 class SoundPlayer {
+    /** Gatea desde Ajustes ("Sonido"); `Services` lo mantiene al día. */
+    @Volatile var activo: Boolean = true
+
     private val generador = ToneGenerator(AudioManager.STREAM_MUSIC, 70)
 
     // Una pista por nota (no una compartida): así dos teclas tocadas rápido
@@ -89,6 +92,7 @@ class SoundPlayer {
 
     /** Nota real de xilófono (barra percutida, sintetizada) — cada índice es un grado de la escala pentatónica. */
     fun tocarNota(indice: Int) {
+        if (!activo) return
         val pista = pistasXilofono[indice.coerceIn(0, pistasXilofono.size - 1)]
         pista.stop()
         pista.reloadStaticData()
@@ -96,6 +100,7 @@ class SoundPlayer {
     }
 
     fun tocar(efecto: Efecto) {
+        if (!activo) return
         val tono = when (efecto) {
             Efecto.CLICK -> ToneGenerator.TONE_PROP_BEEP
             Efecto.CORRECT -> ToneGenerator.TONE_PROP_ACK

@@ -3,6 +3,7 @@ package com.miambiente.app.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -190,7 +193,14 @@ fun SolitarioScreen(onVolver: () -> Unit) {
         acciones = { if (ganado) Button(onClick = ::repartir) { Text("Jugar de nuevo") } },
     ) {
         Column(Modifier.fillMaxSize().padding(12.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+            // Con scroll horizontal (no solo fillMaxWidth): en un celular
+            // angosto 7-10 cartas de ancho fijo no caben en una fila que
+            // solo se ajusta por peso — mismo bug de fondo ya encontrado y
+            // corregido varias veces en la pizarra y en los otros juegos.
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            ) {
                 // Mazo y descarte
                 CartaDorso(habilitado = mazo.isNotEmpty() || descarte.isNotEmpty(), onClick = ::tocarMazo, vacio = mazo.isEmpty())
                 Box(modifier = Modifier.size(width = 40.dp, height = 56.dp)) {
@@ -220,11 +230,11 @@ fun SolitarioScreen(onVolver: () -> Unit) {
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 14.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 14.dp).horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 columnas.forEachIndexed { colIdx, col ->
-                    Box(modifier = Modifier.weight(1f)) {
+                    Box(modifier = Modifier.width(42.dp)) {
                         if (col.isEmpty()) {
                             Box(
                                 modifier = Modifier

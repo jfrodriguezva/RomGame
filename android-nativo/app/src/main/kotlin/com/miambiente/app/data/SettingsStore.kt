@@ -23,6 +23,7 @@ data class Settings(
     val sonido: Boolean = true,
     val voz: Boolean = true,
     val vibracion: Boolean = true,
+    val musica: Boolean = true,
     val calma: Boolean = false,
 )
 
@@ -33,6 +34,7 @@ class SettingsStore(private val context: Context) {
         val SONIDO = booleanPreferencesKey("sonido")
         val VOZ = booleanPreferencesKey("voz")
         val VIBRACION = booleanPreferencesKey("vibracion")
+        val MUSICA = booleanPreferencesKey("musica")
         val CALMA = booleanPreferencesKey("calma")
     }
 
@@ -43,6 +45,7 @@ class SettingsStore(private val context: Context) {
             sonido = p[Claves.SONIDO] ?: true,
             voz = p[Claves.VOZ] ?: true,
             vibracion = p[Claves.VIBRACION] ?: true,
+            musica = p[Claves.MUSICA] ?: true,
             calma = p[Claves.CALMA] ?: false,
         )
     }
@@ -58,6 +61,7 @@ class SettingsStore(private val context: Context) {
     suspend fun toggleSonido() = toggle(Claves.SONIDO)
     suspend fun toggleVoz() = toggle(Claves.VOZ)
     suspend fun toggleVibracion() = toggle(Claves.VIBRACION)
+    suspend fun toggleMusica() = toggle(Claves.MUSICA)
     suspend fun toggleCalma() = toggle(Claves.CALMA)
 
     private suspend fun toggle(clave: androidx.datastore.preferences.core.Preferences.Key<Boolean>) {

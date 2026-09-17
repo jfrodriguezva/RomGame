@@ -135,6 +135,7 @@ val CATALOGO = listOf(
     // con el dominó.
     GameDef("solitario", "Solitario", "🎴", "Ordena las cartas por palo y color", Area.COMPANIA, 5, "Juego de cartas", "Paciencia, clasificación y estrategia en solitario."),
     GameDef("arana-cartas", "Solitario araña", "🕸️", "Arma secuencias del As al Rey", Area.COMPANIA, 5, "Juego de cartas", "Planeación a varios pasos y memoria de lo ya visto."),
+    GameDef("ajedrez", "Ajedrez", "♞", "Da jaque mate al rey contrario", Area.COMPANIA, 6, "Juego de mesa", "Planeación a varios pasos y anticipar la jugada del rival."),
 
     // --- Movimiento y coordinación (independientes) ---
     GameDef("laberinto", "Laberinto", "🌀", "Encuentra la salida", Area.MOVIMIENTO, 4, "Control del movimiento", "Planear una ruta y seguirla sin chocar."),

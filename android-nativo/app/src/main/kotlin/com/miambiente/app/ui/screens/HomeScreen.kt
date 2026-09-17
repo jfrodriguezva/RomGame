@@ -2,6 +2,7 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -63,7 +64,7 @@ private val IDS_DESTACADOS = listOf("pizarra", "xilofono", "collage", "colorear"
  * filtrados por edad mínima.
  */
 @Composable
-fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> Unit) {
+fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> Unit, onAjustes: () -> Unit) {
     var areaActiva by remember { mutableStateOf<Area?>(Area.entries.first()) }
     val disponibles = CATALOGO.filter { edad >= it.edadMinima }
     val destacados = IDS_DESTACADOS.mapNotNull { buscarJuego(it) }.filter { edad >= it.edadMinima }
@@ -74,22 +75,48 @@ fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> U
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            // `weight(1f)` + una sola línea con "…": en un celular angosto,
+            // antes el título largo podía empujar los botones de la derecha
+            // (edad, ajustes) fuera de la pantalla en vez de acortarse él.
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.weight(1f, fill = false),
+            ) {
                 Box(
                     modifier = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF8BBF6A)),
                     contentAlignment = Alignment.Center,
                 ) { Text("🧩", fontSize = 20.sp) }
                 Column {
-                    Text("RominaGame", style = MaterialTheme.typography.headlineSmall, color = Tinta, fontWeight = FontWeight.ExtraBold)
+                    Text(
+                        "RominaGame",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = Tinta,
+                        fontWeight = FontWeight.ExtraBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                     Text(
                         "${disponibles.size} materiales para $edad años",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextoSuave,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
-            OutlinedButton(onClick = onCambiarEdad) {
-                Text("$edad años ✏️")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                OutlinedButton(onClick = onCambiarEdad) {
+                    Text("$edad años ✏️")
+                }
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White)
+                        .clickable { onAjustes() },
+                    contentAlignment = Alignment.Center,
+                ) { Text("⚙️", fontSize = 18.sp) }
             }
         }
 

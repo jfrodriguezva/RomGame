@@ -3,6 +3,7 @@ package com.miambiente.app.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -169,12 +172,16 @@ fun SolitarioAranaScreen(onVolver: () -> Unit) {
                     modifier = Modifier.clip(RoundedCornerShape(50)).background(Color(0xFFE0C23C).copy(alpha = 0.3f)).padding(horizontal = 10.dp, vertical = 4.dp),
                 ) { Text("✅ $completados / $metaJuegos", fontSize = 11.sp) }
             }
+            // Ancho fijo por columna dentro de una fila con scroll: en un
+            // celular angosto, 10 columnas repartidas por `weight` quedaban
+            // más angostas que la carta de 40dp que tenían adentro, así que
+            // se encimaban — el mismo bug de fondo que el de la pizarra.
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp).horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 columnas.forEachIndexed { colIdx, col ->
-                    Box(modifier = Modifier.weight(1f)) {
+                    Box(modifier = Modifier.width(42.dp)) {
                         if (col.isEmpty()) {
                             Box(
                                 modifier = Modifier

@@ -86,9 +86,16 @@ class AmbientMusic {
     }
     private var actual: Area? = null
 
+    /** Gatea desde Ajustes ("Música"); si se apaga a medio material, se detiene al toque. */
+    var activo: Boolean = true
+        set(valor) {
+            field = valor
+            if (!valor) detener()
+        }
+
     /** Cambia el fondo musical al acorde del área dada; no repite si ya es la misma. */
     fun sonarPara(area: Area) {
-        if (actual == area) return
+        if (!activo || actual == area) return
         pistas[actual]?.pause()
         pistas[actual]?.let { it.stop(); it.reloadStaticData() }
         actual = area

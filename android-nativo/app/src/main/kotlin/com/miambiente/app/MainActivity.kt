@@ -39,6 +39,8 @@ import com.miambiente.app.ui.screens.ContarScreen
 import com.miambiente.app.ui.screens.ContinentesScreen
 import com.miambiente.app.ui.screens.CuerpoScreen
 import com.miambiente.app.ui.screens.DadoScreen
+import com.miambiente.app.ui.screens.AjedrezScreen
+import com.miambiente.app.ui.screens.AjustesScreen
 import com.miambiente.app.ui.screens.DamasScreen
 import com.miambiente.app.ui.screens.SolitarioScreen
 import com.miambiente.app.ui.screens.SolitarioAranaScreen
@@ -126,6 +128,7 @@ import com.miambiente.app.ui.screens.XilofonoScreen
 object Ruta {
     const val EDAD = "edad"
     const val INICIO = "inicio"
+    const val AJUSTES = "ajustes"
 }
 
 class MainActivity : ComponentActivity() {
@@ -173,8 +176,10 @@ class MainActivity : ComponentActivity() {
                                         popUpTo(0)
                                     }
                                 },
+                                onAjustes = { navController.navigate(Ruta.AJUSTES) },
                             )
                         }
+                        composable(Ruta.AJUSTES) { AjustesScreen(volver) }
 
                         // --- MaterialQuiz ---
                         composable("formas") { FormasScreen(volver) }
@@ -284,6 +289,7 @@ class MainActivity : ComponentActivity() {
                         composable("damas") { DamasScreen(volver) }
                         composable("solitario") { SolitarioScreen(volver) }
                         composable("arana-cartas") { SolitarioAranaScreen(volver) }
+                        composable("ajedrez") { AjedrezScreen(volver) }
 
                         // --- Movimiento y coordinación ---
                         composable("laberinto") { LaberintoScreen(volver) }

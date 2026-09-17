@@ -20,6 +20,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.LocalServices
+import com.miambiente.app.data.Settings
 import com.miambiente.app.model.GameDef
 import com.miambiente.app.theme.Papel
 import com.miambiente.app.theme.TextoSuave
@@ -54,9 +57,10 @@ fun GameShell(
 ) {
     val services = LocalServices.current
     val colores = coloresDe(juego.area)
+    val ajustes by services.settings.settings.collectAsState(initial = Settings())
 
-    LaunchedEffect(consigna) {
-        if (consigna != null) services.speech.hablar(consigna)
+    LaunchedEffect(consigna, ajustes.voz) {
+        if (consigna != null && ajustes.voz) services.speech.hablar(consigna)
     }
 
     // Fondo musical tierno por área: entra al abrir el material y se
