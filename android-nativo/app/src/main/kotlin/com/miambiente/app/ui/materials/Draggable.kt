@@ -2,6 +2,8 @@ package com.miambiente.app.ui.materials
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -64,9 +66,16 @@ fun PiezaArrastrable(
 ) {
     val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     var origenRoot by remember { mutableStateOf(Offset.Zero) }
+    var arrastrando by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
     val tamanoPx = with(density) { tamano.toPx() }
+
+    // Feedback táctil real al tomar la pieza: antes no había ninguna
+    // diferencia visual entre "quieta" y "en la mano", y al soltar en un
+    // sitio inválido volvía de golpe sin animación — ahora crece un poco
+    // mientras se arrastra y vuelve con un rebote suave si no encaja.
+    val escala by animateFloatAsState(if (arrastrando) 1.15f else 1f, label = "escalaArrastre")
 
     Box(
         modifier = Modifier
@@ -76,13 +85,22 @@ fun PiezaArrastrable(
             .graphicsLayer {
                 translationX = offset.value.x
                 translationY = offset.value.y
+                scaleX = escala
+                scaleY = escala
+                shadowElevation = if (arrastrando) 12f else 0f
             }
             .pointerInput(clave) {
                 detectDragGestures(
+                    onDragStart = { arrastrando = true },
                     onDragEnd = {
+                        arrastrando = false
                         val centro = origenRoot + offset.value + Offset(tamanoPx / 2, tamanoPx / 2)
                         onSoltar(centro)
-                        scope.launch { offset.snapTo(Offset.Zero) }
+                        scope.launch { offset.animateTo(Offset.Zero, spring(dampingRatio = 0.6f, stiffness = 300f)) }
+                    },
+                    onDragCancel = {
+                        arrastrando = false
+                        scope.launch { offset.animateTo(Offset.Zero, spring(dampingRatio = 0.6f, stiffness = 300f)) }
                     },
                     onDrag = { change, dragAmount ->
                         change.consume()

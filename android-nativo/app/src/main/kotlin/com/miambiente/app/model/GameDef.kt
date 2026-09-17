@@ -28,7 +28,7 @@ val CATALOGO = listOf(
     GameDef("cuerpo", "Partes del cuerpo", "🧍", "Cabeza, ojo, mano, brazo, pierna y pie", Area.CULTURA, 3, "Nomenclatura del cuerpo humano", "Vocabulario y conciencia del propio cuerpo."),
     GameDef("colores", "Los colores", "🎨", "Tabletas de color", Area.SENSORIAL, 3, "Cajas de color", "Nomenclatura de las tabletas de color."),
     GameDef("instrumentos", "Instrumentos musicales", "🎻", "Tambor, guitarra, piano, trompeta y violín", Area.SENSORIAL, 3, "Nomenclatura", "Nomenclatura de instrumentos musicales."),
-    GameDef("oficios", "Oficios y profesiones", "👩‍🚒", "Bombero, doctora, cocinero, maestra, policía", Area.CULTURA, 4, "Nomenclatura", "Vocabulario de oficios y su utilidad social."),
+    GameDef("oficios", "Oficios y profesiones", "🚒", "Bombero, doctora, cocinero, maestra, policía", Area.CULTURA, 4, "Nomenclatura", "Vocabulario de oficios y su utilidad social."),
     GameDef("transporte", "Medios de transporte", "🚂", "Tierra, aire o agua", Area.CULTURA, 3, "Clasificación de transportes", "Relacionar cada vehículo con el medio por el que se mueve."),
 
     // --- MaterialOrdenar (seriación, con arrastre) ---
@@ -125,7 +125,7 @@ val CATALOGO = listOf(
     GameDef("tabla-cien", "La tabla del cien", "💯", "Coloca del 1 al 100", Area.MATEMATICAS, 4, "Tabla del cien", "Secuencia numérica y estructura de la decena."),
     GameDef("banco-dorado", "El banco dorado", "🟡", "Unidades, decenas y centenas", Area.MATEMATICAS, 4, "Perlas doradas", "Sistema decimal a la vista: componer números grandes."),
     GameDef("bingo", "Bingo con imágenes", "🎱", "Escucha, busca y marca en tu cartón", Area.COMPANIA, 3, "Juego de mesa", "Vocabulario, atención y correspondencia."),
-    GameDef("domino", "Dominó de imágenes", "🁣", "Encaja tu ficha con el dibujo", Area.COMPANIA, 4, "Juego de mesa", "Correspondencia visual y esperar el turno."),
+    GameDef("domino", "Dominó", "🀄", "Encaja tu ficha por número", Area.COMPANIA, 4, "Juego de mesa", "Correspondencia numérica y esperar el turno."),
     GameDef("conecta4", "Cuatro en línea", "🔵", "Alinea cuatro fichas antes que la computadora", Area.COMPANIA, 4, "Juego de mesa", "Planeación simple y anticipar la jugada del otro."),
     GameDef("adivinaquien", "Adivina quién es", "🕵️", "Pregunta y descubre", Area.COMPANIA, 4, "Juego de deducción", "Razonamiento lógico por eliminación."),
 

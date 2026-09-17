@@ -16,6 +16,73 @@ encabezado del Home). No se tocó `applicationId` ni el paquete Kotlin
 perder el progreso guardado en instalaciones existentes, un efecto
 destructivo que nadie pidió.
 
+## Tercera pasada: material por material (Gato, Dominó, Xilófono, bug de iconos)
+
+Pedido explícito: "genera el mismo esfuerzo por mejorar cada material con
+el mismo detalle que con la pizarra". Rehacer los 98 materiales al mismo
+nivel que la pizarra en una sola pasada no es realista (la pizarra por sí
+sola fue una reescritura de ~700 líneas); en cambio se priorizó lo
+reportado con detalle concreto y los componentes con mayor efecto
+multiplicador:
+
+- **Bug real de iconos que no se ven, causa encontrada**: varios emoji del
+  catálogo y de materiales usaban secuencias con unión (ZWJ, ej.
+  "👩‍🚒" = mujer + unión + camión) que no siempre tienen un glifo
+  combinado en fuentes reducidas — el sistema entonces no dibuja nada o
+  dibuja las partes sueltas. Se reemplazaron todas las que había en el
+  código (`grep` del carácter U+200D confirmó la lista completa) por
+  emoji de un solo carácter: Oficios (bombero/doctora/cocinero/maestra),
+  el "oso polar" de Hábitat (ahora sin unión: "🐻❄️" en vez de "🐻‍❄️",
+  se ven los dos símbolos igual sin depender de la fuente), y el emoji
+  del catálogo de Dominó (el carácter "Domino Tile" de Unicode casi nunca
+  tiene glifo de color en ninguna fuente — cambiado a "🀄", que sí lo
+  tiene desde hace años).
+- **Xilófono — sonido real, no DTMF**: antes usaba `ToneGenerator` con
+  tonos de teclado de teléfono. Ahora sintetiza cada nota con
+  `AudioTrack` (ataque instantáneo, decaimiento exponencial y un
+  sobretono a ~2.76x la fundamental — la física real de una barra
+  percutida) sobre una escala pentatónica, así que cualquier combinación
+  de teclas suena musical. Visual rehecho: barras de largo decreciente
+  (como el instrumento real) con agujeros de resonancia y feedback al
+  presionar.
+- **Gato — IA real, no aleatoria**: bug real reportado ("que la respuesta
+  no sea aleatoria, sino que realmente piense"); antes la CPU jugaba
+  `vacias.random()`. Ahora usa minimax completo (juego perfecto,
+  verificado con una prueba que simula partidas completas y confirma que
+  nunca pierde). Se agregó también un modo de dos jugadores locales.
+- **Dominó — numérico real, no emparejar dibujos**: bug real reportado
+  ("hazlo por números, o sea normal"); era un juego de emparejar 5
+  dibujos. Ahora es un dominó doble-6 real (28 fichas, valores 0-6,
+  puntos dibujados con `Canvas` en el patrón real de cada número) con
+  orientación correcta en la cadena (el lado que conecta siempre queda
+  pegado). El rival ahora se ve: avatar + sus fichas boca abajo, no solo
+  un contador de texto.
+- **Arrastre compartido** (`PiezaArrastrable`, ~40 materiales): antes no
+  había ninguna diferencia visual entre "quieta" y "en la mano", y al
+  soltar en un sitio inválido la pieza volvía de golpe sin animación.
+  Ahora crece un poco mientras se arrastra (con sombra) y vuelve con un
+  rebote suave si no encaja.
+- **Pulido individual**: Piedra-papel-o-tijera (aro de ganador, "VS",
+  sombras), Memorama (volteo real en 3D con `rotationY`, no un cambio de
+  color instantáneo), Cuatro en línea (tablero con marco azul y agujeros
+  perforados, antes las fichas flotaban sueltas), Bingo (cartón con
+  marco, sello de verificación en lo marcado, voz cantora en una
+  medalla).
+
+Todo verificado en el emulador con capturas reales (no solo compilación):
+Gato bloqueando y ganando con minimax, Dominó con la cadena encajando
+visualmente, Xilófono sin errores en logcat al tocar, íconos de Oficios
+y Dominó ya visibles, RPS con el aro de victoria, Memorama volteando la
+carta correcta, Cuatro en línea con el marco y la ficha cayendo, Bingo
+con el sello en lo marcado.
+
+**Lo que NO se hizo en esta pasada** (para ser honesto sobre el alcance):
+la gran mayoría de los otros ~85 materiales no recibieron una reescritura
+individual — siguen con el nivel visual de las pasadas anteriores
+(componentes compartidos ya pulidos, pero sin un tratamiento a medida
+como el de la pizarra o el dominó). Igualar ese nivel a los 98 materiales
+uno por uno es un trabajo de varias sesiones más, no de una sola.
+
 ## Pasada de calidad visual/UX "nivel enterprise" en los componentes compartidos
 
 En vez de rediseñar material por material (inviable con 98 pantallas),

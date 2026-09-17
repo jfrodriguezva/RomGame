@@ -13,7 +13,10 @@ private val POOL = listOf(
     ItemClasificar("🐒", "mono", "selva"), ItemClasificar("🦜", "loro", "selva"),
     ItemClasificar("🐫", "camello", "desierto"), ItemClasificar("🦂", "escorpion", "desierto"),
     ItemClasificar("🐠", "pez", "oceano"), ItemClasificar("🐬", "delfin", "oceano"),
-    ItemClasificar("🐧", "pinguino", "polo"), ItemClasificar("🐻‍❄️", "oso-polar", "polo"),
+    // "🐻❄️" en vez de "🐻‍❄️": sin unión (ZWJ) entre los dos caracteres, para
+    // que se vean siempre los dos símbolos aunque la fuente no tenga el
+    // glifo combinado de "oso polar" (el bug real de iconos que no aparecen).
+    ItemClasificar("🐧", "pinguino", "polo"), ItemClasificar("🐻❄️", "oso-polar", "polo"),
 )
 
 /** ¿Dónde vive? — patrón MaterialClasificar (selva / desierto / océano / polo). */

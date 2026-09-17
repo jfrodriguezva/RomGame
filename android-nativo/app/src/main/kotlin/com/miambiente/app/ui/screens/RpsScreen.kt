@@ -1,7 +1,10 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
@@ -35,6 +41,22 @@ private val OPCIONES = listOf("piedra" to "🪨", "papel" to "📄", "tijera" to
 
 private fun gana(a: String, b: String): Boolean =
     (a == "piedra" && b == "tijera") || (a == "papel" && b == "piedra") || (a == "tijera" && b == "papel")
+
+@Composable
+private fun ManoRps(etiqueta: String, emoji: String?, resaltado: Boolean) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(etiqueta, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Box(
+            modifier = Modifier
+                .size(76.dp)
+                .shadow(if (resaltado) 8.dp else 3.dp, CircleShape)
+                .clip(CircleShape)
+                .background(Color.White)
+                .border(3.dp, if (resaltado) Color(0xFF4C7A3A) else Color.Transparent, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) { Text(emoji ?: "❔", fontSize = 34.sp) }
+    }
+}
 
 /** Piedra, papel o tijera — material independiente, sin patrón compartido. */
 @Composable
@@ -82,21 +104,13 @@ fun RpsScreen(onVolver: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Tú", fontSize = 14.sp)
-                    Box(
-                        Modifier.size(72.dp).clip(CircleShape).background(Color.White),
-                        contentAlignment = Alignment.Center,
-                    ) { Text(jugada?.let { op -> OPCIONES.first { it.first == op }.second } ?: "❔", fontSize = 32.sp) }
-                }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Rival", fontSize = 14.sp)
-                    Box(
-                        Modifier.size(72.dp).clip(CircleShape).background(Color.White),
-                        contentAlignment = Alignment.Center,
-                    ) { Text(cpu?.let { op -> OPCIONES.first { it.first == op }.second } ?: "❔", fontSize = 32.sp) }
-                }
+            val ganoTu = jugada != null && cpu != null && jugada != cpu && gana(jugada!!, cpu!!)
+            val ganoCpu = jugada != null && cpu != null && jugada != cpu && !ganoTu
+
+            Row(horizontalArrangement = Arrangement.spacedBy(20.dp), verticalAlignment = Alignment.CenterVertically) {
+                ManoRps("Tú", jugada?.let { op -> OPCIONES.first { it.first == op }.second }, resaltado = ganoTu)
+                Text("VS", fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = Color(0xFFB0A48F))
+                ManoRps("Rival", cpu?.let { op -> OPCIONES.first { it.first == op }.second }, resaltado = ganoCpu)
             }
 
             Row(
@@ -104,12 +118,16 @@ fun RpsScreen(onVolver: () -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 OPCIONES.forEach { (id, emoji) ->
+                    val interaccion = remember { MutableInteractionSource() }
+                    val presionado by interaccion.collectIsPressedAsState()
                     Box(
                         modifier = Modifier
                             .size(64.dp)
+                            .scale(if (presionado) 0.9f else 1f)
+                            .shadow(4.dp, CircleShape)
                             .clip(CircleShape)
                             .background(Color.White)
-                            .clickable { jugar(id) },
+                            .clickable(interactionSource = interaccion, indication = null) { jugar(id) },
                         contentAlignment = Alignment.Center,
                     ) { Text(emoji, fontSize = 28.sp) }
                 }

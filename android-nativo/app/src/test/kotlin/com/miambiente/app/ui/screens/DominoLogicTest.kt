@@ -8,8 +8,8 @@ import org.junit.Test
 class DominoLogicTest {
 
     @Test
-    fun `el set doble-4 tiene exactamente 15 fichas`() {
-        assertEquals(15, setCompleto().size)
+    fun `el set doble-6 tiene exactamente 28 fichas`() {
+        assertEquals(28, setCompleto().size)
     }
 
     @Test
@@ -21,8 +21,8 @@ class DominoLogicTest {
     }
 
     @Test
-    fun `estan todas las combinaciones posibles del 0 al 4`() {
-        val esperadas = (0..4).flatMap { a -> (a..4).map { b -> a to b } }.toSet()
+    fun `estan todas las combinaciones posibles del 0 al 6`() {
+        val esperadas = (0..6).flatMap { a -> (a..6).map { b -> a to b } }.toSet()
         val obtenidas = setCompleto().map { it.a to it.b }.toSet()
         assertEquals(esperadas, obtenidas)
     }

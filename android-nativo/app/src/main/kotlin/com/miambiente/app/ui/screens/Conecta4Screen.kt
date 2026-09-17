@@ -1,7 +1,11 @@
 package com.miambiente.app.ui.screens
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.data.Efecto
@@ -124,22 +130,41 @@ fun Conecta4Screen(onVolver: () -> Unit) {
     }
 
     GameShell(juego = juego, consigna = mensaje, onVolver = onVolver) {
-        Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            for (f in 0 until FILAS) {
-                Row {
-                    for (c in 0 until COLS) {
-                        val ficha = tablero[f * COLS + c]
-                        Box(
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(if (ficha == null) Color.White else Color.Transparent)
-                                .clickable { jugar(c) },
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            if (ficha != null) {
-                                Box(Modifier.size(40.dp).clip(CircleShape).background(if (ficha == "🔴") Color(0xFFD9433A) else Color(0xFF3E7AA3)))
+        Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            // Tablero real con marco: antes las fichas flotaban sueltas
+            // sobre el fondo, sin el marco azul clásico de Cuatro en línea.
+            Column(
+                modifier = Modifier
+                    .shadow(6.dp, RoundedCornerShape(18.dp))
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(Color(0xFF2F5C82))
+                    .padding(6.dp),
+            ) {
+                for (f in 0 until FILAS) {
+                    Row {
+                        for (c in 0 until COLS) {
+                            val ficha = tablero[f * COLS + c]
+                            val tamano by animateDpAsState(
+                                if (ficha != null) 40.dp else 0.dp,
+                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                                label = "ficha",
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .padding(3.dp)
+                                    .size(44.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF224867))
+                                    .clickable { jugar(c) },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Box(
+                                    Modifier
+                                        .size(tamano)
+                                        .shadow(if (tamano > 0.dp) 2.dp else 0.dp, CircleShape)
+                                        .clip(CircleShape)
+                                        .background(if (ficha == "🔴") Color(0xFFD9433A) else if (ficha == "🔵") Color(0xFF7AC0E0) else Color.Transparent),
+                                )
                             }
                         }
                     }

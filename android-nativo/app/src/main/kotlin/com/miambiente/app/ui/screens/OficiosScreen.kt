@@ -8,11 +8,15 @@ import com.miambiente.app.model.phasedInt
 import com.miambiente.app.ui.materials.ItemQuiz
 import com.miambiente.app.ui.materials.MaterialQuiz
 
+// Emoji de un solo carácter Unicode, no secuencias ZWJ (persona+unión+objeto):
+// las secuencias con unión no siempre tienen glifo en fuentes reducidas (el
+// bug real reportado de "iconos que no se ven") — con un carácter simple el
+// dibujo siempre existe, en cualquier dispositivo.
 private val OFICIOS = listOf(
-    ItemQuiz("👨‍🚒", "bombero", "Bombero"),
-    ItemQuiz("👩‍⚕️", "doctora", "Doctora"),
-    ItemQuiz("👨‍🍳", "cocinero", "Cocinero"),
-    ItemQuiz("👩‍🏫", "maestra", "Maestra"),
+    ItemQuiz("🚒", "bombero", "Bombero"),
+    ItemQuiz("🩺", "doctora", "Doctora"),
+    ItemQuiz("🍳", "cocinero", "Cocinero"),
+    ItemQuiz("📚", "maestra", "Maestra"),
     ItemQuiz("👮", "policia", "Policía"),
 )
 
