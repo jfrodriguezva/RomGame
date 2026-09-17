@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miambiente.app.data.GameProgress
+import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.CATALOGO
 import com.miambiente.app.model.GameDef
 import com.miambiente.app.model.buscarJuego
@@ -69,14 +72,21 @@ fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> U
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column {
-                Text("Mi ambiente", style = MaterialTheme.typography.headlineSmall, color = Tinta, fontWeight = FontWeight.ExtraBold)
-                Text(
-                    "${disponibles.size} materiales para $edad años",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextoSuave,
-                )
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Box(
+                    modifier = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(Color(0xFF8BBF6A)),
+                    contentAlignment = Alignment.Center,
+                ) { Text("🧩", fontSize = 20.sp) }
+                Column {
+                    Text("RominaGame", style = MaterialTheme.typography.headlineSmall, color = Tinta, fontWeight = FontWeight.ExtraBold)
+                    Text(
+                        "${disponibles.size} materiales para $edad años",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextoSuave,
+                    )
+                }
             }
             OutlinedButton(onClick = onCambiarEdad) {
                 Text("$edad años ✏️")
@@ -165,6 +175,12 @@ private fun TarjetaJuego(juego: GameDef, onClick: () -> Unit) {
     val interaccion = remember { MutableInteractionSource() }
     val presionado by interaccion.collectIsPressedAsState()
 
+    // Insignia de estrellas: progreso real guardado, no decorativo. Solo
+    // los ~10-12 materiales visibles a la vez se componen (LazyVerticalGrid
+    // es perezoso), así que esto no dispara 98 suscripciones simultáneas.
+    val services = LocalServices.current
+    val progreso by services.progress.progresoDe(juego.id).collectAsState(initial = GameProgress())
+
     Card(
         onClick = onClick,
         interactionSource = interaccion,
@@ -177,10 +193,25 @@ private fun TarjetaJuego(juego: GameDef, onClick: () -> Unit) {
             .scale(if (presionado) 0.95f else 1f),
     ) {
         Column(modifier = Modifier.fillMaxSize().padding(10.dp)) {
-            Box(
-                modifier = Modifier.size(34.dp).clip(CircleShape).background(colores.acento.copy(alpha = 0.22f)),
-                contentAlignment = Alignment.Center,
-            ) { Text(juego.emoji, fontSize = 17.sp) }
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Box(
+                    modifier = Modifier.size(34.dp).clip(CircleShape).background(colores.acento.copy(alpha = 0.22f)),
+                    contentAlignment = Alignment.Center,
+                ) { Text(juego.emoji, fontSize = 17.sp) }
+                if (!juego.libre && progreso.estrellas > 0) {
+                    Box(
+                        modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(Color(0xFFE0C23C).copy(alpha = 0.85f)),
+                    ) {
+                        Text(
+                            "⭐ ${progreso.estrellas}",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF3F342C),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+                        )
+                    }
+                }
+            }
             Text(
                 juego.title,
                 fontWeight = FontWeight.Bold,

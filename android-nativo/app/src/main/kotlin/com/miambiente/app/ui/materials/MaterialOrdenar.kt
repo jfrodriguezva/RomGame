@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.border
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.GameDef
@@ -95,15 +96,19 @@ fun MaterialOrdenar(
                         modifier = Modifier.size(ladoRanura),
                         onPosicion = { rect -> ranuraRects[i] = rect },
                     ) {
+                        val piezaAqui = i + 1
+                        val llena = piezaAqui in colocadas
                         Box(
                             modifier = Modifier
                                 .size(ladoRanura)
                                 .clip(RoundedCornerShape(6.dp))
-                                .background(colores.fondo),
+                                .background(colores.fondo)
+                                .then(
+                                    if (llena) Modifier else Modifier.border(2.dp, colores.acento.copy(alpha = 0.35f), RoundedCornerShape(6.dp)),
+                                ),
                             contentAlignment = Alignment.Center,
                         ) {
-                            val piezaAqui = i + 1
-                            if (piezaAqui in colocadas) render(piezaAqui, ladoRanura)
+                            if (llena) render(piezaAqui, ladoRanura)
                         }
                     }
                 }

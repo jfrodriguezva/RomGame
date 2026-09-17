@@ -149,10 +149,15 @@ fun MaterialTablero(
             LazyVerticalGrid(columns = GridCells.Fixed(6), modifier = Modifier.fillMaxSize()) {
                 items(casillas + 1) { i ->
                     val especial = especiales.find { it.posicion == i }
+                    val fondoCasilla = when {
+                        i == casillas -> colores.acento
+                        especial != null -> colores.acento.copy(alpha = 0.25f)
+                        else -> Color.White
+                    }
                     Box(
                         modifier = Modifier
                             .padding(2.dp)
-                            .background(if (i == casillas) colores.acento else Color.White, RoundedCornerShape(6.dp)),
+                            .background(fondoCasilla, RoundedCornerShape(6.dp)),
                         contentAlignment = Alignment.Center,
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(4.dp)) {

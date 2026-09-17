@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -85,7 +86,11 @@ fun <T> MaterialClasificar(
         } else null,
     ) {
         Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
-            Text("Quedan: ${pendientes.size} · Acertados: $acertados", color = colores.texto)
+            Box(
+                modifier = Modifier.clip(RoundedCornerShape(50)).background(colores.acento.copy(alpha = 0.16f)).padding(horizontal = 14.dp, vertical = 6.dp),
+            ) {
+                Text("Quedan: ${pendientes.size} · Acertados: $acertados", color = colores.texto, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+            }
 
             // horizontalScroll: cantidadPorRonda varía por material (hasta
             // 8 en algunos), y sin esto las piezas de más quedaban fuera de
@@ -113,7 +118,11 @@ fun <T> MaterialClasificar(
                         onPosicion = { rect -> canastaRects[canasta.id] = rect },
                     ) {
                         Box(
-                            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)).background(canasta.color),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .shadow(3.dp, RoundedCornerShape(20.dp))
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(canasta.color),
                             contentAlignment = Alignment.Center,
                         ) { Text(canasta.nombre, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp) }
                     }

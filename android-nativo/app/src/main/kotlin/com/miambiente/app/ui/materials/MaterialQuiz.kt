@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -12,6 +13,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.GameDef
 import com.miambiente.app.model.etapaDe
@@ -120,11 +125,7 @@ fun <T> MaterialQuiz(
                     Button(onClick = ::acertar) { Text("¡Ya sé! Siguiente") }
                 }
                 2 -> {
-                    Text(
-                        "ronda: $aciertosRonda / $RONDA",
-                        modifier = Modifier.padding(bottom = 24.dp),
-                        color = colores.texto,
-                    )
+                    ProgresoRonda(aciertosRonda, RONDA, colores.acento)
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(if (opciones <= 4) 2 else 3),
                         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -132,24 +133,23 @@ fun <T> MaterialQuiz(
                     ) {
                         items(elecciones) { item ->
                             val esObjetivo = item.id == objetivo.id
-                            androidx.compose.foundation.layout.Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(Color.White)
-                                    .clickable { if (esObjetivo) acertar() else estado.intento() }
-                                    .padding(16.dp),
-                                contentAlignment = Alignment.Center,
-                            ) { render(item.valor, false) }
+                            Card(
+                                shape = RoundedCornerShape(14.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color.White),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                                modifier = Modifier.clickable { if (esObjetivo) acertar() else estado.intento() },
+                            ) {
+                                androidx.compose.foundation.layout.Box(
+                                    modifier = Modifier.padding(16.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) { render(item.valor, false) }
+                            }
                         }
                     }
                 }
                 else -> {
                     render(objetivo.valor, true)
-                    Text(
-                        "ronda: $aciertosRonda / $RONDA",
-                        modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
-                        color = colores.texto,
-                    )
+                    ProgresoRonda(aciertosRonda, RONDA, colores.acento, modifier = Modifier.padding(top = 8.dp, bottom = 24.dp))
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(if (opciones <= 4) 2 else 3),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -159,12 +159,27 @@ fun <T> MaterialQuiz(
                             Button(
                                 onClick = { if (item.id == objetivo.id) acertar() else estado.intento() },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = colores.texto),
+                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
                             ) { Text(item.nombre) }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+/** Barra de progreso real de la ronda (en vez de solo texto "2 / 5"). */
+@Composable
+private fun ProgresoRonda(aciertos: Int, meta: Int, color: Color, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.fillMaxWidth(0.7f), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("ronda: $aciertos / $meta", fontWeight = FontWeight.Bold, color = color)
+        LinearProgressIndicator(
+            progress = { (aciertos.toFloat() / meta).coerceIn(0f, 1f) },
+            color = color,
+            trackColor = color.copy(alpha = 0.15f),
+            modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+        )
     }
 }
 

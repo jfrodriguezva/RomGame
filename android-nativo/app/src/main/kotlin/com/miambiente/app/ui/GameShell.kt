@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -20,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,19 +64,38 @@ fun GameShell(
     // navegación en vez de solo el fondo. Encontrado probando en un
     // emulador real: una pieza soltada terminaba oculta tras la barra.
     Column(modifier = Modifier.fillMaxSize().background(colores.fondo).safeDrawingPadding()) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        // Encabezado con una sombra sutil: separa visualmente la barra de
+        // navegación del contenido de juego, un detalle de profundidad que
+        // antes era plano de punta a punta.
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(elevation = 2.dp, shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp))
+                .background(colores.fondo, shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp))
+                .padding(bottom = 4.dp),
         ) {
-            TextButton(onClick = onVolver) { Text("← Volver", color = colores.texto) }
-        }
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                TextButton(onClick = onVolver) { Text("← Volver", color = colores.texto, fontWeight = FontWeight.Bold) }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .background(colores.acento.copy(alpha = 0.18f))
+                        .padding(horizontal = 12.dp, vertical = 5.dp),
+                ) { Text(juego.area.label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = colores.texto) }
+            }
 
-        Text(
-            "${juego.emoji} ${juego.title}",
-            style = MaterialTheme.typography.titleLarge,
-            color = colores.texto,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        )
+            Text(
+                "${juego.emoji} ${juego.title}",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.ExtraBold,
+                color = colores.texto,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            )
+        }
 
         if (consigna != null) {
             AnimatedContent(

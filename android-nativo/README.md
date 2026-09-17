@@ -1,4 +1,4 @@
-# Mi Ambiente — versión nativa (Kotlin + Jetpack Compose)
+# RominaGame — versión nativa (Kotlin + Jetpack Compose)
 
 Proyecto Android nativo aparte, **sin depender de la app web ni de
 Capacitor** (esa versión sigue intacta en `../android` y `../app`). Nace
@@ -6,6 +6,43 @@ de un pedido explícito: la versión empaquetada con Capacitor (un WebView)
 tenía un bug real en el selector de edad en un dispositivo físico, y el
 usuario pidió una versión nativa completa, con drag-and-drop real y
 funciones nativas del sistema en vez de simularlas dentro de un WebView.
+
+Se llamó "Mi Ambiente" durante el desarrollo (nombre descriptivo del
+concepto Montessori de "ambiente preparado"); el nombre público de la
+app pasó a ser **RominaGame** (`app_name` en `strings.xml` + el
+encabezado del Home). No se tocó `applicationId` ni el paquete Kotlin
+(`com.miambiente.app`) ni los identificadores internos del tema
+(`Theme.MiAmbiente`) — cambiar eso forzaría desinstalar/reinstalar y
+perder el progreso guardado en instalaciones existentes, un efecto
+destructivo que nadie pidió.
+
+## Pasada de calidad visual/UX "nivel enterprise" en los componentes compartidos
+
+En vez de rediseñar material por material (inviable con 98 pantallas),
+se elevó la calidad visual de los **componentes compartidos** que los
+98 materiales reutilizan — así el efecto se multiplica automáticamente:
+
+- `HomeScreen`: tarjetas más pequeñas y "vivas" (con `LazyVerticalGrid`
+  adaptativo, `scale` al presionar), acceso rápido a las herramientas
+  libres (pizarra, xilófono, collage, colorear) siempre visible arriba
+  del filtro por área — la pizarra ahora es una herramienta a la mano,
+  no un material más entre 98. Se agregó una insignia real de estrellas
+  ganadas por material, leída de `ProgressStore` (progreso guardado de
+  verdad, no decorativo).
+- `GameShell` (usado por los 98 materiales): encabezado con sombra sutil
+  para dar profundidad, chip con el área Montessori del material junto
+  al botón de volver.
+- `MaterialQuiz` (lección de tres periodos, ~30 materiales): las
+  opciones del periodo 2 pasaron de cajas planas a `Card` con elevación
+  y feedback de presión; se reemplazó el texto plano "ronda: 2/5" por
+  una barra de progreso real.
+- `MaterialOrdenar`: las ranuras vacías ahora tienen un borde que marca
+  dónde va cada pieza (antes eran indistinguibles del fondo hasta que
+  se llenaban).
+- `MaterialClasificar`: el contador "Quedan / Acertados" pasó a un chip
+  redondeado; las canastas ganaron sombra para separarse del fondo.
+- `MaterialTablero` (oca/serpientes): las casillas especiales ahora se
+  distinguen con un tinte de color, no solo por el emoji.
 
 ## Segunda pasada: el mismo bug de scroll en los 4 patrones compartidos
 
