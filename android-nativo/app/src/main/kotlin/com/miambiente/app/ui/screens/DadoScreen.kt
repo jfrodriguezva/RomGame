@@ -24,9 +24,28 @@ import com.miambiente.app.ui.GameShell
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+// Se pidió "muchos más objetivos" — de 6 pasó a 40, variados: saltos,
+// equilibrio, animales, gracia y cortesía, y pausas de calma.
 private val RETOS = listOf(
     "Salta 3 veces", "Da 2 vueltas", "Toca tus pies", "Aplaude 5 veces",
     "Camina de puntitas", "Haz como un avión",
+    "Salta como un conejo 5 veces", "Camina como un pato",
+    "Da 3 vueltas en tu lugar", "Toca el suelo con una mano",
+    "Estírate lo más alto que puedas", "Haz 3 sentadillas",
+    "Camina hacia atrás 4 pasos", "Balancéate en un pie 5 segundos",
+    "Ruge como un león", "Vuela como una mariposa",
+    "Marcha como soldado 10 pasos", "Haz una reverencia",
+    "Salta con los pies juntos 5 veces", "Gira los brazos como molino",
+    "Camina en puntitas hasta la pared", "Haz 3 abrazos a alguien cerca",
+    "Di 'por favor' y 'gracias' en voz alta", "Sonríele a alguien",
+    "Respira hondo 3 veces despacio", "Quédate quieto como estatua 5 segundos",
+    "Salta como una rana 4 veces", "Camina como un cangrejo",
+    "Toca tu nariz con un dedo", "Da un aplauso lento y uno rápido",
+    "Haz como que nadas 5 segundos", "Imita el sonido de un tren",
+    "Camina balanceando los brazos", "Salta hacia adelante y hacia atrás",
+    "Toca algo de color azul", "Toca algo de color rojo",
+    "Cuenta hasta 5 en voz alta", "Dile algo bonito a alguien",
+    "Haz una pose de superhéroe", "Camina como si flotaras",
 )
 private val CARAS = listOf("⚀", "⚁", "⚂", "⚃", "⚄", "⚅")
 

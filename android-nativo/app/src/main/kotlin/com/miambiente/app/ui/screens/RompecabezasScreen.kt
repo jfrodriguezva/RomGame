@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -97,14 +98,20 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
                     }
                 }
             }
+            // key(posicion): mismo bug de "acomodar" encontrado en
+            // MaterialOrdenar/MaterialClasificar — sin él, al colocar una
+            // pieza el resto se recorría un lugar y heredaba el arrastre a
+            // medias de la pieza anterior en esa posición.
             Row(modifier = Modifier.padding(top = 32.dp)) {
                 piezasRevueltas.filter { it.second !in colocadas }.forEach { (emoji, posicion) ->
-                    PiezaArrastrable(
-                        tamano = 56.dp,
-                        clave = posicion,
-                        onArrastrar = { punto -> puntoArrastre = punto },
-                        onSoltar = { punto -> soltar(posicion, punto) },
-                    ) { Text(emoji, fontSize = 26.sp) }
+                    key(posicion) {
+                        PiezaArrastrable(
+                            tamano = 56.dp,
+                            clave = posicion,
+                            onArrastrar = { punto -> puntoArrastre = punto },
+                            onSoltar = { punto -> soltar(posicion, punto) },
+                        ) { Text(emoji, fontSize = 26.sp) }
+                    }
                 }
             }
         }

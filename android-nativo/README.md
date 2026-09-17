@@ -16,6 +16,88 @@ encabezado del Home). No se tocó `applicationId` ni el paquete Kotlin
 perder el progreso guardado en instalaciones existentes, un efecto
 destructivo que nadie pidió.
 
+## Séptima pasada: damas chinas, la araña de verdad, y el bug real del arrastre
+
+Pedido explícito, con varios puntos concretos:
+
+- **Bug real de fondo del "acomodar en las casillas", encontrado y
+  corregido**: el reporte "los juegos como 'rutina de la mañana' sigue
+  sin estar correcto" apuntaba a algo más profundo que el bug del
+  canasto ya arreglado en la quinta pasada. Causa real: el `forEach` que
+  dibuja cada pieza del canasto (en `MaterialOrdenar`, `MaterialClasificar`
+  y `RompecabezasScreen`) no tenía `key(pieza)`. Sin eso, Compose reutiliza
+  cada `PiezaArrastrable` de la fila por **posición en la lista**, no por
+  la pieza real que representa. Al colocar una pieza y quitarla de la
+  lista, las piezas siguientes se recorrían un lugar — y cada una heredaba
+  el estado interno de arrastre (offset, si estaba "en la mano") de lo que
+  antes vivía en esa posición, en vez de arrancar limpio. Es un bug clásico
+  de Compose, difícil de ver leyendo el código una sola vez porque no
+  lanza ninguna excepción — solo se manifiesta como "la pieza siguiente no
+  se comporta bien". Corregido envolviendo cada pieza en `key(pieza)` /
+  `key(item.id)` en los tres archivos. Verificado de verdad, no solo por
+  compilación: se jugó "La rutina de la mañana" completa en el emulador,
+  las 4 piezas en las 4 casillas correctas, una por una, con
+  `adb shell input draganddrop` y coordenadas exactas sacadas de
+  `uiautomator dump` — la serie se completó con las 4 piezas en el orden
+  correcto y el mensaje "¡Completaste la serie!".
+- **Damas chinas, generadas**: versión honesta, no el tablero real de
+  estrella de 6 puntas (eso son 121 casillas con geometría hexagonal) sino
+  un tablero cuadrado de 8×8 con una casa de 6 canicas en cada esquina
+  opuesta — pero con las reglas reales: paso simple, o cadena de saltos
+  (sobre cualquier canica, sin capturarla) que puede terminar en cualquier
+  punto de la cadena. IA voraz (no minimax completo: las cadenas de salto
+  hacen el árbol de jugadas demasiado grande para 6 canicas a la vez) que
+  sí juega con intención real, moviendo la canica que más avanza hacia la
+  casa contraria. Verificado jugando de verdad: una canica saltó dos
+  casillas de un salto, la IA respondió con su propio movimiento.
+- **"La araña pintora" — ahora sí descubre una imagen real**: el bug
+  reportado era literal: las 16 casillas revelaban el mismo emoji de
+  araña suelto, repetido 16 veces — no había ninguna "imagen" que
+  descubrir. Ahora hay una sola araña grande de fondo, del tamaño de todo
+  el tablero, y las 16 casillas son una cuadrícula que la tapa; al
+  tocarlas van desapareciendo y dejan ver el pedazo de la araña grande que
+  había debajo. Verificado visualmente: se destaparon 8 casillas y se ve
+  con claridad la mitad superior de una araña reconocible, no fragmentos
+  sueltos.
+- **Dado de retos — de 6 a 40 objetivos**: se pidieron "muchos más". La
+  lista de retos pasó de 6 a 40, variados (saltos, equilibrio, animales,
+  gracia y cortesía, pausas de calma), sin tocar la animación de giro ya
+  existente.
+- **Memorama — cartas más chicas, muchas más parejas**: de 6 parejas en
+  una grilla fija de 4 columnas a 24 parejas (48 cartas) en una grilla
+  adaptable (`GridCells.Adaptive(minSize = 56.dp)`) con letras más
+  pequeñas en la carta (nuevo parámetro `tamanoEmoji`/`tamanoDorso` en
+  `CartaMemorama`, con los valores de antes como default para no afectar
+  a Memoria por turnos, que sigue con cartas grandes).
+- **Filtro de edad quitado en los juegos de mesa clásicos**: los 16
+  materiales de "Juegos en compañía" (Gato, Damas, Ajedrez, Solitario,
+  Bingo, Dominó, etc., más Damas chinas nueva) bajaron su `edadMinima` a
+  2 — la edad más chica del selector — así que aparecen abiertos sin
+  importar la edad elegida, tal como se pidió.
+- Sobre "una versión más amigable y enterprise": es un pedido demasiado
+  vago para tratarlo como una tarea aparte con una lista propia de qué
+  cambió — se interpretó como calidad de ejecución en todo lo anterior
+  (iconos que sí se ven, animaciones reales, mensajes claros), no como
+  un rediseño visual adicional sin objetivo concreto.
+
+**Lo que de verdad no se hizo, otra vez con honestidad**: Tetris,
+Palillos chinos, Lotería (distinta de Bingo), Acomodar bloques como
+material aparte — ninguno se generó. Tampoco se agruparon/consolidaron
+materiales parecidos en menos pantallas con niveles, por la misma razón
+de la pasada anterior (riesgo real de borrar variedad pedagógica sin
+saber qué se considera "igual").
+
+Verificado: 66 tests unitarios pasando (6 nuevos de Damas chinas),
+compilación limpia, `assembleDebug` exitoso, e instalado y jugado de
+verdad en el emulador: Damas chinas de principio a fin (selección, salto
+en cadena, respuesta de la IA), La araña pintora con la imagen
+reconocible, Dado de retos con un reto nuevo de la lista ampliada,
+Memorama con 48 cartas chicas volteando bien, el filtro de edad
+confirmado quitado (los 16 juegos de mesa visibles), y el bug del
+arrastre en Vida práctica confirmado corregido jugando la serie completa
+de "La rutina de la mañana" con coordenadas exactas de `uiautomator`, no
+solo con una captura de pantalla suelta.
+
 ## Sexta pasada: rotación de pantalla, ajustes reales, y ajedrez
 
 Pedido: "termina con todo lo que te pedí" + rotación de pantalla para

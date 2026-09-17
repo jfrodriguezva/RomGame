@@ -190,7 +190,11 @@ fun SolitarioAranaScreen(onVolver: () -> Unit) {
                                     .clickable { tocarColumna(colIdx, 0) },
                             )
                         } else {
-                            Column {
+                            // Mismo bug de fondo que en Solitario: `Column`
+                            // ya apila las cartas, y el `offset` encima
+                            // duplicaba el desplazamiento. Con `Box` el
+                            // offset es la única posición.
+                            Box {
                                 col.forEachIndexed { i, (carta, bocaArriba) ->
                                     Box(modifier = Modifier.offset(y = (i * 15).dp)) {
                                         if (bocaArriba) {

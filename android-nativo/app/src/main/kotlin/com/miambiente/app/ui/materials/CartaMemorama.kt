@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -34,6 +35,11 @@ fun CartaMemorama(
     visible: Boolean,
     encontrada: Boolean,
     colorDorso: Color = Color(0xFFA97FC7),
+    // Memorama ahora usa cartas más chicas para caber muchas más — el
+    // texto fijo de antes (28sp/24sp) se veía desbordado en una carta de
+    // ~44dp, así que el tamaño de letra también se puede achicar.
+    tamanoEmoji: TextUnit = 28.sp,
+    tamanoDorso: TextUnit = 24.sp,
     onClick: () -> Unit,
 ) {
     val angulo by animateFloatAsState(if (visible) 180f else 0f, label = "volteo")
@@ -57,9 +63,9 @@ fun CartaMemorama(
         if (angulo > 90f) {
             // La cara con el dibujo se dibuja "espejada" en Y para que, al
             // pasar los 90°, se vea derecha y no invertida.
-            Text(emoji, fontSize = 28.sp, modifier = Modifier.padding(10.dp).graphicsLayer { rotationY = 180f })
+            Text(emoji, fontSize = tamanoEmoji, modifier = Modifier.padding(4.dp).graphicsLayer { rotationY = 180f })
         } else {
-            Text("❓", fontSize = 24.sp, color = Color.White, modifier = Modifier.padding(10.dp))
+            Text("❓", fontSize = tamanoDorso, color = Color.White, modifier = Modifier.padding(4.dp))
         }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -100,13 +101,19 @@ fun <T> MaterialClasificar(
                 modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 16.dp).horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.Center,
             ) {
+                // `key(item.id)` — mismo bug de fondo que en MaterialOrdenar:
+                // sin él, al retirar un objeto ya clasificado, Compose
+                // reciclaba el estado de arrastre por POSICIÓN en vez de por
+                // objeto, y el resto de las piezas heredaba estado ajeno.
                 pendientes.forEach { item ->
-                    PiezaArrastrable(
-                        tamano = 64.dp,
-                        clave = item.id,
-                        onArrastrar = { punto -> puntoArrastre = punto },
-                        onSoltar = { punto -> soltar(item, punto) },
-                    ) { render(item.valor) }
+                    key(item.id) {
+                        PiezaArrastrable(
+                            tamano = 64.dp,
+                            clave = item.id,
+                            onArrastrar = { punto -> puntoArrastre = punto },
+                            onSoltar = { punto -> soltar(item, punto) },
+                        ) { render(item.valor) }
+                    }
                 }
             }
 

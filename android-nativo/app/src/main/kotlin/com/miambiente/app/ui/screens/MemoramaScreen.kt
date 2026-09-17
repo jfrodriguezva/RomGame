@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
@@ -21,7 +22,14 @@ import com.miambiente.app.ui.materials.CartaMemorama
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private val EMOJIS = listOf("🐶", "🐱", "🐰", "🦋", "🌸", "⭐")
+// Antes solo 6 parejas con cartas grandes (grilla de 4 columnas). Se pidió
+// "mucho más pequeño para que puedan ser muchas más tarjetas" — ahora son
+// 24 parejas (48 cartas) en una grilla adaptable de cartas chicas.
+private val EMOJIS = listOf(
+    "🐶", "🐱", "🐰", "🦋", "🌸", "⭐", "🐸", "🐢", "🦊", "🐼",
+    "🐨", "🦁", "🐵", "🐷", "🐔", "🦆", "🐝", "🐞", "🌻", "🍓",
+    "🍉", "🚗", "⚽", "🎈",
+)
 
 private data class Carta(val id: Int, val emoji: String)
 
@@ -81,15 +89,22 @@ fun MemoramaScreen(onVolver: () -> Unit) {
         onVolver = onVolver,
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            contentPadding = PaddingValues(16.dp),
+            columns = GridCells.Adaptive(minSize = 56.dp),
+            contentPadding = PaddingValues(10.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             items(cartas, key = { it.id }) { carta ->
                 val encontrada = carta.id in encontradas
                 val visible = carta.id in volteadas || encontrada
-                CartaMemorama(emoji = carta.emoji, visible = visible, encontrada = encontrada, onClick = { tocar(carta.id) })
+                CartaMemorama(
+                    emoji = carta.emoji,
+                    visible = visible,
+                    encontrada = encontrada,
+                    tamanoEmoji = 18.sp,
+                    tamanoDorso = 16.sp,
+                    onClick = { tocar(carta.id) },
+                )
             }
         }
     }

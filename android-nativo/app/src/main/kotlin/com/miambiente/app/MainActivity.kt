@@ -41,6 +41,7 @@ import com.miambiente.app.ui.screens.CuerpoScreen
 import com.miambiente.app.ui.screens.DadoScreen
 import com.miambiente.app.ui.screens.AjedrezScreen
 import com.miambiente.app.ui.screens.AjustesScreen
+import com.miambiente.app.ui.screens.DamasChinasScreen
 import com.miambiente.app.ui.screens.DamasScreen
 import com.miambiente.app.ui.screens.SolitarioScreen
 import com.miambiente.app.ui.screens.SolitarioAranaScreen
@@ -287,6 +288,7 @@ class MainActivity : ComponentActivity() {
                         composable("conecta4") { Conecta4Screen(volver) }
                         composable("adivinaquien") { AdivinaQuienScreen(volver) }
                         composable("damas") { DamasScreen(volver) }
+                        composable("damas-chinas") { DamasChinasScreen(volver) }
                         composable("solitario") { SolitarioScreen(volver) }
                         composable("arana-cartas") { SolitarioAranaScreen(volver) }
                         composable("ajedrez") { AjedrezScreen(volver) }

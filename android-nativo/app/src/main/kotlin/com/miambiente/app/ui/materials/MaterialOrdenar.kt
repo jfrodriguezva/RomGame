@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -131,25 +132,40 @@ fun MaterialOrdenar(
                 // iniciar el nivel — el ejercicio de seriación quedaba
                 // resuelto de antemano, sin nada que pensar. Ahora se
                 // respeta el orden revuelto real.
+                //
+                // Segundo bug real, más de fondo, del mismo "no funciona
+                // bien al acomodar en las casillas": faltaba `key(pieza)`.
+                // Sin eso, Compose reutiliza cada Composable de este forEach
+                // por POSICIÓN en la lista, no por la pieza real. Al colocar
+                // una pieza y quitarla de `enCanasto`, las piezas siguientes
+                // se recorren un lugar — y cada una HEREDABA el estado
+                // interno (offset a medio arrastrar, `arrastrando`) de la
+                // pieza que antes vivía en esa posición, en vez de arrancar
+                // limpia. Eso hacía que, sobre todo después de la primera
+                // colocación correcta, las piezas restantes del canasto se
+                // vieran o arrastraran mal. `key(pieza)` ata el estado a la
+                // pieza real, no a su posición en la fila.
                 enCanasto.forEach { pieza ->
-                    val ladoPieza = tamanoPara(pieza)
-                    PiezaArrastrable(
-                        tamano = ladoPieza,
-                        clave = pieza,
-                        onArrastrar = { punto -> puntoArrastre = punto },
-                        onSoltar = { punto -> soltarEn(pieza, punto) },
-                    ) {
-                        // Tarjeta compartida para toda pieza del canasto: antes
-                        // cada material dibujaba su contenido "al aire", sin
-                        // fondo ni sombra que lo distinguiera de la pantalla.
-                        Box(
-                            modifier = Modifier
-                                .size(ladoPieza)
-                                .shadow(3.dp, RoundedCornerShape(10.dp))
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color.White),
-                            contentAlignment = Alignment.Center,
-                        ) { render(pieza, ladoPieza) }
+                    key(pieza) {
+                        val ladoPieza = tamanoPara(pieza)
+                        PiezaArrastrable(
+                            tamano = ladoPieza,
+                            clave = pieza,
+                            onArrastrar = { punto -> puntoArrastre = punto },
+                            onSoltar = { punto -> soltarEn(pieza, punto) },
+                        ) {
+                            // Tarjeta compartida para toda pieza del canasto: antes
+                            // cada material dibujaba su contenido "al aire", sin
+                            // fondo ni sombra que lo distinguiera de la pantalla.
+                            Box(
+                                modifier = Modifier
+                                    .size(ladoPieza)
+                                    .shadow(3.dp, RoundedCornerShape(10.dp))
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color.White),
+                                contentAlignment = Alignment.Center,
+                            ) { render(pieza, ladoPieza) }
+                        }
                     }
                 }
             }

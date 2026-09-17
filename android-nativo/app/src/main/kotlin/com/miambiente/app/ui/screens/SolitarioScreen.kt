@@ -243,7 +243,18 @@ fun SolitarioScreen(onVolver: () -> Unit) {
                                     .clickable { tocarColumna(colIdx, 0) },
                             )
                         } else {
-                            Column {
+                            // Bug real reportado ("los solitarios no
+                            // funcionan bien"): esto estaba dentro de un
+                            // `Column`, que YA apila verticalmente cada
+                            // carta debajo de la anterior (56dp completos),
+                            // y ENCIMA cada una tenía su propio `offset` —
+                            // los dos efectos se sumaban, así que las
+                            // cartas quedaban separadas por huecos
+                            // crecientes en vez de la cascada apretada y
+                            // superpuesta de un solitario real. Con `Box`
+                            // (que no apila solo) el offset manual es la
+                            // única fuente de posición, y sí se superponen.
+                            Box {
                                 col.forEachIndexed { i, (carta, bocaArriba) ->
                                     Box(modifier = Modifier.offset(y = (i * 18).dp)) {
                                         if (bocaArriba) {
