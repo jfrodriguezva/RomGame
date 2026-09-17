@@ -39,6 +39,9 @@ import com.miambiente.app.ui.screens.ContarScreen
 import com.miambiente.app.ui.screens.ContinentesScreen
 import com.miambiente.app.ui.screens.CuerpoScreen
 import com.miambiente.app.ui.screens.DadoScreen
+import com.miambiente.app.ui.screens.DamasScreen
+import com.miambiente.app.ui.screens.SolitarioScreen
+import com.miambiente.app.ui.screens.SolitarioAranaScreen
 import com.miambiente.app.ui.screens.DiaNocheScreen
 import com.miambiente.app.ui.screens.DominoScreen
 import com.miambiente.app.ui.screens.DiasSemanaScreen
@@ -278,6 +281,9 @@ class MainActivity : ComponentActivity() {
                         composable("domino") { DominoScreen(volver) }
                         composable("conecta4") { Conecta4Screen(volver) }
                         composable("adivinaquien") { AdivinaQuienScreen(volver) }
+                        composable("damas") { DamasScreen(volver) }
+                        composable("solitario") { SolitarioScreen(volver) }
+                        composable("arana-cartas") { SolitarioAranaScreen(volver) }
 
                         // --- Movimiento y coordinación ---
                         composable("laberinto") { LaberintoScreen(volver) }

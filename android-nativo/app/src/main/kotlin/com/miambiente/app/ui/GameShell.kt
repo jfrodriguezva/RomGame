@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,14 @@ fun GameShell(
 
     LaunchedEffect(consigna) {
         if (consigna != null) services.speech.hablar(consigna)
+    }
+
+    // Fondo musical tierno por área: entra al abrir el material y se
+    // detiene al volver al Home, para que el silencio de la pantalla
+    // principal siga siendo silencio.
+    DisposableEffect(juego.area) {
+        services.musica.sonarPara(juego.area)
+        onDispose { services.musica.detener() }
     }
 
     // `enableEdgeToEdge()` (MainActivity) dibuja detrás de las barras del

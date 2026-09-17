@@ -16,6 +16,87 @@ encabezado del Home). No se tocó `applicationId` ni el paquete Kotlin
 perder el progreso guardado en instalaciones existentes, un efecto
 destructivo que nadie pidió.
 
+## Quinta pasada: bug del canasto, voz cálida, música ambiental, pizarra real y juegos de mesa nuevos
+
+Pedido con varias partes reales a la vez:
+
+- **Bug real del canasto, encontrado y corregido**: en `MaterialOrdenar`
+  (~15 materiales de seriación: Vida práctica, Torre rosa, Días de la
+  semana, Barras numéricas, etc.) el canasto se dibujaba con
+  `enCanasto.sorted()` — así que SIEMPRE mostraba las piezas en el orden
+  correcto (1, 2, 3...), sin importar que `enCanasto` sí se revolvía al
+  iniciar el nivel. El ejercicio de seriación estaba resuelto de
+  antemano, sin nada que pensar. Corregido quitando el `.sorted()`, y de
+  paso cada pieza del canasto ahora tiene una tarjeta real (sombra,
+  fondo blanco) en vez de flotar "al aire". Vida práctica también
+  mejoró sus íconos (💧🍽️🧵 con tarjetas más grandes).
+- **Voz menos robótica**: `Speech` ahora sube un poco el tono, baja un
+  poco la velocidad, y elige la voz en español de mejor calidad
+  instalada (sin depender de datos móviles) en vez de la primera que
+  encuentre el motor — antes usaba tono/velocidad de fábrica con
+  cualquier voz.
+- **Fondo musical por área**: 8 acordes tiernos, uno por área Montessori
+  (no 98 pistas distintas — eso necesitaría archivos de audio reales,
+  que este proyecto no tiene), sintetizados igual que las notas del
+  xilófono, en loop perfecto (frecuencias ajustadas a un número entero
+  de ciclos) y muy suaves para no competir con la voz ni los efectos.
+  Entra al abrir un material, se detiene al volver al Home. No hay
+  todavía un botón en pantalla para silenciarla — limitación real, no
+  resuelta.
+- **La pizarra, letra "a" real**: antes TODAS las letras minúsculas se
+  dibujaban con `Typeface.DEFAULT_BOLD` trazado — una tipografía de
+  computadora. La "a", la "e" y la "o" ahora son un trazo de una sola
+  línea de verdad (`path`, la misma técnica que ya usan las formas),
+  como se enseña a escribir en preescolar ("bolita y palito" para la
+  a). Las 22 consonantes restantes se quedan con texto por ahora —
+  extenderlas es la misma técnica, una a la vez.
+- **Mariposa y nube arregladas**: la mariposa eran 4 óvalos sueltos sin
+  forma de ala; ahora cada ala es una gota con curvas reales y tiene
+  antenas. La nube eran 3 círculos flotando sobre una barra separada,
+  con huecos visibles; ahora es un solo contorno cerrado sin huecos.
+  Verificado visualmente en el emulador, no solo por compilación.
+- **El dado se ve mover**: `MaterialTablero` (oca, serpientes) antes
+  solo mostraba el número tirado como texto dentro del botón. Ahora hay
+  una cara de dado real que gira varias vueltas (reutiliza la técnica
+  del Dado de retos) antes de caer en el resultado.
+- **Juegos de mesa nuevos, contra la computadora**: se pidieron Tetris,
+  Memorama, acomodar bloques, rompecabezas, lotería, palillos chinos,
+  damas chinas, damas inglesas, ajedrez, solitario y la araña "bien
+  hecha" — una lista de 10+ juegos, varios de ellos proyectos grandes
+  por sí solos (ajedrez con jaque/mate real, damas chinas con tablero
+  de estrella, palillos chinos con físicas de colisión entre palitos
+  superpuestos). Se priorizó calidad sobre cantidad y se entregaron
+  tres completos y reales, no simplificados:
+  - **Damas inglesas**: captura obligatoria, cadena de capturas
+    múltiples con la misma ficha, coronación a dama, IA con minimax
+    real (no al azar).
+  - **Solitario (Klondike)**: 7 columnas, robo de a 1, 4 fundaciones,
+    secuencias que alternan color — reglas reales, no una versión
+    reducida.
+  - **Solitario araña** (variante de un palo, la más jugable): 10
+    columnas, 104 cartas, secuencias completas que se retiran solas.
+    Esta es la "araña" real que se pidió — el material anterior en
+    Movimiento ("La araña pintora") es un juego de revelar casillas sin
+    relación con el solitario araña, y sigue existiendo aparte.
+
+  **No se hicieron todavía** (para ser honesto, no por falta de ganas):
+  Tetris, Ajedrez, Damas chinas, Palillos chinos, Lotería (Bingo con
+  imágenes ya cubre gran parte de esa mecánica) y Acomodar bloques.
+  Memorama y Rompecabezas ya existían de antes. Ajedrez y Damas chinas
+  son los siguientes candidatos más razonables si se continúa esta
+  línea — ambos son factibles con el mismo patrón de Damas inglesas
+  (tablero + movidas legales + minimax), solo que con más reglas por
+  codificar.
+
+Verificado: 50 tests unitarios pasando (20 nuevos: Damas, Solitario,
+Solitario araña), compilación limpia, `assembleDebug` exitoso, y
+probado en vivo en el emulador — el bug del canasto confirmado
+corregido con una captura antes/después, drag-and-drop verificado
+funcionando en Vida práctica, los tres juegos de mesa nuevos jugados de
+verdad (una movida real en cada uno, no solo abrir la pantalla), la
+letra "a"/"e"/"o" y la mariposa/nube confirmadas visualmente, y sin
+ningún crash en logcat durante toda la sesión de prueba.
+
 ## Cuarta pasada: "cada material al nivel de la pizarra" — cobertura casi total
 
 Pedido explícito: "aplica los ajustes para todos los materiales, mejoralos

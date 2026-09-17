@@ -13,6 +13,7 @@ class Services(context: Context) {
     val progress = ProgressStore(context)
     val speech = Speech(context)
     val sound = SoundPlayer()
+    val musica = AmbientMusic()
     val haptics = Haptics(context)
 }
 

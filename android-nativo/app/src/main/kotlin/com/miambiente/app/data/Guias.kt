@@ -11,8 +11,33 @@ package com.miambiente.app.data
 data class Guia(val id: String, val nombre: String, val icono: String, val tipo: String, val contenido: String)
 
 private fun letra(l: String) = Guia("l-$l", "Letra $l", l, "texto", l)
-private fun letraMin(l: String) = Guia("lm-$l", "letra ${l.lowercase()}", l.lowercase(), "texto", l.lowercase())
 private fun numero(n: Int) = Guia("n-$n", "Número $n", "$n", "texto", "$n")
+
+// Bug real reportado: "la letra 'a' que sean como las escribe un niño, no
+// como una computadora". Antes TODAS las minúsculas se dibujaban con
+// `Typeface.DEFAULT_BOLD` trazado — una tipografía de computadora, con
+// proporciones geométricas perfectas, nada parecido a un trazo de lápiz de
+// una sola línea. Las vocales (las más practicadas) ahora son un trazo
+// real de "bolita y palito" como se enseña a escribir la a, la o y la e en
+// preescolar, con `path` en vez de `texto` — el mismo mecanismo que ya
+// usan las FORMAS de abajo. El resto de las minúsculas (consonantes) se
+// quedan con texto por ahora — extenderlas a las 22 restantes es la misma
+// técnica, pero una a la vez para que cada una se vea bien de verdad.
+private val TRAZOS_MINUSCULA: Map<String, String> = mapOf(
+    "a" to "M 60 62 C 60 74 48 78 38 76 C 26 74 20 66 20 55 C 20 42 28 32 42 30 C 50 29 58 33 60 40 L 60 78",
+    "o" to "M 50 32 A 22 23 0 1 1 49.9 32 Z",
+    "e" to "M 62 50 L 24 50 C 24 38 34 30 46 30 C 58 30 66 38 66 48 C 66 56 58 60 48 58",
+)
+
+private fun letraMin(l: String): Guia {
+    val min = l.lowercase()
+    val trazo = TRAZOS_MINUSCULA[min]
+    return if (trazo != null) {
+        Guia("lm-$l", "letra $min", min, "path", trazo)
+    } else {
+        Guia("lm-$l", "letra $min", min, "texto", min)
+    }
+}
 
 private val LETRAS = listOf(
     "A", "E", "I", "O", "U", "M", "P", "S", "L", "T", "D", "N", "F", "B", "C",
@@ -40,9 +65,33 @@ val FORMAS: List<Guia> = listOf(
     Guia("f-casa", "Casa", "🏠", "path", "M20 88 V44 L50 18 L80 44 V88 Z M40 88 V62 H60 V88"),
     Guia("f-sol", "Sol", "☀", "path", "M50 28 A22 22 0 1 1 49.9 28 Z M50 4 V14 M50 86 V96 M4 50 H14 M86 50 H96 M18 18 L25 25 M75 75 L82 82 M82 18 L75 25 M25 75 L18 82"),
     Guia("f-pez", "Pez", "🐟", "path", "M25 50 A30 18 0 1 1 24.9 50 Z M25 50 L8 35 L8 65 Z M75 42 A3 3 0 1 1 74.9 42 Z"),
-    Guia("f-mariposa", "Mariposa", "🦋", "path", "M50 12 L50 88 M18 35 A14 18 0 1 1 17.9 35 Z M82 35 A14 18 0 1 1 82.1 35 Z M26 60 A10 14 0 1 1 25.9 60 Z M74 60 A10 14 0 1 1 74.1 60 Z"),
+    // Bug real reportado: "mariposa no se parece" — antes eran 4 óvalos
+    // sueltos sin forma de ala. Ahora cada ala es una gota con curvas
+    // reales (como un ala de verdad) y el cuerpo es un huso, no una línea.
+    Guia(
+        "f-mariposa",
+        "Mariposa",
+        "🦋",
+        "path",
+        "M42 15 L35 5 M58 15 L65 5 " +
+            "M50 18 C46 18 44 24 44 34 C44 55 46 75 50 85 C54 75 56 55 56 34 C56 24 54 18 50 18 Z " +
+            "M48 28 C30 18 10 22 8 40 C6 55 20 60 34 52 C42 47 47 38 48 28 Z " +
+            "M52 28 C70 18 90 22 92 40 C94 55 80 60 66 52 C58 47 53 38 52 28 Z " +
+            "M47 50 C34 46 20 50 18 62 C16 72 26 78 36 72 C43 68 47 58 47 50 Z " +
+            "M53 50 C66 46 80 50 82 62 C84 72 74 78 64 72 C57 68 53 58 53 50 Z",
+    ),
     Guia("f-flor", "Flor", "🌸", "path", "M50 13 A9 9 0 1 1 49.9 13 Z M50 49 A9 9 0 1 1 49.9 49 Z M32 31 A9 9 0 1 1 31.9 31 Z M68 31 A9 9 0 1 1 67.9 31 Z M50 34 A6 6 0 1 1 49.9 34 Z M50 49 L50 88"),
-    Guia("f-nube", "Nube", "☁", "path", "M32 41 A14 14 0 1 1 31.9 41 Z M52 27 A18 18 0 1 1 51.9 27 Z M72 42 A13 13 0 1 1 71.9 42 Z M18 62 H86 Q90 62 90 66 Q90 70 86 70 H18 Q14 70 14 66 Q14 62 18 62 Z"),
+    // Bug real reportado: "ni nubes" — antes eran 3 círculos flotando
+    // arriba de una barra separada, con un hueco visible entre ambos.
+    // Ahora es un solo contorno cerrado y continuo, sin huecos.
+    Guia(
+        "f-nube",
+        "Nube",
+        "☁",
+        "path",
+        "M20 65 A12 12 0 1 1 34 45 A16 16 0 1 1 58 38 A14 14 0 1 1 82 55 A10 10 0 1 1 88 68 " +
+            "Q80 72 70 68 Q60 74 50 68 Q40 74 30 68 Q22 70 20 65 Z",
+    ),
     Guia("f-arbol", "Árbol", "🌳", "path", "M50 9 A26 26 0 1 1 49.9 9 Z M42 58 H58 V90 H42 Z"),
 )
 

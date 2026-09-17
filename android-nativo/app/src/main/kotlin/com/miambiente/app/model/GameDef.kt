@@ -128,6 +128,13 @@ val CATALOGO = listOf(
     GameDef("domino", "Dominó", "🀄", "Encaja tu ficha por número", Area.COMPANIA, 4, "Juego de mesa", "Correspondencia numérica y esperar el turno."),
     GameDef("conecta4", "Cuatro en línea", "🔵", "Alinea cuatro fichas antes que la computadora", Area.COMPANIA, 4, "Juego de mesa", "Planeación simple y anticipar la jugada del otro."),
     GameDef("adivinaquien", "Adivina quién es", "🕵️", "Pregunta y descubre", Area.COMPANIA, 4, "Juego de deducción", "Razonamiento lógico por eliminación."),
+    GameDef("damas", "Damas inglesas", "⚫", "Captura y corona tus fichas", Area.COMPANIA, 5, "Juego de mesa", "Planeación a varios pasos y anticipar capturas del rival."),
+    // "🎴" en vez de un carácter del bloque Unicode "Playing Cards" (como
+    // "🂡"): ese bloque casi nunca tiene glifo de color en las fuentes —
+    // el mismo bug de iconos que no se ven, encontrado y corregido antes
+    // con el dominó.
+    GameDef("solitario", "Solitario", "🎴", "Ordena las cartas por palo y color", Area.COMPANIA, 5, "Juego de cartas", "Paciencia, clasificación y estrategia en solitario."),
+    GameDef("arana-cartas", "Solitario araña", "🕸️", "Arma secuencias del As al Rey", Area.COMPANIA, 5, "Juego de cartas", "Planeación a varios pasos y memoria de lo ya visto."),
 
     // --- Movimiento y coordinación (independientes) ---
     GameDef("laberinto", "Laberinto", "🌀", "Encuentra la salida", Area.MOVIMIENTO, 4, "Control del movimiento", "Planear una ruta y seguirla sin chocar."),

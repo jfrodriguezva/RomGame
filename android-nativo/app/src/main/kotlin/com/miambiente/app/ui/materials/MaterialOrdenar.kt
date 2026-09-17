@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.border
@@ -124,13 +125,32 @@ fun MaterialOrdenar(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.Bottom,
             ) {
-                enCanasto.sorted().forEach { pieza ->
+                // Bug real: antes esto era `enCanasto.sorted()`, así que el
+                // canasto SIEMPRE mostraba las piezas en el orden correcto
+                // (1, 2, 3...) sin importar cómo se revolvió `enCanasto` al
+                // iniciar el nivel — el ejercicio de seriación quedaba
+                // resuelto de antemano, sin nada que pensar. Ahora se
+                // respeta el orden revuelto real.
+                enCanasto.forEach { pieza ->
+                    val ladoPieza = tamanoPara(pieza)
                     PiezaArrastrable(
-                        tamano = tamanoPara(pieza),
+                        tamano = ladoPieza,
                         clave = pieza,
                         onArrastrar = { punto -> puntoArrastre = punto },
                         onSoltar = { punto -> soltarEn(pieza, punto) },
-                    ) { render(pieza, tamanoPara(pieza)) }
+                    ) {
+                        // Tarjeta compartida para toda pieza del canasto: antes
+                        // cada material dibujaba su contenido "al aire", sin
+                        // fondo ni sombra que lo distinguiera de la pantalla.
+                        Box(
+                            modifier = Modifier
+                                .size(ladoPieza)
+                                .shadow(3.dp, RoundedCornerShape(10.dp))
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.White),
+                            contentAlignment = Alignment.Center,
+                        ) { render(pieza, ladoPieza) }
+                    }
                 }
             }
         }
