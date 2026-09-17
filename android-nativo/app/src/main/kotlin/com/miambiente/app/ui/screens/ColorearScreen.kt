@@ -2,6 +2,7 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -41,7 +43,16 @@ fun ColorearScreen(onVolver: () -> Unit) {
         Column(Modifier.fillMaxSize()) {
             Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(10.dp)) {
                 PALETA.forEach { color ->
-                    Box(Modifier.size(32.dp).clip(CircleShape).background(color).clickable { colorActivo = color })
+                    val activo = color == colorActivo
+                    Box(
+                        Modifier
+                            .size(if (activo) 40.dp else 32.dp)
+                            .shadow(if (activo) 6.dp else 2.dp, CircleShape)
+                            .clip(CircleShape)
+                            .background(color)
+                            .then(if (activo) Modifier.border(3.dp, Color(0xFF3F342C), CircleShape) else Modifier)
+                            .clickable { colorActivo = color },
+                    )
                 }
             }
             Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {

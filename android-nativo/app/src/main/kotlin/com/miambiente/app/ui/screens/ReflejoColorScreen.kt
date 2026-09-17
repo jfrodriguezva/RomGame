@@ -1,5 +1,7 @@
 package com.miambiente.app.ui.screens
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -18,6 +20,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
@@ -92,11 +97,22 @@ fun ReflejoColorScreen(onVolver: () -> Unit) {
                 .pointerInput(esperando, listo) { detectTapGestures { tocar() } },
             contentAlignment = Alignment.Center,
         ) {
+            val escala by animateFloatAsState(if (listo) 1.12f else 1f, animationSpec = spring(dampingRatio = 0.4f), label = "reflejo")
             Box(
                 Modifier
                     .size(160.dp)
+                    .scale(escala)
+                    .shadow(if (listo) 24.dp else 6.dp, CircleShape)
                     .clip(CircleShape)
-                    .background(if (listo) Color(0xFF8BBF6A) else Color(0xFFD9433A)),
+                    .background(
+                        Brush.radialGradient(
+                            if (listo) {
+                                listOf(Color(0xFFA9D488), Color(0xFF8BBF6A), Color(0xFF6E9C57))
+                            } else {
+                                listOf(Color(0xFFE0685E), Color(0xFFD9433A), Color(0xFFB03329))
+                            },
+                        ),
+                    ),
             )
         }
     }

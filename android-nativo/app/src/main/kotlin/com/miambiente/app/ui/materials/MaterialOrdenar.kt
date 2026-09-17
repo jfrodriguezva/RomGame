@@ -55,6 +55,7 @@ fun MaterialOrdenar(
     var colocadas by remember(estado.nivel) { mutableStateOf(setOf<Int>()) }
     var enCanasto by remember(estado.nivel) { mutableStateOf((1..n).shuffled()) }
     val ranuraRects = remember(estado.nivel) { mutableStateMapOf<Int, Rect>() }
+    var puntoArrastre by remember(estado.nivel) { mutableStateOf<androidx.compose.ui.geometry.Offset?>(null) }
 
     val completo = colocadas.size == n
 
@@ -92,9 +93,12 @@ fun MaterialOrdenar(
             ) {
                 for (i in 0 until n) {
                     val ladoRanura = tamanoPara(i + 1)
+                    val rect = ranuraRects[i]
                     ZonaSoltar(
                         modifier = Modifier.size(ladoRanura),
-                        onPosicion = { rect -> ranuraRects[i] = rect },
+                        resaltado = puntoArrastre != null && rect?.contains(puntoArrastre!!) == true,
+                        formaResaltado = RoundedCornerShape(6.dp),
+                        onPosicion = { r -> ranuraRects[i] = r },
                     ) {
                         val piezaAqui = i + 1
                         val llena = piezaAqui in colocadas
@@ -124,6 +128,7 @@ fun MaterialOrdenar(
                     PiezaArrastrable(
                         tamano = tamanoPara(pieza),
                         clave = pieza,
+                        onArrastrar = { punto -> puntoArrastre = punto },
                         onSoltar = { punto -> soltarEn(pieza, punto) },
                     ) { render(pieza, tamanoPara(pieza)) }
                 }

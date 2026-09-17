@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,9 +24,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.miambiente.app.model.GameDef
 import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
@@ -52,6 +56,7 @@ fun MaterialTransferir(
     var enOrigen by remember(estado.nivel) { mutableStateOf(total) }
     var enDestino by remember(estado.nivel) { mutableStateOf(0) }
     var destinoRect by remember(estado.nivel) { mutableStateOf<Rect?>(null) }
+    var puntoArrastre by remember(estado.nivel) { mutableStateOf<Offset?>(null) }
 
     fun soltar(puntoRoot: Offset) {
         val rect = destinoRect ?: return
@@ -80,7 +85,19 @@ fun MaterialTransferir(
         } else null,
     ) {
         Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
-            Text("Origen", color = colores.texto)
+            Box(
+                modifier = Modifier.clip(RoundedCornerShape(50)).background(colores.acento.copy(alpha = 0.16f)).padding(horizontal = 14.dp, vertical = 6.dp),
+            ) {
+                Text("Origen: $enOrigen · Van $enDestino de $objetivo", color = colores.texto, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+            }
+            LinearProgressIndicator(
+                progress = { (enDestino.toFloat() / objetivo).coerceIn(0f, 1f) },
+                color = colores.acento,
+                trackColor = colores.acento.copy(alpha = 0.15f),
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            )
+
+            Text("Origen", color = colores.texto, modifier = Modifier.padding(top = 12.dp))
             LazyRow(
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -89,6 +106,7 @@ fun MaterialTransferir(
                     PiezaArrastrable(
                         tamano = 48.dp,
                         clave = "origen-${estado.nivel}-$i-$enOrigen",
+                        onArrastrar = { punto -> puntoArrastre = punto },
                         onSoltar = { punto -> soltar(punto) },
                     ) { render() }
                 }
@@ -97,10 +115,12 @@ fun MaterialTransferir(
             Text("Destino", color = colores.texto, modifier = Modifier.padding(top = 12.dp))
             ZonaSoltar(
                 modifier = Modifier.fillMaxWidth().height(90.dp).padding(top = 4.dp),
+                resaltado = puntoArrastre != null && destinoRect?.contains(puntoArrastre!!) == true,
+                formaResaltado = RoundedCornerShape(20.dp),
                 onPosicion = { rect -> destinoRect = rect },
             ) {
                 Box(
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)).background(colores.fondo),
+                    modifier = Modifier.fillMaxSize().shadow(3.dp, RoundedCornerShape(20.dp)).clip(RoundedCornerShape(20.dp)).background(colores.fondo),
                     contentAlignment = Alignment.Center,
                 ) {
                     Row(

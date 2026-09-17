@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,10 +18,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
@@ -67,14 +72,23 @@ fun LavaScreen(onVolver: () -> Unit) {
     ) {
         LazyVerticalGrid(columns = GridCells.Fixed(3), contentPadding = PaddingValues(32.dp)) {
             items(9) { i ->
+                val esLava = i == lava
                 Box(
                     Modifier
                         .padding(6.dp)
                         .size(80.dp)
+                        .shadow(if (esLava) 8.dp else 2.dp, RoundedCornerShape(10.dp))
                         .clip(RoundedCornerShape(10.dp))
-                        .background(if (i == lava) Color(0xFFD9433A) else Color(0xFFE9F0E4))
+                        .background(
+                            if (esLava) {
+                                Brush.radialGradient(listOf(Color(0xFFFFC24C), Color(0xFFE0682E), Color(0xFFA23B22)))
+                            } else {
+                                Brush.verticalGradient(listOf(Color(0xFFF3F8EF), Color(0xFFE9F0E4)))
+                            },
+                        )
                         .clickable { tocar(i) },
-                )
+                    contentAlignment = Alignment.Center,
+                ) { if (esLava) Text("🔥", fontSize = 28.sp) }
             }
         }
     }

@@ -60,6 +60,7 @@ fun <T> MaterialClasificar(
     }
     var acertados by remember(estado.nivel) { mutableStateOf(0) }
     val canastaRects = remember(estado.nivel) { mutableStateMapOf<String, Rect>() }
+    var puntoArrastre by remember(estado.nivel) { mutableStateOf<androidx.compose.ui.geometry.Offset?>(null) }
 
     val completo = pendientes.isEmpty()
 
@@ -103,6 +104,7 @@ fun <T> MaterialClasificar(
                     PiezaArrastrable(
                         tamano = 64.dp,
                         clave = item.id,
+                        onArrastrar = { punto -> puntoArrastre = punto },
                         onSoltar = { punto -> soltar(item, punto) },
                     ) { render(item.valor) }
                 }
@@ -113,9 +115,12 @@ fun <T> MaterialClasificar(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 canastas.forEach { canasta ->
+                    val rect = canastaRects[canasta.id]
                     ZonaSoltar(
                         modifier = Modifier.weight(1f).fillMaxSize(),
-                        onPosicion = { rect -> canastaRects[canasta.id] = rect },
+                        resaltado = puntoArrastre != null && rect?.contains(puntoArrastre!!) == true,
+                        formaResaltado = RoundedCornerShape(20.dp),
+                        onPosicion = { r -> canastaRects[canasta.id] = r },
                     ) {
                         Box(
                             modifier = Modifier

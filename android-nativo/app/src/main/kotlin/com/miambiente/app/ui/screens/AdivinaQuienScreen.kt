@@ -1,17 +1,15 @@
 package com.miambiente.app.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,7 +19,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +26,7 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.CasillaEmoji
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -85,26 +83,41 @@ fun AdivinaQuienScreen(onVolver: () -> Unit) {
         acciones = {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    COLORES.forEach { color -> Button(onClick = { colorFiltro = color }) { Text(color, fontSize = 11.sp) } }
+                    COLORES.forEach { color ->
+                        FilterChip(
+                            selected = colorFiltro == color,
+                            onClick = { colorFiltro = if (colorFiltro == color) null else color },
+                            label = { Text(color, fontSize = 11.sp) },
+                            colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF3E7AA3), selectedLabelColor = Color.White),
+                        )
+                    }
                 }
                 Row(modifier = Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Button(onClick = { tamanoFiltro = "grande" }) { Text("Grande") }
-                    Button(onClick = { tamanoFiltro = "chico" }) { Text("Chico") }
-                    Button(onClick = { colorFiltro = null; tamanoFiltro = null }) { Text("Reiniciar filtro") }
+                    FilterChip(
+                        selected = tamanoFiltro == "grande",
+                        onClick = { tamanoFiltro = if (tamanoFiltro == "grande") null else "grande" },
+                        label = { Text("Grande") },
+                        colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF8A5A2B), selectedLabelColor = Color.White),
+                    )
+                    FilterChip(
+                        selected = tamanoFiltro == "chico",
+                        onClick = { tamanoFiltro = if (tamanoFiltro == "chico") null else "chico" },
+                        label = { Text("Chico") },
+                        colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF8A5A2B), selectedLabelColor = Color.White),
+                    )
+                    OutlinedButton(onClick = { colorFiltro = null; tamanoFiltro = null }) { Text("Reiniciar") }
                 }
             }
         },
     ) {
-        LazyVerticalGrid(columns = GridCells.Fixed(4), contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)) {
-            items(visibles) { p ->
-                Box(
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.White)
-                        .clickable { adivinar(p) },
-                    contentAlignment = Alignment.Center,
-                ) { Text(p.emoji, fontSize = 32.sp, modifier = Modifier.padding(12.dp)) }
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            items(visibles, key = { it.emoji }) { p ->
+                CasillaEmoji(emoji = p.emoji, tamanoFuente = 32.sp, onClick = { adivinar(p) })
             }
         }
     }

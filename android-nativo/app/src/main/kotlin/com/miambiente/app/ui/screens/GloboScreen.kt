@@ -1,5 +1,6 @@
 package com.miambiente.app.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,6 +73,7 @@ fun GloboScreen(onVolver: () -> Unit) {
         Box(
             Modifier
                 .fillMaxSize()
+                .background(Brush.verticalGradient(listOf(Color(0xFFDCEEFA), Color(0xFFF3FAFF))))
                 .pointerInput(caido) {
                     detectTapGestures {
                         if (caido) {

@@ -1,6 +1,7 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +52,7 @@ fun LaberintoScreen(onVolver: () -> Unit) {
     val salida = (filas - 1) * COLS + (0 until COLS).first { MAPA[(filas - 1) * COLS + it] == 1 }
 
     var posicion by remember { mutableStateOf(entrada) }
+    var visitadas by remember { mutableStateOf(setOf(entrada)) }
     var completo by remember { mutableStateOf(false) }
 
     fun sonAdyacentes(a: Int, b: Int): Boolean {
@@ -65,6 +68,7 @@ fun LaberintoScreen(onVolver: () -> Unit) {
         }
         services.sound.tocar(Efecto.CLICK)
         posicion = i
+        visitadas = visitadas + i
         if (posicion == salida) {
             completo = true
             services.sound.tocar(Efecto.WIN)
@@ -79,21 +83,34 @@ fun LaberintoScreen(onVolver: () -> Unit) {
     ) {
         LazyVerticalGrid(columns = GridCells.Fixed(COLS), contentPadding = androidx.compose.foundation.layout.PaddingValues(24.dp)) {
             items(MAPA.size) { i ->
+                val esPared = MAPA[i] == 0
+                val visitada = i in visitadas
                 Box(
                     modifier = Modifier
                         .padding(2.dp)
                         .size(56.dp)
+                        .shadow(if (esPared) 0.dp else 2.dp, RoundedCornerShape(4.dp))
                         .clip(RoundedCornerShape(4.dp))
                         .background(
                             when {
-                                MAPA[i] == 0 -> Color(0xFF3F342C)
+                                esPared -> Color(0xFF3F342C)
                                 i == salida -> Color(0xFF8BBF6A)
+                                // El camino ya recorrido queda con un tinte,
+                                // para ver de un vistazo por dónde ya pasó.
+                                visitada -> Color(0xFFEFE7D8)
                                 else -> Color.White
                             },
                         )
+                        .then(if (i == posicion) Modifier.border(3.dp, Color(0xFFE0A93C), RoundedCornerShape(4.dp)) else Modifier)
                         .clickable { tocar(i) },
                     contentAlignment = Alignment.Center,
-                ) { if (i == posicion) Text("🐭", fontSize = 22.sp) else if (i == salida) Text("🧀", fontSize = 18.sp) }
+                ) {
+                    when {
+                        i == posicion -> Text("🐭", fontSize = 22.sp)
+                        i == entrada -> Text("🚪", fontSize = 16.sp)
+                        i == salida -> Text("🧀", fontSize = 18.sp)
+                    }
+                }
             }
         }
     }

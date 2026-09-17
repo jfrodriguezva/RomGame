@@ -16,6 +16,68 @@ encabezado del Home). No se tocó `applicationId` ni el paquete Kotlin
 perder el progreso guardado en instalaciones existentes, un efecto
 destructivo que nadie pidió.
 
+## Cuarta pasada: "cada material al nivel de la pizarra" — cobertura casi total
+
+Pedido explícito: "aplica los ajustes para todos los materiales, mejoralos
+al nivel de pizarra, cada uno de los 91 supera el ambiente en visión y en
+toda interacción". Rehacer los 91 materiales restantes con el mismo nivel
+de detalle que la pizarra (una reescritura de ~700 líneas) no es viable en
+una sola pasada, así que se usó la estrategia de mayor apalancamiento:
+
+**Multiplicador (afecta a los 63 materiales que usan un patrón
+compartido):**
+- `PiezaArrastrable`/`ZonaSoltar`: se agregó resaltado en tiempo real de
+  la zona de destino mientras se arrastra (antes solo se sabía si
+  encajaba DESPUÉS de soltar) — nuevo parámetro `onArrastrar` que reporta
+  la posición viva del dedo, y `resaltado`/`formaResaltado` en
+  `ZonaSoltar` que dibuja un aro verde animado cuando la pieza está
+  encima. Verificado en vivo en el emulador (capturas del aro de
+  resaltado y de un acierto completo con "Pinza de transferencia").
+- `MaterialClasificar`, `MaterialOrdenar`, `MaterialTransferir`: los tres
+  quedaron conectados a ese resaltado.
+
+**Individual (31 de los ~35 materiales sin patrón compartido,
+reescritos o pulidos de verdad, no solo "un poco de sombra"):**
+Gato, Dominó, Xilófono, RPS, Memorama, Cuatro en línea, Bingo (pasada
+anterior) + ¿Qué falta?, ¿Qué es distinto?, Encuentra los objetos
+(nueva `CasillaEmoji` compartida con feedback de presión), Burbujas
+(pompas con degradado radial real en vez de círculos planos), Laberinto
+(rastro del camino recorrido + puerta de entrada), Toca la cara (orejas,
+pelo, boca curva dibujada con `Canvas` en vez de un círculo negro), Dado
+de retos (el dado ahora gira de verdad con desaceleración, antes era un
+emoji fijo), Las campanas (pulso y sombra real al sonar, reutiliza el
+xilófono sintetizado), El juego del silencio (degradado radial en vez de
+un círculo de color plano), Adivina quién es (filtros con estado
+visible, antes no se sabía qué estaba activo), Memoria por turnos
+(ahora comparte la carta con volteo 3D de Memorama vía nueva
+`CartaMemorama` compartida, antes tenía su propia versión vieja sin
+volteo), Vibra y adivina, Reflejo de color (glow radial + pulso al
+cambiar), El piso es lava (degradado de fuego + ícono), La araña
+pintora (revelado con rebote), Aventura de juguetes (aparece con rebote
++ sombra en el suelo), Trazos previos (marca de inicio y meta),
+Rompecabezas (resaltado de destino + marco con sombra), Alfabeto móvil
+(ranuras vacías con borde), La tabla del cien (columnas de decena
+sombreadas + casilla objetivo resaltada), El cubo del binomio (marco con
+sombra + feedback de presión), El banco dorado (contadores con sombra y
+feedback de presión), Collage libre (paleta con marco), Colorear (aro de
+selección en el color activo), Globo y Atrapa las estrellas (degradado
+de cielo, ya tenían física real de sesiones previas).
+
+**No tocados individualmente** (ya se benefician del resaltado de
+arrastre y de la pasada de componentes compartidos de la ronda anterior,
+pero no recibieron una reescritura a medida): los ~63 materiales basados
+en `MaterialQuiz`/`MaterialOrdenar`/`MaterialClasificar`/`MaterialTransferir`/
+`MaterialTablero` (nomenclatura, seriación, clasificación, transferencia,
+juegos de tablero tipo oca/serpientes) — llevarlos a un rediseño
+individual como el de la pizarra o el dominó es un trabajo real de
+varias sesiones más, no de una sola, y se documenta así en vez de
+afirmar una cobertura que no existe.
+
+Verificado: 30 tests unitarios pasando, compilación limpia,
+`assembleDebug` exitoso, y probado en vivo en el emulador (arrastre con
+resaltado, tabla del cien, colorear, y una tanda representativa de los
+materiales reescritos).
+
 ## Tercera pasada: material por material (Gato, Dominó, Xilófono, bug de iconos)
 
 Pedido explícito: "genera el mismo esfuerzo por mejorar cada material con

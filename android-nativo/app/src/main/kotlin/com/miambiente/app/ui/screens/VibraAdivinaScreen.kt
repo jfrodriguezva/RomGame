@@ -2,6 +2,8 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +21,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
@@ -85,16 +90,18 @@ fun VibraAdivinaScreen(onVolver: () -> Unit) {
         Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Row(modifier = Modifier.padding(top = 48.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
                 (1..5).forEach { n ->
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        androidx.compose.foundation.layout.Box(
-                            Modifier
-                                .size(56.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFA97FC7))
-                                .clickable { elegir(n) },
-                            contentAlignment = Alignment.Center,
-                        ) { Text("$n", fontSize = 22.sp, color = Color.White) }
-                    }
+                    val interaccion = remember { MutableInteractionSource() }
+                    val presionado by interaccion.collectIsPressedAsState()
+                    androidx.compose.foundation.layout.Box(
+                        Modifier
+                            .size(56.dp)
+                            .scale(if (presionado) 0.9f else 1f)
+                            .shadow(4.dp, CircleShape)
+                            .clip(CircleShape)
+                            .background(Color(0xFFA97FC7))
+                            .clickable(interactionSource = interaccion, indication = null) { elegir(n) },
+                        contentAlignment = Alignment.Center,
+                    ) { Text("$n", fontSize = 22.sp, color = Color.White, fontWeight = FontWeight.Bold) }
                 }
             }
         }

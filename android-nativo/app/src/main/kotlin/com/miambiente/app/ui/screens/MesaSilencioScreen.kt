@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.data.LocalServices
@@ -57,12 +58,26 @@ fun MesaSilencioScreen(onVolver: () -> Unit) {
 
     GameShell(juego = juego, consigna = texto, onVolver = onVolver) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            // Anillos concéntricos + degradado en vez de un círculo de
+            // color plano: se siente más como una guía de respiración
+            // real (inhala = expande hacia afuera) que como una mancha.
+            Box(
+                Modifier
+                    .size(280.dp)
+                    .scale(0.7f + escala * 0.3f)
+                    .clip(CircleShape)
+                    .background(Color(0xFF8BBF6A).copy(alpha = 0.12f)),
+            )
             Box(
                 Modifier
                     .size(200.dp)
                     .scale(escala)
                     .clip(CircleShape)
-                    .background(Color(0xFF8BBF6A).copy(alpha = 0.5f)),
+                    .background(
+                        Brush.radialGradient(
+                            listOf(Color(0xFFA9D488).copy(alpha = 0.75f), Color(0xFF8BBF6A).copy(alpha = 0.45f), Color(0xFF6E9C57).copy(alpha = 0.3f)),
+                        ),
+                    ),
             )
         }
     }

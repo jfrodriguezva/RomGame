@@ -2,6 +2,8 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.data.Efecto
@@ -63,18 +67,29 @@ fun BinomioScreen(onVolver: () -> Unit) {
 
 @Composable
 private fun Cuadricula(colores: List<Color>, onTocar: ((Int) -> Unit)?) {
-    Column {
+    Column(
+        modifier = Modifier.shadow(4.dp, RoundedCornerShape(10.dp)).clip(RoundedCornerShape(10.dp)).background(Color(0xFFEFE7DA)).padding(4.dp),
+    ) {
         for (fila in 0..1) {
             Row {
                 for (col in 0..1) {
                     val i = fila * 2 + col
+                    val interaccion = remember { MutableInteractionSource() }
+                    val presionado by interaccion.collectIsPressedAsState()
                     Box(
                         Modifier
                             .size(56.dp)
                             .padding(2.dp)
+                            .scale(if (presionado) 0.92f else 1f)
                             .clip(RoundedCornerShape(6.dp))
                             .background(colores[i])
-                            .then(if (onTocar != null) Modifier.clickable { onTocar(i) } else Modifier),
+                            .then(
+                                if (onTocar != null) {
+                                    Modifier.clickable(interactionSource = interaccion, indication = null) { onTocar(i) }
+                                } else {
+                                    Modifier
+                                },
+                            ),
                     )
                 }
             }

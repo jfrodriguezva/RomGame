@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -16,6 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -57,7 +60,13 @@ fun CollageScreen(onVolver: () -> Unit) {
                 ) { Text(estampa.emoji, fontSize = 36.sp) }
             }
             Row(
-                Modifier.fillMaxWidth().padding(12.dp).background(androidx.compose.ui.graphics.Color.White.copy(alpha = 0.85f)),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+                    .shadow(4.dp, RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(androidx.compose.ui.graphics.Color.White.copy(alpha = 0.92f))
+                    .padding(6.dp),
             ) {
                 ESTAMPAS.forEach { emoji ->
                     Text(

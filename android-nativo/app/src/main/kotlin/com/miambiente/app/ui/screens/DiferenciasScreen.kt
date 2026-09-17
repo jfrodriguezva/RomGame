@@ -1,30 +1,24 @@
 package com.miambiente.app.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.CasillaEmoji
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -45,12 +39,14 @@ fun DiferenciasScreen(onVolver: () -> Unit) {
 
     var estado by remember { mutableStateOf(nuevaGrilla()) }
     val (grilla, distinta) = estado
+    var acertada by remember { mutableStateOf(false) }
 
     fun tocar(i: Int) {
         if (i == distinta) {
             services.sound.tocar(Efecto.CORRECT)
+            acertada = true
             scope.launch { services.progress.completarNivel(juego.id, 1) }
-            scope.launch { delay(900); estado = nuevaGrilla() }
+            scope.launch { delay(900); estado = nuevaGrilla(); acertada = false }
         } else {
             services.sound.tocar(Efecto.WRONG)
         }
@@ -59,18 +55,17 @@ fun DiferenciasScreen(onVolver: () -> Unit) {
     GameShell(juego = juego, consigna = "Encuentra lo diferente", onVolver = onVolver) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(32.dp),
+            contentPadding = PaddingValues(32.dp),
             modifier = Modifier.padding(16.dp),
         ) {
             items(grilla.size) { i ->
-                Box(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
-                        .clickable { tocar(i) },
-                    contentAlignment = Alignment.Center,
-                ) { Text(grilla[i], fontSize = 32.sp, modifier = Modifier.padding(18.dp)) }
+                CasillaEmoji(
+                    emoji = grilla[i],
+                    modifier = Modifier.padding(8.dp),
+                    tamanoFuente = 32.sp,
+                    acertado = acertada && i == distinta,
+                    onClick = { tocar(i) },
+                )
             }
         }
     }

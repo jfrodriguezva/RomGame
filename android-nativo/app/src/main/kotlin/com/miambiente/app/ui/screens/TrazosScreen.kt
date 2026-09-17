@@ -76,6 +76,10 @@ fun TrazosScreen(onVolver: () -> Unit) {
                     cap = StrokeCap.Round,
                     pathEffect = PathEffect.dashPathEffect(floatArrayOf(20f, 20f)),
                 )
+                // Marca de inicio y meta: antes la línea punteada no decía
+                // dónde empezar ni cuánto faltaba para terminar.
+                drawCircle(Color(0xFF8BBF6A), radius = 18f, center = Offset(40f, y))
+                drawCircle(Color(0xFFE0C23C), radius = 22f, center = Offset(850f, y), style = Stroke(width = 6f))
                 for (i in 0 until trazo.size - 1) {
                     drawLine(Color(0xFF3E7AA3), trazo[i], trazo[i + 1], strokeWidth = 14f, cap = StrokeCap.Round)
                 }

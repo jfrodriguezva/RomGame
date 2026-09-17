@@ -1,5 +1,7 @@
 package com.miambiente.app.ui.screens
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -19,8 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
@@ -83,16 +88,25 @@ fun PatronScreen(onVolver: () -> Unit) {
         consigna = if (mostrando) "Escucha la melodía..." else "Ahora repítela (${secuencia.size} campanas)",
         onVolver = onVolver,
     ) {
-        Row(Modifier.fillMaxSize().padding(24.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
+        Row(
+            Modifier.fillMaxSize().padding(24.dp),
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             CAMPANAS.forEachIndexed { i, color ->
+                val activa = sonando == i
+                val escala by animateFloatAsState(if (activa) 1.2f else 1f, animationSpec = spring(dampingRatio = 0.4f), label = "campana")
                 androidx.compose.foundation.layout.Box(
                     Modifier
                         .padding(10.dp)
                         .size(72.dp)
+                        .scale(escala)
+                        .shadow(if (activa) 10.dp else 3.dp, CircleShape)
                         .clip(CircleShape)
-                        .background(if (sonando == i) Color.White else color)
+                        .background(color)
                         .clickable { tocar(i) },
-                )
+                    contentAlignment = Alignment.Center,
+                ) { Text("🔔", fontSize = 28.sp) }
             }
         }
     }

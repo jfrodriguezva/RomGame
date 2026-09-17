@@ -1,5 +1,6 @@
 package com.miambiente.app.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,6 +83,7 @@ fun CanastaScreen(onVolver: () -> Unit) {
         Box(
             Modifier
                 .fillMaxSize()
+                .background(Brush.verticalGradient(listOf(Color(0xFFE4F0FA), Color(0xFFEFF8EA))))
                 .pointerInput(Unit) {
                     detectDragGestures { change, _ -> change.consume(); canastaX = change.position.x.coerceIn(0f, 340f) }
                 },

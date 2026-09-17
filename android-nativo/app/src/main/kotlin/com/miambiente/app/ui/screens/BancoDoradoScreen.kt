@@ -2,6 +2,8 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,10 +74,18 @@ fun BancoDoradoScreen(onVolver: () -> Unit) {
 
 @Composable
 private fun Contador(nombre: String, valor: Int, maximo: Int, color: Color, onCambiar: (Int) -> Unit) {
+    val interaccion = remember { MutableInteractionSource() }
+    val presionado by interaccion.collectIsPressedAsState()
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(nombre, fontSize = 12.sp)
+        Text(nombre, fontSize = 12.sp, fontWeight = FontWeight.Bold)
         androidx.compose.foundation.layout.Box(
-            Modifier.size(56.dp).clip(CircleShape).background(color).clickable { onCambiar((valor + 1) % (maximo + 1)) },
+            Modifier
+                .size(56.dp)
+                .scale(if (presionado) 0.9f else 1f)
+                .shadow(4.dp, CircleShape)
+                .clip(CircleShape)
+                .background(color)
+                .clickable(interactionSource = interaccion, indication = null) { onCambiar((valor + 1) % (maximo + 1)) },
             contentAlignment = Alignment.Center,
         ) { Text("$valor", fontSize = 22.sp, color = Color.White, fontWeight = FontWeight.Bold) }
     }

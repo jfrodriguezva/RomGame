@@ -1,6 +1,7 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -59,11 +60,20 @@ fun TablaCienScreen(onVolver: () -> Unit) {
         LazyVerticalGrid(columns = GridCells.Fixed(10), contentPadding = androidx.compose.foundation.layout.PaddingValues(8.dp)) {
             items(100) { i ->
                 val n = i + 1
+                val decena = (i / 10) % 2 == 0
+                val esSiguiente = n == siguiente
                 Box(
                     modifier = Modifier
                         .padding(1.dp)
                         .clip(RoundedCornerShape(3.dp))
-                        .background(if (n < siguiente) Color(0xFF8BBF6A) else Color.White)
+                        .background(
+                            when {
+                                n < siguiente -> Color(0xFF8BBF6A)
+                                decena -> Color(0xFFF7F3EA)
+                                else -> Color.White
+                            },
+                        )
+                        .then(if (esSiguiente) Modifier.border(2.dp, Color(0xFFE0A93C), RoundedCornerShape(3.dp)) else Modifier)
                         .clickable { tocar(n) },
                     contentAlignment = Alignment.Center,
                 ) { Text("$n", fontSize = 9.sp, modifier = Modifier.padding(3.dp)) }

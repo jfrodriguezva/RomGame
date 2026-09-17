@@ -4,9 +4,13 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -24,6 +30,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.launch
 
@@ -42,18 +49,39 @@ import kotlinx.coroutines.launch
  * una descripción). Documentado como limitación real, no resuelta del
  * todo, en el README.
  */
+/**
+ * `resaltado` es el segundo pedazo del feedback de arrastre real: antes
+ * una zona de destino se veía exactamente igual estuvieras arrastrando
+ * una pieza sobre ella o no — solo se sabía si encajaba DESPUÉS de
+ * soltar. Ahora, mientras el dedo pasa por encima, se ve un aro de "acá
+ * puedes soltar" en tiempo real, como el resto de las apps con
+ * arrastre-y-suelta modernas.
+ */
 @Composable
 fun ZonaSoltar(
     modifier: Modifier = Modifier,
     descripcion: String? = null,
+    resaltado: Boolean = false,
+    formaResaltado: Shape = RoundedCornerShape(16.dp),
     onPosicion: (Rect) -> Unit,
     contenido: @Composable () -> Unit,
 ) {
+    val alfa by animateFloatAsState(if (resaltado) 1f else 0f, label = "resaltadoZona")
     Box(
         modifier = modifier
             .onGloballyPositioned { c -> onPosicion(Rect(c.positionInRoot(), c.size.toSize())) }
             .then(if (descripcion != null) Modifier.semantics { contentDescription = descripcion } else Modifier),
-    ) { contenido() }
+    ) {
+        contenido()
+        if (alfa > 0f) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFF4C7A3A).copy(alpha = 0.16f * alfa), formaResaltado)
+                    .border(3.dp, Color(0xFF4C7A3A).copy(alpha = alfa), formaResaltado),
+            )
+        }
+    }
 }
 
 @Composable
@@ -61,6 +89,7 @@ fun PiezaArrastrable(
     tamano: Dp,
     clave: Any,
     descripcion: String? = null,
+    onArrastrar: ((centroRoot: Offset?) -> Unit)? = null,
     onSoltar: (centroRoot: Offset) -> Unit,
     contenido: @Composable () -> Unit,
 ) {
@@ -96,15 +125,19 @@ fun PiezaArrastrable(
                         arrastrando = false
                         val centro = origenRoot + offset.value + Offset(tamanoPx / 2, tamanoPx / 2)
                         onSoltar(centro)
+                        onArrastrar?.invoke(null)
                         scope.launch { offset.animateTo(Offset.Zero, spring(dampingRatio = 0.6f, stiffness = 300f)) }
                     },
                     onDragCancel = {
                         arrastrando = false
+                        onArrastrar?.invoke(null)
                         scope.launch { offset.animateTo(Offset.Zero, spring(dampingRatio = 0.6f, stiffness = 300f)) }
                     },
                     onDrag = { change, dragAmount ->
                         change.consume()
-                        scope.launch { offset.snapTo(offset.value + dragAmount) }
+                        val nuevoOffset = offset.value + dragAmount
+                        scope.launch { offset.snapTo(nuevoOffset) }
+                        onArrastrar?.invoke(origenRoot + nuevoOffset + Offset(tamanoPx / 2, tamanoPx / 2))
                     },
                 )
             },

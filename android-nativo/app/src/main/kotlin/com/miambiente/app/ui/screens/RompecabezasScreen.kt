@@ -1,6 +1,7 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +42,7 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
     var colocadas by remember(estado.nivel) { mutableStateOf(setOf<Int>()) }
     val piezasRevueltas = remember(estado.nivel) { PIEZAS.shuffled() }
     val ranuraRects = remember(estado.nivel) { mutableStateMapOf<Int, Rect>() }
+    var puntoArrastre by remember(estado.nivel) { mutableStateOf<androidx.compose.ui.geometry.Offset?>(null) }
     val completo = colocadas.size == PIEZAS.size
 
     fun soltar(posicionCorrecta: Int, puntoRoot: androidx.compose.ui.geometry.Offset) {
@@ -64,22 +67,30 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
         } else null,
     ) {
         Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Row {
+            Row(
+                modifier = Modifier.shadow(4.dp, RoundedCornerShape(10.dp)).clip(RoundedCornerShape(10.dp)).background(colores.fondo.copy(alpha = 0.3f)).padding(2.dp),
+            ) {
                 for (fila in 0..1) {
                     Column {
                         for (col in 0..1) {
                             val posicion = fila * 2 + col
+                            val llena = posicion in colocadas
+                            val rect = ranuraRects[posicion]
                             ZonaSoltar(
                                 modifier = Modifier.size(70.dp),
-                                onPosicion = { rect -> ranuraRects[posicion] = rect },
+                                resaltado = puntoArrastre != null && rect?.contains(puntoArrastre!!) == true,
+                                formaResaltado = RoundedCornerShape(6.dp),
+                                onPosicion = { r -> ranuraRects[posicion] = r },
                             ) {
                                 Box(
-                                    Modifier.size(70.dp).clip(RoundedCornerShape(6.dp)).background(colores.fondo),
+                                    Modifier
+                                        .size(70.dp)
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(colores.fondo)
+                                        .then(if (llena) Modifier else Modifier.border(2.dp, colores.acento.copy(alpha = 0.3f), RoundedCornerShape(6.dp))),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    if (posicion in colocadas) {
-                                        Text(PIEZAS.first { it.second == posicion }.first, fontSize = 28.sp)
-                                    }
+                                    if (llena) Text(PIEZAS.first { it.second == posicion }.first, fontSize = 28.sp)
                                 }
                             }
                         }
@@ -91,6 +102,7 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
                     PiezaArrastrable(
                         tamano = 56.dp,
                         clave = posicion,
+                        onArrastrar = { punto -> puntoArrastre = punto },
                         onSoltar = { punto -> soltar(posicion, punto) },
                     ) { Text(emoji, fontSize = 26.sp) }
                 }

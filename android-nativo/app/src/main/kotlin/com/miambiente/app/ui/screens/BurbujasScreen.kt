@@ -16,8 +16,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
@@ -89,16 +92,37 @@ fun BurbujasScreen(onVolver: () -> Unit) {
         consigna = if (reventadas >= meta) "¡Truena todas!" else "Truena las burbujas: $reventadas / $meta",
         onVolver = onVolver,
     ) {
-        Box(Modifier.fillMaxSize().background(Color(0xFFE8F2F5))) {
+        Box(
+            Modifier.fillMaxSize().background(
+                Brush.verticalGradient(listOf(Color(0xFFDCF0F5), Color(0xFFEFF8FA))),
+            ),
+        ) {
             burbujas.forEach { b ->
                 Box(
                     modifier = Modifier
                         .offset(x = b.x.dp, y = b.y.dp)
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFB8E0EC).copy(alpha = 0.8f))
+                        // Degradado radial descentrado: da el brillo de una
+                        // pompa de jabón real, no un círculo de color plano.
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(Color.White.copy(alpha = 0.9f), Color(0xFFB8E0EC).copy(alpha = 0.55f), Color(0xFF8FC4D6).copy(alpha = 0.45f)),
+                                center = Offset(25f, 22f),
+                                radius = 46f,
+                            ),
+                        )
                         .pointerInput(b.id) { detectTapGestures { reventar(b.id) } },
-                )
+                    contentAlignment = Alignment.TopStart,
+                ) {
+                    Box(
+                        Modifier
+                            .offset(x = 8.dp, y = 6.dp)
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.85f)),
+                    )
+                }
             }
         }
     }
