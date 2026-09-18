@@ -72,7 +72,11 @@ val CATALOGO = listOf(
 
     // --- MaterialOrdenar: lote 2 ---
     GameDef("escalera-marron", "La escalera marrón", "🟫", "Del más ancho al más delgado", Area.SENSORIAL, 3, "Escalera marrón", "Discriminación de grosor y construcción de una serie."),
-    GameDef("bloques", "Ordenar bloques", "🧱", "Del más chico al más grande", Area.SENSORIAL, 3, "Serie de tamaños", "Seriación: colocar en orden por una sola cualidad."),
+    // "Ordenar bloques" (id "bloques") se quitó: era un duplicado real de
+    // Torre rosa, no un material distinto — mismo patrón MaterialOrdenar,
+    // misma fórmula de tamaños, sin ninguna cualidad propia más allá del
+    // color. Bug real reportado ("el módulo sensorial tiene materiales
+    // duplicados"); Torre rosa ya cubre la seriación por tamaño de verdad.
     GameDef("cilindros", "Cilindros con botón", "🎯", "Cada uno en su hueco", Area.SENSORIAL, 3, "Bloques de cilindros", "Ajuste exacto por tamaño."),
     GameDef("sistema-solar", "El sistema solar", "🪐", "Ordena los planetas desde el Sol", Area.CULTURA, 4, "Los planetas", "Secuencia y vocabulario del sistema solar."),
     GameDef("ciclo-agua", "El ciclo del agua", "💧", "Sol, nube, lluvia, río", Area.CULTURA, 4, "Ciencias naturales: el ciclo del agua", "Secuencia de un proceso natural."),

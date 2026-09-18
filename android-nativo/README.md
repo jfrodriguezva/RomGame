@@ -16,6 +16,98 @@ encabezado del Home). No se tocó `applicationId` ni el paquete Kotlin
 perder el progreso guardado en instalaciones existentes, un efecto
 destructivo que nadie pidió.
 
+## Novena pasada: silueta al mover piezas, un ANR real corregido, un duplicado menos, Arkanoid con niveles, Solitario "nivel PC"
+
+Pedido de cinco partes en un solo mensaje: *"En todos los juegos al
+arrastrar o mover se pierde la silueta, ajusta ese efecto / algunos
+juegos traban la app y la reinician / el modulo sensorial tiene
+materiales duplicados / más niveles y completa más el juego de rompe
+ladrillos / genera bien los solitarios al nivel de la pc"*.
+
+- **La "silueta perdida" al mover piezas — era falta de animación, no
+  un bug de estado**: Damas inglesas, Ajedrez y Damas chinas dibujaban
+  cada ficha directamente dentro de su celda de grilla, así que al
+  moverse la ficha desaparecía de una celda y reaparecía en otra sin
+  transición — de ahí la sensación de "se pierde la silueta". Se separó
+  el tablero en dos capas dentro de un mismo `Box`: una grilla de fondo
+  (solo celdas, clic y resaltado de destino) y una capa de piezas
+  superpuesta que usa un `AnimatedPieza` compartido nuevo
+  (`ui/materials/AnimatedPieza.kt`), con `animateDpAsState` sobre X/Y
+  para que cada ficha se deslice de verdad entre casillas. La clave fue
+  darle a cada ficha un `id` estable (no la fila/columna, que cambia en
+  cada jugada) para que Compose la reconozca como la misma pieza entre
+  recomposiciones y la anime en vez de recrearla. `MaterialOrdenar` y
+  `MaterialTransferir` (los ~15 materiales de tocar-para-soltar de la
+  pasada anterior) ganaron una animación de aparición (escala 0→1) para
+  que la pieza no aparezca de golpe al llegar a su ranura/destino.
+  Verificado en vivo: Damas inglesas (jugada + respuesta de la
+  computadora), Ajedrez (peón e2-e4) y Damas chinas (canica moviéndose
+  en diagonal) — las tres con deslizamiento visible y sin choque.
+- **"Algunos juegos traban la app y la reinician" — causa real
+  encontrada por auditoría, no adivinada**: es el patrón clásico de ANR
+  (Application Not Responding) de Android — cálculo de IA corriendo en
+  el hilo principal dentro de un `LaunchedEffect` sin `withContext`,
+  que si tarda más de ~5s dispara el diálogo del sistema y, si se
+  descarta, reinicia la app. `AjedrezScreen.kt` ya lo hacía bien;
+  `DamasScreen.kt` (la IA más cara de la app: minimax con cadenas de
+  captura múltiple) y `DamasChinasScreen.kt` no — se envolvió el cálculo
+  de la mejor jugada de ambos en `withContext(Dispatchers.Default)`.
+  Esta es la causa más probable encontrada por auditoría de código, no
+  una confirmada con un log de choque real del usuario — se corrigió
+  igual porque es un bug real independientemente de si es exactamente
+  el que reportó el usuario.
+- **Un material duplicado real menos en Sensorial**: `BloquesScreen.kt`
+  ("Ordenar bloques") y `TorreRosaScreen.kt` tenían el mismo
+  `MaterialOrdenar` parametrizado byte por byte igual
+  (`n = phasedInt(1, listOf(3,4,4,5,5,6,7,8,9,10,10))`), solo cambiaba
+  el color y el texto de instrucción — se borró Bloques por ser un
+  duplicado mecánico real, no una variante pedagógica distinta. Se
+  mantuvieron a propósito los 5 materiales de "sentidos" (Áspero o liso,
+  Caliente o frío, Pesado o ligero, Dulce o salado, Huele bien o mal)
+  que son mecánicamente parecidos pero pedagógicamente distintos, mismo
+  criterio de rondas anteriores. 106 materiales totales tras el borrado
+  (Sensorial 21), verificado en el Home.
+- **Rompe ladrillos — de "un solo tablero fijo" a niveles de verdad**:
+  ahora sube de nivel al vaciar el tablero (pausa breve con "¡Nivel X
+  superado!", no termina el juego), con más filas de ladrillos por
+  nivel hasta un tope de 8, la pelota más rápida cada nivel, y desde el
+  nivel 3 aparecen ladrillos reforzados (2 golpes, borde blanco) en el
+  tercio superior. El rebote en la paleta ahora depende de verdad de en
+  qué parte le pega (ángulo real vía `hypot`/`sqrt`, no una división fija
+  de velocidad). Verificado en vivo: lanzar la pelota, arrastrar la
+  paleta, romper un ladrillo (puntaje +10), perder una vida y que la
+  pelota se reposicione sin choque — el ciclo completo de "vaciar el
+  tablero y pasar de nivel" quedó confirmado por las pruebas unitarias
+  reescritas (`ArkanoidLogicTest.kt`) y por revisión de código, no
+  jugado hasta el final en vivo (habría tomado deslizar la pelota contra
+  ~24 ladrillos a mano por adb, poco práctico).
+- **Solitario "al nivel de la PC"**: doble toque para mandar una carta a
+  su fundación automáticamente (sin necesidad de seleccionarla primero),
+  tanto desde el descarte como desde el tope de cada columna — usando
+  `detectTapGestures(onTap=..., onDoubleTap=...)` en vez de un simple
+  `.clickable`. Se agregó un botón "Auto-completar ✨" que aparece solo
+  cuando ya no quedan cartas boca abajo ni en el mazo/descarte (todo el
+  tablero resuelto), y manda automáticamente cada carta a su fundación
+  en cadena. Verificado en vivo: el doble toque no rompe nada sobre una
+  carta que no puede ir a fundación (no-op seguro, sin choque) y la
+  selección de un solo toque sigue funcionando igual que antes
+  (sin regresión).
+
+**Sobre la verificación en vivo de esta pasada, con honestidad**: la
+máquina volvió a tener presión de memoria severa y fluctuante durante
+la sesión (llegó a 0.47GB libres en un momento, recuperándose a 6GB
+minutos después) — se esperó a que la memoria se recuperara antes de
+cada tanda de pruebas en vez de forzar el emulador en ese estado. Con
+memoria recuperada, las cinco correcciones se probaron en vivo sobre el
+build real (no solo compilado): Damas, Ajedrez y Damas chinas con una
+jugada real cada una; Arkanoid con el ciclo de lanzar/rebotar/romper/
+perder vida; Solitario con el gesto de doble toque. Lo único no llevado
+hasta el final en vivo fue completar un nivel entero de Arkanoid (por
+lo largo que toma a mano vía adb) y forzar un tablero de Solitario en
+estado "todo boca arriba" para ver el botón de auto-completar en
+acción — ambos quedan respaldados por revisión de código y, en el caso
+de Arkanoid, por pruebas unitarias.
+
 ## Octava pasada: se rehace el modelo de arrastre, la araña real, y tres arcade nuevos
 
 Pedido con varias partes, después de que la séptima pasada resultó

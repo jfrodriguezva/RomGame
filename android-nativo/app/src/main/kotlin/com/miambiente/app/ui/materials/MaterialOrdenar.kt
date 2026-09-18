@@ -127,7 +127,12 @@ fun MaterialOrdenar(
                             .then(if (!llena) Modifier.clickable { tocarRanura(posicion) } else Modifier),
                         contentAlignment = Alignment.Center,
                     ) {
-                        if (llena) render(posicion, ladoRanura)
+                        // Aparece con un pop de escala, no de golpe: sin
+                        // esto la pieza "se perdía" del canasto y una
+                        // aparecía de la nada en la casilla, sin ninguna
+                        // sensación de haber llegado ahí.
+                        val escalaLlegada by animateFloatAsState(if (llena) 1f else 0f, label = "llegadaPieza")
+                        if (llena) Box(Modifier.scale(escalaLlegada)) { render(posicion, ladoRanura) }
                     }
                 }
             }

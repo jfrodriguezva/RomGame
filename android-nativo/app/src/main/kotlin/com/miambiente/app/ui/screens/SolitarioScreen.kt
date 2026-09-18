@@ -3,6 +3,7 @@ package com.miambiente.app.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
@@ -156,6 +158,50 @@ fun SolitarioScreen(onVolver: () -> Unit) {
         revisarVictoria()
     }
 
+    // "Al nivel de la PC": doble toque manda la carta de arriba a su
+    // fundación si es válido, igual que el doble clic del Solitario de
+    // Windows — sin tener que seleccionarla primero y después tocar la
+    // fundación exacta.
+    fun intentarAutoFundacion(colIdx: Int, idx: Int): Boolean {
+        val col = columnas[colIdx]
+        if (idx != col.size - 1 || !col[idx].second) return false
+        val carta = col[idx].first
+        if (!puedeColocarEnFundacionSol(carta, fundaciones[carta.palo])) return false
+        services.sound.tocar(Efecto.CORRECT)
+        fundaciones = fundaciones.toMutableList().also { it[carta.palo] = carta.valor }
+        columnas = destaparTope(colIdx, columnas.toMutableList().also { it[colIdx] = it[colIdx].dropLast(1) })
+        seleccion = null
+        revisarVictoria()
+        return true
+    }
+
+    fun intentarAutoFundacionDescarte(): Boolean {
+        val carta = descarte.lastOrNull() ?: return false
+        if (!puedeColocarEnFundacionSol(carta, fundaciones[carta.palo])) return false
+        services.sound.tocar(Efecto.CORRECT)
+        fundaciones = fundaciones.toMutableList().also { it[carta.palo] = carta.valor }
+        descarte = descarte.dropLast(1)
+        seleccion = null
+        revisarVictoria()
+        return true
+    }
+
+    // Auto-completar: solo se activa cuando ya no queda ninguna decisión
+    // real por tomar (todas las cartas boca arriba, mazo y descarte
+    // vacíos) — igual que el botón del Solitario de Windows, no hace
+    // trampa resolviendo un juego que todavía requiere pensar.
+    fun puedeAutoCompletar() = mazo.isEmpty() && descarte.isEmpty() && columnas.all { col -> col.all { it.second } } && !ganado
+
+    fun autoCompletar() {
+        scope.launch {
+            while (true) {
+                val colIdx = columnas.indices.firstOrNull { columnas[it].isNotEmpty() && intentarAutoFundacion(it, columnas[it].size - 1) }
+                if (colIdx == null) break
+                kotlinx.coroutines.delay(140)
+            }
+        }
+    }
+
     fun tocarColumna(colDestino: Int, indiceTocado: Int) {
         val actual = seleccion
         if (actual == null) {
@@ -191,7 +237,16 @@ fun SolitarioScreen(onVolver: () -> Unit) {
         consigna = mensaje,
         celebrar = ganado,
         onVolver = onVolver,
-        acciones = { if (ganado) Button(onClick = ::repartir) { Text("Jugar de nuevo") } },
+        acciones = {
+            if (ganado) {
+                Button(onClick = ::repartir) { Text("Jugar de nuevo") }
+            } else if (puedeAutoCompletar()) {
+                // "Al nivel de la PC": el botón de auto-completar clásico,
+                // solo aparece cuando ya no hay ninguna decisión real que
+                // tomar (todo boca arriba, sin mazo ni descarte).
+                Button(onClick = ::autoCompletar) { Text("Auto-completar ✨") }
+            }
+        },
     ) {
         // Bug real reportado ("se corta la pantalla"): esta Column nunca
         // tuvo scroll VERTICAL, solo las filas de adentro tenían scroll
@@ -213,7 +268,7 @@ fun SolitarioScreen(onVolver: () -> Unit) {
                 CartaDorso(habilitado = mazo.isNotEmpty() || descarte.isNotEmpty(), onClick = ::tocarMazo, vacio = mazo.isEmpty())
                 Box(modifier = Modifier.size(width = 40.dp, height = 56.dp)) {
                     descarte.lastOrNull()?.let { c ->
-                        CartaSolVista(c, seleccionada = seleccion == (-1 to 0), onClick = ::tocarDescarte)
+                        CartaSolVista(c, seleccionada = seleccion == (-1 to 0), onClick = ::tocarDescarte, onDobleToque = { intentarAutoFundacionDescarte() })
                     }
                 }
                 Box(Modifier.size(1.dp)) // separador
@@ -281,7 +336,13 @@ fun SolitarioScreen(onVolver: () -> Unit) {
                                 col.forEachIndexed { i, (carta, bocaArriba) ->
                                     Box(modifier = Modifier.offset(y = (i * 18).dp)) {
                                         if (bocaArriba) {
-                                            CartaSolVista(carta, seleccionada = seleccion == (colIdx to i), onClick = { tocarColumna(colIdx, i) })
+                                            val esTope = i == col.size - 1
+                                            CartaSolVista(
+                                                carta,
+                                                seleccionada = seleccion == (colIdx to i),
+                                                onClick = { tocarColumna(colIdx, i) },
+                                                onDobleToque = if (esTope) { { intentarAutoFundacion(colIdx, i) } } else null,
+                                            )
                                         } else {
                                             CartaDorso(habilitado = false, onClick = {}, vacio = false)
                                         }
@@ -311,7 +372,7 @@ internal fun CartaDorso(habilitado: Boolean, onClick: () -> Unit, vacio: Boolean
 }
 
 @Composable
-internal fun CartaSolVista(carta: CartaSol, seleccionada: Boolean, onClick: () -> Unit) {
+internal fun CartaSolVista(carta: CartaSol, seleccionada: Boolean, onClick: () -> Unit, onDobleToque: (() -> Unit)? = null) {
     Box(
         modifier = Modifier
             .size(width = 40.dp, height = 56.dp)
@@ -319,7 +380,18 @@ internal fun CartaSolVista(carta: CartaSol, seleccionada: Boolean, onClick: () -
             .clip(RoundedCornerShape(6.dp))
             .background(Color.White)
             .border(if (seleccionada) 2.dp else 1.dp, if (seleccionada) Color(0xFFE0C23C) else Color(0xFFD9CDB4), RoundedCornerShape(6.dp))
-            .clickable { onClick() },
+            .then(
+                if (onDobleToque != null) {
+                    // "Al nivel de la PC": un solo toque selecciona (como
+                    // antes), doble toque manda a la fundación de una vez
+                    // — igual que el doble clic del Solitario de Windows.
+                    Modifier.pointerInput(carta) {
+                        detectTapGestures(onTap = { onClick() }, onDoubleTap = { onDobleToque() })
+                    }
+                } else {
+                    Modifier.clickable { onClick() }
+                },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

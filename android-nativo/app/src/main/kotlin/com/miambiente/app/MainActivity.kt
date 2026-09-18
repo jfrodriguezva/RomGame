@@ -17,7 +17,6 @@ import com.miambiente.app.ui.screens.AbecedarioScreen
 import com.miambiente.app.ui.screens.AnimalesScreen
 import com.miambiente.app.ui.screens.BanderasScreen
 import com.miambiente.app.ui.screens.BarrasNumericasScreen
-import com.miambiente.app.ui.screens.BloquesScreen
 import com.miambiente.app.ui.screens.AdivinaQuienScreen
 import com.miambiente.app.ui.screens.AlfabetoMovilScreen
 import com.miambiente.app.ui.screens.AranaScreen
@@ -235,7 +234,6 @@ class MainActivity : ComponentActivity() {
 
                         // --- MaterialOrdenar: lote 2 ---
                         composable("escalera-marron") { EscaleraMarronScreen(volver) }
-                        composable("bloques") { BloquesScreen(volver) }
                         composable("cilindros") { CilindrosScreen(volver) }
                         composable("sistema-solar") { SistemaSolarScreen(volver) }
                         composable("ciclo-agua") { CicloAguaScreen(volver) }

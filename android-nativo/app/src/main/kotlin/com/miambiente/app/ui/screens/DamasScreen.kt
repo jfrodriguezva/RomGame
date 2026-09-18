@@ -36,18 +36,27 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.AnimatedPieza
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-internal data class FichaDamas(val fila: Int, val col: Int, val esJugador: Boolean, val esDama: Boolean = false)
+// `id` al final con valor por defecto: no rompe las pruebas existentes
+// que construyen FichaDamas posicionalmente sin pensar en identidad. Es
+// lo que permite animar el movimiento (ver AnimatedPieza): a diferencia
+// de fila/col, el id NO cambia cuando la ficha se mueve, así Compose
+// sabe que sigue siendo la misma pieza en vez de recrearla de la nada.
+internal data class FichaDamas(val fila: Int, val col: Int, val esJugador: Boolean, val esDama: Boolean = false, val id: Int = 0)
 internal data class MovidaDamas(val ficha: FichaDamas, val filaDestino: Int, val colDestino: Int, val capturada: FichaDamas? = null)
 
 internal fun casillaJugable(fila: Int, col: Int) = (fila + col) % 2 == 1
 
 internal fun tableroInicialDamas(): List<FichaDamas> {
     val fichas = mutableListOf<FichaDamas>()
-    for (fila in 0..2) for (col in 0..7) if (casillaJugable(fila, col)) fichas.add(FichaDamas(fila, col, esJugador = false))
-    for (fila in 5..7) for (col in 0..7) if (casillaJugable(fila, col)) fichas.add(FichaDamas(fila, col, esJugador = true))
+    var id = 0
+    for (fila in 0..2) for (col in 0..7) if (casillaJugable(fila, col)) fichas.add(FichaDamas(fila, col, esJugador = false, id = id++))
+    for (fila in 5..7) for (col in 0..7) if (casillaJugable(fila, col)) fichas.add(FichaDamas(fila, col, esJugador = true, id = id++))
     return fichas
 }
 
@@ -205,13 +214,22 @@ fun DamasScreen(onVolver: () -> Unit) {
         delay(700)
         var piezaTurno: FichaDamas? = null
         while (true) {
-            val movida = if (piezaTurno == null) {
-                mejorMovidaDamas(tablero)
-            } else {
-                movidasDeFicha(piezaTurno, tablero).filter { it.capturada != null }
-                    .maxByOrNull { minimaxDamas(aplicarMovidaDamas(tablero, it), 2, true, false) }
-                    ?: break
-            }
+            // Bug real reportado ("algunos juegos traban la app y la
+            // reinician"): el minimax corría en el hilo principal — con
+            // una cadena de capturas múltiples reales (varias llamadas
+            // seguidas, cada una explorando el árbol de jugadas de nuevo)
+            // podía tardar lo suficiente para que Android considerara la
+            // app "no responde" (ANR) y la reiniciara. Ajedrez ya lo hacía
+            // bien con Dispatchers.Default; Damas no. Corregido igual.
+            val piezaTurnoActual = piezaTurno
+            val movida = withContext(Dispatchers.Default) {
+                if (piezaTurnoActual == null) {
+                    mejorMovidaDamas(tablero)
+                } else {
+                    movidasDeFicha(piezaTurnoActual, tablero).filter { it.capturada != null }
+                        .maxByOrNull { minimaxDamas(aplicarMovidaDamas(tablero, it), 2, true, false) }
+                }
+            } ?: break
             services.sound.tocar(if (movida.capturada != null) Efecto.WRONG else Efecto.CLICK)
             tablero = aplicarMovidaDamas(tablero, movida)
             delay(450)
@@ -259,43 +277,58 @@ fun DamasScreen(onVolver: () -> Unit) {
             // envuelve en scroll horizontal de todas formas: en pantallas
             // muy angostas o en modo multi-ventana, antes se recortaba en
             // silencio en vez de poder desplazarse para verlo completo.
-            Column(
+            Box(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .horizontalScroll(rememberScrollState())
                     .shadow(6.dp, RoundedCornerShape(8.dp))
-                    .clip(RoundedCornerShape(8.dp)),
+                    .clip(RoundedCornerShape(8.dp))
+                    .size(38.dp * 8),
             ) {
-                for (fila in 0..7) {
-                    Row {
-                        for (col in 0..7) {
-                            val jugable = casillaJugable(fila, col)
-                            val ficha = tablero.find { it.fila == fila && it.col == col }
-                            val esSeleccionada = seleccionada?.fila == fila && seleccionada?.col == col
-                            val esDestino = destinosResaltados.any { it.filaDestino == fila && it.colDestino == col }
-                            Box(
-                                modifier = Modifier
-                                    .size(38.dp)
-                                    .background(if (jugable) Color(0xFF8A5A2B) else Color(0xFFF3E8D0))
-                                    .then(if (esSeleccionada) Modifier.border(2.dp, Color(0xFFE0C23C)) else Modifier)
-                                    .then(if (jugable) Modifier.clickable { tocarCasilla(fila, col) } else Modifier),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                if (esDestino) {
-                                    Box(Modifier.size(12.dp).clip(RoundedCornerShape(50)).background(Color(0xFF8BBF6A).copy(alpha = 0.85f)))
-                                }
-                                if (ficha != null) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(30.dp)
-                                            .shadow(2.dp, RoundedCornerShape(50))
-                                            .clip(RoundedCornerShape(50))
-                                            .background(if (ficha.esJugador) Color(0xFFD9433A) else Color(0xFF3F342C))
-                                            .then(if (esSeleccionada) Modifier.border(2.dp, Color(0xFFE0C23C), RoundedCornerShape(50)) else Modifier),
-                                        contentAlignment = Alignment.Center,
-                                    ) { if (ficha.esDama) Text("♛", fontSize = 14.sp, color = Color(0xFFE0C23C)) }
+                // Capa de fondo: solo casillas, resaltados y toques — sin
+                // dibujar ninguna ficha acá (ver AnimatedPieza más abajo).
+                Column {
+                    for (fila in 0..7) {
+                        Row {
+                            for (col in 0..7) {
+                                val jugable = casillaJugable(fila, col)
+                                val esSeleccionada = seleccionada?.fila == fila && seleccionada?.col == col
+                                val esDestino = destinosResaltados.any { it.filaDestino == fila && it.colDestino == col }
+                                Box(
+                                    modifier = Modifier
+                                        .size(38.dp)
+                                        .background(if (jugable) Color(0xFF8A5A2B) else Color(0xFFF3E8D0))
+                                        .then(if (esSeleccionada) Modifier.border(2.dp, Color(0xFFE0C23C)) else Modifier)
+                                        .then(if (jugable) Modifier.clickable { tocarCasilla(fila, col) } else Modifier),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    if (esDestino) {
+                                        Box(Modifier.size(12.dp).clip(RoundedCornerShape(50)).background(Color(0xFF8BBF6A).copy(alpha = 0.85f)))
+                                    }
                                 }
                             }
+                        }
+                    }
+                }
+                // Capa de fichas: una por ficha viva, en su posición
+                // absoluta animada — así un movimiento se ve deslizar en
+                // vez de desaparecer de una casilla y aparecer en otra.
+                tablero.forEach { ficha ->
+                    val esSeleccionada = seleccionada?.id == ficha.id
+                    AnimatedPieza(id = ficha.id, fila = ficha.fila, col = ficha.col, tamanoCelda = 38.dp) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .shadow(2.dp, RoundedCornerShape(50))
+                                    .clip(RoundedCornerShape(50))
+                                    .background(if (ficha.esJugador) Color(0xFFD9433A) else Color(0xFF3F342C))
+                                    .then(if (esSeleccionada) Modifier.border(2.dp, Color(0xFFE0C23C), RoundedCornerShape(50)) else Modifier),
+                                contentAlignment = Alignment.Center,
+                            ) { if (ficha.esDama) Text("♛", fontSize = 14.sp, color = Color(0xFFE0C23C)) }
                         }
                     }
                 }

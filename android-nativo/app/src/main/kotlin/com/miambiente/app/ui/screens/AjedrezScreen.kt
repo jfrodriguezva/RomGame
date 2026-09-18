@@ -36,13 +36,17 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.AnimatedPieza
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 internal enum class TipoPieza { PEON, TORRE, CABALLO, ALFIL, REINA, REY }
-internal data class PiezaAjedrez(val fila: Int, val col: Int, val tipo: TipoPieza, val esJugador: Boolean)
+// `id` al final con valor por defecto: no rompe las pruebas existentes.
+// Es lo que permite animar el movimiento (ver AnimatedPieza) sin perder
+// de vista qué pieza es cuál al moverse.
+internal data class PiezaAjedrez(val fila: Int, val col: Int, val tipo: TipoPieza, val esJugador: Boolean, val id: Int = 0)
 internal data class MovidaAjedrez(val pieza: PiezaAjedrez, val filaDestino: Int, val colDestino: Int, val captura: PiezaAjedrez? = null)
 
 private fun enTablero(f: Int, c: Int) = f in 0..7 && c in 0..7
@@ -50,11 +54,12 @@ private fun enTablero(f: Int, c: Int) = f in 0..7 && c in 0..7
 internal fun tableroInicialAjedrez(): List<PiezaAjedrez> {
     val orden = listOf(TipoPieza.TORRE, TipoPieza.CABALLO, TipoPieza.ALFIL, TipoPieza.REINA, TipoPieza.REY, TipoPieza.ALFIL, TipoPieza.CABALLO, TipoPieza.TORRE)
     val fichas = mutableListOf<PiezaAjedrez>()
+    var id = 0
     for (col in 0..7) {
-        fichas.add(PiezaAjedrez(0, col, orden[col], esJugador = false))
-        fichas.add(PiezaAjedrez(1, col, TipoPieza.PEON, esJugador = false))
-        fichas.add(PiezaAjedrez(6, col, TipoPieza.PEON, esJugador = true))
-        fichas.add(PiezaAjedrez(7, col, orden[col], esJugador = true))
+        fichas.add(PiezaAjedrez(0, col, orden[col], esJugador = false, id = id++))
+        fichas.add(PiezaAjedrez(1, col, TipoPieza.PEON, esJugador = false, id = id++))
+        fichas.add(PiezaAjedrez(6, col, TipoPieza.PEON, esJugador = true, id = id++))
+        fichas.add(PiezaAjedrez(7, col, orden[col], esJugador = true, id = id++))
     }
     return fichas
 }
@@ -315,41 +320,48 @@ fun AjedrezScreen(onVolver: () -> Unit) {
                     colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF3F342C), selectedLabelColor = Color.White),
                 )
             }
-            Column(
+            Box(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .horizontalScroll(rememberScrollState())
                     .shadow(6.dp, RoundedCornerShape(8.dp))
-                    .clip(RoundedCornerShape(8.dp)),
+                    .clip(RoundedCornerShape(8.dp))
+                    .size(40.dp * 8),
             ) {
-                for (fila in 0..7) {
-                    Row {
-                        for (col in 0..7) {
-                            val claro = (fila + col) % 2 == 0
-                            val pieza = tablero.find { it.fila == fila && it.col == col }
-                            val esSeleccionada = seleccionada?.fila == fila && seleccionada?.col == col
-                            val esDestino = destinosResaltados.any { it.filaDestino == fila && it.colDestino == col }
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(if (claro) Color(0xFFF3E8D0) else Color(0xFF8A5A2B))
-                                    .then(if (esSeleccionada) Modifier.border(2.dp, Color(0xFFE0C23C)) else Modifier)
-                                    .clickable { tocarCasilla(fila, col) },
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                if (esDestino) {
-                                    Box(Modifier.size(12.dp).clip(RoundedCornerShape(50)).background(Color(0xFF8BBF6A).copy(alpha = 0.85f)))
-                                }
-                                if (pieza != null) {
-                                    // Un solo color de tinta para las dos: el
-                                    // símbolo Unicode ya distingue blanco
-                                    // (hueco) de negro (sólido) por su forma.
-                                    // Pintarlas de colores distintos hacía
-                                    // que las piezas del jugador casi
-                                    // desaparecieran sobre casillas claras.
-                                    Text(simboloPieza(pieza), fontSize = 26.sp, color = Color(0xFF2A2118))
+                Column {
+                    for (fila in 0..7) {
+                        Row {
+                            for (col in 0..7) {
+                                val claro = (fila + col) % 2 == 0
+                                val esSeleccionada = seleccionada?.fila == fila && seleccionada?.col == col
+                                val esDestino = destinosResaltados.any { it.filaDestino == fila && it.colDestino == col }
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .background(if (claro) Color(0xFFF3E8D0) else Color(0xFF8A5A2B))
+                                        .then(if (esSeleccionada) Modifier.border(2.dp, Color(0xFFE0C23C)) else Modifier)
+                                        .clickable { tocarCasilla(fila, col) },
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    if (esDestino) {
+                                        Box(Modifier.size(12.dp).clip(RoundedCornerShape(50)).background(Color(0xFF8BBF6A).copy(alpha = 0.85f)))
+                                    }
                                 }
                             }
+                        }
+                    }
+                }
+                // Capa de fichas con posición animada — desliza al moverse
+                // en vez de desaparecer de una casilla y aparecer en otra.
+                tablero.forEach { pieza ->
+                    AnimatedPieza(id = pieza.id, fila = pieza.fila, col = pieza.col, tamanoCelda = 40.dp) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            // Un solo color de tinta para las dos: el
+                            // símbolo Unicode ya distingue blanco (hueco) de
+                            // negro (sólido) por su forma. Pintarlas de
+                            // colores distintos hacía que las piezas del
+                            // jugador casi desaparecieran sobre casillas claras.
+                            Text(simboloPieza(pieza), fontSize = 26.sp, color = Color(0xFF2A2118))
                         }
                     }
                 }

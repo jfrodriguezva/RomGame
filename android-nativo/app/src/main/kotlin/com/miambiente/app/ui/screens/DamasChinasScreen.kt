@@ -35,9 +35,15 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.AnimatedPieza
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
-internal data class FichaChina(val fila: Int, val col: Int, val esJugador: Boolean)
+// `id` al final con valor por defecto: no rompe las pruebas existentes.
+// Permite animar el movimiento (ver AnimatedPieza) sin perder de vista
+// qué canica es cuál al saltar.
+internal data class FichaChina(val fila: Int, val col: Int, val esJugador: Boolean, val id: Int = 0)
 internal data class MovidaChina(val ficha: FichaChina, val filaDestino: Int, val colDestino: Int)
 
 private val DIRECCIONES_CHINAS = listOf(-1 to -1, -1 to 0, -1 to 1, 0 to -1, 0 to 1, 1 to -1, 1 to 0, 1 to 1)
@@ -48,8 +54,8 @@ internal val CASA_JUGADOR = listOf(0 to 0, 0 to 1, 0 to 2, 1 to 0, 1 to 1, 1 to 
 internal val CASA_CPU = listOf(6 to 5, 6 to 6, 6 to 7, 7 to 5, 7 to 6, 7 to 7)
 
 internal fun tableroInicialChinas(): List<FichaChina> =
-    CASA_JUGADOR.map { (f, c) -> FichaChina(f, c, esJugador = true) } +
-        CASA_CPU.map { (f, c) -> FichaChina(f, c, esJugador = false) }
+    CASA_JUGADOR.mapIndexed { i, (f, c) -> FichaChina(f, c, esJugador = true, id = i) } +
+        CASA_CPU.mapIndexed { i, (f, c) -> FichaChina(f, c, esJugador = false, id = i + CASA_JUGADOR.size) }
 
 private fun saltosDesde(origen: Pair<Int, Int>, ocupadas: Set<Pair<Int, Int>>, visitados: MutableSet<Pair<Int, Int>>): Set<Pair<Int, Int>> {
     val alcanzables = mutableSetOf<Pair<Int, Int>>()
@@ -195,7 +201,11 @@ fun DamasChinasScreen(onVolver: () -> Unit) {
     LaunchedEffect(turnoJugador, ganador, dosJugadores) {
         if (dosJugadores || turnoJugador || ganador != null) return@LaunchedEffect
         delay(600)
-        val movida = mejorMovidaChinas(tablero)
+        // Igual que en Damas: la IA corre fuera del hilo principal para
+        // no arriesgar un ANR ("algunos juegos traban la app y la
+        // reinician") — acá cada canica evalúa cadenas de salto
+        // recursivas, y son 6 canicas por turno.
+        val movida = withContext(Dispatchers.Default) { mejorMovidaChinas(tablero) }
         if (movida != null) {
             services.sound.tocar(Efecto.CLICK)
             tablero = aplicarMovidaChinas(tablero, movida)
@@ -236,49 +246,57 @@ fun DamasChinasScreen(onVolver: () -> Unit) {
                     (if (dosJugadores) "Verdes" else "Computadora") + ": ${tablero.count { !it.esJugador && (it.fila to it.col) in CASA_JUGADOR }}/6 en casa",
                 fontSize = 12.sp,
             )
-            Column(
+            Box(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .horizontalScroll(rememberScrollState())
                     .shadow(6.dp, RoundedCornerShape(8.dp))
-                    .clip(RoundedCornerShape(8.dp)),
+                    .clip(RoundedCornerShape(8.dp))
+                    .size(38.dp * 8),
             ) {
-                for (fila in 0..7) {
-                    Row {
-                        for (col in 0..7) {
-                            val ficha = tablero.find { it.fila == fila && it.col == col }
-                            val esSeleccionada = seleccionada?.fila == fila && seleccionada?.col == col
-                            val esDestino = (fila to col) in destinosResaltados
-                            val esCasaJugador = (fila to col) in CASA_JUGADOR
-                            val esCasaCpu = (fila to col) in CASA_CPU
-                            Box(
-                                modifier = Modifier
-                                    .size(38.dp)
-                                    .background(
-                                        when {
-                                            esCasaJugador -> Color(0xFFF0D9D6)
-                                            esCasaCpu -> Color(0xFFD6E8DF)
-                                            else -> Color(0xFFF3E8D0)
-                                        },
-                                    )
-                                    .border(0.5.dp, Color(0xFFD9CDB4))
-                                    .clickable { tocarCasilla(fila, col) },
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                if (esDestino) {
-                                    Box(Modifier.size(12.dp).clip(RoundedCornerShape(50)).background(Color(0xFF4C7A3A).copy(alpha = 0.6f)))
-                                }
-                                if (ficha != null) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(28.dp)
-                                            .shadow(2.dp, RoundedCornerShape(50))
-                                            .clip(RoundedCornerShape(50))
-                                            .background(if (ficha.esJugador) Color(0xFFD9433A) else Color(0xFF3E9B7A))
-                                            .then(if (esSeleccionada) Modifier.border(2.dp, Color(0xFFE0C23C), RoundedCornerShape(50)) else Modifier),
-                                    )
+                Column {
+                    for (fila in 0..7) {
+                        Row {
+                            for (col in 0..7) {
+                                val esDestino = (fila to col) in destinosResaltados
+                                val esCasaJugador = (fila to col) in CASA_JUGADOR
+                                val esCasaCpu = (fila to col) in CASA_CPU
+                                Box(
+                                    modifier = Modifier
+                                        .size(38.dp)
+                                        .background(
+                                            when {
+                                                esCasaJugador -> Color(0xFFF0D9D6)
+                                                esCasaCpu -> Color(0xFFD6E8DF)
+                                                else -> Color(0xFFF3E8D0)
+                                            },
+                                        )
+                                        .border(0.5.dp, Color(0xFFD9CDB4))
+                                        .clickable { tocarCasilla(fila, col) },
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    if (esDestino) {
+                                        Box(Modifier.size(12.dp).clip(RoundedCornerShape(50)).background(Color(0xFF4C7A3A).copy(alpha = 0.6f)))
+                                    }
                                 }
                             }
+                        }
+                    }
+                }
+                // Capa de canicas con posición animada — se ven saltar de
+                // verdad en vez de desaparecer y aparecer de golpe.
+                tablero.forEach { ficha ->
+                    val esSeleccionada = seleccionada?.id == ficha.id
+                    AnimatedPieza(id = ficha.id, fila = ficha.fila, col = ficha.col, tamanoCelda = 38.dp) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .shadow(2.dp, RoundedCornerShape(50))
+                                    .clip(RoundedCornerShape(50))
+                                    .background(if (ficha.esJugador) Color(0xFFD9433A) else Color(0xFF3E9B7A))
+                                    .then(if (esSeleccionada) Modifier.border(2.dp, Color(0xFFE0C23C), RoundedCornerShape(50)) else Modifier),
+                            )
                         }
                     }
                 }

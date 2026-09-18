@@ -1,5 +1,6 @@
 package com.miambiente.app.ui.materials
 
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -17,13 +18,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.text.font.FontWeight
@@ -129,7 +133,17 @@ fun MaterialTransferir(
                         modifier = Modifier.horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
-                        repeat(enDestino) { render() }
+                        // Cada pieza que llega aparece con un pop de escala
+                        // (key(i) + Animatable propio): antes se perdía la
+                        // silueta de la pieza arrastrada y una nueva
+                        // aparecía de golpe en el destino, sin transición.
+                        for (i in 0 until enDestino) {
+                            key(i) {
+                                val escala = remember { androidx.compose.animation.core.Animatable(0f) }
+                                LaunchedEffect(Unit) { escala.animateTo(1f, spring(dampingRatio = 0.55f)) }
+                                Box(Modifier.scale(escala.value)) { render() }
+                            }
+                        }
                     }
                 }
             }
