@@ -1,5 +1,6 @@
 package com.miambiente.app.ui.screens
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,12 +22,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
+import com.miambiente.app.data.Patron
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
 import kotlinx.coroutines.delay
@@ -41,7 +44,23 @@ private val PARTES = listOf(
     Parte("boca", "la boca", 0, 55, 60),
 )
 
-/** Toca la cara — material independiente: tocar directo sobre el dibujo, no elegir de una lista. */
+/**
+ * Toca la cara — material independiente: tocar directo sobre el dibujo,
+ * no elegir de una lista.
+ *
+ * Bug real reportado ("toca la cara no hace nada"): "el ojo" son en
+ * realidad DOS partes distintas (ojo-izq y ojo-der) con el mismo nombre
+ * mostrado. Antes `tocar(id)` comparaba por `id` exacto contra el
+ * objetivo elegido al azar — así que tocar el ojo "equivocado" (el otro,
+ * no el que salió sorteado) contaba como error, sin ningún aviso visual
+ * de que pasó algo. Como además la consigna ("Toca el ojo") no distingue
+ * cuál de los dos, y al acertar el objetivo podía volver a caer en el
+ * OTRO ojo (mismo texto en pantalla, nada visible cambió), la experiencia
+ * completa se sentía como "no hace nada" aunque técnicamente sí
+ * respondía. Ahora se compara por NOMBRE (tocar cualquiera de los dos
+ * ojos cuenta si el objetivo es "el ojo"), y un toque equivocado sí
+ * muestra un aviso real en vez de fallar en silencio.
+ */
 @Composable
 fun CaraScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
@@ -49,18 +68,29 @@ fun CaraScreen(onVolver: () -> Unit) {
     val juego = buscarJuego("cara")!!
 
     var objetivo by remember { mutableStateOf(PARTES.random()) }
+    var error by remember { mutableStateOf<String?>(null) }
+    var acertada by remember { mutableStateOf<String?>(null) }
 
-    fun tocar(id: String) {
-        if (id == objetivo.id) {
+    fun tocar(parte: Parte) {
+        if (parte.nombre == objetivo.nombre) {
             services.sound.tocar(Efecto.CORRECT)
+            services.haptics.vibrar(Patron.ACIERTO)
+            error = null
+            acertada = parte.id
             scope.launch { services.progress.completarNivel(juego.id, 1) }
-            scope.launch { delay(700); objetivo = PARTES.filter { it.id != objetivo.id }.random() }
+            scope.launch {
+                delay(700)
+                objetivo = PARTES.filter { it.nombre != objetivo.nombre }.random()
+                acertada = null
+            }
         } else {
             services.sound.tocar(Efecto.WRONG)
+            error = "Ese no es. Intenta otra vez"
+            scope.launch { delay(900); error = null }
         }
     }
 
-    GameShell(juego = juego, consigna = "Toca ${objetivo.nombre}", onVolver = onVolver) {
+    GameShell(juego = juego, consigna = "Toca ${objetivo.nombre}", nota = error, onVolver = onVolver) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Box(Modifier.size(240.dp), contentAlignment = Alignment.Center) {
                 // Orejas y pelo: antes la cara era un círculo liso, ahora
@@ -83,7 +113,7 @@ fun CaraScreen(onVolver: () -> Unit) {
                                     .align(Alignment.Center)
                                     .offset(x = parte.dx.dp, y = parte.dy.dp)
                                     .semantics { contentDescription = parte.nombre }
-                                    .clickable { tocar(parte.id) },
+                                    .clickable { tocar(parte) },
                             ) {
                                 drawArc(
                                     color = Color(0xFFA23B3B),
@@ -96,15 +126,17 @@ fun CaraScreen(onVolver: () -> Unit) {
                                 )
                             }
                         } else {
+                            val pulso by animateFloatAsState(if (acertada == parte.id) 1.3f else 1f, label = "pulsoParte")
                             Box(
                                 modifier = Modifier
                                     .size(parte.tamano.dp)
                                     .align(Alignment.Center)
                                     .offset(x = parte.dx.dp, y = parte.dy.dp)
+                                    .graphicsLayer { scaleX = pulso; scaleY = pulso }
                                     .clip(CircleShape)
                                     .background(Color(0xFF3F342C))
                                     .semantics { contentDescription = parte.nombre }
-                                    .clickable { tocar(parte.id) },
+                                    .clickable { tocar(parte) },
                             )
                         }
                     }

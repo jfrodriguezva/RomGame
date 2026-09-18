@@ -41,8 +41,12 @@ import com.miambiente.app.ui.screens.CuerpoScreen
 import com.miambiente.app.ui.screens.DadoScreen
 import com.miambiente.app.ui.screens.AjedrezScreen
 import com.miambiente.app.ui.screens.AjustesScreen
+import com.miambiente.app.ui.screens.ArkanoidScreen
 import com.miambiente.app.ui.screens.DamasChinasScreen
 import com.miambiente.app.ui.screens.DamasScreen
+import com.miambiente.app.ui.screens.SnakeScreen
+import com.miambiente.app.ui.screens.TetrisScreen
+import com.miambiente.app.ui.screens.TopoScreen
 import com.miambiente.app.ui.screens.SolitarioScreen
 import com.miambiente.app.ui.screens.SolitarioAranaScreen
 import com.miambiente.app.ui.screens.DiaNocheScreen
@@ -289,6 +293,10 @@ class MainActivity : ComponentActivity() {
                         composable("adivinaquien") { AdivinaQuienScreen(volver) }
                         composable("damas") { DamasScreen(volver) }
                         composable("damas-chinas") { DamasChinasScreen(volver) }
+                        composable("tetris") { TetrisScreen(volver) }
+                        composable("snake") { SnakeScreen(volver) }
+                        composable("arkanoid") { ArkanoidScreen(volver) }
+                        composable("topo") { TopoScreen(volver) }
                         composable("solitario") { SolitarioScreen(volver) }
                         composable("arana-cartas") { SolitarioAranaScreen(volver) }
                         composable("ajedrez") { AjedrezScreen(volver) }

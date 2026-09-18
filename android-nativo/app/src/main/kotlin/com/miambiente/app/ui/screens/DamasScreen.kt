@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -125,6 +126,7 @@ fun DamasScreen(onVolver: () -> Unit) {
     val scope = rememberCoroutineScope()
     val juego = buscarJuego("damas")!!
 
+    var dosJugadores by remember { mutableStateOf(false) }
     var tablero by remember { mutableStateOf(tableroInicialDamas()) }
     var turnoJugador by remember { mutableStateOf(true) }
     var seleccionada by remember { mutableStateOf<FichaDamas?>(null) }
@@ -132,26 +134,37 @@ fun DamasScreen(onVolver: () -> Unit) {
     var mensaje by remember { mutableStateOf("Tu turno — toca una ficha") }
     var ganador by remember { mutableStateOf<String?>(null) }
 
+    fun mensajeInicio() = if (dosJugadores) "Turno de 🔴 — toca una ficha" else "Tu turno — toca una ficha"
+
     fun reiniciar() {
         tablero = tableroInicialDamas()
         turnoJugador = true
         seleccionada = null
         encadenando = false
         ganador = null
-        mensaje = "Tu turno — toca una ficha"
+        mensaje = mensajeInicio()
+    }
+
+    fun cambiarModo(activarDosJugadores: Boolean) {
+        dosJugadores = activarDosJugadores
+        reiniciar()
     }
 
     fun verificarFin() {
         val fichasJugador = tablero.count { it.esJugador }
         val fichasCpu = tablero.count { !it.esJugador }
         if (fichasCpu == 0 || movidasLegales(tablero, esJugador = false).isEmpty()) {
-            ganador = "jugador"; mensaje = "¡Ganaste! 🎉"
+            ganador = "jugador"; mensaje = if (dosJugadores) "¡Ganó 🔴! 🎉" else "¡Ganaste! 🎉"
         } else if (fichasJugador == 0 || movidasLegales(tablero, esJugador = true).isEmpty()) {
-            ganador = "cpu"; mensaje = "Ganó la computadora, ¡otra vez!"
+            ganador = "cpu"; mensaje = if (dosJugadores) "¡Ganó ⚫! 🎉" else "Ganó la computadora, ¡otra vez!"
         }
     }
 
-    fun jugarMovidaJugador(movida: MovidaDamas) {
+    // Se pidió poder jugar entre más de una persona: con `dosJugadores`
+    // activo, ambos lados se controlan por toques (nadie mueve solo) — la
+    // ficha "esJugador" pasa a significar simplemente "de quién es el
+    // turno ahora mismo" (🔴 o ⚫), no "humano vs. computadora".
+    fun jugarMovida(movida: MovidaDamas) {
         services.sound.tocar(if (movida.capturada != null) Efecto.CORRECT else Efecto.CLICK)
         tablero = aplicarMovidaDamas(tablero, movida)
         val nuevaFicha = tablero.first { it.fila == movida.filaDestino && it.col == movida.colDestino }
@@ -163,27 +176,32 @@ fun DamasScreen(onVolver: () -> Unit) {
         } else {
             seleccionada = null
             encadenando = false
-            turnoJugador = false
-            mensaje = "Turno de la computadora"
+            turnoJugador = !turnoJugador
+            mensaje = when {
+                dosJugadores && turnoJugador -> "Turno de 🔴"
+                dosJugadores -> "Turno de ⚫"
+                else -> "Turno de la computadora"
+            }
         }
     }
 
     fun tocarCasilla(fila: Int, col: Int) {
-        if (!turnoJugador || ganador != null) return
+        if (ganador != null) return
+        if (!dosJugadores && !turnoJugador) return
         val ocupante = tablero.find { it.fila == fila && it.col == col }
         val actual = seleccionada
         if (actual != null) {
             val destino = movidasDeFicha(actual, tablero).find { it.filaDestino == fila && it.colDestino == col }
-            if (destino != null) { jugarMovidaJugador(destino); verificarFin(); return }
+            if (destino != null) { jugarMovida(destino); verificarFin(); return }
         }
-        if (!encadenando && ocupante != null && ocupante.esJugador) {
+        if (!encadenando && ocupante != null && ocupante.esJugador == turnoJugador) {
             seleccionada = ocupante
             services.sound.tocar(Efecto.CLICK)
         }
     }
 
-    LaunchedEffect(turnoJugador, ganador) {
-        if (turnoJugador || ganador != null) return@LaunchedEffect
+    LaunchedEffect(turnoJugador, ganador, dosJugadores) {
+        if (dosJugadores || turnoJugador || ganador != null) return@LaunchedEffect
         delay(700)
         var piezaTurno: FichaDamas? = null
         while (true) {
@@ -215,8 +233,28 @@ fun DamasScreen(onVolver: () -> Unit) {
         onVolver = onVolver,
         acciones = { if (ganador != null) Button(onClick = ::reiniciar) { Text("Jugar de nuevo") } },
     ) {
-        Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Tú: ${tablero.count { it.esJugador }} · Computadora: ${tablero.count { !it.esJugador }}", fontSize = 12.sp)
+        Column(
+            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 10.dp)) {
+                FilterChip(
+                    selected = !dosJugadores,
+                    onClick = { if (dosJugadores) cambiarModo(false) },
+                    label = { Text("🤖 Vs. computadora") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF8A5A2B), selectedLabelColor = Color.White),
+                )
+                FilterChip(
+                    selected = dosJugadores,
+                    onClick = { if (!dosJugadores) cambiarModo(true) },
+                    label = { Text("👫 Dos jugadores") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF3F342C), selectedLabelColor = Color.White),
+                )
+            }
+            Text(
+                if (dosJugadores) "🔴: ${tablero.count { it.esJugador }} · ⚫: ${tablero.count { !it.esJugador }}" else "Tú: ${tablero.count { it.esJugador }} · Computadora: ${tablero.count { !it.esJugador }}",
+                fontSize = 12.sp,
+            )
             // El tablero (304dp) cabe en casi cualquier celular, pero se
             // envuelve en scroll horizontal de todas formas: en pantallas
             // muy angostas o en modo multi-ventana, antes se recortaba en

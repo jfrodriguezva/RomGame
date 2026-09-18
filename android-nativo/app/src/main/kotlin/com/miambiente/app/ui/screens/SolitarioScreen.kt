@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -192,7 +193,14 @@ fun SolitarioScreen(onVolver: () -> Unit) {
         onVolver = onVolver,
         acciones = { if (ganado) Button(onClick = ::repartir) { Text("Jugar de nuevo") } },
     ) {
-        Column(Modifier.fillMaxSize().padding(12.dp)) {
+        // Bug real reportado ("se corta la pantalla"): esta Column nunca
+        // tuvo scroll VERTICAL, solo las filas de adentro tenían scroll
+        // horizontal. En una pantalla baja (celular en horizontal, o
+        // cualquier alto reducido) la cascada de 7 columnas + fundaciones +
+        // encabezado suma más alto de lo que cabe, y el resto simplemente
+        // se recortaba fuera de la vista, inalcanzable. verticalScroll en
+        // el contenedor completo resuelve esto sin tocar el layout interno.
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp)) {
             // Con scroll horizontal (no solo fillMaxWidth): en un celular
             // angosto 7-10 cartas de ancho fijo no caben en una fila que
             // solo se ajusta por peso — mismo bug de fondo ya encontrado y
@@ -254,7 +262,22 @@ fun SolitarioScreen(onVolver: () -> Unit) {
                             // superpuesta de un solitario real. Con `Box`
                             // (que no apila solo) el offset manual es la
                             // única fuente de posición, y sí se superponen.
-                            Box {
+                            //
+                            // Segundo bug real, más de fondo, del mismo
+                            // "se corta la pantalla": `Modifier.offset()`
+                            // NO agranda el tamaño medido del `Box` que lo
+                            // contiene — así que este `Box`, sin una altura
+                            // explícita, reportaba hacia afuera solo la
+                            // altura de UNA carta (56dp), sin importar
+                            // cuántas cartas tuviera en cascada debajo. El
+                            // `verticalScroll` de más afuera entonces
+                            // calculaba mal cuánto contenido había, y a
+                            // veces ni activaba el scroll aunque la cascada
+                            // sí se saliera visualmente de la pantalla.
+                            // Con la altura puesta a mano (una carta +
+                            // el offset de la última), el Box reporta su
+                            // tamaño real y el scroll sabe hasta dónde ir.
+                            Box(modifier = Modifier.height(56.dp + 18.dp * (col.size - 1))) {
                                 col.forEachIndexed { i, (carta, bocaArriba) ->
                                     Box(modifier = Modifier.offset(y = (i * 18).dp)) {
                                         if (bocaArriba) {

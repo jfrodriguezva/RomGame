@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -164,7 +166,11 @@ fun SolitarioAranaScreen(onVolver: () -> Unit) {
         onVolver = onVolver,
         acciones = { if (ganado) Button(onClick = ::repartir) { Text("Jugar de nuevo") } },
     ) {
-        Column(Modifier.fillMaxSize().padding(10.dp)) {
+        // Mismo bug de fondo que en Solitario ("se corta la pantalla"):
+        // sin scroll vertical en el contenedor completo, una pantalla baja
+        // recortaba la cascada de cartas por debajo en vez de dejarla
+        // alcanzable con un swipe.
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 CartaDorso(habilitado = mazo.isNotEmpty(), onClick = ::tocarMazo, vacio = mazo.isEmpty())
                 Text("Mazo: ${mazo.size / 10} repartos", fontSize = 11.sp)
@@ -194,7 +200,13 @@ fun SolitarioAranaScreen(onVolver: () -> Unit) {
                             // ya apila las cartas, y el `offset` encima
                             // duplicaba el desplazamiento. Con `Box` el
                             // offset es la única posición.
-                            Box {
+                            //
+                            // Segundo bug real ("se corta la pantalla"):
+                            // `offset()` no agranda el alto medido del Box,
+                            // así que el scroll vertical de más afuera no
+                            // se enteraba de cuánto medía la cascada real.
+                            // Altura puesta a mano para que sí se entere.
+                            Box(modifier = Modifier.height(56.dp + 15.dp * (col.size - 1))) {
                                 col.forEachIndexed { i, (carta, bocaArriba) ->
                                     Box(modifier = Modifier.offset(y = (i * 15).dp)) {
                                         if (bocaArriba) {

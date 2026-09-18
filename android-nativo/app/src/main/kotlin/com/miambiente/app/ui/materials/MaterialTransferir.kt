@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,11 +55,14 @@ fun MaterialTransferir(
     var enOrigen by remember(estado.nivel) { mutableStateOf(total) }
     var enDestino by remember(estado.nivel) { mutableStateOf(0) }
     var destinoRect by remember(estado.nivel) { mutableStateOf<Rect?>(null) }
-    var puntoArrastre by remember(estado.nivel) { mutableStateOf<Offset?>(null) }
+    var rectArrastre by remember(estado.nivel) { mutableStateOf<Rect?>(null) }
 
-    fun soltar(puntoRoot: Offset) {
+    // Mismo bug de fondo que en MaterialOrdenar/MaterialClasificar
+    // ("sigue fallando al arrastrar y colocar"): solapamiento de
+    // rectángulos en vez de exigir el punto central exacto.
+    fun soltar(rectPieza: Rect) {
         val rect = destinoRect ?: return
-        if (!rect.contains(puntoRoot)) return
+        if (!rect.overlaps(rectPieza)) return
         val nuevoDestino = enDestino + 1
         if (nuevoDestino > objetivo) {
             estado.intento("Te pasaste del objetivo. Vuelve a empezar")
@@ -106,8 +108,8 @@ fun MaterialTransferir(
                     PiezaArrastrable(
                         tamano = 48.dp,
                         clave = "origen-${estado.nivel}-$i-$enOrigen",
-                        onArrastrar = { punto -> puntoArrastre = punto },
-                        onSoltar = { punto -> soltar(punto) },
+                        onArrastrar = { rect -> rectArrastre = rect },
+                        onSoltar = { rect -> soltar(rect) },
                     ) { render() }
                 }
             }
@@ -115,7 +117,7 @@ fun MaterialTransferir(
             Text("Destino", color = colores.texto, modifier = Modifier.padding(top = 12.dp))
             ZonaSoltar(
                 modifier = Modifier.fillMaxWidth().height(90.dp).padding(top = 4.dp),
-                resaltado = puntoArrastre != null && destinoRect?.contains(puntoArrastre!!) == true,
+                resaltado = rectArrastre != null && destinoRect?.overlaps(rectArrastre!!) == true,
                 formaResaltado = RoundedCornerShape(20.dp),
                 onPosicion = { rect -> destinoRect = rect },
             ) {

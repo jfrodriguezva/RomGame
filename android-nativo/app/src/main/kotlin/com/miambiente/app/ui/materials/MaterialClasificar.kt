@@ -61,12 +61,16 @@ fun <T> MaterialClasificar(
     }
     var acertados by remember(estado.nivel) { mutableStateOf(0) }
     val canastaRects = remember(estado.nivel) { mutableStateMapOf<String, Rect>() }
-    var puntoArrastre by remember(estado.nivel) { mutableStateOf<androidx.compose.ui.geometry.Offset?>(null) }
+    var rectArrastre by remember(estado.nivel) { mutableStateOf<Rect?>(null) }
 
     val completo = pendientes.isEmpty()
 
-    fun soltar(item: ItemClasificar<T>, puntoRoot: androidx.compose.ui.geometry.Offset) {
-        val canastaId = canastaRects.entries.find { (_, rect) -> rect.contains(puntoRoot) }?.key ?: return
+    // Mismo bug de fondo que en MaterialOrdenar ("sigue fallando al
+    // arrastrar y colocar"): exigir que el punto central de la pieza
+    // caiga dentro de la canasta es muy poco tolerante. Ahora basta con
+    // que los rectángulos se solapen.
+    fun soltar(item: ItemClasificar<T>, rectPieza: Rect) {
+        val canastaId = canastaRects.entries.find { (_, rect) -> rect.overlaps(rectPieza) }?.key ?: return
         if (canastaId == item.categoria) {
             estado.acierto("¡Correcto!")
             pendientes = pendientes.filter { it.id != item.id }
@@ -110,8 +114,8 @@ fun <T> MaterialClasificar(
                         PiezaArrastrable(
                             tamano = 64.dp,
                             clave = item.id,
-                            onArrastrar = { punto -> puntoArrastre = punto },
-                            onSoltar = { punto -> soltar(item, punto) },
+                            onArrastrar = { rect -> rectArrastre = rect },
+                            onSoltar = { rect -> soltar(item, rect) },
                         ) { render(item.valor) }
                     }
                 }
@@ -125,7 +129,7 @@ fun <T> MaterialClasificar(
                     val rect = canastaRects[canasta.id]
                     ZonaSoltar(
                         modifier = Modifier.weight(1f).fillMaxSize(),
-                        resaltado = puntoArrastre != null && rect?.contains(puntoArrastre!!) == true,
+                        resaltado = rectArrastre != null && rect?.overlaps(rectArrastre!!) == true,
                         formaResaltado = RoundedCornerShape(20.dp),
                         onPosicion = { r -> canastaRects[canasta.id] = r },
                     ) {

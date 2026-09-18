@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -89,8 +90,19 @@ fun PiezaArrastrable(
     tamano: Dp,
     clave: Any,
     descripcion: String? = null,
-    onArrastrar: ((centroRoot: Offset?) -> Unit)? = null,
-    onSoltar: (centroRoot: Offset) -> Unit,
+    // Bug real reportado varias veces ("sigue fallando al arrastrar y
+    // colocar"): antes `onSoltar`/`onArrastrar` solo mandaban el punto
+    // CENTRAL de la pieza, y `ZonaSoltar` exigía que ese único punto
+    // cayera dentro del rectángulo del destino — con una pieza y un
+    // destino del mismo tamaño (el caso normal), eso exige soltar con el
+    // dedo casi exactamente centrado, algo muy difícil para manos de niño
+    // chico y la causa más probable de "no funciona". Ahora se manda el
+    // rectángulo COMPLETO de la pieza mientras se arrastra, y el destino
+    // acepta cualquier SOLAPAMIENTO real entre ambos rectángulos (como
+    // cualquier app de arrastrar-y-soltar seria) en vez de exigir un
+    // punto exacto.
+    onArrastrar: ((rectRoot: Rect?) -> Unit)? = null,
+    onSoltar: (rectRoot: Rect) -> Unit,
     contenido: @Composable () -> Unit,
 ) {
     val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
@@ -99,6 +111,8 @@ fun PiezaArrastrable(
     val scope = rememberCoroutineScope()
     val density = LocalDensity.current
     val tamanoPx = with(density) { tamano.toPx() }
+
+    fun rectActual(desplazado: Offset) = Rect(origenRoot + desplazado, Size(tamanoPx, tamanoPx))
 
     // Feedback táctil real al tomar la pieza: antes no había ninguna
     // diferencia visual entre "quieta" y "en la mano", y al soltar en un
@@ -123,8 +137,7 @@ fun PiezaArrastrable(
                     onDragStart = { arrastrando = true },
                     onDragEnd = {
                         arrastrando = false
-                        val centro = origenRoot + offset.value + Offset(tamanoPx / 2, tamanoPx / 2)
-                        onSoltar(centro)
+                        onSoltar(rectActual(offset.value))
                         onArrastrar?.invoke(null)
                         scope.launch { offset.animateTo(Offset.Zero, spring(dampingRatio = 0.6f, stiffness = 300f)) }
                     },
@@ -137,7 +150,7 @@ fun PiezaArrastrable(
                         change.consume()
                         val nuevoOffset = offset.value + dragAmount
                         scope.launch { offset.snapTo(nuevoOffset) }
-                        onArrastrar?.invoke(origenRoot + nuevoOffset + Offset(tamanoPx / 2, tamanoPx / 2))
+                        onArrastrar?.invoke(rectActual(nuevoOffset))
                     },
                 )
             },

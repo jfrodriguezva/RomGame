@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -191,16 +194,32 @@ fun AjedrezScreen(onVolver: () -> Unit) {
     var tablero by remember { mutableStateOf(tableroInicialAjedrez()) }
     var turnoJugador by remember { mutableStateOf(true) }
     var seleccionada by remember { mutableStateOf<PiezaAjedrez?>(null) }
+    var dosJugadores by remember { mutableStateOf(false) }
     var pensando by remember { mutableStateOf(false) }
     var mensaje by remember { mutableStateOf("Tu turno — toca una pieza") }
     var resultado by remember { mutableStateOf<String?>(null) }
+
+    fun mensajeTurno(esJugador: Boolean) = when {
+        !dosJugadores && esJugador -> "Tu turno"
+        !dosJugadores -> "Turno de la computadora"
+        esJugador -> "Turno de blancas"
+        else -> "Turno de negras"
+    }
 
     fun reiniciar() {
         tablero = tableroInicialAjedrez()
         turnoJugador = true
         seleccionada = null
         resultado = null
-        mensaje = "Tu turno — toca una pieza"
+        mensaje = mensajeTurno(true)
+    }
+
+    // Se pidió poder jugar entre más de una persona: con `dosJugadores`
+    // activo nadie mueve solo — blancas y negras se controlan por
+    // toques, alternando.
+    fun cambiarModo(activarDosJugadores: Boolean) {
+        dosJugadores = activarDosJugadores
+        reiniciar()
     }
 
     fun revisarFin(despuesDeTurnoJugador: Boolean) {
@@ -214,42 +233,40 @@ fun AjedrezScreen(onVolver: () -> Unit) {
                 else -> "empate"
             }
             mensaje = when (resultado) {
-                "jugador" -> "¡Jaque mate, ganaste! 🎉"
-                "cpu" -> "Jaque mate — ganó la computadora"
+                "jugador" -> if (dosJugadores) "¡Jaque mate, ganaron blancas! 🎉" else "¡Jaque mate, ganaste! 🎉"
+                "cpu" -> if (dosJugadores) "¡Jaque mate, ganaron negras! 🎉" else "Jaque mate — ganó la computadora"
                 else -> "¡Ahogado! Empate"
             }
-            if (resultado == "jugador") {
-                services.sound.tocar(Efecto.WIN)
-                scope.launch { services.progress.completarNivel(juego.id, 1) }
-            } else {
-                services.sound.tocar(Efecto.WRONG)
-            }
+            if (resultado == "jugador" && !dosJugadores) scope.launch { services.progress.completarNivel(juego.id, 1) }
+            services.sound.tocar(if (resultado == "jugador" || (dosJugadores && resultado == "cpu")) Efecto.WIN else Efecto.WRONG)
         } else {
             mensaje = when {
-                turnoSiguienteEsJugador && reyEnJaque(tablero, true) -> "¡Jaque! Tu turno"
-                turnoSiguienteEsJugador -> "Tu turno"
-                else -> "Turno de la computadora"
+                turnoSiguienteEsJugador && reyEnJaque(tablero, true) -> "¡Jaque! ${mensajeTurno(true)}"
+                !turnoSiguienteEsJugador && reyEnJaque(tablero, false) -> "¡Jaque! ${mensajeTurno(false)}"
+                else -> mensajeTurno(turnoSiguienteEsJugador)
             }
         }
     }
 
     fun tocarCasilla(fila: Int, col: Int) {
-        if (!turnoJugador || resultado != null || pensando) return
+        if (resultado != null || pensando) return
+        if (!dosJugadores && !turnoJugador) return
         val ocupante = tablero.find { it.fila == fila && it.col == col }
         val actual = seleccionada
         if (actual != null) {
-            val movida = movidasLegalesAjedrez(tablero, esJugador = true)
+            val movida = movidasLegalesAjedrez(tablero, esJugador = turnoJugador)
                 .find { it.pieza == actual && it.filaDestino == fila && it.colDestino == col }
             if (movida != null) {
                 services.sound.tocar(if (movida.captura != null) Efecto.CORRECT else Efecto.CLICK)
                 tablero = aplicarMovidaAjedrez(tablero, movida)
                 seleccionada = null
-                turnoJugador = false
-                revisarFin(despuesDeTurnoJugador = true)
+                val eraTurnoJugador = turnoJugador
+                turnoJugador = !turnoJugador
+                revisarFin(despuesDeTurnoJugador = eraTurnoJugador)
                 return
             }
         }
-        if (ocupante != null && ocupante.esJugador) {
+        if (ocupante != null && ocupante.esJugador == turnoJugador) {
             seleccionada = ocupante
             services.sound.tocar(Efecto.CLICK)
         } else {
@@ -257,8 +274,8 @@ fun AjedrezScreen(onVolver: () -> Unit) {
         }
     }
 
-    LaunchedEffect(turnoJugador, resultado) {
-        if (turnoJugador || resultado != null) return@LaunchedEffect
+    LaunchedEffect(turnoJugador, resultado, dosJugadores) {
+        if (dosJugadores || turnoJugador || resultado != null) return@LaunchedEffect
         pensando = true
         delay(500)
         val movida = withContext(Dispatchers.Default) { mejorMovidaAjedrez(tablero) }
@@ -269,7 +286,7 @@ fun AjedrezScreen(onVolver: () -> Unit) {
         revisarFin(despuesDeTurnoJugador = false)
     }
 
-    val destinosResaltados = seleccionada?.let { movidasLegalesAjedrez(tablero, esJugador = true).filter { m -> m.pieza == it } } ?: emptyList()
+    val destinosResaltados = seleccionada?.let { movidasLegalesAjedrez(tablero, esJugador = turnoJugador).filter { m -> m.pieza == it } } ?: emptyList()
 
     GameShell(
         juego = juego,
@@ -278,7 +295,26 @@ fun AjedrezScreen(onVolver: () -> Unit) {
         onVolver = onVolver,
         acciones = { if (resultado != null) Button(onClick = ::reiniciar) { Text("Jugar de nuevo") } },
     ) {
-        Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        // Mismo bug de fondo que "se corta la pantalla" en Solitario:
+        // faltaba scroll vertical en el contenedor completo.
+        Column(
+            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 10.dp)) {
+                FilterChip(
+                    selected = !dosJugadores,
+                    onClick = { if (dosJugadores) cambiarModo(false) },
+                    label = { Text("🤖 Vs. computadora") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF8A5A2B), selectedLabelColor = Color.White),
+                )
+                FilterChip(
+                    selected = dosJugadores,
+                    onClick = { if (!dosJugadores) cambiarModo(true) },
+                    label = { Text("👫 Dos jugadores") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF3F342C), selectedLabelColor = Color.White),
+                )
+            }
             Column(
                 modifier = Modifier
                     .padding(top = 8.dp)

@@ -66,7 +66,15 @@ private val IDS_DESTACADOS = listOf("pizarra", "xilofono", "collage", "colorear"
 @Composable
 fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> Unit, onAjustes: () -> Unit) {
     var areaActiva by remember { mutableStateOf<Area?>(Area.entries.first()) }
-    val disponibles = CATALOGO.filter { edad >= it.edadMinima }
+    // Bug real reportado ("no quitaste la opcion de las edades"): antes
+    // esto dependía de que `edadMinima = 2` en los juegos de mesa
+    // clásicos fuera siempre menor o igual a la edad mínima elegible en
+    // el selector — funcionaba, pero de forma frágil e implícita (si el
+    // selector alguna vez cambiara su mínimo, se rompería solo). Ahora el
+    // filtro EXPLÍCITAMENTE no aplica a Área.COMPANIA: esos materiales
+    // siempre aparecen abiertos, sin importar la edad elegida, tal como
+    // se pidió ("que todos aparezcan abiertos para jugar sin elegir edad").
+    val disponibles = CATALOGO.filter { it.area == Area.COMPANIA || edad >= it.edadMinima }
     val destacados = IDS_DESTACADOS.mapNotNull { buscarJuego(it) }.filter { edad >= it.edadMinima }
 
     Column(modifier = Modifier.fillMaxSize().background(Papel).safeDrawingPadding()) {

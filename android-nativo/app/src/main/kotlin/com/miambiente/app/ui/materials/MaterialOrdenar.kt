@@ -1,6 +1,9 @@
 package com.miambiente.app.ui.materials
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,31 +19,40 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.border
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.miambiente.app.data.Efecto
+import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.GameDef
 import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
 
 /**
- * Seriación por arrastre real — puerto del patrón MaterialOrdenar, pero
- * con arrastre (`PiezaArrastrable`/`ZonaSoltar`) en vez de tocar del
- * canasto en orden como en la web. `posicion` va de 1 a n; con
- * `invertido = false` la posición 1 espera la pieza más grande/primera
- * (torre rosa, escalera marrón); con `invertido = true` la fila sale en
- * orden ascendente (ciclo de vida, secuencias — ver la nota equivalente
- * en data/levels/ciclo-vida.ts de la versión web).
+ * Seriación por TOQUES, no por arrastre — modelo rehecho por completo.
+ *
+ * Bug real reportado repetidas veces ("Vida práctica, sigue fallando al
+ * arrastrar y colocar"): el modelo anterior (arrastrar con el dedo,
+ * `PiezaArrastrable`/`ZonaSoltar`) ya se le habían corregido dos causas
+ * de fondo reales (el estado se reciclaba por posición en la lista en
+ * vez de por pieza, y el punto de suelta exigía casi el centro exacto) y
+ * seguía sintiéndose poco confiable — arrastrar con precisión es
+ * genuinamente difícil para una mano de niño chico, sin importar cuánto
+ * se afine la tolerancia. Rehecho con un modelo distinto de raíz: tocar
+ * una pieza del canasto la "toma" (se ve seleccionada, con aro y
+ * sombra), y tocar una casilla intenta soltarla ahí. Sin gesto de
+ * arrastre, sin coordenadas de dedo en movimiento, sin nada que pueda
+ * fallar a medio camino — un toque siempre se registra bien.
+ *
+ * `posicion` va de 1 a n.
  */
 @Composable
 fun MaterialOrdenar(
@@ -51,31 +63,38 @@ fun MaterialOrdenar(
     consigna: String,
     onVolver: () -> Unit,
 ) {
+    val services = LocalServices.current
     val estado = rememberMaterialState(juego)
     val colores = coloresDe(juego.area)
 
     var colocadas by remember(estado.nivel) { mutableStateOf(setOf<Int>()) }
     var enCanasto by remember(estado.nivel) { mutableStateOf((1..n).shuffled()) }
-    val ranuraRects = remember(estado.nivel) { mutableStateMapOf<Int, Rect>() }
-    var puntoArrastre by remember(estado.nivel) { mutableStateOf<androidx.compose.ui.geometry.Offset?>(null) }
+    var seleccionada by remember(estado.nivel) { mutableStateOf<Int?>(null) }
 
     val completo = colocadas.size == n
 
-    fun soltarEn(pieza: Int, puntoRoot: androidx.compose.ui.geometry.Offset) {
-        val ranuraObjetivo = ranuraRects.entries.find { (_, rect) -> rect.contains(puntoRoot) }?.key
-        if (ranuraObjetivo == pieza - 1) {
+    fun tocarPieza(pieza: Int) {
+        services.sound.tocar(Efecto.CLICK)
+        seleccionada = if (seleccionada == pieza) null else pieza
+    }
+
+    fun tocarRanura(posicion: Int) {
+        val pieza = seleccionada ?: return
+        if (posicion == pieza) {
             estado.acierto("¡Ahí va!")
             colocadas = colocadas + pieza
             enCanasto = enCanasto - pieza
+            seleccionada = null
             if (colocadas.size == n) estado.completar()
-        } else if (ranuraObjetivo != null) {
+        } else {
             estado.intento("Ahí no va. Mira otra vez")
+            seleccionada = null
         }
     }
 
     GameShell(
         juego = juego,
-        consigna = if (completo) "¡Completaste la serie!" else consigna,
+        consigna = if (completo) "¡Completaste la serie!" else if (seleccionada != null) "Ahora toca dónde va" else consigna,
         nota = estado.nota,
         celebrar = estado.logrado,
         onVolver = onVolver,
@@ -94,28 +113,21 @@ fun MaterialOrdenar(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 for (i in 0 until n) {
-                    val ladoRanura = tamanoPara(i + 1)
-                    val rect = ranuraRects[i]
-                    ZonaSoltar(
-                        modifier = Modifier.size(ladoRanura),
-                        resaltado = puntoArrastre != null && rect?.contains(puntoArrastre!!) == true,
-                        formaResaltado = RoundedCornerShape(6.dp),
-                        onPosicion = { r -> ranuraRects[i] = r },
+                    val posicion = i + 1
+                    val ladoRanura = tamanoPara(posicion)
+                    val llena = posicion in colocadas
+                    Box(
+                        modifier = Modifier
+                            .size(ladoRanura)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(colores.fondo)
+                            .then(
+                                if (llena) Modifier else Modifier.border(2.dp, colores.acento.copy(alpha = 0.35f), RoundedCornerShape(6.dp)),
+                            )
+                            .then(if (!llena) Modifier.clickable { tocarRanura(posicion) } else Modifier),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        val piezaAqui = i + 1
-                        val llena = piezaAqui in colocadas
-                        Box(
-                            modifier = Modifier
-                                .size(ladoRanura)
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(colores.fondo)
-                                .then(
-                                    if (llena) Modifier else Modifier.border(2.dp, colores.acento.copy(alpha = 0.35f), RoundedCornerShape(6.dp)),
-                                ),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            if (llena) render(piezaAqui, ladoRanura)
-                        }
+                        if (llena) render(posicion, ladoRanura)
                     }
                 }
             }
@@ -126,46 +138,27 @@ fun MaterialOrdenar(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.Bottom,
             ) {
-                // Bug real: antes esto era `enCanasto.sorted()`, así que el
-                // canasto SIEMPRE mostraba las piezas en el orden correcto
-                // (1, 2, 3...) sin importar cómo se revolvió `enCanasto` al
-                // iniciar el nivel — el ejercicio de seriación quedaba
-                // resuelto de antemano, sin nada que pensar. Ahora se
-                // respeta el orden revuelto real.
-                //
-                // Segundo bug real, más de fondo, del mismo "no funciona
-                // bien al acomodar en las casillas": faltaba `key(pieza)`.
-                // Sin eso, Compose reutiliza cada Composable de este forEach
-                // por POSICIÓN en la lista, no por la pieza real. Al colocar
-                // una pieza y quitarla de `enCanasto`, las piezas siguientes
-                // se recorren un lugar — y cada una HEREDABA el estado
-                // interno (offset a medio arrastrar, `arrastrando`) de la
-                // pieza que antes vivía en esa posición, en vez de arrancar
-                // limpia. Eso hacía que, sobre todo después de la primera
-                // colocación correcta, las piezas restantes del canasto se
-                // vieran o arrastraran mal. `key(pieza)` ata el estado a la
-                // pieza real, no a su posición en la fila.
+                // `key(pieza)`: ata el estado (acá solo visual, pero es el
+                // mismo hábito que evitó el bug de reciclaje por posición
+                // del modelo de arrastre anterior.
                 enCanasto.forEach { pieza ->
                     key(pieza) {
                         val ladoPieza = tamanoPara(pieza)
-                        PiezaArrastrable(
-                            tamano = ladoPieza,
-                            clave = pieza,
-                            onArrastrar = { punto -> puntoArrastre = punto },
-                            onSoltar = { punto -> soltarEn(pieza, punto) },
-                        ) {
-                            // Tarjeta compartida para toda pieza del canasto: antes
-                            // cada material dibujaba su contenido "al aire", sin
-                            // fondo ni sombra que lo distinguiera de la pantalla.
-                            Box(
-                                modifier = Modifier
-                                    .size(ladoPieza)
-                                    .shadow(3.dp, RoundedCornerShape(10.dp))
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(Color.White),
-                                contentAlignment = Alignment.Center,
-                            ) { render(pieza, ladoPieza) }
-                        }
+                        val estaSeleccionada = seleccionada == pieza
+                        val escala by animateFloatAsState(if (estaSeleccionada) 1.12f else 1f, label = "escalaSeleccion")
+                        Box(
+                            modifier = Modifier
+                                .size(ladoPieza)
+                                .scale(escala)
+                                .shadow(if (estaSeleccionada) 8.dp else 3.dp, RoundedCornerShape(10.dp))
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.White)
+                                .then(
+                                    if (estaSeleccionada) Modifier.border(3.dp, Color(0xFFE0C23C), RoundedCornerShape(10.dp)) else Modifier,
+                                )
+                                .clickable { tocarPieza(pieza) },
+                            contentAlignment = Alignment.Center,
+                        ) { render(pieza, ladoPieza) }
                     }
                 }
             }

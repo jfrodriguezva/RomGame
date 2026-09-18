@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -132,45 +136,64 @@ fun DamasChinasScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
     val juego = buscarJuego("damas-chinas")!!
 
+    var dosJugadores by remember { mutableStateOf(false) }
     var tablero by remember { mutableStateOf(tableroInicialChinas()) }
     var turnoJugador by remember { mutableStateOf(true) }
     var seleccionada by remember { mutableStateOf<FichaChina?>(null) }
     var mensaje by remember { mutableStateOf("Tu turno — toca una canica roja") }
     var ganador by remember { mutableStateOf<String?>(null) }
 
+    fun mensajeInicio() = if (dosJugadores) "Turno de las canicas rojas" else "Tu turno — toca una canica roja"
+
     fun reiniciar() {
         tablero = tableroInicialChinas()
         turnoJugador = true
         seleccionada = null
         ganador = null
-        mensaje = "Tu turno — toca una canica roja"
+        mensaje = mensajeInicio()
+    }
+
+    // Se pidió poder jugar entre más de una persona: con `dosJugadores`
+    // activo nadie mueve solo, las rojas y las verdes se controlan por
+    // toques, alternando.
+    fun cambiarModo(activarDosJugadores: Boolean) {
+        dosJugadores = activarDosJugadores
+        reiniciar()
     }
 
     fun verificarFin() {
-        if (ganoJugadorChinas(tablero)) { ganador = "jugador"; mensaje = "¡Ganaste, cruzaste todas tus canicas! 🎉" }
-        else if (ganoCpuChinas(tablero)) { ganador = "cpu"; mensaje = "Ganó la computadora, ¡otra vez!" }
+        if (ganoJugadorChinas(tablero)) { ganador = "jugador"; mensaje = if (dosJugadores) "¡Ganaron las rojas! 🎉" else "¡Ganaste, cruzaste todas tus canicas! 🎉" }
+        else if (ganoCpuChinas(tablero)) { ganador = "cpu"; mensaje = if (dosJugadores) "¡Ganaron las verdes! 🎉" else "Ganó la computadora, ¡otra vez!" }
     }
 
     fun tocarCasilla(fila: Int, col: Int) {
-        if (!turnoJugador || ganador != null) return
+        if (ganador != null) return
+        if (!dosJugadores && !turnoJugador) return
         val ocupante = tablero.find { it.fila == fila && it.col == col }
         val actual = seleccionada
-        if (actual != null && (fila to col) in destinosChinas(actual, tablero)) {
+        if (actual != null && actual.esJugador == turnoJugador && (fila to col) in destinosChinas(actual, tablero)) {
             services.sound.tocar(Efecto.CORRECT)
             tablero = aplicarMovidaChinas(tablero, MovidaChina(actual, fila, col))
             seleccionada = null
             verificarFin()
-            if (ganador == null) { turnoJugador = false; mensaje = "Turno de la computadora" }
+            if (ganador == null) {
+                turnoJugador = !turnoJugador
+                mensaje = when {
+                    dosJugadores && turnoJugador -> "Turno de las canicas rojas"
+                    dosJugadores -> "Turno de las canicas verdes"
+                    else -> "Turno de la computadora"
+                }
+            }
             return
         }
-        if (ocupante != null && ocupante.esJugador) {
+        if (ocupante != null && ocupante.esJugador == turnoJugador) {
             seleccionada = ocupante
             services.sound.tocar(Efecto.CLICK)
         }
     }
 
-    LaunchedEffect(turnoJugador, ganador) {
-        if (turnoJugador || ganador != null) return@LaunchedEffect
+    LaunchedEffect(turnoJugador, ganador, dosJugadores) {
+        if (dosJugadores || turnoJugador || ganador != null) return@LaunchedEffect
         delay(600)
         val movida = mejorMovidaChinas(tablero)
         if (movida != null) {
@@ -190,10 +213,27 @@ fun DamasChinasScreen(onVolver: () -> Unit) {
         onVolver = onVolver,
         acciones = { if (ganador != null) Button(onClick = ::reiniciar) { Text("Jugar de nuevo") } },
     ) {
-        Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 10.dp)) {
+                FilterChip(
+                    selected = !dosJugadores,
+                    onClick = { if (dosJugadores) cambiarModo(false) },
+                    label = { Text("🤖 Vs. computadora") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFFD9433A), selectedLabelColor = Color.White),
+                )
+                FilterChip(
+                    selected = dosJugadores,
+                    onClick = { if (!dosJugadores) cambiarModo(true) },
+                    label = { Text("👫 Dos jugadores") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF3E9B7A), selectedLabelColor = Color.White),
+                )
+            }
             Text(
-                "Tú: ${tablero.count { it.esJugador && (it.fila to it.col) in CASA_CPU }}/6 en casa · " +
-                    "Computadora: ${tablero.count { !it.esJugador && (it.fila to it.col) in CASA_JUGADOR }}/6 en casa",
+                (if (dosJugadores) "Rojas" else "Tú") + ": ${tablero.count { it.esJugador && (it.fila to it.col) in CASA_CPU }}/6 en casa · " +
+                    (if (dosJugadores) "Verdes" else "Computadora") + ": ${tablero.count { !it.esJugador && (it.fila to it.col) in CASA_JUGADOR }}/6 en casa",
                 fontSize = 12.sp,
             )
             Column(

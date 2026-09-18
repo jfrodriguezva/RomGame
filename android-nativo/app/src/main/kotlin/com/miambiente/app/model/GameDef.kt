@@ -140,6 +140,10 @@ val CATALOGO = listOf(
     GameDef("solitario", "Solitario", "🎴", "Ordena las cartas por palo y color", Area.COMPANIA, 2, "Juego de cartas", "Paciencia, clasificación y estrategia en solitario."),
     GameDef("arana-cartas", "Solitario araña", "🕸️", "Arma secuencias del As al Rey", Area.COMPANIA, 2, "Juego de cartas", "Planeación a varios pasos y memoria de lo ya visto."),
     GameDef("ajedrez", "Ajedrez", "♞", "Da jaque mate al rey contrario", Area.COMPANIA, 2, "Juego de mesa", "Planeación a varios pasos y anticipar la jugada del rival."),
+    GameDef("tetris", "Tetris", "🧱", "Acomoda las piezas y completa líneas", Area.COMPANIA, 2, "Juego de mesa", "Rotación mental, planeación espacial y reflejos."),
+    GameDef("snake", "La víbora", "🐍", "Come y no choques", Area.COMPANIA, 2, "Juego arcade", "Planeación de ruta, reflejos y control del error."),
+    GameDef("arkanoid", "Rompe ladrillos", "🧱", "Rebota la pelota y rompe todos los ladrillos", Area.COMPANIA, 2, "Juego arcade", "Coordinación ojo-mano y anticipar trayectorias."),
+    GameDef("topo", "Atrapa al topo", "🐹", "Tócalo antes de que se esconda", Area.COMPANIA, 2, "Juego arcade", "Tiempo de reacción y atención sostenida."),
 
     // --- Movimiento y coordinación (independientes) ---
     GameDef("laberinto", "Laberinto", "🌀", "Encuentra la salida", Area.MOVIMIENTO, 4, "Control del movimiento", "Planear una ruta y seguirla sin chocar."),

@@ -43,11 +43,13 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
     var colocadas by remember(estado.nivel) { mutableStateOf(setOf<Int>()) }
     val piezasRevueltas = remember(estado.nivel) { PIEZAS.shuffled() }
     val ranuraRects = remember(estado.nivel) { mutableStateMapOf<Int, Rect>() }
-    var puntoArrastre by remember(estado.nivel) { mutableStateOf<androidx.compose.ui.geometry.Offset?>(null) }
+    var rectArrastre by remember(estado.nivel) { mutableStateOf<Rect?>(null) }
     val completo = colocadas.size == PIEZAS.size
 
-    fun soltar(posicionCorrecta: Int, puntoRoot: androidx.compose.ui.geometry.Offset) {
-        val ranura = ranuraRects.entries.find { (_, rect) -> rect.contains(puntoRoot) }?.key
+    // Mismo bug de fondo del arrastre que en MaterialOrdenar: solapamiento
+    // de rectángulos en vez de exigir el punto central exacto.
+    fun soltar(posicionCorrecta: Int, rectPieza: Rect) {
+        val ranura = ranuraRects.entries.find { (_, rect) -> rect.overlaps(rectPieza) }?.key
         if (ranura == posicionCorrecta) {
             estado.acierto("¡Ahí va!")
             colocadas = colocadas + posicionCorrecta
@@ -79,7 +81,7 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
                             val rect = ranuraRects[posicion]
                             ZonaSoltar(
                                 modifier = Modifier.size(70.dp),
-                                resaltado = puntoArrastre != null && rect?.contains(puntoArrastre!!) == true,
+                                resaltado = rectArrastre != null && rect?.overlaps(rectArrastre!!) == true,
                                 formaResaltado = RoundedCornerShape(6.dp),
                                 onPosicion = { r -> ranuraRects[posicion] = r },
                             ) {
@@ -108,8 +110,8 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
                         PiezaArrastrable(
                             tamano = 56.dp,
                             clave = posicion,
-                            onArrastrar = { punto -> puntoArrastre = punto },
-                            onSoltar = { punto -> soltar(posicion, punto) },
+                            onArrastrar = { rect -> rectArrastre = rect },
+                            onSoltar = { rect -> soltar(posicion, rect) },
                         ) { Text(emoji, fontSize = 26.sp) }
                     }
                 }

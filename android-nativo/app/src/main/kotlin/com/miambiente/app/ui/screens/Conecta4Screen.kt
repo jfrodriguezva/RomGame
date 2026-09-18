@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -70,6 +73,7 @@ fun Conecta4Screen(onVolver: () -> Unit) {
     val scope = rememberCoroutineScope()
     val juego = buscarJuego("conecta4")!!
 
+    var dosJugadores by remember { mutableStateOf(false) }
     var tablero by remember { mutableStateOf(List<String?>(COLS * FILAS) { null }) }
     var turno by remember { mutableStateOf("jugador") }
     var mensaje by remember { mutableStateOf("Tu turno") }
@@ -90,26 +94,37 @@ fun Conecta4Screen(onVolver: () -> Unit) {
     fun reiniciar() {
         tablero = List(COLS * FILAS) { null }
         turno = "jugador"
-        mensaje = "Tu turno"
+        mensaje = if (dosJugadores) "Turno de 🔴" else "Tu turno"
+    }
+
+    fun cambiarModo(activarDosJugadores: Boolean) {
+        dosJugadores = activarDosJugadores
+        reiniciar()
     }
 
     fun jugar(c: Int) {
-        if (turno != "jugador" || terminado) return
-        val nuevo = soltarEn(c, "🔴") ?: return
+        if (terminado) return
+        if (!dosJugadores && turno != "jugador") return
+        val ficha = if (turno == "jugador") "🔴" else "🔵"
+        val nuevo = soltarEn(c, ficha) ?: return
         services.sound.tocar(Efecto.CLICK)
         tablero = nuevo
-        turno = "cpu"
+        turno = if (dosJugadores) {
+            val siguiente = if (turno == "jugador") "cpu" else "jugador"
+            mensaje = if (siguiente == "jugador") "Turno de 🔴" else "Turno de 🔵"
+            siguiente
+        } else "cpu"
     }
 
     LaunchedEffect(ganoJugador, ganoCpu, empate) {
         if (ganoJugador) {
             services.sound.tocar(Efecto.WIN)
-            mensaje = "¡Ganaste! 🎉"
-            scope.launch { services.progress.completarNivel(juego.id, 1) }
+            mensaje = if (dosJugadores) "¡Ganó 🔴! 🎉" else "¡Ganaste! 🎉"
+            if (!dosJugadores) scope.launch { services.progress.completarNivel(juego.id, 1) }
             delay(1800); reiniciar()
         } else if (ganoCpu) {
-            services.sound.tocar(Efecto.WRONG)
-            mensaje = "Ganó la computadora"
+            services.sound.tocar(if (dosJugadores) Efecto.WIN else Efecto.WRONG)
+            mensaje = if (dosJugadores) "¡Ganó 🔵! 🎉" else "Ganó la computadora"
             delay(1800); reiniciar()
         } else if (empate) {
             mensaje = "¡Empate!"
@@ -117,8 +132,8 @@ fun Conecta4Screen(onVolver: () -> Unit) {
         }
     }
 
-    LaunchedEffect(turno, tablero) {
-        if (turno != "cpu" || terminado) return@LaunchedEffect
+    LaunchedEffect(turno, tablero, dosJugadores) {
+        if (dosJugadores || turno != "cpu" || terminado) return@LaunchedEffect
         delay(500)
         val columnasLibres = (0 until COLS).filter { !columnaLlena(it) }
         if (columnasLibres.isEmpty()) return@LaunchedEffect
@@ -131,6 +146,22 @@ fun Conecta4Screen(onVolver: () -> Unit) {
 
     GameShell(juego = juego, consigna = mensaje, onVolver = onVolver) {
         Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            // Modo dos jugadores, mismo patrón que Gato: se pidió poder
+            // jugar entre más de una persona cuando el juego lo permite.
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 16.dp)) {
+                FilterChip(
+                    selected = !dosJugadores,
+                    onClick = { if (dosJugadores) cambiarModo(false) },
+                    label = { Text("🤖 Vs. computadora") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF2F5C82), selectedLabelColor = Color.White),
+                )
+                FilterChip(
+                    selected = dosJugadores,
+                    onClick = { if (!dosJugadores) cambiarModo(true) },
+                    label = { Text("👫 Dos jugadores") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFF8A5A2B), selectedLabelColor = Color.White),
+                )
+            }
             // Tablero real con marco: antes las fichas flotaban sueltas
             // sobre el fondo, sin el marco azul clásico de Cuatro en línea.
             Column(

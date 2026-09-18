@@ -16,6 +16,91 @@ encabezado del Home). No se tocó `applicationId` ni el paquete Kotlin
 perder el progreso guardado en instalaciones existentes, un efecto
 destructivo que nadie pidió.
 
+## Octava pasada: se rehace el modelo de arrastre, la araña real, y tres arcade nuevos
+
+Pedido con varias partes, después de que la séptima pasada resultó
+insuficiente para lo mismo que ya se había reportado antes:
+
+- **El modelo de arrastre de Vida práctica se rehizo de raíz, no se
+  volvió a parchar**: después de corregir dos causas reales distintas
+  del mismo síntoma (estado reciclado por posición, tolerancia de
+  suelta demasiado exacta) y que el reporte siguiera siendo "sigue
+  fallando", la conclusión honesta es que arrastrar con precisión es
+  difícil de por sí para una mano de niño chico, sin importar cuánto se
+  afine. `MaterialOrdenar` (~15 materiales: Vida práctica, Rutina,
+  Poner la mesa, Torre rosa, etc.) pasó de arrastrar-y-soltar a
+  **tocar para tomar, tocar para soltar** — sin gesto de arrastre, sin
+  coordenadas de dedo en movimiento, nada que pueda fallar a medio
+  camino. Verificado de verdad en el emulador: se tomó "Despertar",
+  se soltó en la casilla correcta ("¡Ahí va!"), y se intentó "Escuela"
+  en la casilla 2 — el rechazo con el aviso real también funcionó.
+- **"La araña pintora" — se encontró la causa de fondo real**: el
+  reporte "no es nada al juego" llevó a leer el código fuente del juego
+  real en la versión web (`app/games/arana/page.tsx`), y resultó que la
+  mecánica nativa anterior nunca se pareció al juego real. No es tocar
+  casillas fijas: es arrastrar el dedo junto al borde ya descubierto,
+  trazando un contorno que se revela por inundación (flood fill) al
+  soltar, con arañas malas que rondan el tablero y quitan una vida si
+  tocan el trazo — igual que el original, con el mismo motor de niveles
+  (`phasedInt`) y las mismas 10 imágenes que se revelan (no es una
+  araña la que se revela — la araña es el enemigo). Se verificó
+  cargando correctamente (corazones, nivel, arañas visibles); el gesto
+  de arrastre completo no se alcanzó a confirmar en este emulador por
+  la inestabilidad descrita abajo.
+- **Tres juegos de arcade nuevos, elegidos por el usuario entre 4
+  opciones**: Snake (la víbora, con velocidad que sube al comer),
+  Arkanoid/rompe ladrillos (física real por cuadro, igual que
+  Globo/Burbujas/Carreras — `withFrameNanos`, no incrementos fijos, con
+  ángulo de rebote real según dónde pega en la paleta) y Atrapa al topo
+  (ronda de 30 segundos con dificultad que sube). Ninguno existía antes
+  en ninguna versión de la app.
+- **Modo dos jugadores agregado donde tiene sentido**: Damas, Damas
+  chinas, Ajedrez y Cuatro en línea ya tenían el patrón de Gato para
+  copiar (un `FilterChip` que activa turnos alternos sin IA). Dominó
+  también, mostrando la mano del segundo jugador boca arriba en vez de
+  boca abajo (ya no hay nada que esconderle a una computadora). Piedra,
+  papel o tijera necesitó algo distinto: como las dos jugadas tienen que
+  ser secretas y simultáneas para que el juego tenga sentido, se agregó
+  una fase real de "pásale el dispositivo a Jugador 2" que esconde la
+  jugada de Jugador 1 hasta que el segundo también eligió la suya — no
+  un simple `dosJugadores` de turnos alternos como los demás.
+  **No se hizo** para Solitario/Solitario araña (son de un jugador por
+  diseño) ni Bingo (no es un juego de enfrentarse).
+
+**Bug real de fondo detrás de "se corta la pantalla", encontrado
+después de que el primer `verticalScroll` no alcanzara**: la cascada de
+cartas de Solitario/Solitario araña posiciona cada carta con
+`Modifier.offset()`, que NO agranda el tamaño medido del `Box` que la
+contiene — así que el `verticalScroll` de más afuera calculaba mal
+cuánto medía el contenido real y a veces ni se activaba. Se le puso una
+altura explícita al `Box` de cada columna (una carta + el offset de la
+última). Verificado de verdad: el `ScrollView` pasó de reportar
+`scrollable="false"` a `scrollable="true"` en el árbol de accesibilidad,
+y un swipe reveló la carta que antes quedaba cortada fuera de la
+pantalla.
+
+**Sobre la verificación en vivo de esta pasada, con honestidad**: la
+máquina de esta sesión tuvo presión de memoria severa y fluctuante
+(procesos de Python, varias ventanas de navegador/asistentes de IA
+ajenos a esta tarea) que provocó varios choques reales del emulador y,
+hacia el final, una entrega de toques poco confiable a nivel de sistema
+— el mismo `adb shell input tap`, con el mismo código, a veces
+funcionaba perfecto y a veces aterrizaba en una pantalla de material
+completamente distinta sin relación alguna con la posición tocada (algo
+arquitectónicamente imposible desde el código de la app: los manejadores
+de toque de `MaterialOrdenar` no tienen ninguna referencia al controlador
+de navegación). Se confirmó en vivo lo que se pudo antes de que la
+inestabilidad lo impidiera: el modelo de toque de `MaterialOrdenar`
+completo (selección, colocación correcta, rechazo correcto), el filtro
+de edad, Tetris, el arreglo de scroll de Solitario, la tolerancia de
+arrastre más amplia, y "Toca la cara". Snake, Arkanoid, Atrapa al topo,
+el gesto completo de la araña, y los interruptores de dos jugadores
+quedan sin confirmar en vivo en esta sesión — compilan limpio y pasan
+sus pruebas unitarias, pero no se vieron correr con los propios ojos.
+
+Verificado: 83 pruebas unitarias pasando (10 nuevas: 5 de Snake, 5 de
+Arkanoid), compilación limpia, `assembleDebug` exitoso.
+
 ## Séptima pasada: damas chinas, la araña de verdad, y el bug real del arrastre
 
 Pedido explícito, con varios puntos concretos:
