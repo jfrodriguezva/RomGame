@@ -1,10 +1,10 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,13 +32,16 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
-import kotlinx.coroutines.coroutineScope
+import com.miambiente.app.ui.materials.BotonArcade
+import com.miambiente.app.ui.materials.BotonMantenerArcade
+import com.miambiente.app.ui.materials.MarcadorArcade
+import com.miambiente.app.ui.materials.MarcoArcade
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 private const val ANCHO = 300f
-private const val ALTO = 200f
-private const val SUELO_Y = ALTO - 40f
+private const val ALTO = 420f
+private const val SUELO_Y = ALTO - 60f
 private const val RADIO_ENEMIGO = 16f
 private const val VIDAS_INICIALES = 3
 private const val INVULNERABILIDAD_NANOS = 900_000_000L
@@ -47,6 +49,7 @@ internal const val GOLPES_PARA_ATRAPAR = 3
 internal const val VEL_RODADA = 230f
 private const val VEL_PROYECTIL = 240f
 private const val ALCANCE_PATADA = 30f
+private const val VELOCIDAD_JUGADOR_BOTON = 200f
 
 internal data class EnemigoNieve(
     val id: Int, val x: Float, val velX: Float,
@@ -222,60 +225,57 @@ fun NieveScreen(onVolver: () -> Unit) {
         acciones = { if (terminado) Button(onClick = ::reiniciar) { Text("Otra ronda") } },
     ) {
         Column(Modifier.fillMaxSize().padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Box(
-                modifier = Modifier
-                    .size(width = ANCHO.dp, height = ALTO.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFFDDF4FF))
-                    .pointerInput(terminado) {
-                        coroutineScope {
-                            launch { detectTapGestures { disparar() } }
-                            launch {
-                                detectDragGestures { change, dragAmount ->
-                                    change.consume()
-                                    if (dragAmount.x != 0f) mirando = if (dragAmount.x > 0) 1 else -1
-                                    jugadorX = (jugadorX + dragAmount.x).coerceIn(RADIO_ENEMIGO, ANCHO - RADIO_ENEMIGO)
-                                }
-                            }
-                        }
-                    },
-            ) {
-                Box(modifier = Modifier.offset(y = SUELO_Y.dp).size(width = ANCHO.dp, height = 4.dp).background(Color(0xFFB8E6FF)))
-                enemigos.forEach { e ->
-                    val emoji = when { e.rodando -> "⚪"; e.atrapado -> "⛄"; else -> "👾" }
+            MarcadorArcade("Enemigos: ${enemigos.size} · Vidas $vidas")
+            MarcoArcade(colorFondo = Color(0xFFDDF4FF), modifier = Modifier.padding(top = 8.dp)) {
+                Box(modifier = Modifier.align(Alignment.Center).size(width = ANCHO.dp, height = ALTO.dp)) {
+                    Box(modifier = Modifier.offset(y = SUELO_Y.dp).size(width = ANCHO.dp, height = 4.dp).background(Color(0xFFB8E6FF)))
+                    enemigos.forEach { e ->
+                        val emoji = when { e.rodando -> "⚪"; e.atrapado -> "⛄"; else -> "👾" }
+                        Box(
+                            modifier = Modifier
+                                .offset(x = (e.x - RADIO_ENEMIGO).dp, y = (SUELO_Y - RADIO_ENEMIGO * 2).dp)
+                                .size((RADIO_ENEMIGO * 2).dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.85f)),
+                            contentAlignment = Alignment.Center,
+                        ) { Text(emoji, fontSize = 20.sp) }
+                    }
+                    proyectiles.forEach { p ->
+                        Box(
+                            modifier = Modifier
+                                .offset(x = (p.x - 5f).dp, y = (SUELO_Y - RADIO_ENEMIGO).dp)
+                                .size(10.dp)
+                                .clip(CircleShape)
+                                .background(Color.White),
+                        )
+                    }
                     Box(
                         modifier = Modifier
-                            .offset(x = (e.x - RADIO_ENEMIGO).dp, y = (SUELO_Y - RADIO_ENEMIGO * 2).dp)
-                            .size((RADIO_ENEMIGO * 2).dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.85f)),
+                            .offset(x = (jugadorX - 15f).dp, y = (SUELO_Y - 30f).dp)
+                            .size(width = 30.dp, height = 30.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (invulnerableHasta != 0L) Color(0xFFE0925C) else Color(0xFF6FBF73)),
                         contentAlignment = Alignment.Center,
-                    ) { Text(emoji, fontSize = 20.sp) }
+                    ) { Text(if (mirando > 0) "🙂" else "🙃", fontSize = 18.sp) }
                 }
-                proyectiles.forEach { p ->
-                    Box(
-                        modifier = Modifier
-                            .offset(x = (p.x - 5f).dp, y = (SUELO_Y - RADIO_ENEMIGO).dp)
-                            .size(10.dp)
-                            .clip(CircleShape)
-                            .background(Color.White),
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .offset(x = (jugadorX - 15f).dp, y = (SUELO_Y - 30f).dp)
-                        .size(width = 30.dp, height = 30.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(if (invulnerableHasta != 0L) Color(0xFFE0925C) else Color(0xFF6FBF73)),
-                    contentAlignment = Alignment.Center,
-                ) { Text(if (mirando > 0) "🙂" else "🙃", fontSize = 18.sp) }
             }
             Text(
-                "Arrastra para moverte y apuntar; toca para lanzar nieve; acércate a un ⛄ para patearlo",
+                "Acércate a un ⛄ para patearlo",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 6.dp, bottom = 6.dp),
             )
+            Row(horizontalArrangement = Arrangement.spacedBy(30.dp)) {
+                BotonMantenerArcade("⬅️") { dt ->
+                    mirando = -1
+                    jugadorX = (jugadorX - VELOCIDAD_JUGADOR_BOTON * dt).coerceIn(RADIO_ENEMIGO, ANCHO - RADIO_ENEMIGO)
+                }
+                BotonArcade("❄️") { disparar() }
+                BotonMantenerArcade("➡️") { dt ->
+                    mirando = 1
+                    jugadorX = (jugadorX + VELOCIDAD_JUGADOR_BOTON * dt).coerceIn(RADIO_ENEMIGO, ANCHO - RADIO_ENEMIGO)
+                }
+            }
         }
     }
 }
