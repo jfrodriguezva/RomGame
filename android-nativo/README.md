@@ -1,5 +1,71 @@
 # RominaGame — versión nativa (Kotlin + Jetpack Compose)
 
+## Duodécima pasada: se une el trabajo de dos sesiones en paralelo, y cuatro arcades pasan de "inspirados" a copias reales
+
+Esta sesión venía trabajando sobre `main` sin saber que otra sesión ya
+había subido su propio trabajo a `origin/main` mientras tanto — ambas
+tocaron los mismos archivos centrales (`GameDef.kt`, `HomeScreen.kt`,
+`MainActivity.kt`) y ambas agregaron su propia Lotería. Antes de seguir,
+se hizo `git fetch` + `git merge` real, revisando diff por diff qué
+conservar de cada lado (documentado con detalle en la "Undécima pasada"
+de abajo, la que se reetiquetó por este mismo choque de nombres).
+
+- **Los cuatro arcades pedidos explícitamente por nombre real** (Gals
+  Panic, Sunset Riders, Pac-Man, Snow Bros) tenían ya una primera versión
+  de la pasada de arriba (Mosaico, Vaqueros, Comepuntos, Nieve) que era
+  una aproximación libre, no una copia de la mecánica real — un pedido
+  posterior explícito fue "no los hagas a tu inspiración, copia la forma
+  de juego, cambia el nombre y los personajes pero mantén la modalidad
+  idéntica". Se reescribieron los cuatro (mismos ids/nombres del
+  catálogo, mismas rutas — no hubo que tocar `GameDef.kt` ni
+  `MainActivity.kt` para esto):
+  - **Mosaico sorpresa → Gals Panic/Qix real**, en `GalsPanicScreen.kt`:
+    antes era "revela casillas fijas adyacentes"; ahora el borde empieza
+    reclamado, te mueves con flechas, entrar a zona oscura deja un
+    trazo, y volver a zona segura lo sella — la bolsa de territorio que
+    queda separada del resto se reclama sola (`sellarTrazo`, partición
+    en componentes conexas por BFS), salvo la que todavía tenga un
+    enemigo adentro. Enemigos rondando con física real; tocar tu trazo
+    cuesta una vida.
+  - **Vaqueros del ocaso → Sunset Riders real**, en
+    `SunsetRidersScreen.kt`: antes era una galería de tiro tipo
+    "atrapa al topo"; ahora es de verdad correr-y-disparar de lado —
+    el mundo avanza solo, los bandidos entran caminando y disparan
+    tiros altos o bajos, y sobrevivir depende de agacharse o saltar
+    según el tiro (`sobreviveDisparo`), no de reaccionar rápido nomás.
+  - **Comepuntos → Pac-Man real**, en `PacManScreen.kt`: antes era por
+    turnos (cada movimiento tuyo movía a los fantasmas una vez); ahora
+    es en tiempo real con un tic propio, 4 pellets de poder en las
+    esquinas que vuelven a los fantasmas comestibles unos segundos
+    (huyen en vez de perseguir), y comerte uno los manda de regreso a
+    la casa. Simplificación declarada: sin túnel de envoltura lateral.
+  - **Rescate de nieve → Snow Bros real**, en `SnowBrosScreen.kt`: antes
+    era "aguanta 3 toques y ya"; ahora la nieve no mata al toque — hace
+    falta pegarle 3 veces para atrapar al enemigo dentro de una bola
+    quieta, y recién ahí se la puede patear para que ruede y arrase con
+    cualquier otro enemigo en su camino (matanza en cadena real, no uno
+    por uno). Simplificación declarada: una sola plataforma a nivel de
+    piso, sin saltar entre niveles, para concentrar el esfuerzo en el
+    ciclo de atrapar-y-patear que es lo que de verdad distingue a este
+    arcade.
+  - `EscuadrónEstelarScreen` y `GranPremioScreen` (los otros dos arcades
+    de la pasada de arriba) no se tocaron — no se pidieron por nombre.
+
+**Sobre la verificación, con la misma honestidad de siempre**: el JDK 21
+de esta máquina sigue incompleto (ver la nota de la pasada de abajo), así
+que tampoco se pudo compilar ni correr los tests de esta pasada. Cada
+archivo se releyó completo a mano buscando bugs reales — y sí se
+encontraron y corrigieron dos genuinos antes de este resumen: en
+`SunsetRidersScreen.kt`, el `estado` del jugador (de pie/agachado/
+saltando) se leía de una variable capturada una sola vez al arrancar la
+corrutina de física, así que el esquive nunca habría funcionado de
+verdad (se corrigió recalculándolo en cada cuadro dentro del propio
+bucle); en `SnowBrosScreen.kt`, patear una bola de nieve lastimaba al
+jugador en el mismo cuadro por estar parado junto a ella (se corrigió
+para que un enemigo ya atrapado, rodando o no, nunca sea peligroso para
+quien lo pateó). Sin compilar de verdad, no hay garantía de que no quede
+ningún otro error de tipos o sintaxis suelto.
+
 ## Décima pasada: seis arcades, controles estables y laberintos reales
 
 - Se agregaron seis arcades originales basados en las mecánicas solicitadas,
@@ -38,7 +104,16 @@ encabezado del Home). No se tocó `applicationId` ni el paquete Kotlin
 perder el progreso guardado en instalaciones existentes, un efecto
 destructivo que nadie pidió.
 
-## Décima pasada: Home sin filtro de edad, Arkanoid/Tetris/Snake sin recortarse, Lotería, Pang y Palillos chinos nuevos
+## Undécima pasada: Home sin filtro de edad, Arkanoid/Tetris/Snake sin recortarse, Pang y Palillos chinos nuevos
+
+(Renombrada de "Décima" a "Undécima": esta pasada se hizo en paralelo con
+la de arriba en otra sesión, sin saber una de la otra hasta el momento de
+unir ambas ramas — se resolvió el choque de nombres y de código real
+manualmente, ver la pasada siguiente para el detalle completo del merge.
+La Lotería propia de esta pasada se descartó a favor de la del "Décima
+pasada" de arriba, que tiene progresión real de 100 niveles y ya estaba
+en `origin/main` — mismo criterio de "no duplicar trabajo" que se explica
+abajo.)
 
 Pedido de seis partes en un solo mensaje: *"quita los filtros de edad y
 que se muestren todos los materiales juntos / ajusta los tamaños de cada
@@ -63,13 +138,11 @@ compartidos (no rediseño), y Lotería como lotería mexicana tradicional.
   mismo tablero de tamaño fijo sin `verticalScroll`/`horizontalScroll` que
   ya se había corregido antes en Damas/Ajedrez/Solitario — mismo patrón
   defensivo aplicado ahora aquí.
-- **Lotería mexicana, material nuevo** (`loteria`, distinto de Bingo):
-  mazo real de 54 cartas únicas y 8 tableros de 4×4 predefinidos
-  (subconjuntos distintos del mazo, uno se elige al azar por partida). El
-  mazo se baraja una vez y se consume carta por carta sin repetir
-  (`siguienteCanto`) hasta ganar el cartón completo o agotarlo — a
-  diferencia de Bingo, donde el "mazo" y el "cartón" eran literalmente el
-  mismo conjunto de 9 emojis.
+- ~~Lotería mexicana propia~~ — se descartó al unir con la pasada de
+  arriba: esa versión ya tenía `loteria` con progresión real de 100
+  niveles (lección de tres periodos, igual que el resto del catálogo),
+  más completa que la de esta pasada. No duplicar un material con dos
+  implementaciones a la vez.
 - **Arkanoid, mucho más cerca del arcade original**: multi-bola de verdad
   (`bolas: List<BolaState>`, no una sola bola), power-ups reales que caen
   de un ladrillo roto (paleta ancha/angosta temporal, multi-bola, bola
