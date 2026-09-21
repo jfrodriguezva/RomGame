@@ -25,19 +25,22 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.BotonArcade
+import com.miambiente.app.ui.materials.MarcadorArcade
+import com.miambiente.app.ui.materials.MarcoArcade
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 private const val ANCHO = 300f
-private const val ALTO = 300f
+private const val ALTO = 420f
 private const val SUELO_Y = ALTO - 50f
 private const val GRAVEDAD = 500f
 private const val IMPULSO_SALTO = 330f
@@ -232,11 +235,12 @@ fun VaquerosScreen(onVolver: () -> Unit) {
         acciones = { if (terminado) Button(onClick = ::reiniciar) { Text("Volver a intentar") } },
     ) {
         Column(Modifier.fillMaxSize().padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            MarcadorArcade("Bandidos $derrotados/$OBJETIVO_BANDIDOS · Vidas $vidas")
+            MarcoArcade(colorFondo = Color(0xFFF5D99B), modifier = Modifier.padding(top = 8.dp)) {
             Box(
                 modifier = Modifier
-                    .size(width = ANCHO.dp, height = ALTO.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFFF5D99B)),
+                    .align(Alignment.Center)
+                    .size(width = ANCHO.dp, height = ALTO.dp),
             ) {
                 // Suelo
                 Box(
@@ -276,22 +280,29 @@ fun VaquerosScreen(onVolver: () -> Unit) {
                     contentAlignment = Alignment.Center,
                 ) { Text(if (estado == EstadoJugador.SALTANDO) "🤸" else "🤠", fontSize = 18.sp) }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(14.dp), modifier = Modifier.padding(top = 10.dp)) {
-                BotonVaqueros("🦆 Agacharte", presionado = agachado) { agachado = it }
-                BotonVaqueros("🤸 Saltar", presionado = false) { if (it) saltar() }
-                BotonVaqueros("🔫 Disparar", presionado = false) { if (it) disparar() }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp), modifier = Modifier.padding(top = 10.dp)) {
+                BotonVaqueros("🦆", presionado = agachado) { agachado = it }
+                BotonArcade("🤸") { saltar() }
+                BotonArcade("🔫") { disparar() }
             }
         }
     }
 }
 
+/** El único botón que no es un `BotonArcade` normal: "agacharte" es un
+ * interruptor con estado propio (se queda agachado hasta que se vuelve a
+ * tocar), no un toque único — por eso muestra si está activo o no,
+ * mismo tamaño y forma que el resto para no romper la homologación visual. */
 @Composable
 private fun BotonVaqueros(texto: String, presionado: Boolean, onCambio: (Boolean) -> Unit) {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(10.dp))
+            .size(48.dp)
+            .shadow(2.dp, RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(if (presionado) Color(0xFF8A5A2B) else Color.White)
-            .clickable { onCambio(!presionado) }
-            .padding(horizontal = 10.dp, vertical = 8.dp),
-    ) { Text(texto, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (presionado) Color.White else Color(0xFF3F342C)) }
+            .clickable { onCambio(!presionado) },
+        contentAlignment = Alignment.Center,
+    ) { Text(texto, fontSize = 18.sp) }
 }
