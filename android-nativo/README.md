@@ -1,5 +1,27 @@
 # RominaGame — versión nativa (Kotlin + Jetpack Compose)
 
+## Décima pasada: seis arcades, controles estables y laberintos reales
+
+- Se agregaron seis arcades originales basados en las mecánicas solicitadas,
+  sin copiar personajes ni recursos gráficos de franquicias: **Mosaico
+  sorpresa** (territorio), **Vaqueros del ocaso** (puntería), **Comepuntos**
+  (laberinto y perseguidores), **Rescate de nieve** (impactos acumulados),
+  **Escuadrón estelar** (naves por carriles) y **Gran premio** (carreras).
+- `CarrerasScreen` y `CanastaScreen` dejaron de mutar listas y recomponerlas
+  en cada frame. Ahora usan tres carriles y pasos temporizados: las colisiones
+  son independientes de la densidad de pantalla y el trabajo por ciclo es
+  constante, evitando los bloqueos observados en dispositivos lentos.
+- El globo solo responde al toque sobre su propia silueta; tocar el fondo ya
+  no impulsa ni suma puntos. Victoria y caída tienen cierre y reinicio propios.
+- Laberinto ya no es un mapa fijo de 5 columnas: genera un laberinto perfecto
+  de 11×11 diferente en cada ronda, con controles direccionales, recorrido,
+  contador de pasos y salida siempre alcanzable. Una prueba recorre 100
+  semillas y comprueba que todas tienen solución.
+- Se retiraron por completo `toystory` y `lava` del catálogo, navegación y
+  código fuente nativo.
+- Verificado con JDK 21: 95 pruebas unitarias, compilación Kotlin y
+  `assembleDebug`, todo limpio.
+
 Proyecto Android nativo aparte, **sin depender de la app web ni de
 Capacitor** (esa versión sigue intacta en `../android` y `../app`). Nace
 de un pedido explícito: la versión empaquetada con Capacitor (un WebView)

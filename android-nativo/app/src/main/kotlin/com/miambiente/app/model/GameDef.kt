@@ -149,6 +149,12 @@ val CATALOGO = listOf(
     GameDef("snake", "La víbora", "🐍", "Come y no choques", Area.COMPANIA, 2, "Juego arcade", "Planeación de ruta, reflejos y control del error."),
     GameDef("arkanoid", "Rompe ladrillos", "🧱", "Rebota la pelota y rompe todos los ladrillos", Area.COMPANIA, 2, "Juego arcade", "Coordinación ojo-mano y anticipar trayectorias."),
     GameDef("topo", "Atrapa al topo", "🐹", "Tócalo antes de que se esconda", Area.COMPANIA, 2, "Juego arcade", "Tiempo de reacción y atención sostenida."),
+    GameDef("mosaico", "Mosaico sorpresa", "🖼️", "Descubre la imagen sin tocar a los guardianes", Area.COMPANIA, 4, "Arcade de territorio", "Planeación espacial, prudencia y control de impulsos."),
+    GameDef("vaqueros", "Vaqueros del ocaso", "🤠", "Protege el pueblo y atrapa a los bandidos", Area.COMPANIA, 5, "Arcade de puntería", "Atención visual, precisión y velocidad de reacción."),
+    GameDef("comepuntos", "Comepuntos", "🟡", "Come todos los puntos y evita a los fantasmas", Area.COMPANIA, 4, "Laberinto arcade", "Planeación de rutas, orientación y anticipación."),
+    GameDef("nieve", "Rescate de nieve", "⛄", "Convierte a los traviesos en bolas de nieve", Area.COMPANIA, 4, "Arcade de plataformas", "Secuenciación, precisión y atención dividida."),
+    GameDef("escuadron-estelar", "Escuadrón estelar", "🚀", "Pilota, apunta y protege la galaxia", Area.COMPANIA, 5, "Arcade espacial", "Coordinación ojo-mano y anticipación de trayectorias."),
+    GameDef("gran-premio", "Gran premio", "🏁", "Cambia de carril y llega primero", Area.COMPANIA, 4, "Arcade de carreras", "Reflejos, anticipación y toma rápida de decisiones."),
 
     // --- Movimiento y coordinación (independientes) ---
     GameDef("laberinto", "Laberinto", "🌀", "Encuentra la salida", Area.MOVIMIENTO, 4, "Control del movimiento", "Planear una ruta y seguirla sin chocar."),
@@ -156,8 +162,6 @@ val CATALOGO = listOf(
     GameDef("canasta", "Atrapa las estrellas", "🧺", "Mueve la canasta", Area.MOVIMIENTO, 3, "Coordinación ojo-mano", "Anticipar una trayectoria y responder a tiempo."),
     GameDef("globo", "El globo volador", "🎈", "No dejes que caiga", Area.MOVIMIENTO, 3, "Coordinación ojo-mano", "Ritmo y constancia del toque."),
     GameDef("arana", "La araña pintora", "🕷️", "Descubre la imagen", Area.MOVIMIENTO, 4, "Recorrido y estrategia", "Recorrer un espacio completo evitando obstáculos."),
-    GameDef("lava", "El piso es lava", "🌋", "No toques el suelo", Area.MOVIMIENTO, 4, "Reflejos", "Reacción rápida y control del salto."),
-    GameDef("toystory", "Aventura de juguetes", "🤠", "Salta y explora", Area.MOVIMIENTO, 4, "Recorrido de obstáculos", "Coordinación, ritmo y persistencia ante el reto."),
     GameDef("carreras", "Carreras", "🏎️", "Esquiva y llega a la meta", Area.MOVIMIENTO, 4, "Reflejos", "Atención sostenida y respuesta veloz."),
 
     // --- Exclusivos de la versión nativa (no existen en la web) ---
