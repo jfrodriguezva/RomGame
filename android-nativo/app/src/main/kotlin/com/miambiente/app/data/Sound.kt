@@ -75,7 +75,6 @@ private fun crearPistaEstatica(datos: ShortArray): AudioTrack =
         )
         .setBufferSizeInBytes(datos.size * 2)
         .setTransferMode(AudioTrack.MODE_STATIC)
-        .setSessionId(AudioManager.AUDIO_SESSION_ID_GENERATE)
         .build()
         .apply { write(datos, 0, datos.size) }
 

@@ -2,7 +2,6 @@ package com.miambiente.app.data
 
 import android.media.AudioAttributes
 import android.media.AudioFormat
-import android.media.AudioManager
 import android.media.AudioTrack
 import com.miambiente.app.theme.Area
 import kotlin.math.PI
@@ -77,7 +76,6 @@ class AmbientMusic {
             )
             .setBufferSizeInBytes(datos.size * 2)
             .setTransferMode(AudioTrack.MODE_STATIC)
-            .setSessionId(AudioManager.AUDIO_SESSION_ID_GENERATE)
             .build()
             .apply {
                 write(datos, 0, datos.size)

@@ -1,5 +1,26 @@
 # RominaGame — versión nativa (Kotlin + Jetpack Compose)
 
+## Undécima pasada: modalidades arcade completas
+
+- **Mosaico sorpresa** conserva el trazado desde una zona segura: al cerrar
+  una línea se calcula cada región y solo se revela la que no contiene a los
+  guardianes. El contacto con el trazo cuesta una vida.
+- **Vaqueros del ocaso** ahora tiene desplazamiento lateral, dos alturas,
+  proyectiles visibles, aparición progresiva de bandidos, recorrido y jefe
+  final con varios impactos.
+- **Comepuntos** funciona en tiempo real con puntos, energizantes que duran
+  varios ciclos, cuatro perseguidores, choques frontales y por cruce, vidas y
+  reaparición.
+- **Rescate de nieve** acumula nieve sobre enemigos móviles, los convierte en
+  bolas y permite empujarlas para que rueden y derriben otros enemigos.
+- **Escuadrón estelar** avanza sobre rieles con movimiento en dos ejes,
+  objetos a distintas profundidades, disparos, meteoros, escudo y jefe final.
+- **Gran premio** incorpora acelerador, freno, volante, tráfico simultáneo,
+  curvas, derrape por exceso de velocidad, daños y tres vueltas.
+- Se corrigieron los avisos de API mínima en vibración y configuración de
+  audio. Verificado con JDK 21: 97 pruebas unitarias, `lintDebug` sin errores y
+  `assembleDebug` correcto.
+
 ## Décima pasada: seis arcades, controles estables y laberintos reales
 
 - Se agregaron seis arcades originales basados en las mecánicas solicitadas,

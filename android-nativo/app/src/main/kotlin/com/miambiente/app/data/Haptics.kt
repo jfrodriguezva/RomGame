@@ -33,6 +33,11 @@ class Haptics(context: Context) {
         val v = vibrator ?: return
         if (!v.hasVibrator()) return
         val timings = patronMs(patron)
-        v.vibrate(VibrationEffect.createWaveform(timings, -1))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createWaveform(timings, -1))
+        } else {
+            @Suppress("DEPRECATION")
+            v.vibrate(timings, -1)
+        }
     }
 }
