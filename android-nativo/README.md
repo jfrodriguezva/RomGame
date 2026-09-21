@@ -1,5 +1,53 @@
 # RominaGame — versión nativa (Kotlin + Jetpack Compose)
 
+## Decimotercera pasada: los 11 arcade quedan homologados (mismo marco, mismos controles, mismo estilo)
+
+Pedido explícito tras revisar la pasada anterior: los 11 materiales
+"arcade" del catálogo (Snake, Tetris, Arkanoid, Pang, Topo, Mosaico,
+Vaqueros, Comepuntos, Nieve, Escuadrón estelar, Gran premio) habían ido
+quedando con tamaños de tablero (de 200 a 420dp de alto) y esquemas de
+control distintos entre sí (unos con flechas en pantalla, otros con
+arrastrar+tocar) — cada uno construido en una sesión distinta, sin un
+criterio compartido. Se pidió "una versión arcade, pero homologada":
+mismo tamaño de tablero, mismo esquema de control y mismo estilo visual
+en los 11 a la vez.
+
+- **`ui/materials/ArcadeChrome.kt` nuevo**, el multiplicador real de esta
+  pasada — cuatro componentes que ahora usan los 11 arcade:
+  - `MarcoArcade`: el mismo tablero de 300×420dp (sombra, esquinas,
+    fondo) en todos, en vez de que cada uno definiera el suyo.
+  - `BotonArcade`: el mismo botón de un toque.
+  - `BotonMantenerArcade`: mantener presionado repite la acción una vez
+    por cuadro con el `dt` real transcurrido — reemplaza el
+    `detectDragGestures` que usaban Arkanoid (paleta), Pang y Nieve
+    (moverse) para no perder el movimiento continuo que esos tres sí
+    necesitan, con el mismo criterio ya probado en Snake de "un botón
+    siempre se interpreta igual, un swipe no".
+  - `PadDireccional`: la cruz de flechas ya usada en Snake, ahora
+    también en Comepuntos y Mosaico.
+  - `MarcadorArcade`: la misma línea de nivel/puntaje/vidas.
+- **Dos excepciones a propósito, no un olvido**: **Topo** (tocar el hoyo
+  exacto donde sale el topo ES el juego completo — forzar flechas ahí
+  rompería la mecánica) y **Tetris** (mover/rotar de a un toque, sin
+  autorepetición, es el estándar real del juego, no una limitación).
+  Ambos sí recibieron el marco de 300×420 y los botones restilizados,
+  solo no el D-pad de movimiento continuo.
+- **Vaqueros conserva un botón que no es un `BotonArcade` normal**
+  ("agacharte" es un interruptor con estado propio, no un toque único),
+  pero con el mismo tamaño/forma que el resto para no romper la
+  homologación visual.
+- Nieve creció de 300×200 a 300×420 (más cielo arriba del suelo, sin
+  cambiar la mecánica); Vaqueros de 300×300 a 300×420.
+
+**Sobre la verificación, con la misma honestidad de siempre**: sin JDK
+completo en esta máquina, no se pudo compilar. Se revisó cada archivo
+completo a mano, se contaron llaves de apertura/cierre por archivo como
+señal débil de balance (los 11 arcade + el componente nuevo dieron
+igual), y se confirmó que el catálogo (`GameDef.kt`) y las rutas
+(`MainActivity.kt`) siguen exactamente en el mismo conjunto de ids que
+antes de esta pasada — no se necesitó tocar ninguno de los dos archivos
+porque los 11 materiales ya existían, solo se les cambió el cuerpo.
+
 ## Duodécima pasada: se une el trabajo de dos sesiones en paralelo, y cuatro arcades pasan de "inspirados" a copias reales
 
 Esta sesión venía trabajando sobre `main` sin saber que otra sesión ya
