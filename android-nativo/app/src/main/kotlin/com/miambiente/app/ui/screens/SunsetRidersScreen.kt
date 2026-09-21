@@ -1,0 +1,297 @@
+package com.miambiente.app.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.miambiente.app.data.Efecto
+import com.miambiente.app.data.LocalServices
+import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.ui.GameShell
+import kotlinx.coroutines.launch
+import kotlin.random.Random
+
+private const val ANCHO = 300f
+private const val ALTO = 300f
+private const val SUELO_Y = ALTO - 50f
+private const val GRAVEDAD = 500f
+private const val IMPULSO_SALTO = 330f
+private const val JUGADOR_X = 55f
+private const val VEL_BALA_JUGADOR = 260f
+private const val VEL_BALA_ENEMIGA = 150f
+private const val VIDAS_INICIALES = 3
+private const val OBJETIVO_BANDIDOS = 12
+private const val INVULNERABILIDAD_NANOS = 900_000_000L
+
+internal enum class EstadoJugador { DE_PIE, AGACHADO, SALTANDO }
+internal enum class TipoDisparo { ALTO, BAJO }
+
+internal data class Bandido(val id: Int, val x: Float, val velX: Float, val proximoDisparoEn: Long)
+internal data class BalaVaqueros(val id: Int, val x: Float, val tipo: TipoDisparo?, val deEnemigo: Boolean)
+
+/** Un tiro alto se esquiva agachado; uno bajo (a ras de piso) se esquiva saltando —
+ * de pie no esquiva ninguno, igual que en el arcade real. */
+internal fun sobreviveDisparo(estado: EstadoJugador, tipo: TipoDisparo): Boolean = when (tipo) {
+    TipoDisparo.ALTO -> estado == EstadoJugador.AGACHADO
+    TipoDisparo.BAJO -> estado == EstadoJugador.SALTANDO
+}
+
+internal fun velocidadBanditoParaDistancia(distancia: Int): Float = (80f + distancia * 1.5f).coerceAtMost(220f)
+
+internal fun intervaloSpawnParaDistancia(distancia: Int): Long = (1500L - distancia * 6L).coerceAtLeast(600L)
+
+/**
+ * Vaqueros del ocaso — copia de la modalidad Sunset Riders: correr y
+ * disparar de lado. El mundo avanza solo (la distancia sube con el
+ * tiempo), los bandidos entran caminando desde la derecha y disparan
+ * tiros altos o bajos, y sobrevivir depende de agacharse o saltar según
+ * el tiro que venga — no basta con disparar rápido.
+ */
+@Composable
+fun VaquerosScreen(onVolver: () -> Unit) {
+    val services = LocalServices.current
+    val scope = rememberCoroutineScope()
+    val juego = buscarJuego("vaqueros")!!
+
+    var agachado by remember { mutableStateOf(false) }
+    var alturaSalto by remember { mutableStateOf(0f) }
+    var velocidadSalto by remember { mutableStateOf(0f) }
+    var bandidos by remember { mutableStateOf(listOf<Bandido>()) }
+    var balas by remember { mutableStateOf(listOf<BalaVaqueros>()) }
+    var siguienteId by remember { mutableStateOf(0) }
+    var derrotados by remember { mutableStateOf(0) }
+    var vidas by remember { mutableStateOf(VIDAS_INICIALES) }
+    var invulnerableHasta by remember { mutableStateOf(0L) }
+    var terminado by remember { mutableStateOf(false) }
+    var gano by remember { mutableStateOf(false) }
+
+    val estado = when {
+        alturaSalto > 0f -> EstadoJugador.SALTANDO
+        agachado -> EstadoJugador.AGACHADO
+        else -> EstadoJugador.DE_PIE
+    }
+
+    fun reiniciar() {
+        agachado = false
+        alturaSalto = 0f
+        velocidadSalto = 0f
+        bandidos = emptyList()
+        balas = emptyList()
+        derrotados = 0
+        vidas = VIDAS_INICIALES
+        invulnerableHasta = 0L
+        terminado = false
+        gano = false
+    }
+
+    fun saltar() {
+        if (!terminado && alturaSalto == 0f) {
+            velocidadSalto = IMPULSO_SALTO
+            alturaSalto = 1f
+            services.sound.tocar(Efecto.CLICK)
+        }
+    }
+
+    fun disparar() {
+        if (terminado) return
+        balas = balas + BalaVaqueros(siguienteId++, JUGADOR_X + 12f, null, deEnemigo = false)
+        services.sound.tocar(Efecto.CLICK)
+    }
+
+    LaunchedEffect(terminado) {
+        if (terminado) return@LaunchedEffect
+        var anterior = withFrameNanos { it }
+        var proximoBandidoEn = 900L
+        var tiempoTranscurridoMs = 0L
+        var distancia = 0
+        while (true) {
+            val ahora = withFrameNanos { it }
+            val dt = ((ahora - anterior) / 1_000_000_000f).coerceAtMost(0.032f)
+            anterior = ahora
+            if (terminado) break
+
+            tiempoTranscurridoMs += (dt * 1000).toLong()
+            distancia = (tiempoTranscurridoMs / 100L).toInt()
+
+            if (invulnerableHasta != 0L && ahora > invulnerableHasta) invulnerableHasta = 0L
+
+            if (alturaSalto > 0f) {
+                velocidadSalto -= GRAVEDAD * dt
+                alturaSalto = (alturaSalto + velocidadSalto * dt).coerceAtLeast(0f)
+                if (alturaSalto <= 0f) { alturaSalto = 0f; velocidadSalto = 0f }
+            }
+
+            if (tiempoTranscurridoMs >= proximoBandidoEn) {
+                proximoBandidoEn = tiempoTranscurridoMs + intervaloSpawnParaDistancia(distancia)
+                bandidos = bandidos + Bandido(
+                    id = siguienteId++,
+                    x = ANCHO + 20f,
+                    velX = -velocidadBanditoParaDistancia(distancia),
+                    proximoDisparoEn = tiempoTranscurridoMs + 700L + Random.nextLong(600L),
+                )
+            }
+
+            bandidos = bandidos.mapNotNull { b ->
+                val nx = b.x + b.velX * dt
+                if (nx < JUGADOR_X - 30f) return@mapNotNull null // se pasó sin que lo mataran
+                var nuevo = b.copy(x = nx)
+                if (nx in (JUGADOR_X + 10f)..(ANCHO) && tiempoTranscurridoMs >= b.proximoDisparoEn) {
+                    val tipo = if (Random.nextBoolean()) TipoDisparo.ALTO else TipoDisparo.BAJO
+                    balas = balas + BalaVaqueros(siguienteId++, nx, tipo, deEnemigo = true)
+                    nuevo = nuevo.copy(proximoDisparoEn = tiempoTranscurridoMs + 900L + Random.nextLong(700L))
+                }
+                nuevo
+            }
+
+            val bandidosRestantes = bandidos.toMutableList()
+            val balasRestantes = mutableListOf<BalaVaqueros>()
+            for (bala in balas) {
+                if (bala.deEnemigo) {
+                    val nx = bala.x - VEL_BALA_ENEMIGA * dt
+                    if (nx <= JUGADOR_X + 6f && nx >= JUGADOR_X - 6f) {
+                        // OJO: se recalcula aquí adentro (no se reusa el `estado` de
+                        // arriba) porque ese `val` queda fijo en el valor que tenía
+                        // cuando arrancó esta corrutina — leer `agachado`/`alturaSalto`
+                        // directo sí siempre da el valor real más reciente.
+                        val estadoActual = when {
+                            alturaSalto > 0f -> EstadoJugador.SALTANDO
+                            agachado -> EstadoJugador.AGACHADO
+                            else -> EstadoJugador.DE_PIE
+                        }
+                        if (invulnerableHasta == 0L && bala.tipo != null && !sobreviveDisparo(estadoActual, bala.tipo)) {
+                            vidas -= 1
+                            invulnerableHasta = ahora + INVULNERABILIDAD_NANOS
+                            services.sound.tocar(Efecto.WRONG)
+                        }
+                        continue // la bala se consume al llegar al jugador, la esquive o no
+                    }
+                    if (nx > JUGADOR_X - 6f) balasRestantes.add(bala.copy(x = nx))
+                } else {
+                    val nx = bala.x + VEL_BALA_JUGADOR * dt
+                    val golpeado = bandidosRestantes.firstOrNull { circuloChocaRect(nx, SUELO_Y - 15f, 4f, it.x - 10f, SUELO_Y - 30f, 20f, 30f) }
+                    if (golpeado != null) {
+                        bandidosRestantes.remove(golpeado)
+                        derrotados += 1
+                        services.sound.tocar(Efecto.CORRECT)
+                    } else if (nx < ANCHO) {
+                        balasRestantes.add(bala.copy(x = nx))
+                    }
+                }
+            }
+            bandidos = bandidosRestantes
+            balas = balasRestantes
+
+            if (vidas <= 0) {
+                terminado = true
+                services.sound.tocar(Efecto.WRONG)
+                break
+            }
+            if (derrotados >= OBJETIVO_BANDIDOS) {
+                terminado = true
+                gano = true
+                services.sound.tocar(Efecto.WIN)
+                scope.launch { services.progress.completarNivel(juego.id, 1) }
+                break
+            }
+        }
+    }
+
+    GameShell(
+        juego = juego,
+        consigna = when {
+            terminado && gano -> "¡Pueblo a salvo! $OBJETIVO_BANDIDOS bandidos atrapados"
+            terminado -> "Un bandido te derribó — bandidos atrapados: $derrotados"
+            else -> "Bandidos $derrotados/$OBJETIVO_BANDIDOS · Vidas $vidas"
+        },
+        onVolver = onVolver,
+        acciones = { if (terminado) Button(onClick = ::reiniciar) { Text("Volver a intentar") } },
+    ) {
+        Column(Modifier.fillMaxSize().padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(
+                modifier = Modifier
+                    .size(width = ANCHO.dp, height = ALTO.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(0xFFF5D99B)),
+            ) {
+                // Suelo
+                Box(
+                    modifier = Modifier
+                        .offset(y = SUELO_Y.dp)
+                        .size(width = ANCHO.dp, height = 6.dp)
+                        .background(Color(0xFF70452D)),
+                )
+                bandidos.forEach { b ->
+                    Box(
+                        modifier = Modifier.offset(x = (b.x - 15f).dp, y = (SUELO_Y - 30f).dp).size(width = 30.dp, height = 30.dp),
+                        contentAlignment = Alignment.Center,
+                    ) { Text("🤠", fontSize = 22.sp) }
+                }
+                balas.forEach { bala ->
+                    val y = if (bala.deEnemigo) {
+                        when (bala.tipo) { TipoDisparo.ALTO -> SUELO_Y - 26f; TipoDisparo.BAJO -> SUELO_Y - 4f; null -> SUELO_Y - 15f }
+                    } else {
+                        SUELO_Y - 15f
+                    }
+                    Box(
+                        modifier = Modifier
+                            .offset(x = bala.x.dp, y = y.dp)
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(if (bala.deEnemigo) Color(0xFFD9433A) else Color(0xFF3F342C)),
+                    )
+                }
+                // Jugador: agachado se ve más bajo y ancho, saltando sube del suelo.
+                val altoJugador = if (estado == EstadoJugador.AGACHADO) 22f else 34f
+                Box(
+                    modifier = Modifier
+                        .offset(x = (JUGADOR_X - 15f).dp, y = (SUELO_Y - altoJugador - alturaSalto).dp)
+                        .size(width = 30.dp, height = altoJugador.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (invulnerableHasta != 0L) Color(0xFFE0925C) else Color(0xFF6FBF73)),
+                    contentAlignment = Alignment.Center,
+                ) { Text(if (estado == EstadoJugador.SALTANDO) "🤸" else "🤠", fontSize = 18.sp) }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(14.dp), modifier = Modifier.padding(top = 10.dp)) {
+                BotonVaqueros("🦆 Agacharte", presionado = agachado) { agachado = it }
+                BotonVaqueros("🤸 Saltar", presionado = false) { if (it) saltar() }
+                BotonVaqueros("🔫 Disparar", presionado = false) { if (it) disparar() }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BotonVaqueros(texto: String, presionado: Boolean, onCambio: (Boolean) -> Unit) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(if (presionado) Color(0xFF8A5A2B) else Color.White)
+            .clickable { onCambio(!presionado) }
+            .padding(horizontal = 10.dp, vertical = 8.dp),
+    ) { Text(texto, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (presionado) Color.White else Color(0xFF3F342C)) }
+}
