@@ -132,6 +132,7 @@ val CATALOGO = listOf(
     GameDef("tabla-cien", "La tabla del cien", "💯", "Coloca del 1 al 100", Area.MATEMATICAS, 4, "Tabla del cien", "Secuencia numérica y estructura de la decena."),
     GameDef("banco-dorado", "El banco dorado", "🟡", "Unidades, decenas y centenas", Area.MATEMATICAS, 4, "Perlas doradas", "Sistema decimal a la vista: componer números grandes."),
     GameDef("bingo", "Bingo con imágenes", "🎱", "Escucha, busca y marca en tu cartón", Area.COMPANIA, 2, "Juego de mesa", "Vocabulario, atención y correspondencia."),
+    GameDef("loteria", "Lotería mexicana", "🃏", "El gritón canta y tú marcas tu cartón", Area.COMPANIA, 2, "Lotería mexicana", "Escuchar con atención, reconocer por el nombre y esperar su turno."),
     GameDef("domino", "Dominó", "🀄", "Encaja tu ficha por número", Area.COMPANIA, 2, "Juego de mesa", "Correspondencia numérica y esperar el turno."),
     GameDef("conecta4", "Cuatro en línea", "🔵", "Alinea cuatro fichas antes que la computadora", Area.COMPANIA, 2, "Juego de mesa", "Planeación simple y anticipar la jugada del otro."),
     GameDef("adivinaquien", "Adivina quién es", "🕵️", "Pregunta y descubre", Area.COMPANIA, 2, "Juego de deducción", "Razonamiento lógico por eliminación."),

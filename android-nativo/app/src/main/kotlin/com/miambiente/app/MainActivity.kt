@@ -23,6 +23,7 @@ import com.miambiente.app.ui.screens.AranaScreen
 import com.miambiente.app.ui.screens.BancoDoradoScreen
 import com.miambiente.app.ui.screens.BinomioScreen
 import com.miambiente.app.ui.screens.BingoScreen
+import com.miambiente.app.ui.screens.LoteriaScreen
 import com.miambiente.app.ui.screens.BurbujasScreen
 import com.miambiente.app.ui.screens.CanastaScreen
 import com.miambiente.app.ui.screens.CaraScreen
@@ -287,6 +288,7 @@ class MainActivity : ComponentActivity() {
                         composable("tabla-cien") { TablaCienScreen(volver) }
                         composable("banco-dorado") { BancoDoradoScreen(volver) }
                         composable("bingo") { BingoScreen(volver) }
+                        composable("loteria") { LoteriaScreen(volver) }
                         composable("domino") { DominoScreen(volver) }
                         composable("conecta4") { Conecta4Screen(volver) }
                         composable("adivinaquien") { AdivinaQuienScreen(volver) }
