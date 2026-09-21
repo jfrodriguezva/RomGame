@@ -2,6 +2,7 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -149,11 +152,15 @@ fun SnakeScreen(onVolver: () -> Unit) {
         onVolver = onVolver,
         acciones = { if (terminado) Button(onClick = ::reiniciar) { Text("Jugar de nuevo") } },
     ) {
-        Column(Modifier.fillMaxSize().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Text("Puntaje: $puntaje", fontSize = 14.sp, fontWeight = FontWeight.Bold)
             Box(
                 modifier = Modifier
                     .padding(top = 8.dp)
+                    .horizontalScroll(rememberScrollState())
                     .size(width = CELDA_SNAKE * SNAKE_COLS, height = CELDA_SNAKE * SNAKE_FILAS)
                     .shadow(6.dp, RoundedCornerShape(8.dp))
                     .clip(RoundedCornerShape(8.dp))

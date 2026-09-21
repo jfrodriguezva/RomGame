@@ -132,6 +132,7 @@ val CATALOGO = listOf(
     GameDef("tabla-cien", "La tabla del cien", "💯", "Coloca del 1 al 100", Area.MATEMATICAS, 4, "Tabla del cien", "Secuencia numérica y estructura de la decena."),
     GameDef("banco-dorado", "El banco dorado", "🟡", "Unidades, decenas y centenas", Area.MATEMATICAS, 4, "Perlas doradas", "Sistema decimal a la vista: componer números grandes."),
     GameDef("bingo", "Bingo con imágenes", "🎱", "Escucha, busca y marca en tu cartón", Area.COMPANIA, 2, "Juego de mesa", "Vocabulario, atención y correspondencia."),
+    GameDef("loteria", "Lotería mexicana", "🎴", "Marca tu tablero antes de que se acabe el mazo", Area.COMPANIA, 2, "Juego de mesa", "Vocabulario, atención y esperar el turno del azar."),
     GameDef("domino", "Dominó", "🀄", "Encaja tu ficha por número", Area.COMPANIA, 2, "Juego de mesa", "Correspondencia numérica y esperar el turno."),
     GameDef("conecta4", "Cuatro en línea", "🔵", "Alinea cuatro fichas antes que la computadora", Area.COMPANIA, 2, "Juego de mesa", "Planeación simple y anticipar la jugada del otro."),
     GameDef("adivinaquien", "Adivina quién es", "🕵️", "Pregunta y descubre", Area.COMPANIA, 2, "Juego de deducción", "Razonamiento lógico por eliminación."),
@@ -147,6 +148,8 @@ val CATALOGO = listOf(
     GameDef("tetris", "Tetris", "🧱", "Acomoda las piezas y completa líneas", Area.COMPANIA, 2, "Juego de mesa", "Rotación mental, planeación espacial y reflejos."),
     GameDef("snake", "La víbora", "🐍", "Come y no choques", Area.COMPANIA, 2, "Juego arcade", "Planeación de ruta, reflejos y control del error."),
     GameDef("arkanoid", "Rompe ladrillos", "🧱", "Rebota la pelota y rompe todos los ladrillos", Area.COMPANIA, 2, "Juego arcade", "Coordinación ojo-mano y anticipar trayectorias."),
+    GameDef("pang", "Pang: revienta burbujas", "🎯", "Dispara el arpón y divide las burbujas", Area.COMPANIA, 2, "Juego arcade", "Coordinación ojo-mano y anticipar trayectorias parabólicas."),
+    GameDef("palillos", "Palillos chinos", "🥢", "Saca varillas sin mover las demás", Area.COMPANIA, 2, "Juego de destreza", "Pulso firme, paciencia y esperar el turno del rival."),
     GameDef("topo", "Atrapa al topo", "🐹", "Tócalo antes de que se esconda", Area.COMPANIA, 2, "Juego arcade", "Tiempo de reacción y atención sostenida."),
 
     // --- Movimiento y coordinación (independientes) ---

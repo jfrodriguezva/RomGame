@@ -2,6 +2,7 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -185,14 +188,17 @@ fun TetrisScreen(onVolver: () -> Unit) {
         onVolver = onVolver,
         acciones = { if (terminado) Button(onClick = ::reiniciar) { Text("Jugar de nuevo") } },
     ) {
-        Column(Modifier.fillMaxSize().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                 Text("Puntaje: $puntaje", fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 Text("Líneas: $lineas", fontSize = 13.sp)
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 8.dp).horizontalScroll(rememberScrollState()),
             ) {
                 Box(
                     modifier = Modifier

@@ -25,17 +25,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,7 +46,7 @@ import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.CATALOGO
 import com.miambiente.app.model.GameDef
 import com.miambiente.app.model.buscarJuego
-import com.miambiente.app.theme.Area
+import com.miambiente.app.theme.EspacioM
 import com.miambiente.app.theme.Papel
 import com.miambiente.app.theme.TextoSuave
 import com.miambiente.app.theme.Tinta
@@ -60,26 +56,22 @@ private val IDS_DESTACADOS = listOf("pizarra", "xilofono", "collage", "colorear"
 
 /**
  * Menú principal, equivalente nativo de app/page.tsx: acceso rápido a las
- * herramientas libres + selector de área + cuadrícula de materiales,
- * filtrados por edad mínima.
+ * herramientas libres + una sola cuadrícula con todos los materiales, sin
+ * pestañas de área ni filtro por edad.
  */
 @Composable
 fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> Unit, onAjustes: () -> Unit) {
-    var areaActiva by remember { mutableStateOf<Area?>(Area.entries.first()) }
-    // Bug real reportado ("no quitaste la opcion de las edades"): antes
-    // esto dependía de que `edadMinima = 2` en los juegos de mesa
-    // clásicos fuera siempre menor o igual a la edad mínima elegible en
-    // el selector — funcionaba, pero de forma frágil e implícita (si el
-    // selector alguna vez cambiara su mínimo, se rompería solo). Ahora el
-    // filtro EXPLÍCITAMENTE no aplica a Área.COMPANIA: esos materiales
-    // siempre aparecen abiertos, sin importar la edad elegida, tal como
-    // se pidió ("que todos aparezcan abiertos para jugar sin elegir edad").
-    val disponibles = CATALOGO.filter { it.area == Area.COMPANIA || edad >= it.edadMinima }
-    val destacados = IDS_DESTACADOS.mapNotNull { buscarJuego(it) }.filter { edad >= it.edadMinima }
+    // El filtro por edad se quitó por completo: se pidió que todos los
+    // materiales aparezcan juntos, sin importar la edad elegida al inicio
+    // (ese selector se conserva solo como pantalla de bienvenida, ya no
+    // oculta nada del catálogo). Tampoco se agrupa por área: una sola
+    // grilla con los 98+ materiales, más fácil de recorrer sin pestañas.
+    val disponibles = CATALOGO
+    val destacados = IDS_DESTACADOS.mapNotNull { buscarJuego(it) }
 
     Column(modifier = Modifier.fillMaxSize().background(Papel).safeDrawingPadding()) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = EspacioM, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -105,7 +97,7 @@ fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> U
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        "${disponibles.size} materiales para $edad años",
+                        "${disponibles.size} materiales",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextoSuave,
                         maxLines = 1,
@@ -137,10 +129,10 @@ fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> U
                 style = MaterialTheme.typography.labelLarge,
                 color = TextoSuave,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 16.dp, bottom = 6.dp),
+                modifier = Modifier.padding(start = EspacioM, bottom = 6.dp),
             )
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
+                contentPadding = PaddingValues(horizontal = EspacioM),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.padding(bottom = 14.dp),
             ) {
@@ -148,33 +140,14 @@ fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> U
             }
         }
 
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(Area.entries.toList()) { area ->
-                val cantidad = disponibles.count { it.area == area }
-                FilterChip(
-                    selected = areaActiva == area,
-                    onClick = { areaActiva = area },
-                    label = { Text("${area.emoji} ${area.label} ($cantidad)") },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = coloresDe(area).fondo,
-                        selectedLabelColor = coloresDe(area).texto,
-                    ),
-                )
-            }
-        }
-
-        val lista = disponibles.filter { areaActiva == null || it.area == areaActiva }
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 128.dp),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(EspacioM),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.fillMaxSize(),
         ) {
-            items(lista, key = { it.id }) { juego -> TarjetaJuego(juego, onClick = { onAbrirJuego(juego.id) }) }
+            items(disponibles, key = { it.id }) { juego -> TarjetaJuego(juego, onClick = { onAbrirJuego(juego.id) }) }
         }
     }
 }

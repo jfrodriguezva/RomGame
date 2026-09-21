@@ -16,6 +16,100 @@ encabezado del Home). No se tocó `applicationId` ni el paquete Kotlin
 perder el progreso guardado en instalaciones existentes, un efecto
 destructivo que nadie pidió.
 
+## Décima pasada: Home sin filtro de edad, Arkanoid/Tetris/Snake sin recortarse, Lotería, Pang y Palillos chinos nuevos
+
+Pedido de seis partes en un solo mensaje: *"quita los filtros de edad y
+que se muestren todos los materiales juntos / ajusta los tamaños de cada
+juego y que no se salga del cuadro / agregaste la lotería, ponle otros
+tableros y que salgan todas las cartas al azar / agrega los palillos
+chinos que funcione bien / replica idénticamente los juegos arcade
+(Arkanoid, Pang) / dale una mejor vista a toda la app"*. Confirmado con
+el usuario antes de tocar código: trabajar solo sobre `android-nativo`
+(no la web), una sola grilla sin pestañas de área, pulido de componentes
+compartidos (no rediseño), y Lotería como lotería mexicana tradicional.
+
+- **`HomeScreen.kt` — filtro de edad y pestañas de área eliminados por
+  completo**: `disponibles` ya no filtra por `edad >= edadMinima` (antes
+  con una excepción explícita solo para `Area.COMPANIA`); ahora es
+  literalmente `CATALOGO` completo. Se quitó también la fila de
+  `FilterChip` por área y la variable `areaActiva` — una sola
+  `LazyVerticalGrid` con los 100+ materiales. El selector de edad inicial
+  (`SelectorEdadScreen`) se dejó intacto a propósito: `edad` no se usa
+  para dificultad en ningún material, solo decide la pantalla de arranque,
+  así que quitarlo hubiera sido un cambio no pedido sin beneficio real.
+- **Arkanoid, Tetris y Snake ya no se recortan**: los tres tenían el
+  mismo tablero de tamaño fijo sin `verticalScroll`/`horizontalScroll` que
+  ya se había corregido antes en Damas/Ajedrez/Solitario — mismo patrón
+  defensivo aplicado ahora aquí.
+- **Lotería mexicana, material nuevo** (`loteria`, distinto de Bingo):
+  mazo real de 54 cartas únicas y 8 tableros de 4×4 predefinidos
+  (subconjuntos distintos del mazo, uno se elige al azar por partida). El
+  mazo se baraja una vez y se consume carta por carta sin repetir
+  (`siguienteCanto`) hasta ganar el cartón completo o agotarlo — a
+  diferencia de Bingo, donde el "mazo" y el "cartón" eran literalmente el
+  mismo conjunto de 9 emojis.
+- **Arkanoid, mucho más cerca del arcade original**: multi-bola de verdad
+  (`bolas: List<BolaState>`, no una sola bola), power-ups reales que caen
+  de un ladrillo roto (paleta ancha/angosta temporal, multi-bola, bola
+  rápida/lenta, vida extra), 5 patrones de nivel que rotan (filas
+  completas, marco con ladrillos indestructibles, pirámide, diamante,
+  tablero de ajedrez — antes siempre era una cuadrícula rectangular
+  completa) y rebote lateral real contra los ladrillos (resolución AABB
+  por penetración mínima, antes el rebote siempre invertía la velocidad
+  vertical sin importar de qué lado pegara). Los tests existentes de
+  `ArkanoidLogicTest` se preservaron sin tocar (el layout por defecto en
+  `(nivel-1)%5==0` es exactamente el diseño original) y se sumaron los
+  nuevos para `layoutParaNivel`, `resolverReboteLadrillo` y
+  `deberiaCaerPowerUp`.
+- **Pang, generado de cero** (`pang`): arpón fijo que sube y se retrae al
+  tocar el techo o una burbuja, burbujas con gravedad real que rebotan en
+  paredes/techo/suelo y se dividen en dos más chicas al ser tocadas por el
+  arpón (hasta desaparecer en el tamaño mínimo). Reutiliza
+  `circuloChocaRect` de `ArkanoidScreen.kt` tratando el arpón como un
+  rectángulo angosto, en vez de duplicar la fórmula de colisión.
+- **Palillos chinos (Mikado), generado de cero** (`palillos`) — el más
+  nuevo técnicamente, primera geometría de colisión segmento-segmento del
+  proyecto (`segmentosSeCruzan`, algoritmo estándar de orientación de 3
+  puntos con los 4 casos colineales). El jugador arrastra una varilla
+  suelta hacia "tu bandeja" (una franja abajo del montón); si en el
+  camino cruza otra varilla, se cancela el intento y pasa el turno —
+  igual que la regla real de "no molestar las demás". Modo contra la
+  computadora (heurística: elige la varilla con menos varillas
+  cruzándola, con una probabilidad de éxito que baja mientras más cruces
+  tenga) o dos jugadores, mismo patrón de `FilterChip` que Damas/Ajedrez.
+  **Dos simplificaciones conscientes, declaradas sin rodeos**: la caída
+  inicial del montón es un cálculo de posiciones dispersas (no física de
+  colisión entre 24 cuerpos rígidos cayendo de verdad), y arrastrar una
+  varilla la traslada en línea recta sin rotarla (más simple para una
+  mano de niño que rotar y trasladar a la vez).
+- **Pase de pulido en componentes compartidos** (confirmado con el
+  usuario: solo esto, no un rediseño): `theme/Theme.kt` completó los
+  estilos de `Typography` que faltaban (`headlineSmall`, `titleMedium`,
+  `titleSmall`, `bodySmall`, `labelLarge`, `labelMedium` — antes Material3
+  los rellenaba con su tamaño/peso por defecto en vez del criterio propio
+  del proyecto); `theme/Espaciado.kt` nuevo con una escala de espaciado
+  (4/8/16/24dp) aplicada en `GameShell.kt` y `HomeScreen.kt` donde ya
+  coincidía con esos valores; y una transición de navegación pareja
+  (fundido + deslizamiento corto) declarada una sola vez en el `NavHost`
+  de `MainActivity.kt`, que antes no tenía ninguna (corte seco entre Home
+  y cada material).
+
+**Sobre la verificación de esta pasada, con la misma honestidad de
+siempre**: el JDK 21 de esta máquina (`C:/Program Files/Android/openjdk/jdk-21.0.8`)
+resultó estar incompleto (le falta `lib/jvm.cfg` y los subdirectorios
+reales del runtime — solo 23 archivos en total, cuando un JDK completo
+tiene miles), así que **no se pudo correr `compileDebugKotlin` ni los
+tests unitarios nuevos en esta sesión**. Todo el código de esta pasada se
+escribió y se revisó a mano releyendo cada archivo completo buscando
+errores de sintaxis/tipos, siguiendo al pie de la letra los patrones ya
+usados en el proyecto (mismo estilo de `withFrameNanos`, mismo
+`circuloChocaRect` reutilizado, mismo patrón de `FilterChip` para
+dos-jugadores-vs-IA), pero no se instaló ni se jugó en un emulador. Para
+verificar de verdad: reinstalar un JDK 21 completo (o apuntar
+`JAVA_HOME` a uno que sí lo tenga, por ejemplo el JBR de Android Studio)
+y correr `./gradlew compileDebugKotlin`, `./gradlew testDebugUnitTest` y
+`./gradlew assembleDebug`.
+
 ## Novena pasada: silueta al mover piezas, un ANR real corregido, un duplicado menos, Arkanoid con niveles, Solitario "nivel PC"
 
 Pedido de cinco partes en un solo mensaje: *"En todos los juegos al

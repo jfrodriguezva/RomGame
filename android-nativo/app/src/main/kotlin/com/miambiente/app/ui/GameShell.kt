@@ -32,6 +32,10 @@ import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Settings
 import com.miambiente.app.model.GameDef
+import com.miambiente.app.theme.EspacioL
+import com.miambiente.app.theme.EspacioM
+import com.miambiente.app.theme.EspacioS
+import com.miambiente.app.theme.EspacioXS
 import com.miambiente.app.theme.Papel
 import com.miambiente.app.theme.TextoSuave
 import com.miambiente.app.theme.Tinta
@@ -85,10 +89,10 @@ fun GameShell(
                 .fillMaxWidth()
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp))
                 .background(colores.fondo, shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp))
-                .padding(bottom = 4.dp),
+                .padding(bottom = EspacioXS),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = EspacioS, vertical = EspacioS),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -106,7 +110,7 @@ fun GameShell(
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.ExtraBold,
                 color = colores.texto,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = EspacioM),
             )
         }
 
@@ -120,7 +124,7 @@ fun GameShell(
                     texto,
                     fontWeight = FontWeight.Bold,
                     color = TextoSuave,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = EspacioL, vertical = EspacioS),
                 )
             }
         }
@@ -131,7 +135,7 @@ fun GameShell(
         }
 
         if (nota != null) {
-            Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxWidth().padding(EspacioM), contentAlignment = Alignment.Center) {
                 Text(
                     nota,
                     color = Papel,
@@ -139,7 +143,7 @@ fun GameShell(
                     fontSize = 14.sp,
                     modifier = Modifier
                         .background(Tinta.copy(alpha = 0.85f), shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp))
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = EspacioM, vertical = EspacioS),
                 )
             }
         }

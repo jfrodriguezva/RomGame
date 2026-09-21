@@ -7,6 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -23,6 +28,7 @@ import com.miambiente.app.ui.screens.AranaScreen
 import com.miambiente.app.ui.screens.BancoDoradoScreen
 import com.miambiente.app.ui.screens.BinomioScreen
 import com.miambiente.app.ui.screens.BingoScreen
+import com.miambiente.app.ui.screens.LoteriaScreen
 import com.miambiente.app.ui.screens.BurbujasScreen
 import com.miambiente.app.ui.screens.CanastaScreen
 import com.miambiente.app.ui.screens.CaraScreen
@@ -41,6 +47,8 @@ import com.miambiente.app.ui.screens.DadoScreen
 import com.miambiente.app.ui.screens.AjedrezScreen
 import com.miambiente.app.ui.screens.AjustesScreen
 import com.miambiente.app.ui.screens.ArkanoidScreen
+import com.miambiente.app.ui.screens.PangScreen
+import com.miambiente.app.ui.screens.PalillosScreen
 import com.miambiente.app.ui.screens.DamasChinasScreen
 import com.miambiente.app.ui.screens.DamasScreen
 import com.miambiente.app.ui.screens.SnakeScreen
@@ -163,6 +171,15 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
                         startDestination = if (actual.edad == null) Ruta.EDAD else Ruta.INICIO,
+                        // Transición pareja para toda la app (antes era corte
+                        // seco entre Home y cada material): se declara una
+                        // sola vez a nivel de NavHost, no en cada uno de los
+                        // ~100 `composable(...)`, así que toca "toda la app"
+                        // sin editar cada pantalla individual.
+                        enterTransition = { fadeIn(tween(180)) + slideInHorizontally(tween(180)) { it / 8 } },
+                        exitTransition = { fadeOut(tween(150)) },
+                        popEnterTransition = { fadeIn(tween(180)) },
+                        popExitTransition = { fadeOut(tween(150)) + slideOutHorizontally(tween(150)) { it / 8 } },
                     ) {
                         composable(Ruta.EDAD) {
                             SelectorEdadScreen(onElegida = {
@@ -286,6 +303,7 @@ class MainActivity : ComponentActivity() {
                         composable("tabla-cien") { TablaCienScreen(volver) }
                         composable("banco-dorado") { BancoDoradoScreen(volver) }
                         composable("bingo") { BingoScreen(volver) }
+                        composable("loteria") { LoteriaScreen(volver) }
                         composable("domino") { DominoScreen(volver) }
                         composable("conecta4") { Conecta4Screen(volver) }
                         composable("adivinaquien") { AdivinaQuienScreen(volver) }
@@ -294,6 +312,8 @@ class MainActivity : ComponentActivity() {
                         composable("tetris") { TetrisScreen(volver) }
                         composable("snake") { SnakeScreen(volver) }
                         composable("arkanoid") { ArkanoidScreen(volver) }
+                        composable("pang") { PangScreen(volver) }
+                        composable("palillos") { PalillosScreen(volver) }
                         composable("topo") { TopoScreen(volver) }
                         composable("solitario") { SolitarioScreen(volver) }
                         composable("arana-cartas") { SolitarioAranaScreen(volver) }
