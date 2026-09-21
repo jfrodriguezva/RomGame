@@ -1,15 +1,12 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,14 +18,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.ui.materials.MarcoArcade
+import com.miambiente.app.ui.materials.PadDireccional
 import com.miambiente.app.ui.GameShell
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -214,59 +211,42 @@ fun ComepuntosScreen(onVolver: () -> Unit) {
     ) {
         Column(Modifier.fillMaxSize().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             val energizado = energizadoTicks > 0
-            Column(
-                modifier = Modifier
-                    .size((PACMAN_COLS * 34).dp, (PACMAN_FILAS * 34).dp)
-                    .shadow(6.dp, RoundedCornerShape(8.dp))
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFF11152E)),
-            ) {
-                for (f in 0 until PACMAN_FILAS) {
-                    Row {
-                        for (c in 0 until PACMAN_COLS) {
-                            val i = f * PACMAN_COLS + c
-                            val esMuro = i !in CELDAS_LIBRES_PACMAN
-                            Box(
-                                modifier = Modifier.size(34.dp).background(if (esMuro) Color(0xFF3858B8) else Color(0xFF11152E)),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Text(
-                                    when {
-                                        i == jugador -> "🟡"
-                                        i in fantasmas -> if (energizado) "🔵" else "👻"
-                                        i in pellets -> "⭐"
-                                        i in comestibles -> "·"
-                                        else -> ""
-                                    },
-                                    color = Color.White,
-                                    fontSize = 17.sp,
-                                )
+            MarcoArcade(colorFondo = Color(0xFF11152E)) {
+                Column(modifier = Modifier.align(Alignment.Center)) {
+                    for (f in 0 until PACMAN_FILAS) {
+                        Row {
+                            for (c in 0 until PACMAN_COLS) {
+                                val i = f * PACMAN_COLS + c
+                                val esMuro = i !in CELDAS_LIBRES_PACMAN
+                                Box(
+                                    modifier = Modifier.size(34.dp).background(if (esMuro) Color(0xFF3858B8) else Color(0xFF11152E)),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Text(
+                                        when {
+                                            i == jugador -> "🟡"
+                                            i in fantasmas -> if (energizado) "🔵" else "👻"
+                                            i in pellets -> "⭐"
+                                            i in comestibles -> "·"
+                                            else -> ""
+                                        },
+                                        color = Color.White,
+                                        fontSize = 17.sp,
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(top = 12.dp)) {
-                BotonPacman("▲") { girar(DireccionPacman.ARRIBA) }
-                Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
-                    BotonPacman("◀") { girar(DireccionPacman.IZQUIERDA) }
-                    BotonPacman("▼") { girar(DireccionPacman.ABAJO) }
-                    BotonPacman("▶") { girar(DireccionPacman.DERECHA) }
-                }
+                PadDireccional(
+                    onArriba = { girar(DireccionPacman.ARRIBA) },
+                    onAbajo = { girar(DireccionPacman.ABAJO) },
+                    onIzquierda = { girar(DireccionPacman.IZQUIERDA) },
+                    onDerecha = { girar(DireccionPacman.DERECHA) },
+                )
             }
         }
     }
-}
-
-@Composable
-private fun BotonPacman(texto: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(48.dp)
-            .shadow(2.dp, RoundedCornerShape(12.dp))
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) { Text(texto, fontSize = 20.sp) }
 }

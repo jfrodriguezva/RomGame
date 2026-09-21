@@ -1,8 +1,6 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -25,15 +22,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.MarcadorArcade
+import com.miambiente.app.ui.materials.MarcoArcade
+import com.miambiente.app.ui.materials.PadDireccional
 import kotlinx.coroutines.delay
 
 internal const val SNAKE_COLS = 13
@@ -156,32 +154,26 @@ fun SnakeScreen(onVolver: () -> Unit) {
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("Puntaje: $puntaje", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-            Box(
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .horizontalScroll(rememberScrollState())
-                    .size(width = CELDA_SNAKE * SNAKE_COLS, height = CELDA_SNAKE * SNAKE_FILAS)
-                    .shadow(6.dp, RoundedCornerShape(8.dp))
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFF223B24)),
-            ) {
-                Column {
-                    for (f in 0 until SNAKE_FILAS) {
-                        Row {
-                            for (c in 0 until SNAKE_COLS) {
-                                val celda = f to c
-                                val esCabeza = celda == vibora.first()
-                                val esCuerpo = !esCabeza && celda in vibora
-                                val esComida = celda == comida
-                                Box(
-                                    modifier = Modifier.size(CELDA_SNAKE).padding(1.dp),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    when {
-                                        esComida -> Text("🍎", fontSize = 14.sp)
-                                        esCabeza -> Box(Modifier.fillMaxSize().clip(RoundedCornerShape(4.dp)).background(Color(0xFF8BBF6A)))
-                                        esCuerpo -> Box(Modifier.fillMaxSize().clip(RoundedCornerShape(4.dp)).background(Color(0xFF4C7A3A)))
+            MarcadorArcade("Puntaje: $puntaje")
+            MarcoArcade(colorFondo = Color(0xFF223B24), modifier = Modifier.padding(top = 8.dp)) {
+                Box(modifier = Modifier.align(Alignment.Center)) {
+                    Column {
+                        for (f in 0 until SNAKE_FILAS) {
+                            Row {
+                                for (c in 0 until SNAKE_COLS) {
+                                    val celda = f to c
+                                    val esCabeza = celda == vibora.first()
+                                    val esCuerpo = !esCabeza && celda in vibora
+                                    val esComida = celda == comida
+                                    Box(
+                                        modifier = Modifier.size(CELDA_SNAKE).padding(1.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        when {
+                                            esComida -> Text("🍎", fontSize = 14.sp)
+                                            esCabeza -> Box(Modifier.fillMaxSize().clip(RoundedCornerShape(4.dp)).background(Color(0xFF8BBF6A)))
+                                            esCuerpo -> Box(Modifier.fillMaxSize().clip(RoundedCornerShape(4.dp)).background(Color(0xFF4C7A3A)))
+                                        }
                                     }
                                 }
                             }
@@ -190,27 +182,13 @@ fun SnakeScreen(onVolver: () -> Unit) {
                 }
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(top = 16.dp)) {
-                BotonDireccion("⬆️") { girar(ARRIBA) }
-                Row(horizontalArrangement = Arrangement.spacedBy(52.dp)) {
-                    BotonDireccion("⬅️") { girar(IZQUIERDA) }
-                    BotonDireccion("➡️") { girar(DERECHA) }
-                }
-                BotonDireccion("⬇️") { girar(ABAJO) }
+                PadDireccional(
+                    onArriba = { girar(ARRIBA) },
+                    onAbajo = { girar(ABAJO) },
+                    onIzquierda = { girar(IZQUIERDA) },
+                    onDerecha = { girar(DERECHA) },
+                )
             }
         }
     }
-}
-
-@Composable
-private fun BotonDireccion(emoji: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .padding(4.dp)
-            .size(48.dp)
-            .shadow(2.dp, CircleShape)
-            .clip(CircleShape)
-            .background(Color.White)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) { Text(emoji, fontSize = 20.sp) }
 }

@@ -1,17 +1,13 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +21,6 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,6 +29,8 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.MarcoArcade
+import com.miambiente.app.ui.materials.PadDireccional
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -240,11 +237,11 @@ fun MosaicoScreen(onVolver: () -> Unit) {
         acciones = { if (terminado) Button(onClick = ::reiniciar) { Text("Nuevo mosaico") } },
     ) {
         Column(Modifier.fillMaxSize().padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            MarcoArcade(colorFondo = Color(0xFF11152E)) {
             Box(
                 modifier = Modifier
-                    .size(width = ANCHO.dp, height = ALTO.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(Color(0xFF11152E)),
+                    .align(Alignment.Center)
+                    .size(width = ANCHO.dp, height = ALTO.dp),
             ) {
                 for (i in 0 until COLS * FILAS) {
                     val fila = i / COLS
@@ -281,18 +278,19 @@ fun MosaicoScreen(onVolver: () -> Unit) {
                         .background(Color.White),
                 )
             }
+            }
             Text(
                 "Dibuja sobre lo oscuro y vuelve a lo verde para sellarlo",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 6.dp, bottom = 6.dp),
             )
-            BotonMosaico("⬆️") { mover(-COLS) }
-            Row(horizontalArrangement = Arrangement.spacedBy(52.dp)) {
-                BotonMosaico("⬅️") { mover(-1) }
-                BotonMosaico("➡️") { mover(1) }
-            }
-            BotonMosaico("⬇️") { mover(COLS) }
+            PadDireccional(
+                onArriba = { mover(-COLS) },
+                onAbajo = { mover(COLS) },
+                onIzquierda = { mover(-1) },
+                onDerecha = { mover(1) },
+            )
         }
     }
 }
@@ -301,17 +299,4 @@ private fun celdaDe(x: Float, y: Float): Int {
     val col = (x / CELDA).toInt().coerceIn(0, COLS - 1)
     val fila = (y / CELDA).toInt().coerceIn(0, FILAS - 1)
     return fila * COLS + col
-}
-
-@Composable
-private fun BotonMosaico(emoji: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(44.dp)
-            .shadow(2.dp, RoundedCornerShape(12.dp))
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) { Text(emoji, fontSize = 18.sp) }
 }
