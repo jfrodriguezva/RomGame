@@ -1,12 +1,15 @@
 package com.miambiente.app
 
 import android.os.Bundle
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.ui.platform.LocalContext
+import com.miambiente.app.game.MemoriaGdxActivity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -71,6 +74,7 @@ import com.miambiente.app.ui.screens.GatoScreen
 import com.miambiente.app.ui.screens.GloboScreen
 import com.miambiente.app.ui.screens.HabitatScreen
 import com.miambiente.app.ui.screens.HomeScreen
+import com.miambiente.app.ui.screens.FamiliaScreen
 import com.miambiente.app.ui.screens.HusosScreen
 import com.miambiente.app.ui.screens.InglesScreen
 import com.miambiente.app.ui.screens.InstrumentosScreen
@@ -104,7 +108,6 @@ import com.miambiente.app.ui.screens.RompecabezasScreen
 import com.miambiente.app.ui.screens.RpsScreen
 import com.miambiente.app.ui.screens.RutinaScreen
 import com.miambiente.app.ui.screens.SaborScreen
-import com.miambiente.app.ui.screens.SelectorEdadScreen
 import com.miambiente.app.ui.screens.SentidosScreen
 import com.miambiente.app.ui.screens.SeresVivosScreen
 import com.miambiente.app.ui.screens.SerpientesScreen
@@ -135,9 +138,9 @@ import com.miambiente.app.ui.screens.XilofonoScreen
  * `navController.navigate(juego.id)` sin necesitar un mapeo aparte.
  */
 object Ruta {
-    const val EDAD = "edad"
     const val INICIO = "inicio"
     const val AJUSTES = "ajustes"
+    const val FAMILIA = "familia/{id}"
 }
 
 class MainActivity : ComponentActivity() {
@@ -167,26 +170,24 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(
                         navController = navController,
-                        startDestination = if (actual.edad == null) Ruta.EDAD else Ruta.INICIO,
+                        startDestination = Ruta.INICIO,
                     ) {
-                        composable(Ruta.EDAD) {
-                            SelectorEdadScreen(onElegida = {
-                                navController.navigate(Ruta.INICIO) {
-                                    popUpTo(Ruta.EDAD) { inclusive = true }
-                                }
-                            })
-                        }
                         composable(Ruta.INICIO) {
                             HomeScreen(
-                                edad = actual.edad ?: 6,
-                                onAbrirJuego = { id -> navController.navigate(id) },
-                                onCambiarEdad = {
-                                    navController.navigate(Ruta.EDAD) {
-                                        popUpTo(0)
-                                    }
-                                },
+                                onAbrirFamilia = { id -> navController.navigate("familia/$id") },
                                 onAjustes = { navController.navigate(Ruta.AJUSTES) },
                                 nombre = actual.nombre,
+                            )
+                        }
+                        composable(Ruta.FAMILIA) { entry ->
+                            val context = LocalContext.current
+                            FamiliaScreen(
+                                id = entry.arguments?.getString("id").orEmpty(),
+                                onAbrirJuego = { id -> navController.navigate(id) },
+                                onAbrirMotor = { id ->
+                                    if (id == "memoria-observacion") context.startActivity(Intent(context, MemoriaGdxActivity::class.java))
+                                },
+                                onVolver = volver,
                             )
                         }
                         composable(Ruta.AJUSTES) { AjustesScreen(volver) }

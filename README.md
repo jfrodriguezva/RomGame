@@ -12,6 +12,10 @@ completos, con modos, niveles, progresión y controles táctiles de calidad.
 - Android 7.0 o posterior (`minSdk 24`).
 - La consolidación del catálogo y la migración a motores de juego se realizará
   por fases.
+- Fase 2 terminada: 111 accesos se consolidaron en 29 juegos con modos y ocho
+  categorías; el selector de edad fue retirado.
+- Fase 3 iniciada: LibGDX 1.14.2 está integrado y `Memoria y observación` tiene
+  el primer tablero OpenGL jugable.
 
 La estrategia completa está en
 [`docs/PLAN-RECONSTRUCCION-ANDROID.md`](docs/PLAN-RECONSTRUCCION-ANDROID.md) y el

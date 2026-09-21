@@ -1,5 +1,7 @@
 import java.util.Properties
 
+val gdxNatives by configurations.creating
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -64,6 +66,7 @@ android {
     sourceSets {
         getByName("main") {
             kotlin.srcDirs("src/main/kotlin")
+            jniLibs.srcDir(layout.buildDirectory.dir("generated/gdx-natives"))
         }
         getByName("test") {
             kotlin.srcDirs("src/test/kotlin")
@@ -76,6 +79,7 @@ android {
 }
 
 dependencies {
+    val gdxVersion = "1.14.2"
     val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)
@@ -92,6 +96,13 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.8.2")
 
+    implementation(project(":game-core"))
+    implementation("com.badlogicgames.gdx:gdx-backend-android:$gdxVersion")
+    gdxNatives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a")
+    gdxNatives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a")
+    gdxNatives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86")
+    gdxNatives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64")
+
     // Persistencia — equivalente nativo de zustand+localStorage (settings.ts, progressStore.ts).
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
@@ -101,4 +112,28 @@ dependencies {
     // ganador de los juegos de mesa, generación del set de dominó) — JVM
     // puro, sin emulador: corren en segundos con `./gradlew testDebugUnitTest`.
     testImplementation("junit:junit:4.13.2")
+}
+
+val copyGdxNatives by tasks.registering {
+    val output = layout.buildDirectory.dir("generated/gdx-natives")
+    outputs.dir(output)
+    doLast {
+        delete(output)
+        gdxNatives.files.forEach { archive ->
+            val abi = when {
+                "arm64-v8a" in archive.name -> "arm64-v8a"
+                "armeabi-v7a" in archive.name -> "armeabi-v7a"
+                "x86_64" in archive.name -> "x86_64"
+                else -> "x86"
+            }
+            copy {
+                from(zipTree(archive)) { include("*.so") }
+                into(output.get().dir(abi))
+            }
+        }
+    }
+}
+
+tasks.matching { it.name.endsWith("JniLibFolders") }.configureEach {
+    dependsOn(copyGdxNatives)
 }
