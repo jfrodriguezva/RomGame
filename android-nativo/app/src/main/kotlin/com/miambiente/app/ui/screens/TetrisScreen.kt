@@ -1,8 +1,6 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,9 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
@@ -35,6 +31,9 @@ import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Patron
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.BotonArcade
+import com.miambiente.app.ui.materials.MarcadorArcade
+import com.miambiente.app.ui.materials.MarcoArcade
 import kotlinx.coroutines.delay
 
 internal const val TETRIS_FILAS = 16
@@ -192,83 +191,65 @@ fun TetrisScreen(onVolver: () -> Unit) {
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                Text("Puntaje: $puntaje", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                Text("Líneas: $lineas", fontSize = 13.sp)
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(top = 8.dp).horizontalScroll(rememberScrollState()),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(width = CELDA_TETRIS * TETRIS_COLS, height = CELDA_TETRIS * TETRIS_FILAS)
-                        .shadow(6.dp, RoundedCornerShape(8.dp))
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFF211D33)),
+            MarcadorArcade("Puntaje: $puntaje · Líneas: $lineas")
+            MarcoArcade(colorFondo = Color(0xFF211D33), modifier = Modifier.padding(top = 8.dp)) {
+                Row(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Column {
-                        for (f in 0 until TETRIS_FILAS) {
-                            Row {
-                                for (c in 0 until TETRIS_COLS) {
-                                    val colorFijo = tablero[f][c]
-                                    val esActual = (f to c) in ocupadasActual
-                                    val color = colorFijo ?: if (esActual) actual.pieza.color else Color.Transparent
-                                    Box(
-                                        modifier = Modifier
-                                            .size(CELDA_TETRIS)
-                                            .padding(1.dp)
-                                            .background(color, RoundedCornerShape(2.dp)),
-                                    )
+                    Box(
+                        modifier = Modifier.size(width = CELDA_TETRIS * TETRIS_COLS, height = CELDA_TETRIS * TETRIS_FILAS),
+                    ) {
+                        Column {
+                            for (f in 0 until TETRIS_FILAS) {
+                                Row {
+                                    for (c in 0 until TETRIS_COLS) {
+                                        val colorFijo = tablero[f][c]
+                                        val esActual = (f to c) in ocupadasActual
+                                        val color = colorFijo ?: if (esActual) actual.pieza.color else Color.Transparent
+                                        Box(
+                                            modifier = Modifier
+                                                .size(CELDA_TETRIS)
+                                                .padding(1.dp)
+                                                .background(color, RoundedCornerShape(2.dp)),
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Siguiente", fontSize = 11.sp)
-                    Box(
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                            .size(CELDA_TETRIS * 4)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(Color(0xFF211D33)),
-                    ) {
-                        // offset por celda: sin esto las 4 celdas de la pieza
-                        // se dibujaban todas en el mismo lugar (esquina
-                        // superior), en vez de mostrar la forma real.
-                        celdasDeTetris(siguiente, 0).forEach { (r, c) ->
-                            Box(
-                                modifier = Modifier
-                                    .offset(x = CELDA_TETRIS * c, y = CELDA_TETRIS * r)
-                                    .size(CELDA_TETRIS)
-                                    .padding(1.dp)
-                                    .background(siguiente.color, RoundedCornerShape(2.dp)),
-                            )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("Siguiente", fontSize = 11.sp, color = Color.White)
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 4.dp)
+                                .size(CELDA_TETRIS * 4)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(Color(0xFF33304A)),
+                        ) {
+                            // offset por celda: sin esto las 4 celdas de la pieza
+                            // se dibujaban todas en el mismo lugar (esquina
+                            // superior), en vez de mostrar la forma real.
+                            celdasDeTetris(siguiente, 0).forEach { (r, c) ->
+                                Box(
+                                    modifier = Modifier
+                                        .offset(x = CELDA_TETRIS * c, y = CELDA_TETRIS * r)
+                                        .size(CELDA_TETRIS)
+                                        .padding(1.dp)
+                                        .background(siguiente.color, RoundedCornerShape(2.dp)),
+                                )
+                            }
                         }
                     }
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(top = 16.dp)) {
-                BotonControlTetris("⬅️") { mover(-1) }
-                BotonControlTetris("🔄") { rotar() }
-                BotonControlTetris("⬇️") { bajar() }
-                BotonControlTetris("⏬") { caidaDura() }
-                BotonControlTetris("➡️") { mover(1) }
+                BotonArcade("⬅️") { mover(-1) }
+                BotonArcade("🔄") { rotar() }
+                BotonArcade("⬇️") { bajar() }
+                BotonArcade("⏬") { caidaDura() }
+                BotonArcade("➡️") { mover(1) }
             }
         }
     }
-}
-
-@Composable
-private fun BotonControlTetris(emoji: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(48.dp)
-            .shadow(2.dp, RoundedCornerShape(12.dp))
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) { Text(emoji, fontSize = 20.sp) }
 }
