@@ -24,13 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.MarcadorArcade
+import com.miambiente.app.ui.materials.MarcoArcade
 import kotlinx.coroutines.delay
 
 private const val HOYOS = 9
@@ -114,33 +115,35 @@ fun TopoScreen(onVolver: () -> Unit) {
         acciones = { Button(onClick = ::iniciar) { Text(if (jugando) "Reiniciar" else "Jugar") } },
     ) {
         Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Puntaje: $puntaje", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Column(
-                modifier = Modifier.padding(top = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
-                for (fila in 0 until 3) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        for (col in 0 until 3) {
-                            val hoyo = fila * 3 + col
-                            val arriba = activo == hoyo
-                            val escala by animateFloatAsState(if (arriba) 1f else 0f, label = "topo")
-                            Box(
-                                modifier = Modifier.size(76.dp).clip(CircleShape).background(Color(0xFF6B4A34)),
-                                contentAlignment = Alignment.Center,
-                            ) {
+            MarcadorArcade("Puntaje: $puntaje")
+            MarcoArcade(colorFondo = Color(0xFF8BBF6A), modifier = Modifier.padding(top = 8.dp)) {
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    for (fila in 0 until 3) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                            for (col in 0 until 3) {
+                                val hoyo = fila * 3 + col
+                                val arriba = activo == hoyo
+                                val escala by animateFloatAsState(if (arriba) 1f else 0f, label = "topo")
                                 Box(
-                                    modifier = Modifier.size(64.dp).clip(CircleShape).background(Color(0xFF3E2A1E)),
+                                    modifier = Modifier.size(76.dp).clip(CircleShape).background(Color(0xFF6B4A34)),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    if (escala > 0.05f) {
-                                        Text(
-                                            "🐹",
-                                            fontSize = 34.sp,
-                                            modifier = Modifier
-                                                .scale(escala)
-                                                .clickable(enabled = jugando) { golpear(hoyo) },
-                                        )
+                                    Box(
+                                        modifier = Modifier.size(64.dp).clip(CircleShape).background(Color(0xFF3E2A1E)),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        if (escala > 0.05f) {
+                                            Text(
+                                                "🐹",
+                                                fontSize = 34.sp,
+                                                modifier = Modifier
+                                                    .scale(escala)
+                                                    .clickable(enabled = jugando) { golpear(hoyo) },
+                                            )
+                                        }
                                     }
                                 }
                             }
