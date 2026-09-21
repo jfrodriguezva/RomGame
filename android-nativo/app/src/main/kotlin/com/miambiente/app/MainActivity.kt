@@ -49,6 +49,12 @@ import com.miambiente.app.ui.screens.AjustesScreen
 import com.miambiente.app.ui.screens.ArkanoidScreen
 import com.miambiente.app.ui.screens.PangScreen
 import com.miambiente.app.ui.screens.PalillosScreen
+import com.miambiente.app.ui.screens.MosaicoScreen
+import com.miambiente.app.ui.screens.VaquerosScreen
+import com.miambiente.app.ui.screens.ComepuntosScreen
+import com.miambiente.app.ui.screens.NieveScreen
+import com.miambiente.app.ui.screens.EscuadronEstelarScreen
+import com.miambiente.app.ui.screens.GranPremioScreen
 import com.miambiente.app.ui.screens.DamasChinasScreen
 import com.miambiente.app.ui.screens.DamasScreen
 import com.miambiente.app.ui.screens.SnakeScreen
@@ -77,7 +83,6 @@ import com.miambiente.app.ui.screens.InglesScreen
 import com.miambiente.app.ui.screens.InstrumentosScreen
 import com.miambiente.app.ui.screens.LaberintoScreen
 import com.miambiente.app.ui.screens.LadosScreen
-import com.miambiente.app.ui.screens.LavaScreen
 import com.miambiente.app.ui.screens.LavadoManosScreen
 import com.miambiente.app.ui.screens.LetrasLijaScreen
 import com.miambiente.app.ui.screens.MayusculasScreen
@@ -122,7 +127,6 @@ import com.miambiente.app.ui.screens.TemperaturaScreen
 import com.miambiente.app.ui.screens.TexturaScreen
 import com.miambiente.app.ui.screens.TierraAguaScreen
 import com.miambiente.app.ui.screens.TiempoScreen
-import com.miambiente.app.ui.screens.ToystoryScreen
 import com.miambiente.app.ui.screens.TorreRosaScreen
 import com.miambiente.app.ui.screens.TransporteScreen
 import com.miambiente.app.ui.screens.TrazosScreen
@@ -198,6 +202,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 },
                                 onAjustes = { navController.navigate(Ruta.AJUSTES) },
+                                nombre = actual.nombre,
                             )
                         }
                         composable(Ruta.AJUSTES) { AjustesScreen(volver) }
@@ -315,6 +320,12 @@ class MainActivity : ComponentActivity() {
                         composable("pang") { PangScreen(volver) }
                         composable("palillos") { PalillosScreen(volver) }
                         composable("topo") { TopoScreen(volver) }
+                        composable("mosaico") { MosaicoScreen(volver) }
+                        composable("vaqueros") { VaquerosScreen(volver) }
+                        composable("comepuntos") { ComepuntosScreen(volver) }
+                        composable("nieve") { NieveScreen(volver) }
+                        composable("escuadron-estelar") { EscuadronEstelarScreen(volver) }
+                        composable("gran-premio") { GranPremioScreen(volver) }
                         composable("solitario") { SolitarioScreen(volver) }
                         composable("arana-cartas") { SolitarioAranaScreen(volver) }
                         composable("ajedrez") { AjedrezScreen(volver) }
@@ -325,8 +336,6 @@ class MainActivity : ComponentActivity() {
                         composable("canasta") { CanastaScreen(volver) }
                         composable("globo") { GloboScreen(volver) }
                         composable("arana") { AranaScreen(volver) }
-                        composable("lava") { LavaScreen(volver) }
-                        composable("toystory") { ToystoryScreen(volver) }
                         composable("carreras") { CarrerasScreen(volver) }
 
                         // --- Exclusivos de la versión nativa ---

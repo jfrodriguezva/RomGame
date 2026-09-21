@@ -2,64 +2,86 @@ package com.miambiente.app.ui.screens
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+/**
+ * Pruebas de la lógica pura de la lotería — JVM, sin emulador.
+ *
+ * Lo que importa verificar aquí es que el cartón siempre se pueda repartir
+ * (el mazo tiene que alcanzar para 4x4 sin repetir cartas) y que las
+ * dificultades entren en el nivel que les toca, en los 100 niveles.
+ */
 class LoteriaLogicTest {
 
     @Test
-    fun `el mazo de 54 cartas no tiene emojis repetidos`() {
-        assertEquals(54, MAZO_LOTERIA.size)
-        assertEquals(MAZO_LOTERIA.size, MAZO_LOTERIA.distinct().size)
+    fun `el mazo alcanza para el carton mas grande sin repetir`() {
+        val maximo = (1..100).maxOf { ladoParaNivel(it) * ladoParaNivel(it) }
+        assertEquals(16, maximo)
+        assertTrue("el mazo debe tener al menos $maximo cartas", MAZO_LOTERIA.size >= maximo)
     }
 
     @Test
-    fun `los 8 tableros tienen exactamente 16 cartas cada uno`() {
-        assertEquals(8, TABLEROS_LOTERIA.size)
-        assertTrue(TABLEROS_LOTERIA.all { it.size == 16 })
-        assertTrue(TABLEROS_LOTERIA.all { it.distinct().size == 16 })
+    fun `no hay cartas repetidas en el mazo`() {
+        val nombres = MAZO_LOTERIA.map { it.nombre }
+        assertEquals(nombres.size, nombres.distinct().size)
+        val emojis = MAZO_LOTERIA.map { it.emoji }
+        assertEquals(emojis.size, emojis.distinct().size)
     }
 
     @Test
-    fun `cada tablero es subconjunto del mazo de 54 cartas`() {
-        val mazo = MAZO_LOTERIA.toSet()
-        assertTrue(TABLEROS_LOTERIA.all { tablero -> tablero.all { it in mazo } })
-    }
-
-    @Test
-    fun `mazoBarajado no repite ni pierde cartas`() {
-        val barajado = mazoBarajado()
-        assertEquals(MAZO_LOTERIA.size, barajado.size)
-        assertEquals(MAZO_LOTERIA.toSet(), barajado.toSet())
-    }
-
-    @Test
-    fun `tableroAleatorio siempre devuelve uno de los tableros predefinidos`() {
-        val elegido = tableroAleatorio()
-        assertTrue(elegido in TABLEROS_LOTERIA)
-    }
-
-    @Test
-    fun `siguienteCanto consume una carta y no la repite hasta agotar el mazo`() {
-        var mazo = listOf("a", "b", "c")
-        val cantadas = mutableListOf<String>()
-        while (true) {
-            val resultado = siguienteCanto(mazo) ?: break
-            val (carta, resto) = resultado
-            cantadas.add(carta)
-            mazo = resto
+    fun `el carton crece de 2x2 a 4x4 y nunca se sale de ese rango`() {
+        assertEquals(2, ladoParaNivel(1))
+        assertEquals(4, ladoParaNivel(100))
+        for (nivel in 1..100) {
+            val lado = ladoParaNivel(nivel)
+            assertTrue("nivel $nivel dio lado $lado", lado in 2..4)
         }
-        assertEquals(listOf("a", "b", "c"), cantadas)
-        assertNull(siguienteCanto(emptyList()))
+        // Nunca decrece: un nivel más alto no puede traer un cartón más chico.
+        for (nivel in 2..100) {
+            assertTrue(
+                "el lado bajó del nivel ${nivel - 1} al $nivel",
+                ladoParaNivel(nivel) >= ladoParaNivel(nivel - 1),
+            )
+        }
     }
 
     @Test
-    fun `cartonCompleto es true solo cuando todas las cartas del tablero estan marcadas`() {
-        val tablero = listOf("🐶", "🐱", "🐰")
-        assertFalse(cartonCompleto(tablero, setOf("🐶")))
-        assertFalse(cartonCompleto(tablero, setOf("🐶", "🐱")))
-        assertTrue(cartonCompleto(tablero, setOf("🐶", "🐱", "🐰")))
-        assertTrue(cartonCompleto(tablero, setOf("🐶", "🐱", "🐰", "🦋")))
+    fun `el carton reparte tantas cartas distintas como casillas`() {
+        for (nivel in listOf(1, 25, 50, 75, 100)) {
+            val carton = repartirCarton(nivel)
+            val lado = ladoParaNivel(nivel)
+            assertEquals(lado * lado, carton.size)
+            assertEquals(carton.size, carton.map { it.nombre }.distinct().size)
+        }
+    }
+
+    @Test
+    fun `la carta se muestra hasta la etapa 6 y despues solo se oye`() {
+        assertTrue(mostrarCartaParaNivel(1))
+        assertTrue(mostrarCartaParaNivel(60))
+        assertFalse(mostrarCartaParaNivel(61))
+        assertFalse(mostrarCartaParaNivel(100))
+    }
+
+    @Test
+    fun `cantar cartas de fuera empieza en la etapa 4`() {
+        assertFalse(cantaCartasFueraParaNivel(1))
+        assertFalse(cantaCartasFueraParaNivel(30))
+        assertTrue(cantaCartasFueraParaNivel(31))
+        assertTrue(cantaCartasFueraParaNivel(100))
+    }
+
+    @Test
+    fun `siempre quedan cartas fuera del carton para poder cantarlas`() {
+        // Si el cartón se comiera el mazo entero, "no la tengo" nunca podría
+        // ser la respuesta correcta y el botón sería una trampa.
+        for (nivel in 31..100) {
+            val casillas = ladoParaNivel(nivel) * ladoParaNivel(nivel)
+            assertTrue(
+                "en el nivel $nivel no sobran cartas fuera del cartón",
+                MAZO_LOTERIA.size - casillas > 0,
+            )
+        }
     }
 }

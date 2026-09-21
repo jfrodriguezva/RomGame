@@ -60,7 +60,13 @@ private val IDS_DESTACADOS = listOf("pizarra", "xilofono", "collage", "colorear"
  * pestañas de área ni filtro por edad.
  */
 @Composable
-fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> Unit, onAjustes: () -> Unit) {
+fun HomeScreen(
+    edad: Int,
+    onAbrirJuego: (String) -> Unit,
+    onCambiarEdad: () -> Unit,
+    onAjustes: () -> Unit,
+    nombre: String = "",
+) {
     // El filtro por edad se quitó por completo: se pidió que todos los
     // materiales aparezcan juntos, sin importar la edad elegida al inicio
     // (ese selector se conserva solo como pantalla de bienvenida, ya no
@@ -88,8 +94,18 @@ fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> U
                     contentAlignment = Alignment.Center,
                 ) { Text("🧩", fontSize = 20.sp) }
                 Column {
+                    // Dentro de la app se lee solo el nombre del niño (RominaGame
+                    // es el nombre del icono, no el encabezado). El saludo va
+                    // arriba, sin repetir el nombre dos veces.
                     Text(
-                        "RominaGame",
+                        "Hola 👋",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextoSuave,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                    )
+                    Text(
+                        if (nombre.isNotBlank()) nombre else "RominaGame",
                         style = MaterialTheme.typography.headlineSmall,
                         color = Tinta,
                         fontWeight = FontWeight.ExtraBold,
