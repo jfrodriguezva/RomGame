@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -61,6 +62,15 @@ fun AjustesScreen(onVolver: () -> Unit) {
             color = TextoSuave,
             fontSize = 13.sp,
             modifier = Modifier.padding(bottom = 20.dp),
+        )
+
+        // El nombre del saludo del inicio. Se guarda solo, como todo aqui.
+        OutlinedTextField(
+            value = ajustes.nombre,
+            onValueChange = { nuevo -> scope.launch { services.settings.setNombre(nuevo.take(20)) } },
+            label = { Text("¿Cómo se llama?") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
         )
 
         FilaAjuste(

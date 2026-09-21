@@ -64,7 +64,13 @@ private val IDS_DESTACADOS = listOf("pizarra", "xilofono", "collage", "colorear"
  * filtrados por edad mínima.
  */
 @Composable
-fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> Unit, onAjustes: () -> Unit) {
+fun HomeScreen(
+    edad: Int,
+    onAbrirJuego: (String) -> Unit,
+    onCambiarEdad: () -> Unit,
+    onAjustes: () -> Unit,
+    nombre: String = "",
+) {
     var areaActiva by remember { mutableStateOf<Area?>(Area.entries.first()) }
     // Bug real reportado ("no quitaste la opcion de las edades"): antes
     // esto dependía de que `edadMinima = 2` en los juegos de mesa
@@ -96,8 +102,18 @@ fun HomeScreen(edad: Int, onAbrirJuego: (String) -> Unit, onCambiarEdad: () -> U
                     contentAlignment = Alignment.Center,
                 ) { Text("🧩", fontSize = 20.sp) }
                 Column {
+                    // Dentro de la app se lee solo el nombre del niño (RominaGame
+                    // es el nombre del icono, no el encabezado). El saludo va
+                    // arriba, sin repetir el nombre dos veces.
                     Text(
-                        "RominaGame",
+                        "Hola 👋",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextoSuave,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                    )
+                    Text(
+                        if (nombre.isNotBlank()) nombre else "RominaGame",
                         style = MaterialTheme.typography.headlineSmall,
                         color = Tinta,
                         fontWeight = FontWeight.ExtraBold,

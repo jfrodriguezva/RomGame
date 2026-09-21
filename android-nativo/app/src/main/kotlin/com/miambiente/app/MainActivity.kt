@@ -181,6 +181,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 },
                                 onAjustes = { navController.navigate(Ruta.AJUSTES) },
+                                nombre = actual.nombre,
                             )
                         }
                         composable(Ruta.AJUSTES) { AjustesScreen(volver) }

@@ -11,6 +11,11 @@ import kotlinx.coroutines.flow.map
 
 private val Context.settingsDataStore by preferencesDataStore(name = "ajustes")
 
+// La tablet es de Romina: su nombre viene puesto para que el saludo del
+// inicio aparezca desde la primera vez, sin pasar por ajustes. Se puede
+// cambiar desde la pantalla de ajustes.
+const val NOMBRE_POR_DEFECTO = "Romina"
+
 /**
  * Equivalente nativo de lib/settings.ts (zustand + persist en localStorage).
  * DataStore es async y basado en Flow por diseño — no hay analogía directa
@@ -19,7 +24,7 @@ private val Context.settingsDataStore by preferencesDataStore(name = "ajustes")
  */
 data class Settings(
     val edad: Int? = null,
-    val nombre: String = "",
+    val nombre: String = NOMBRE_POR_DEFECTO,
     val sonido: Boolean = true,
     val voz: Boolean = true,
     val vibracion: Boolean = true,
@@ -41,7 +46,7 @@ class SettingsStore(private val context: Context) {
     val settings: Flow<Settings> = context.settingsDataStore.data.map { p ->
         Settings(
             edad = p[Claves.EDAD]?.takeIf { it > 0 },
-            nombre = p[Claves.NOMBRE] ?: "",
+            nombre = p[Claves.NOMBRE] ?: NOMBRE_POR_DEFECTO,
             sonido = p[Claves.SONIDO] ?: true,
             voz = p[Claves.VOZ] ?: true,
             vibracion = p[Claves.VIBRACION] ?: true,
