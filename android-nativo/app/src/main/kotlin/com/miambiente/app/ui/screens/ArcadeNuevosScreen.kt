@@ -31,6 +31,9 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.BotonArcade
+import com.miambiente.app.ui.materials.MarcadorArcade
+import com.miambiente.app.ui.materials.MarcoArcade
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -78,10 +81,21 @@ fun EscuadronEstelarScreen(onVolver: () -> Unit) {
     }
 
     GameShell(juego, if (jugando) "Naves $puntos/15 · Escudo $escudo" else "Pilota y dispara", onVolver = onVolver, acciones = { Button(onClick = ::iniciar) { Text(if (jugando) "Reiniciar" else "Despegar") } }) {
-        Column(Modifier.fillMaxSize().background(Color(0xFF10152E)).padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) { repeat(3) { Text(if (enemigo == it) "🛸" else "✨", fontSize = 42.sp) } }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) { repeat(3) { i -> Box(Modifier.size(82.dp).clip(RoundedCornerShape(18.dp)).background(if (carril == i) Color(0xFF425CC7) else Color(0xFF252C52)).clickable { carril = i }, contentAlignment = Alignment.Center) { Text(if (carril == i) "🚀" else "", fontSize = 46.sp) } } }
-            Button(onClick = ::disparar, enabled = jugando) { Text("DISPARAR") }
+        Column(Modifier.fillMaxSize().padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            MarcadorArcade(if (jugando) "Naves $puntos/15 · Escudo $escudo" else "Pilota y dispara")
+            MarcoArcade(colorFondo = Color(0xFF10152E), modifier = Modifier.padding(top = 8.dp)) {
+                Column(
+                    Modifier.fillMaxSize().padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) { repeat(3) { Text(if (enemigo == it) "🛸" else "✨", fontSize = 42.sp) } }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) { repeat(3) { i -> Box(Modifier.size(82.dp).clip(RoundedCornerShape(18.dp)).background(if (carril == i) Color(0xFF425CC7) else Color(0xFF252C52)).clickable { carril = i }, contentAlignment = Alignment.Center) { Text(if (carril == i) "🚀" else "", fontSize = 46.sp) } } }
+                }
+            }
+            Row(modifier = Modifier.padding(top = 10.dp)) {
+                BotonArcade("🔫") { disparar() }
+            }
         }
     }
 }
@@ -114,9 +128,14 @@ fun GranPremioScreen(onVolver: () -> Unit) {
     }
 
     GameShell(juego, if (jugando) "Meta: $distancia/30" else if (distancia >= 30) "¡Primer lugar!" else "Cambia de carril para esquivar", onVolver = onVolver, acciones = { Button(onClick = ::iniciar) { Text(if (jugando) "Reiniciar" else "Arrancar") } }) {
-        Column(Modifier.fillMaxSize().background(Color(0xFF454545)).padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            repeat(6) { f -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) { repeat(3) { c -> Box(Modifier.size(76.dp, 60.dp).background(if (c % 2 == 0) Color(0xFF505050) else Color(0xFF595959)), contentAlignment = Alignment.Center) { if (jugando && f == fila && c == obstaculo) Text("🚙", fontSize = 32.sp) } } } }
-            Row(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceEvenly) { repeat(3) { c -> Box(Modifier.size(76.dp, 58.dp).clip(RoundedCornerShape(12.dp)).background(if (c == carril) Color(0xFF7FA8D8) else Color(0xFFDDDDDD)).clickable { carril = c }, contentAlignment = Alignment.Center) { if (c == carril) Text("🏎️", fontSize = 36.sp) } } }
+        Column(Modifier.fillMaxSize().padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            MarcadorArcade(if (jugando) "Meta: $distancia/30" else "Cambia de carril para esquivar")
+            MarcoArcade(colorFondo = Color(0xFF454545), modifier = Modifier.padding(top = 8.dp)) {
+                Column(Modifier.fillMaxSize().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    repeat(6) { f -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) { repeat(3) { c -> Box(Modifier.size(76.dp, 60.dp).background(if (c % 2 == 0) Color(0xFF505050) else Color(0xFF595959)), contentAlignment = Alignment.Center) { if (jugando && f == fila && c == obstaculo) Text("🚙", fontSize = 32.sp) } } } }
+                    Row(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.SpaceEvenly) { repeat(3) { c -> Box(Modifier.size(76.dp, 58.dp).clip(RoundedCornerShape(12.dp)).background(if (c == carril) Color(0xFF7FA8D8) else Color(0xFFDDDDDD)).clickable { carril = c }, contentAlignment = Alignment.Center) { if (c == carril) Text("🏎️", fontSize = 36.sp) } } }
+                }
+            }
         }
     }
 }
