@@ -6,15 +6,10 @@ on:
     branches: [main]
     paths:
       - "app/**"
-      - "components/**"
-      - "data/**"
-      - "lib/**"
-      - "phaser/**"
-      - "public/**"
-      - "android/**"
-      - "package.json"
-      - "next.config.ts"
-      - "scripts/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
       - ".github/workflows/build-apk.yml"
 
 jobs:
@@ -23,39 +18,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build static export (Next.js)
-        run: npm run export
-
       - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-
-      - name: Ensure gradlew is executable
-        run: chmod +x android/gradlew
-
-      - name: Sync Capacitor web assets
-        run: npx cap sync android
-
-      - name: Build debug APK
-        working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
-
+      - name: Build, test and lint
+        run: |
+          chmod +x gradlew
+          ./gradlew testDebugUnitTest lintDebug assembleDebug --no-daemon
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mi-ambiente-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: romina-game-apk
+          path: app/build/outputs/apk/debug/app-debug.apk

@@ -2,6 +2,10 @@
 
 Fecha: 21 de septiembre de 2026
 
+> Fase completada: el proyecto que figuraba como `android-nativo` fue
+> promovido a la raíz del repositorio durante la fase 1. Las rutas indicadas
+> abajo describen el estado existente al levantar el inventario.
+
 ## Resultado
 
 El repositorio tiene 480 archivos rastreados y tres implementaciones/capas:

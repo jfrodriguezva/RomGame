@@ -2,10 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "romgame-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 40000
+      "name": "romgame-android-check",
+      "runtimeExecutable": "gradlew.bat",
+      "runtimeArgs": ["testDebugUnitTest", "lintDebug", "assembleDebug", "--no-daemon"]
     }
   ]
 }

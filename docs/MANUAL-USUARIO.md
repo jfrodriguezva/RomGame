@@ -1,5 +1,10 @@
 # Mi Ambiente — Manual de usuario
 
+> **Documento histórico.** Describe el producto anterior a la reconstrucción
+> Android iniciada el 21 de septiembre de 2026. La nueva aplicación retirará
+> el filtro de edad y reorganizará el contenido como juegos tradicionales por
+> categorías. Consulta `PLAN-RECONSTRUCCION-ANDROID.md` para el estado vigente.
+
 Ambiente Montessori digital para niños de 2 a 6 años: 96 materiales — 91 con
 100 niveles cada uno (8 500 en total) y 5 actividades libres, sin niveles ni
 puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin

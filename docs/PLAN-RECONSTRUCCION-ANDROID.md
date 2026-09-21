@@ -3,6 +3,10 @@
 Estado: **propuesta para aprobación antes de ejecutar cambios destructivos**  
 Fecha: 21 de septiembre de 2026
 
+> **Aprobado y en ejecución.** Las fases 0 y 1 comenzaron el 21 de septiembre
+> de 2026. El proyecto Android nativo fue promovido a la raíz y las capas
+> React/Next/Capacitor fueron retiradas.
+
 ## 1. Objetivo acordado
 
 Reconstruir RominaGame como una plataforma de juegos tradicionales para

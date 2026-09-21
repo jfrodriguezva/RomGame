@@ -1,5 +1,10 @@
 # Mi Ambiente — Manual técnico
 
+> **Documento histórico.** El stack Next/React/Capacitor descrito aquí fue
+> retirado en la fase 1 de la reconstrucción. El repositorio vigente es un
+> proyecto Android/Gradle en la raíz. Consulta
+> `PLAN-RECONSTRUCCION-ANDROID.md` y el `README.md` de la raíz.
+
 Repositorio: `git@github.com:jfrodriguezva/RomGame.git`
 
 ## 1. Stack
