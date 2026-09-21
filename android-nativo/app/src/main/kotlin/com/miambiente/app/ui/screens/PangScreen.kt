@@ -1,11 +1,10 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -28,15 +27,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
-import kotlinx.coroutines.coroutineScope
+import com.miambiente.app.ui.materials.BotonArcade
+import com.miambiente.app.ui.materials.BotonMantenerArcade
+import com.miambiente.app.ui.materials.MarcadorArcade
+import com.miambiente.app.ui.materials.MarcoArcade
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -51,6 +51,7 @@ private const val Y_JUGADOR = ALTO - 26f
 private const val GROSOR_ARPON = 3f
 private const val VIDAS_INICIALES = 3
 private const val INVULNERABILIDAD_NANOS = 1_000_000_000L
+private const val VELOCIDAD_JUGADOR_BOTON = 200f
 
 private val COLORES_TAMANO = mapOf(3 to Color(0xFF3E9BE0), 2 to Color(0xFF6FBF73), 1 to Color(0xFFE0C23C))
 
@@ -217,7 +218,7 @@ fun PangScreen(onVolver: () -> Unit) {
         consigna = when {
             mostrandoNivel -> "¡Nivel $nivel superado! Vas al nivel ${nivel + 1}"
             terminado -> "Juego terminado — Nivel $nivel, puntaje: $puntaje"
-            else -> "Mueve y toca para disparar el arpón"
+            else -> "Mantén ⬅️ o ➡️ para moverte, toca 🔫 para disparar"
         },
         celebrar = mostrandoNivel,
         onVolver = onVolver,
@@ -227,25 +228,9 @@ fun PangScreen(onVolver: () -> Unit) {
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("Nivel $nivel  ·  ${"❤️".repeat(vidas)}  ·  Puntaje: $puntaje", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-            Box(modifier = Modifier.padding(top = 10.dp).horizontalScroll(rememberScrollState())) {
-                Box(
-                    modifier = Modifier
-                        .size(width = ANCHO.dp, height = ALTO.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color(0xFF1E3A4A))
-                        .pointerInput(terminado, mostrandoNivel) {
-                            coroutineScope {
-                                launch { detectTapGestures { disparar() } }
-                                launch {
-                                    detectDragGestures { change, dragAmount ->
-                                        change.consume()
-                                        jugadorX = (jugadorX + dragAmount.x).coerceIn(ANCHO_JUGADOR / 2f, ANCHO - ANCHO_JUGADOR / 2f)
-                                    }
-                                }
-                            }
-                        },
-                ) {
+            MarcadorArcade("Nivel $nivel  ·  ${"❤️".repeat(vidas)}  ·  Puntaje: $puntaje")
+            MarcoArcade(colorFondo = Color(0xFF1E3A4A), modifier = Modifier.padding(top = 10.dp)) {
+                Box(modifier = Modifier.align(Alignment.Center).size(width = ANCHO.dp, height = ALTO.dp)) {
                     arpon?.let { a ->
                         Box(
                             modifier = Modifier
@@ -272,6 +257,11 @@ fun PangScreen(onVolver: () -> Unit) {
                             .background(if (invulnerableHasta != 0L) Color(0xFFE0925C) else Color(0xFF8BBF6A)),
                     )
                 }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(30.dp), modifier = Modifier.padding(top = 10.dp)) {
+                BotonMantenerArcade("⬅️") { dt -> jugadorX = (jugadorX - VELOCIDAD_JUGADOR_BOTON * dt).coerceIn(ANCHO_JUGADOR / 2f, ANCHO - ANCHO_JUGADOR / 2f) }
+                BotonArcade("🔫") { disparar() }
+                BotonMantenerArcade("➡️") { dt -> jugadorX = (jugadorX + VELOCIDAD_JUGADOR_BOTON * dt).coerceIn(ANCHO_JUGADOR / 2f, ANCHO - ANCHO_JUGADOR / 2f) }
             }
         }
     }

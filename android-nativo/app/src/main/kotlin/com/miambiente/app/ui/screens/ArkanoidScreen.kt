@@ -2,11 +2,11 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -36,7 +36,9 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
-import kotlinx.coroutines.coroutineScope
+import com.miambiente.app.ui.materials.BotonMantenerArcade
+import com.miambiente.app.ui.materials.MarcadorArcade
+import com.miambiente.app.ui.materials.MarcoArcade
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -48,6 +50,7 @@ private const val ANCHO_PALETA = 64f
 private const val ALTO_PALETA = 12f
 private const val Y_PALETA = ALTO - 30f
 private const val VIDAS_INICIALES = 3
+private const val VELOCIDAD_PALETA_BOTON = 260f
 private const val COLS_LADRILLOS = 6
 private const val FILAS_MAX = 8
 private const val ANCHO_LADRILLO = (ANCHO - 20f) / COLS_LADRILLOS
@@ -183,8 +186,9 @@ private fun emojiPowerUp(tipo: TipoPowerUp): String = when (tipo) {
 /**
  * Arkanoid / rompe ladrillos — arcade clásico, generado de cero. Física
  * real integrada por cuadro (mismo patrón que Globo/Burbujas/Carreras:
- * `withFrameNanos`, no incrementos fijos), paleta controlada por arrastre
- * horizontal, ángulo de rebote según en qué parte de la paleta pega la
+ * `withFrameNanos`, no incrementos fijos), paleta controlada con botones
+ * de mantener presionado (homologado con el resto de los arcade, antes
+ * era arrastre), ángulo de rebote según en qué parte de la paleta pega la
  * pelota, ladrillos que desaparecen al romperse, power-ups reales que caen
  * de un ladrillo roto (paleta ancha/angosta, multi-bola, bola rápida/lenta,
  * vida extra), varios patrones de nivel (no siempre filas completas) y
@@ -366,48 +370,23 @@ fun ArkanoidScreen(onVolver: () -> Unit) {
             mostrandoNivel -> "¡Nivel $nivel superado! Vas al nivel ${nivel + 1}"
             terminado -> "Juego terminado — Nivel $nivel, puntaje: $puntaje"
             !lanzada -> "Toca para lanzar la pelota"
-            else -> "Mueve la paleta arrastrando"
+            else -> "Mantén ⬅️ o ➡️ para mover la paleta"
         },
         celebrar = mostrandoNivel,
         onVolver = onVolver,
         acciones = { if (terminado) androidx.compose.material3.Button(onClick = ::reiniciar) { Text("Jugar de nuevo") } },
     ) {
-        // `verticalScroll` en el Column exterior y `horizontalScroll` en el
-        // Box que envuelve el tablero: mismo patrón defensivo ya usado en
-        // Damas/Ajedrez/Solitario para que el tablero nunca quede recortado
-        // en pantallas angostas o con fuente del sistema agrandada. El
-        // `pointerInput` de arrastre de la paleta sigue viviendo en el Box
-        // interno de tamaño fijo, que en la práctica nunca excede el ancho
-        // disponible (300dp caben en cualquier teléfono), así que el scroll
-        // horizontal no compite con el gesto de arrastre en el uso real.
         Column(
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("Nivel $nivel  ·  ${"❤️".repeat(vidas)}  ·  Puntaje: $puntaje", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-            Box(
-                modifier = Modifier.padding(top = 10.dp).horizontalScroll(rememberScrollState()),
-            ) {
+            MarcadorArcade("Nivel $nivel  ·  ${"❤️".repeat(vidas)}  ·  Puntaje: $puntaje")
+            MarcoArcade(colorFondo = Color(0xFF1E2233), modifier = Modifier.padding(top = 10.dp)) {
             Box(
                 modifier = Modifier
+                    .align(Alignment.Center)
                     .size(width = ANCHO.dp, height = ALTO.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF1E2233))
-                    // Un solo pointerInput con las dos detecciones en
-                    // paralelo (no dos `.pointerInput` separados): así
-                    // Compose las corre sobre el mismo flujo de eventos sin
-                    // que una gesto le robe los toques a la otra.
-                    .pointerInput(terminado, mostrandoNivel) {
-                        coroutineScope {
-                            launch { detectTapGestures { lanzar() } }
-                            launch {
-                                detectDragGestures { change, dragAmount ->
-                                    change.consume()
-                                    paletaX = (paletaX + dragAmount.x).coerceIn(anchoPaleta / 2f, ANCHO - anchoPaleta / 2f)
-                                }
-                            }
-                        }
-                    },
+                    .pointerInput(terminado, mostrandoNivel) { detectTapGestures { lanzar() } },
             ) {
                 ladrillos.forEach { l ->
                     Box(
@@ -449,6 +428,10 @@ fun ArkanoidScreen(onVolver: () -> Unit) {
                     )
                 }
             }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(60.dp), modifier = Modifier.padding(top = 10.dp)) {
+                BotonMantenerArcade("⬅️") { dt -> paletaX = (paletaX - VELOCIDAD_PALETA_BOTON * dt).coerceIn(anchoPaleta / 2f, ANCHO - anchoPaleta / 2f) }
+                BotonMantenerArcade("➡️") { dt -> paletaX = (paletaX + VELOCIDAD_PALETA_BOTON * dt).coerceIn(anchoPaleta / 2f, ANCHO - anchoPaleta / 2f) }
             }
         }
     }
