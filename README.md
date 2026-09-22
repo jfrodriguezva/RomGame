@@ -19,6 +19,8 @@ completos, con modos, niveles, progresión y controles táctiles de calidad.
   niveles por modo, progreso persistente y reglas probadas.
 - Fase 3: el bloque lógico en LibGDX está cerrado para Percepción sensorial,
   Formas y encajes y Orden y secuencias, con sus 22 modalidades conservadas.
+- Las 14 familias normales ya tienen motor LibGDX; falta la limpieza final de
+  rutas Compose sustituidas para cerrar formalmente la fase 3.
 
 La estrategia completa está en
 [`docs/PLAN-RECONSTRUCCION-ANDROID.md`](docs/PLAN-RECONSTRUCCION-ANDROID.md) y el

@@ -27,7 +27,9 @@ Estado: **en ejecución**.
 | Naturaleza y planeta | LibGDX | Migrada: siete modos de reconocimiento, clasificación y orden |
 | Personas y comunidad | LibGDX | Migrada: cinco modos de reconocimiento y secuencia |
 | Vida práctica | LibGDX | Migrada: seis modos de clasificación y procesos ordenados |
-| Las tres familias normales restantes | Compose | Pendientes de migración |
+| Taller creativo | LibGDX | Migrada: seis modos de dibujo, color, collage, música y patrón |
+| Coordinación y reflejos | LibGDX | Migrada: seis modos de objetivo, arrastre y reacción |
+| Laberintos y recorridos | LibGDX | Migrada: dos recorridos con camino y dificultad creciente |
 
 El bloque lógico nuevo comparte infraestructura de render, entrada, selector
 de 20 niveles, resultado y persistencia. Orden y secuencias ya distingue torre,
@@ -57,6 +59,13 @@ motor distingue conteo táctil, clasificación por arrastre, secuencias
 reordenables y selección contextual. Cada modalidad dispone de 20 niveles y
 guarda progreso con el identificador de su familia consolidada.
 
+Las 14 familias normales ya cuentan con motor LibGDX. El último bloque añade
+lienzo táctil, coloreado, collage por arrastre, teclado musical, patrones,
+objetivos con detección estricta, canasta por arrastre y laberintos navegables.
+El modo Globo ignora explícitamente cualquier toque fuera del objetivo. La
+fase 3 permanece abierta únicamente para retirar las rutas Compose sustituidas
+y ejecutar el recorrido de regresión posterior a esa limpieza.
+
 ## Fase 4 — potenciación individual
 
 Estado: **en ejecución, detenida hasta cerrar fase 3**.
@@ -76,7 +85,7 @@ alternativa accesible por toque, turnos y pruebas.
 
 ## Validación del checkpoint actual
 
-- 118 pruebas unitarias sin fallos.
+- 122 pruebas unitarias sin fallos.
 - Android Lint sin errores.
 - APK debug generado e instalado.
 - Percepción sensorial abierta desde el catálogo en emulador dentro de
@@ -86,3 +95,5 @@ alternativa accesible por toque, turnos y pruebas.
 - Palabras y sonidos abierto desde el catálogo en emulador con sus ocho modos.
 - Números y cantidades abierto desde el catálogo en emulador con sus nueve
   modos; APK y lint validados.
+- Globo validado en emulador: tocar el fondo mantiene 0 puntos y tocar el
+  objetivo incrementa el contador; sin excepción fatal ni ANR.

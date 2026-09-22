@@ -38,9 +38,9 @@ val FAMILIAS = listOf(
     familia("naturaleza-planeta","Naturaleza y planeta","🌎","Animales, plantas, geografía, espacio y clima",Categoria.MUNDO,"animales","partes-planta","continentes","tierra-agua","sistema-solar","tiempo","banderas",motor=Motor.LIBGDX),
     familia("personas-comunidad","Personas y comunidad","🧑‍🤝🧑","Cuerpo, emociones, profesiones y convivencia",Categoria.MUNDO,"cuerpo","cara","emociones","oficios","mesa-silencio",motor=Motor.LIBGDX),
     familia("vida-practica","Vida práctica","🧫","Rutinas, higiene, mesa y coordinación fina",Categoria.COORDINACION,"vida-practica","pinza","tamanos","rutina","mesa","lavado-manos",motor=Motor.LIBGDX),
-    familia("taller-creativo","Taller creativo","🎨","Dibujo, color, collage y exploración musical",Categoria.CREATIVIDAD,"pizarra","colorear","collage","xilofono","instrumentos","patron"),
-    familia("coordinacion-reflejos","Coordinación y reflejos","🎯","Objetivos móviles, ritmo y reacción",Categoria.COORDINACION,"burbujas","canasta","globo","topo","vibra-adivina","reflejo-color"),
-    familia("laberintos","Laberintos y recorridos","🌀","Rutas, exploración y obstáculos",Categoria.LOGICA,"laberinto","arana"),
+    familia("taller-creativo","Taller creativo","🎨","Dibujo, color, collage y exploración musical",Categoria.CREATIVIDAD,"pizarra","colorear","collage","xilofono","instrumentos","patron",motor=Motor.LIBGDX),
+    familia("coordinacion-reflejos","Coordinación y reflejos","🎯","Objetivos móviles, ritmo y reacción",Categoria.COORDINACION,"burbujas","canasta","globo","topo","vibra-adivina","reflejo-color",motor=Motor.LIBGDX),
+    familia("laberintos","Laberintos y recorridos","🌀","Rutas, exploración y obstáculos",Categoria.LOGICA,"laberinto","arana",motor=Motor.LIBGDX),
 
     familia("alineacion","Alineación y duelo","⭕","Gato, cuatro en línea y piedra-papel-tijera",Categoria.MESA,"gato","conecta4","rps"),
     familia("recorridos-tablero","Dados y recorridos","🎲","Oca, serpientes y retos",Categoria.MESA,"oca","serpientes","dado"),

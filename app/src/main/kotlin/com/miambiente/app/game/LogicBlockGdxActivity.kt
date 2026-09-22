@@ -7,6 +7,7 @@ import com.miambiente.app.data.ProgressStore
 import com.rominagame.core.LogicBlockGame
 import com.rominagame.core.LanguageGame
 import com.rominagame.core.CurriculumGame
+import com.rominagame.core.FinalBlockGame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -35,6 +36,7 @@ class LogicBlockGdxActivity : AndroidApplication() {
         val game = when (familyId) {
             "palabras-sonidos", "construye-palabras" -> LanguageGame(familyId, complete)
             "numeros-cantidades", "clasifica-mundo", "naturaleza-planeta", "personas-comunidad", "vida-practica" -> CurriculumGame(familyId, complete)
+            "taller-creativo", "coordinacion-reflejos", "laberintos" -> FinalBlockGame(familyId, complete)
             else -> LogicBlockGame(familyId, complete)
         }
         initialize(game, config)

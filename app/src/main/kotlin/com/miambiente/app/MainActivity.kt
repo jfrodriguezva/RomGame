@@ -189,7 +189,8 @@ class MainActivity : ComponentActivity() {
                                     when (id) {
                                         "memoria-observacion" -> context.startActivity(Intent(context, MemoriaGdxActivity::class.java))
                                         "percepcion", "formas-encajes", "orden-secuencias", "palabras-sonidos", "construye-palabras",
-                                        "numeros-cantidades", "clasifica-mundo", "naturaleza-planeta", "personas-comunidad", "vida-practica" -> context.startActivity(
+                                        "numeros-cantidades", "clasifica-mundo", "naturaleza-planeta", "personas-comunidad", "vida-practica",
+                                        "taller-creativo", "coordinacion-reflejos", "laberintos" -> context.startActivity(
                                             Intent(context, LogicBlockGdxActivity::class.java)
                                                 .putExtra(LogicBlockGdxActivity.EXTRA_FAMILY_ID, id),
                                         )
