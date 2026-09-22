@@ -65,6 +65,7 @@ como tocar origen y destino. Se incorporó:
 
 Validación inicial: Gato abierto desde Juegos de mesa, ficha X arrastrada al
 tablero y respuesta O de minimax renderizada correctamente; sin excepción
-fatal ni ANR. El bloque todavía no alcanza paridad final: faltan restaurar los
-modos locales de dos jugadores, tutorial/pausa y recorrer las otras dos
-modalidades en emulador antes de retirar sus pantallas Compose.
+fatal ni ANR. El bloque ya incluye modo contra CPU y dos jugadores locales,
+tutorial, pausa y reinicio. En Piedra-papel-tijera local, la primera elección
+se oculta antes de entregar el dispositivo al segundo jugador. Falta completar
+el recorrido de las otras dos modalidades antes de retirar Compose.

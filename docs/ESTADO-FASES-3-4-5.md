@@ -105,12 +105,13 @@ migración comenzará por Alineación y duelo.
 
 Primer bloque en ejecución: Gato, Cuatro en línea y Piedra-papel-tijera ya
 tienen reglas puras y superficie LibGDX con arrastre más alternativa por toque.
-Gato fue validado en emulador; el bloque no se considera cerrado hasta recuperar
-los modos locales y completar tutorial, pausa y recorrido de las tres variantes.
+Gato fue validado en emulador. Los modos locales, tutorial y pausa ya están
+integrados; el bloque no se considera cerrado hasta completar el recorrido de
+las tres variantes y retirar sus pantallas sustituidas.
 
 ## Validación del checkpoint actual
 
-- 125 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
+- 133 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
   retirado fueron sustituidas por las pruebas de reglas del laberinto LibGDX.
 - Android Lint sin errores.
 - APK debug generado e instalado.
