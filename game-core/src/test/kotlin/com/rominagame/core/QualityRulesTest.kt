@@ -19,4 +19,8 @@ class QualityRulesTest {
         val tutorials = curriculumFamilies.flatMap { family -> family.modes.indices.map { curriculumTutorial(family.id, it) } }
         assertEquals(34, tutorials.size); assertTrue(tutorials.all { it.isNotBlank() })
     }
+    @Test fun `final tutorials cover all fourteen modes`() {
+        val tutorials = finalFamilies.flatMap { family -> family.modes.indices.map { finalTutorial(family.id, it) } }
+        assertEquals(14, tutorials.size); assertTrue(tutorials.all { it.isNotBlank() })
+    }
 }

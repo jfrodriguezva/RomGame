@@ -50,3 +50,17 @@ fun curriculumTutorial(familyId: String, mode: Int): String {
         CurriculumMechanic.QUIZ -> "Observa ${selected.title.lowercase()} y selecciona la respuesta correcta."
     }
 }
+
+fun finalTutorial(familyId: String, mode: Int): String {
+    val selected = finalFamily(familyId).modes[mode]
+    return when (selected.mechanic) {
+        FinalMechanic.DRAW -> "Desliza el dedo por el lienzo para completar tu dibujo."
+        FinalMechanic.COLOR -> "Toca cada zona hasta colorear toda la ilustración."
+        FinalMechanic.COLLAGE -> "Arrastra cada pieza desde la bandeja hasta el lienzo."
+        FinalMechanic.MUSIC -> "Toca las teclas para completar la secuencia de notas."
+        FinalMechanic.PATTERN -> "Toca cada cuadro hasta copiar el patrón de la izquierda."
+        FinalMechanic.TARGET -> "Toca solamente el objetivo; el fondo no suma puntos."
+        FinalMechanic.BASKET -> "Arrastra la pelota y suéltala dentro de la canasta."
+        FinalMechanic.MAZE -> "Toca una casilla vecina del camino para llegar a la meta."
+    }
+}

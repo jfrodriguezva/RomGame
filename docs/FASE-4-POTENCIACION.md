@@ -2,14 +2,14 @@
 
 Inicio: 22 de septiembre de 2026
 
-Estado: **en ejecución**. Esta fase cubre las 14 familias normales; Juegos de
+Estado: **terminada**. Esta fase cubre las 14 familias normales; Juegos de
 mesa y Arcade permanecen fuera hasta las fases 5 y 6.
 
 ## Matriz de avance
 
 | Familia | Mecánicas propias | Tutorial | Pausa/reinicio | Niveles | Resultado |
 |---|---:|---:|---:|---:|---:|
-| Memoria y observación | Sí | Sí | Reinicio | 20 × modo | Puntuación |
+| Memoria y observación | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 | Percepción sensorial | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 | Formas y encajes | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 | Orden y secuencias | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
@@ -20,7 +20,9 @@ mesa y Arcade permanecen fuera hasta las fases 5 y 6.
 | Naturaleza y planeta | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 | Personas y comunidad | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 | Vida práctica | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
-| Últimas tres familias | Base fase 3 | Pendiente | Pendiente | 20 × modo | Básico |
+| Taller creativo | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
+| Coordinación y reflejos | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
+| Laberintos y recorridos | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 
 ## Primer bloque potenciado
 
@@ -64,3 +66,24 @@ los gestos de arrastre.
 Validación: tutorial de `Números → Contar` y pausa recorridos en emulador. APK
 generado correctamente, sin excepción fatal ni ANR; 124 pruebas unitarias
 totales sin fallos.
+
+## Bloque creativo, coordinación y recorridos potenciado
+
+Las 14 modalidades finales tienen tutorial contextual y bloqueo completo de
+entrada durante tutorial o pausa, incluidos dibujo y drag-and-drop. Se
+mantienen los aciertos estrictos del Globo, la canasta por arrastre y los
+laberintos con tamaño creciente. El resultado muestra puntuación y estrellas.
+
+Validación: Pizarra recorrida desde el catálogo con tutorial, trazo y pausa;
+sin excepción fatal ni ANR.
+
+## Auditoría final de Memoria
+
+Memoria quedó alineada con el resto mediante reinicio, pausa, tutorial por sus
+cuatro modalidades y resultado con estrellas. Sus esperas de vista previa,
+ocultamiento de cartas y turno de computadora ya no avanzan mientras la pausa
+está activa. También se normalizó el tamaño de texto de sus cinco controles.
+
+Validación: Parejas recorrida desde el catálogo con tutorial y pausa; controles
+sin solapamiento y sin excepción fatal ni ANR. El cierre registra 125 pruebas
+unitarias sin fallos para el proyecto.

@@ -70,9 +70,10 @@ pantalla retirada seguía siendo dependencia del producto.
 
 ## Fase 4 — potenciación individual
 
-Estado: **en ejecución**. La fase 3 ya está cerrada.
+Estado: **terminada**.
 
-- Memoria y observación: primer juego terminado en esta fase.
+- Memoria y observación: tutorial por modalidad, pausa con temporizadores
+  detenidos, reinicio y valoración por estrellas.
 - Percepción sensorial, Formas y encajes y Orden y secuencias: tutorial, pausa,
   reinicio y valoración por estrellas añadidos; pulido individual en curso.
 - Palabras y sonidos y Construye palabras: tutorial por modalidad, pausa,
@@ -80,13 +81,18 @@ Estado: **en ejecución**. La fase 3 ya está cerrada.
 - Números, Clasifica el mundo, Naturaleza y planeta, Personas y comunidad y
   Vida práctica: 34 modalidades con tutorial contextual, pausa, reinicio y
   valoración por estrellas.
-- Taller creativo, Coordinación y reflejos y Laberintos y recorridos:
-  pendientes de potenciación.
+- Taller creativo, Coordinación y reflejos y Laberintos y recorridos: tutorial,
+  pausa que bloquea gestos, reinicio y valoración por estrellas añadidos.
 - Juegos de mesa y Arcade: fuera del alcance de esta fase.
+
+Las 14 familias normales y sus 84 modalidades quedaron potenciadas. Todas
+comparten controles de modalidad, nivel, reinicio y pausa, además de tutorial
+contextual y resultado con estrellas, sin eliminar la mecánica propia de cada
+juego.
 
 ## Fase 5 — juegos de mesa
 
-Estado: **no iniciada**.
+Estado: **siguiente fase; preparación iniciada tras cerrar la fase 4**.
 
 No comenzará hasta cerrar las fases 3 y 4. Comprende seis familias: Alineación
 y duelo, Dados y recorridos, Solitarios, Lotería y bingo, Estrategia de tablero
@@ -95,7 +101,7 @@ alternativa accesible por toque, turnos y pruebas.
 
 ## Validación del checkpoint actual
 
-- 124 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
+- 125 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
   retirado fueron sustituidas por las pruebas de reglas del laberinto LibGDX.
 - Android Lint sin errores.
 - APK debug generado e instalado.
@@ -109,5 +115,7 @@ alternativa accesible por toque, turnos y pruebas.
   excepción fatal ni ANR.
 - Globo validado en emulador: tocar el fondo mantiene 0 puntos y tocar el
   objetivo incrementa el contador; sin excepción fatal ni ANR.
+- Taller creativo validado con tutorial, trazo y pausa; Memoria validada con
+  tutorial y pausa de temporizadores, sin solapamiento de controles.
 - Compilación limpia, lint y APK correctos después de eliminar físicamente las
   pantallas sustituidas; aplicación instalada y abierta en `MainActivity`.
