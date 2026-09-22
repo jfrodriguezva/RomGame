@@ -8,7 +8,7 @@ Estado: **en ejecución**. La fase 4 quedó cerrada antes de iniciar este trabaj
 
 | Familia | Modalidades | Estado de reglas heredadas | Migración |
 |---|---|---|---|
-| Alineación y duelo | Gato, Cuatro en línea, Piedra-papel-tijera | Gato con minimax; Conecta 4 con detección multidireccional; duelo contra CPU y local | Primer bloque |
+| Alineación y duelo | Gato, Cuatro en línea, Piedra-papel-tijera | Reglas trasladadas a `game-core`; primera superficie LibGDX arrastrable integrada | En ejecución |
 | Dados y recorridos | Oca, Serpientes y escaleras, Dado de retos | Dado animado, avance y casillas especiales | Segundo bloque |
 | Solitarios | Klondike, Araña | Reglas de secuencia, fundaciones, reparto y movimientos múltiples | Tercer bloque |
 | Lotería y bingo | Lotería mexicana, Bingo con imágenes | Baraja/cartón, canto y marcado | Cuarto bloque |
@@ -49,3 +49,22 @@ cuando la modalidad correspondiente alcanza paridad funcional.
 6. Deducción y fichas, cerrando con cadena de dominó y descarte visual.
 
 No se iniciará la fase 6 de Arcade antes de completar esta matriz.
+
+## Primer avance ejecutable
+
+El bloque Alineación y duelo ya abre sus tres modalidades en una actividad
+LibGDX desde el catálogo. La superficie acepta tanto arrastrar desde el origen
+como tocar origen y destino. Se incorporó:
+
+- Gato 3×3 con CPU minimax;
+- Cuatro en línea convencional 7×6, gravedad, victoria horizontal, vertical y
+  diagonal, y CPU que gana o bloquea antes de ocupar el centro;
+- Piedra-papel-tijera al mejor de tres rondas contra CPU;
+- persistencia de partidas terminadas;
+- ocho pruebas nuevas de reglas.
+
+Validación inicial: Gato abierto desde Juegos de mesa, ficha X arrastrada al
+tablero y respuesta O de minimax renderizada correctamente; sin excepción
+fatal ni ANR. El bloque todavía no alcanza paridad final: faltan restaurar los
+modos locales de dos jugadores, tutorial/pausa y recorrer las otras dos
+modalidades en emulador antes de retirar sus pantallas Compose.

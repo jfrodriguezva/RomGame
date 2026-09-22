@@ -10,6 +10,11 @@
         android:theme="@style/Theme.MiAmbiente"
         android:supportsRtl="true">
         <activity
+            android:name=".game.AlignmentGdxActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout"
+            android:exported="false" />
+        <activity
             android:name=".game.LogicBlockGdxActivity"
             android:screenOrientation="landscape"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout"

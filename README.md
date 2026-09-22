@@ -14,13 +14,12 @@ completos, con modos, niveles, progresión y controles táctiles de calidad.
   por fases.
 - Fase 2 terminada: 111 accesos se consolidaron en 29 juegos con modos y ocho
   categorías; el selector de edad fue retirado.
-- Fase 3 terminada para el primer bloque: LibGDX 1.14.2 está integrado.
-- Fase 4 en ejecución: `Memoria y observación` ya ofrece cuatro modos, 20
-  niveles por modo, progreso persistente y reglas probadas.
-- Fase 3: el bloque lógico en LibGDX está cerrado para Percepción sensorial,
-  Formas y encajes y Orden y secuencias, con sus 22 modalidades conservadas.
 - Fase 3 terminada: las 14 familias normales usan LibGDX y las rutas/pantallas
   Compose sustituidas fueron eliminadas tras una compilación limpia.
+- Fase 4 terminada: las 14 familias y sus 84 modalidades tienen tutorial,
+  pausa, reinicio, niveles y resultado con estrellas.
+- Fase 5 en ejecución: migración de los 15 juegos de mesa a reglas puras y
+  tableros LibGDX con drag-and-drop y alternativa por toque.
 
 La estrategia completa está en
 [`docs/PLAN-RECONSTRUCCION-ANDROID.md`](docs/PLAN-RECONSTRUCCION-ANDROID.md) y el

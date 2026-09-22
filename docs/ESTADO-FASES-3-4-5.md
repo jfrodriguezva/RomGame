@@ -103,6 +103,11 @@ El inventario de las 15 modalidades y el criterio de paridad están detallados
 en `FASE-5-JUEGOS-DE-MESA.md`. Se conservarán las reglas ya implementadas y la
 migración comenzará por Alineación y duelo.
 
+Primer bloque en ejecución: Gato, Cuatro en línea y Piedra-papel-tijera ya
+tienen reglas puras y superficie LibGDX con arrastre más alternativa por toque.
+Gato fue validado en emulador; el bloque no se considera cerrado hasta recuperar
+los modos locales y completar tutorial, pausa y recorrido de las tres variantes.
+
 ## Validación del checkpoint actual
 
 - 125 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
