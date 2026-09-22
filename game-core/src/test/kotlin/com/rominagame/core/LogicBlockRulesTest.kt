@@ -24,4 +24,10 @@ class LogicBlockRulesTest {
         assertEquals(3, roundsForLevel(1))
         assertEquals(7, roundsForLevel(20))
     }
+
+    @Test fun `sequence modes retain their canonical order`() {
+        assertEquals(listOf("Lun", "Mar", "Mié"), sequenceFor(2, 1))
+        assertEquals("Mariposa", sequenceFor(4, 20).last())
+        assertEquals(7, sequenceFor(2, 20).size)
+    }
 }

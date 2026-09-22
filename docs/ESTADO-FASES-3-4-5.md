@@ -19,12 +19,15 @@ Estado: **en ejecución**.
 | Memoria y observación | LibGDX | Migrada, cuatro modos funcionales |
 | Percepción sensorial | LibGDX | Base jugable, nueve modos conectados; paridad en curso |
 | Formas y encajes | LibGDX | Base jugable, siete modos conectados; paridad en curso |
-| Orden y secuencias | LibGDX | Base jugable, seis modos conectados; paridad en curso |
+| Orden y secuencias | LibGDX | Seis modos con orden canónico y arrastre; paridad visual en curso |
 | Las diez familias normales restantes | Compose | Pendientes de migración |
 
 El bloque lógico nuevo comparte infraestructura de render, entrada, selector
-de 20 niveles, resultado y persistencia, pero no se declara terminado hasta
-que cada modalidad sustituya por completo su interacción Compose original.
+de 20 niveles, resultado y persistencia. Orden y secuencias ya distingue torre,
+escalera, días, estaciones, ciclo de vida y ciclo del agua, conserva el orden
+canónico y permite reordenar por arrastre. El bloque no se declara terminado
+hasta que cada modalidad sustituya por completo su interacción Compose
+original.
 
 ## Fase 4 — potenciación individual
 
@@ -45,7 +48,7 @@ alternativa accesible por toque, turnos y pruebas.
 
 ## Validación del checkpoint actual
 
-- 106 pruebas unitarias sin fallos.
+- 107 pruebas unitarias sin fallos.
 - Android Lint sin errores.
 - APK debug generado e instalado.
 - Percepción sensorial abierta desde el catálogo en emulador dentro de

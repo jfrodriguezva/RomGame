@@ -30,6 +30,9 @@ class LogicBlockGame(
     private var score = 0
     private var feedback = "Elige una modalidad"
     private var round = logicRound(family.id, 0, 1, 0)
+    private var expectedSequence = emptyList<String>()
+    private var sequence = emptyList<String>()
+    private var dragging = -1
 
     override fun create() {
         shapes = ShapeRenderer()
@@ -41,6 +44,12 @@ class LogicBlockGame(
                 tap(point.x, point.y)
                 return true
             }
+            override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+                if (family.id != "orden-secuencias" || dragging < 0 || screen != Screen.PLAY) return false
+                val point = viewport.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+                dropSequence(point.x)
+                return true
+            }
         }
     }
 
@@ -50,6 +59,10 @@ class LogicBlockGame(
         score = 0
         feedback = "Resuelve ${roundsForLevel(level)} retos"
         round = logicRound(family.id, mode, level, step)
+        if (family.id == "orden-secuencias") {
+            expectedSequence = sequenceFor(mode, level)
+            sequence = expectedSequence.shuffled().let { if (it == expectedSequence && it.size > 1) it.reversed() else it }
+        }
         screen = Screen.PLAY
     }
 
@@ -70,6 +83,11 @@ class LogicBlockGame(
                         x < 300f -> { level = (level - 1).coerceAtLeast(1); start() }
                         x < 455f -> { level = (level + 1).coerceAtMost(20); start() }
                     }
+                    return
+                }
+                if (family.id == "orden-secuencias" && y in 190f..315f) {
+                    dragging = sequenceIndexAt(x)
+                    feedback = if (dragging >= 0) "Arrastra la pieza a su lugar" else feedback
                     return
                 }
                 val option = if (y in 95f..355f) {
@@ -97,6 +115,29 @@ class LogicBlockGame(
                 if (x < 480f) screen = Screen.MODES else { level = (level + 1).coerceAtMost(20); start() }
             }
         }
+    }
+
+    private fun sequenceIndexAt(x: Float): Int {
+        if (sequence.isEmpty()) return -1
+        val width = 780f / sequence.size
+        return ((x - 90f) / width).toInt().takeIf { it in sequence.indices } ?: -1
+    }
+
+    private fun dropSequence(x: Float) {
+        val target = sequenceIndexAt(x)
+        val source = dragging
+        dragging = -1
+        if (source !in sequence.indices || target !in sequence.indices) return
+        val changed = sequence.toMutableList()
+        val item = changed.removeAt(source)
+        changed.add(target, item)
+        sequence = changed
+        if (sequence == expectedSequence) {
+            score = 1000 - level * 5
+            feedback = "¡Secuencia completa!"
+            screen = Screen.RESULT
+            onComplete(family.id, level, score)
+        } else feedback = "Sigue ordenando"
     }
 
     override fun render() {
@@ -129,13 +170,24 @@ class LogicBlockGame(
         button(305f, "NIVEL +")
         text("${family.modes[mode]} · Nivel $level", 690f, 516f, Color.WHITE, Align.center)
         text(round.prompt, 480f, 430f, Color(0xE0C23CFF.toInt()), Align.center)
-        round.options.forEachIndexed { index, label ->
-            val x = 170f + (index % 2) * 320f
-            val y = 275f - (index / 2) * 130f
-            box(x, y, 280f, 105f, Color(0x243E78FF.toInt()))
-            text(label, x + 140f, y + 63f, Color.WHITE, Align.center)
-        }
+        if (family.id == "orden-secuencias") renderSequence() else round.options.forEachIndexed { index, label ->
+                val x = 170f + (index % 2) * 320f
+                val y = 275f - (index / 2) * 130f
+                box(x, y, 280f, 105f, Color(0x243E78FF.toInt()))
+                text(label, x + 140f, y + 63f, Color.WHITE, Align.center)
+            }
         text(feedback, 480f, 70f, Color.LIGHT_GRAY, Align.center)
+    }
+
+    private fun renderSequence() {
+        val width = 780f / sequence.size
+        sequence.forEachIndexed { index, label ->
+            val x = 90f + index * width
+            val height = if (mode == 0) 45f + label.toInt() * 7f else 110f
+            box(x + 5f, 200f, width - 10f, height, if (index == dragging) Color(0xE0C23CFF.toInt()) else Color(0x6B4FA3FF.toInt()))
+            text(label, x + width / 2f, 265f, Color.WHITE, Align.center)
+        }
+        text("Orden correcto de izquierda a derecha", 480f, 150f, Color.LIGHT_GRAY, Align.center)
     }
 
     private fun renderResult() {
