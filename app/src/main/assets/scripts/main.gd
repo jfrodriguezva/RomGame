@@ -3,7 +3,10 @@ extends Node2D
 const GAMES := {
     "tetris": preload("res://scripts/blocks.gd"),
     "snake": preload("res://scripts/snake.gd"),
-    "arkanoid": preload("res://scripts/breakout.gd")
+    "arkanoid": preload("res://scripts/breakout.gd"),
+    "mosaico": preload("res://scripts/territory.gd"),
+    "comepuntos": preload("res://scripts/maze_chase.gd"),
+    "nieve": preload("res://scripts/snow_rescue.gd")
 }
 
 func _ready() -> void:

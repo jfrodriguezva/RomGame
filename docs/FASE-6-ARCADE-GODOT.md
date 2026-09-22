@@ -11,10 +11,10 @@ Estado: **en ejecución**. La fase 5 está terminada.
 | Bloques | Bloques | Caída, rotación, líneas y progresión | Implementado; validación headless |
 | La víbora | La víbora | Movimiento continuo, comida y colisión | Implementado; validación headless |
 | Rompe ladrillos | Rompe ladrillos | Pala, rebotes, ladrillos y mejoras | Implementado; validación headless |
-| Mosaico sorpresa | Mosaico sorpresa | Trazado y captura de territorio con enemigos | Pendiente |
+| Mosaico sorpresa | Mosaico sorpresa | Trazado y captura de territorio con enemigos | Implementado; validación headless |
 | Vaqueros del ocaso | Vaqueros del ocaso | Acción lateral, plataformas, disparos y jefes | Pendiente |
-| Comepuntos | Comepuntos | Laberinto, puntos, energizantes e IA perseguidora | Pendiente |
-| Rescate de nieve | Rescate de nieve | Plataformas, nieve acumulativa y cadenas | Pendiente |
+| Comepuntos | Comepuntos | Laberinto, puntos, energizantes e IA perseguidora | Implementado; validación headless |
+| Rescate de nieve | Rescate de nieve | Plataformas, nieve acumulativa y cadenas | Implementado; validación headless |
 | Escuadrón estelar | Escuadrón estelar | Shooter sobre rieles, puntería y jefes | Pendiente |
 | Gran premio | Gran premio, Carreras | Circuitos, rivales, vueltas y progresión | Pendiente |
 
@@ -45,6 +45,19 @@ un dispositivo o emulador con aceleración gráfica funcional.
 Los tres scripts pasan exportación limpia y arranque headless con su ID. El
 exportador elimina todos los `.gdc` y `.remap` anteriores para impedir que un
 binario obsoleto oculte errores de GDScript.
+
+## Segundo bloque jugable
+
+- Mosaico sorpresa permite salir del perímetro seguro, trazar territorio,
+  cerrar áreas mediante relleno desde el enemigo, perder vidas por cortar la
+  estela y avanzar al capturar el 75 %.
+- Comepuntos incluye laberinto, túneles, puntos, energizantes, tres rivales con
+  persecución y huida temporal, vidas y tres rondas progresivamente rápidas.
+- Rescate de nieve incorpora plataformas, salto, proyectiles acumulativos,
+  conversión del enemigo en bola, cadenas contra otros rivales y tres niveles.
+
+Los seis modos implementados pasan compilación desde fuente, exportación limpia
+y arranque headless con el ID correspondiente.
 
 ## Criterio de fidelidad
 
