@@ -99,6 +99,10 @@ y duelo, Dados y recorridos, Solitarios, Lotería y bingo, Estrategia de tablero
 y Deducción y fichas. El criterio incluye reglas completas, drag-and-drop,
 alternativa accesible por toque, turnos y pruebas.
 
+El inventario de las 15 modalidades y el criterio de paridad están detallados
+en `FASE-5-JUEGOS-DE-MESA.md`. Se conservarán las reglas ya implementadas y la
+migración comenzará por Alineación y duelo.
+
 ## Validación del checkpoint actual
 
 - 125 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
