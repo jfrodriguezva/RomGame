@@ -17,6 +17,9 @@ completos, con modos, niveles, progresión y controles táctiles de calidad.
 - Fase 3 terminada para el primer bloque: LibGDX 1.14.2 está integrado.
 - Fase 4 en ejecución: `Memoria y observación` ya ofrece cuatro modos, 20
   niveles por modo, progreso persistente y reglas probadas.
+- Fase 3 continúa con el bloque lógico en LibGDX: Percepción sensorial, Formas
+  y encajes y Orden y secuencias ya tienen una base jugable; su paridad por
+  modalidad sigue en desarrollo.
 
 La estrategia completa está en
 [`docs/PLAN-RECONSTRUCCION-ANDROID.md`](docs/PLAN-RECONSTRUCCION-ANDROID.md) y el
@@ -24,6 +27,8 @@ inventario de la aplicación retirada en
 [`docs/INVENTARIO-FASE-0.md`](docs/INVENTARIO-FASE-0.md).
 El cierre del primer juego de la fase 4 se detalla en
 [`docs/FASE-4-MEMORIA-Y-OBSERVACION.md`](docs/FASE-4-MEMORIA-Y-OBSERVACION.md).
+El estado exacto y los criterios de cierre están en
+[`docs/ESTADO-FASES-3-4-5.md`](docs/ESTADO-FASES-3-4-5.md).
 
 ## Tecnología objetivo
 

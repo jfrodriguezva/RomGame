@@ -27,9 +27,9 @@ private fun familia(id:String,titulo:String,emoji:String,descripcion:String,cate
     FamiliaJuego(id,titulo,emoji,descripcion,categoria,modos.toList(),motor)
 
 val FAMILIAS = listOf(
-    familia("percepcion","Percepción sensorial","🔴","Color, textura, peso, temperatura y sentidos",Categoria.LOGICA,"colores","textura","temperatura","peso","sabor","olfato","sentidos","sombras","diferencias"),
-    familia("formas-encajes","Formas y encajes","🔺","Geometría, cuerpos, lados y construcción",Categoria.LOGICA,"formas","solidos","lados","orificios","cilindros","binomio","rompecabezas"),
-    familia("orden-secuencias","Orden y secuencias","↔️","Series por tamaño, tiempo y procesos",Categoria.LOGICA,"torre-rosa","escalera-marron","dias-semana","estaciones","ciclo-vida","ciclo-agua"),
+    familia("percepcion","Percepción sensorial","🔴","Color, textura, peso, temperatura y sentidos",Categoria.LOGICA,"colores","textura","temperatura","peso","sabor","olfato","sentidos","sombras","diferencias",motor=Motor.LIBGDX),
+    familia("formas-encajes","Formas y encajes","🔺","Geometría, cuerpos, lados y construcción",Categoria.LOGICA,"formas","solidos","lados","orificios","cilindros","binomio","rompecabezas",motor=Motor.LIBGDX),
+    familia("orden-secuencias","Orden y secuencias","↔️","Series por tamaño, tiempo y procesos",Categoria.LOGICA,"torre-rosa","escalera-marron","dias-semana","estaciones","ciclo-vida","ciclo-agua",motor=Motor.LIBGDX),
     familia("memoria-observacion","Memoria y observación","🧠","Parejas, cambios y búsqueda visual",Categoria.LOGICA,"memorama","que-falta","memoria-turnos","objetos",motor=Motor.LIBGDX),
     familia("palabras-sonidos","Palabras y sonidos","🔤","Letras, fonética, rimas y sílabas",Categoria.PALABRAS,"vocales","abecedario","sonidos-iniciales","rimas","silabas","mayusculas","letras-lija","trazos"),
     familia("construye-palabras","Construye palabras","🔡","Forma, clasifica y comprende palabras",Categoria.PALABRAS,"alfabeto-movil","singular-plural","el-la","ingles"),

@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import com.miambiente.app.game.MemoriaGdxActivity
+import com.miambiente.app.game.LogicBlockGdxActivity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -185,7 +186,13 @@ class MainActivity : ComponentActivity() {
                                 id = entry.arguments?.getString("id").orEmpty(),
                                 onAbrirJuego = { id -> navController.navigate(id) },
                                 onAbrirMotor = { id ->
-                                    if (id == "memoria-observacion") context.startActivity(Intent(context, MemoriaGdxActivity::class.java))
+                                    when (id) {
+                                        "memoria-observacion" -> context.startActivity(Intent(context, MemoriaGdxActivity::class.java))
+                                        "percepcion", "formas-encajes", "orden-secuencias" -> context.startActivity(
+                                            Intent(context, LogicBlockGdxActivity::class.java)
+                                                .putExtra(LogicBlockGdxActivity.EXTRA_FAMILY_ID, id),
+                                        )
+                                    }
                                 },
                                 onVolver = volver,
                             )
