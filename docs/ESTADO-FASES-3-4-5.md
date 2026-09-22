@@ -20,7 +20,9 @@ Estado: **en ejecución**.
 | Percepción sensorial | LibGDX | Migrada: nueve modos con clasificación por arrastre, selección y diferencias |
 | Formas y encajes | LibGDX | Migrada: siete modos con quiz, clasificación, encaje, orden, patrón y rompecabezas |
 | Orden y secuencias | LibGDX | Migrada: seis modos con orden canónico y arrastre |
-| Las diez familias normales restantes | Compose | Pendientes de migración |
+| Palabras y sonidos | LibGDX | Migrada: ocho modos de fonética, alfabeto y trazo |
+| Construye palabras | LibGDX | Migrada: cuatro modos de construcción, clasificación e inglés |
+| Las ocho familias normales restantes | Compose | Pendientes de migración |
 
 El bloque lógico nuevo comparte infraestructura de render, entrada, selector
 de 20 niveles, resultado y persistencia. Orden y secuencias ya distingue torre,
@@ -39,6 +41,11 @@ de cuatro piezas con destino exacto.
 conservan sus 22 modalidades, guardan progreso y sus reglas están cubiertas por
 pruebas. Las pantallas Compose históricas permanecen temporalmente como
 referencia hasta la limpieza final de la fase.
+
+El bloque de lenguaje incorpora un motor propio: cuestionarios fonéticos,
+secuencia progresiva del abecedario, formación letra por letra, clasificación
+gramatical por arrastre y trazos táctiles. Conserva las doce modalidades de
+las dos familias consolidadas y 20 niveles por modalidad.
 
 ## Fase 4 — potenciación individual
 
@@ -59,10 +66,11 @@ alternativa accesible por toque, turnos y pruebas.
 
 ## Validación del checkpoint actual
 
-- 111 pruebas unitarias sin fallos.
+- 114 pruebas unitarias sin fallos.
 - Android Lint sin errores.
 - APK debug generado e instalado.
 - Percepción sensorial abierta desde el catálogo en emulador dentro de
   `LogicBlockGdxActivity`, sin excepción fatal ni ANR.
 - Binomio y Rompecabezas abiertos y manipulados en emulador, sin excepción
   fatal ni ANR.
+- Palabras y sonidos abierto desde el catálogo en emulador con sus ocho modos.

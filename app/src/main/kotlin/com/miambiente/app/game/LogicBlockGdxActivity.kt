@@ -5,6 +5,7 @@ import com.badlogic.gdx.backends.android.AndroidApplication
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 import com.miambiente.app.data.ProgressStore
 import com.rominagame.core.LogicBlockGame
+import com.rominagame.core.LanguageGame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,13 +24,18 @@ class LogicBlockGdxActivity : AndroidApplication() {
             useAccelerometer = false
             useCompass = false
         }
-        initialize(LogicBlockGame(familyId) { id, level, score ->
+        val complete: (String, Int, Int) -> Unit = { id, level, score ->
             persistenceScope.launch {
                 progress.completarNivel(id, level)
                 progress.registrarJugada(id)
                 setResult(RESULT_OK, intent.putExtra("level", level).putExtra("score", score))
             }
-        }, config)
+        }
+        val game = when (familyId) {
+            "palabras-sonidos", "construye-palabras" -> LanguageGame(familyId, complete)
+            else -> LogicBlockGame(familyId, complete)
+        }
+        initialize(game, config)
     }
 
     override fun onDestroy() {

@@ -188,7 +188,7 @@ class MainActivity : ComponentActivity() {
                                 onAbrirMotor = { id ->
                                     when (id) {
                                         "memoria-observacion" -> context.startActivity(Intent(context, MemoriaGdxActivity::class.java))
-                                        "percepcion", "formas-encajes", "orden-secuencias" -> context.startActivity(
+                                        "percepcion", "formas-encajes", "orden-secuencias", "palabras-sonidos", "construye-palabras" -> context.startActivity(
                                             Intent(context, LogicBlockGdxActivity::class.java)
                                                 .putExtra(LogicBlockGdxActivity.EXTRA_FAMILY_ID, id),
                                         )
