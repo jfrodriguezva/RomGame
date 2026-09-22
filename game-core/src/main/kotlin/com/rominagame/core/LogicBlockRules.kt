@@ -14,6 +14,7 @@ data class LogicRound(
 
 data class SortItem(val label: String, val destination: Int)
 data class SortRound(val left: String, val right: String, val items: List<SortItem>)
+data class MultiSortRound(val destinations: List<String>, val items: List<SortItem>)
 
 val logicFamilies = listOf(
     LogicFamily("percepcion", "Percepción sensorial", listOf("Colores", "Texturas", "Temperatura", "Peso", "Sabores", "Olores", "Sentidos", "Sombras", "Diferencias")),
@@ -44,8 +45,8 @@ fun logicRound(familyId: String, mode: Int, level: Int, step: Int): LogicRound {
             Triple("¿Qué figura tiene tres lados?", "Triángulo", listOf("Círculo", "Cuadrado", "Pentágono")),
             Triple("¿Qué pieza encaja en el hueco redondo?", "Círculo", listOf("Estrella", "Cuadrado", "Triángulo")),
             Triple("Selecciona el cilindro más alto", "Alto", listOf("Bajo", "Ancho", "Plano")),
-            Triple("Completa el patrón rojo-azul", "Rojo", listOf("Verde", "Morado", "Naranja")),
-            Triple("Elige la pieza que completa la imagen", "Pieza 3", listOf("Pieza 1", "Pieza 2", "Pieza 4")),
+            Triple("Copia exactamente el patrón", "Rojo", listOf("Verde", "Morado", "Naranja")),
+            Triple("Arrastra cada pieza a su lugar", "Pieza 3", listOf("Pieza 1", "Pieza 2", "Pieza 4")),
         )[mode.coerceIn(family.modes.indices)]
         else -> Triple("Ordena $name de izquierda a derecha", "Primero", listOf("Segundo", "Tercero", "Último"))
     }
@@ -66,6 +67,22 @@ fun sensorySort(mode: Int): SortRound = when (mode) {
     5 -> SortRound("HUELE BIEN", "HUELE MAL", listOf(SortItem("Flor", 0), SortItem("Pastel", 0), SortItem("Limón", 0), SortItem("Calcetín", 1), SortItem("Basura", 1), SortItem("Zorrillo", 1)))
     else -> error("Mode $mode is not a sensory classification")
 }
+
+fun shapeSort(mode: Int): MultiSortRound = when (mode) {
+    2 -> MultiSortRound(
+        listOf("3 LADOS", "4 LADOS", "5 LADOS", "6 LADOS"),
+        listOf(SortItem("Triángulo", 0), SortItem("Triángulo 2", 0), SortItem("Cuadrado", 1), SortItem("Rectángulo", 1), SortItem("Pentágono", 2), SortItem("Hexágono", 3)),
+    )
+    3 -> MultiSortRound(
+        listOf("CÍRCULO", "CUADRADO", "TRIÁNGULO"),
+        listOf(SortItem("Círculo", 0), SortItem("Círculo 2", 0), SortItem("Cuadrado", 1), SortItem("Cuadrado 2", 1), SortItem("Triángulo", 2), SortItem("Triángulo 2", 2)),
+    )
+    else -> error("Mode $mode is not a shape classification")
+}
+
+fun cylinderSequence(level: Int): List<String> = (1..(3 + (level - 1) / 3).coerceAtMost(9)).map(Int::toString).reversed()
+
+fun binomialTarget(level: Int): List<Int> = List(4) { index -> (level + index * 2) % 4 }
 
 fun sequenceFor(mode: Int, level: Int): List<String> {
     val full = when (mode) {

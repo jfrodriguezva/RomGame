@@ -17,23 +17,28 @@ Estado: **en ejecución**.
 | Familia normal | Motor | Estado |
 |---|---|---|
 | Memoria y observación | LibGDX | Migrada, cuatro modos funcionales |
-| Percepción sensorial | LibGDX | Nueve modos: clasificación por arrastre, quiz y diferencias; pulido visual en curso |
-| Formas y encajes | LibGDX | Siete modos conectados con figuras renderizadas; paridad en curso |
-| Orden y secuencias | LibGDX | Seis modos con orden canónico y arrastre; paridad visual en curso |
+| Percepción sensorial | LibGDX | Migrada: nueve modos con clasificación por arrastre, selección y diferencias |
+| Formas y encajes | LibGDX | Migrada: siete modos con quiz, clasificación, encaje, orden, patrón y rompecabezas |
+| Orden y secuencias | LibGDX | Migrada: seis modos con orden canónico y arrastre |
 | Las diez familias normales restantes | Compose | Pendientes de migración |
 
 El bloque lógico nuevo comparte infraestructura de render, entrada, selector
 de 20 niveles, resultado y persistencia. Orden y secuencias ya distingue torre,
 escalera, días, estaciones, ciclo de vida y ciclo del agua, conserva el orden
-canónico y permite reordenar por arrastre. El bloque no se declara terminado
-hasta que cada modalidad sustituya por completo su interacción Compose
-original.
+canónico y permite reordenar por arrastre.
 
 Percepción ya clasifica por arrastre texturas, temperatura, peso, sabores y
 olores en destinos propios. Colores, sentidos y sombras conservan selección
 visual, mientras Diferencias usa un tablero cuyo número de distractores crece
 con el nivel. Formas dibuja geometría dentro de las opciones en vez de depender
-solo de etiquetas.
+solo de etiquetas. También separa clasificación por lados, encaje en tres
+orificios, seriación de cilindros, copia del patrón del binomio y rompecabezas
+de cuatro piezas con destino exacto.
+
+**Bloque lógico de fase 3 cerrado:** las tres familias abren desde el catálogo,
+conservan sus 22 modalidades, guardan progreso y sus reglas están cubiertas por
+pruebas. Las pantallas Compose históricas permanecen temporalmente como
+referencia hasta la limpieza final de la fase.
 
 ## Fase 4 — potenciación individual
 
@@ -54,8 +59,10 @@ alternativa accesible por toque, turnos y pruebas.
 
 ## Validación del checkpoint actual
 
-- 109 pruebas unitarias sin fallos.
+- 111 pruebas unitarias sin fallos.
 - Android Lint sin errores.
 - APK debug generado e instalado.
 - Percepción sensorial abierta desde el catálogo en emulador dentro de
   `LogicBlockGdxActivity`, sin excepción fatal ni ANR.
+- Binomio y Rompecabezas abiertos y manipulados en emulador, sin excepción
+  fatal ni ANR.

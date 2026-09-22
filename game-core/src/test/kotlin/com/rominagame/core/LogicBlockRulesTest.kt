@@ -43,4 +43,17 @@ class LogicBlockRulesTest {
         assertEquals(9, differenceCellCount(1))
         assertEquals(15, differenceCellCount(20))
     }
+
+    @Test fun `shape classification keeps valid destinations`() {
+        (2..3).forEach { mode ->
+            val round = shapeSort(mode)
+            assertTrue(round.items.all { it.destination in round.destinations.indices })
+        }
+    }
+
+    @Test fun `cylinders and binomial scale deterministically`() {
+        assertEquals(3, cylinderSequence(1).size)
+        assertEquals(9, cylinderSequence(20).size)
+        assertEquals(4, binomialTarget(7).size)
+    }
 }

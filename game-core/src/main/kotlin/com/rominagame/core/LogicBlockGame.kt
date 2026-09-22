@@ -34,10 +34,16 @@ class LogicBlockGame(
     private var sequence = emptyList<String>()
     private var dragging = -1
     private var sortRound: SortRound? = null
+    private var sortDestinations = emptyList<String>()
     private var sortItems = emptyList<SortItem>()
     private var sortIndex = 0
     private var draggingSort = false
     private var oddIndex = 0
+    private var binomialGoal = emptyList<Int>()
+    private var binomialCurrent = emptyList<Int>()
+    private var puzzlePieces = emptyList<Int>()
+    private var puzzleSlots = List<Int?>(4) { null }
+    private var draggingPuzzle = -1
 
     override fun create() {
         shapes = ShapeRenderer()
@@ -50,12 +56,17 @@ class LogicBlockGame(
                 return true
             }
             override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+                if (draggingPuzzle >= 0 && screen == Screen.PLAY) {
+                    val point = viewport.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+                    dropPuzzle(point.x, point.y)
+                    return true
+                }
                 if (draggingSort && screen == Screen.PLAY) {
                     val point = viewport.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
                     dropSort(point.x, point.y)
                     return true
                 }
-                if (family.id != "orden-secuencias" || dragging < 0 || screen != Screen.PLAY) return false
+                if (!isSequenceMode() || dragging < 0 || screen != Screen.PLAY) return false
                 val point = viewport.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
                 dropSequence(point.x)
                 return true
@@ -69,13 +80,21 @@ class LogicBlockGame(
         score = 0
         feedback = "Resuelve ${roundsForLevel(level)} retos"
         round = logicRound(family.id, mode, level, step)
-        if (family.id == "orden-secuencias") {
-            expectedSequence = sequenceFor(mode, level)
+        if (isSequenceMode()) {
+            expectedSequence = if (family.id == "orden-secuencias") sequenceFor(mode, level) else cylinderSequence(level)
             sequence = expectedSequence.shuffled().let { if (it == expectedSequence && it.size > 1) it.reversed() else it }
         }
-        if (isSensorySort()) {
-            sortRound = sensorySort(mode)
-            sortItems = sortRound!!.items.shuffled().take((4 + level / 8).coerceAtMost(6))
+        if (isSortMode()) {
+            if (isSensorySort()) {
+                sortRound = sensorySort(mode)
+                sortDestinations = listOf(sortRound!!.left, sortRound!!.right)
+                sortItems = sortRound!!.items.shuffled().take((4 + level / 8).coerceAtMost(6))
+            } else {
+                val shape = shapeSort(mode)
+                sortRound = null
+                sortDestinations = shape.destinations
+                sortItems = shape.items.shuffled().take((4 + level / 8).coerceAtMost(6))
+            }
             sortIndex = 0
             draggingSort = false
             feedback = "Arrastra cada objeto a su grupo"
@@ -83,6 +102,17 @@ class LogicBlockGame(
         if (isDifferences()) {
             oddIndex = kotlin.random.Random.nextInt(differenceCellCount(level))
             feedback = "Encuentra el símbolo diferente"
+        }
+        if (isBinomial()) {
+            binomialGoal = binomialTarget(level)
+            binomialCurrent = List(4) { (binomialGoal[it] + 1 + it) % 4 }
+            feedback = "Toca cada cuadro hasta copiar el patrón"
+        }
+        if (isPuzzle()) {
+            puzzlePieces = (0..3).shuffled()
+            puzzleSlots = List(4) { null }
+            draggingPuzzle = -1
+            feedback = "Arrastra cada pieza a su espacio"
         }
         screen = Screen.PLAY
     }
@@ -106,14 +136,31 @@ class LogicBlockGame(
                     }
                     return
                 }
-                if (family.id == "orden-secuencias" && y in 190f..315f) {
+                if (isSequenceMode() && y in 190f..340f) {
                     dragging = sequenceIndexAt(x)
                     feedback = if (dragging >= 0) "Arrastra la pieza a su lugar" else feedback
                     return
                 }
-                if (isSensorySort() && y in 235f..390f && x in 340f..620f) {
+                if (isSortMode() && y in 235f..390f && x in 340f..620f) {
                     draggingSort = true
                     feedback = "Suelta sobre el grupo correcto"
+                    return
+                }
+                if (isBinomial()) {
+                    val cell = binomialIndexAt(x, y)
+                    if (cell >= 0) {
+                        binomialCurrent = binomialCurrent.toMutableList().also { it[cell] = (it[cell] + 1) % 4 }
+                        if (binomialCurrent == binomialGoal) {
+                            score = 1000 - level * 5
+                            screen = Screen.RESULT
+                            onComplete(family.id, level, score)
+                        }
+                    }
+                    return
+                }
+                if (isPuzzle() && y in 90f..190f) {
+                    val index = ((x - 260f) / 110f).toInt()
+                    if (index in puzzlePieces.indices) draggingPuzzle = index
                     return
                 }
                 if (isDifferences()) {
@@ -153,6 +200,11 @@ class LogicBlockGame(
     }
 
     private fun isSensorySort() = family.id == "percepcion" && mode in 1..5
+    private fun isShapeSort() = family.id == "formas-encajes" && mode in 2..3
+    private fun isSortMode() = isSensorySort() || isShapeSort()
+    private fun isSequenceMode() = family.id == "orden-secuencias" || (family.id == "formas-encajes" && mode == 4)
+    private fun isBinomial() = family.id == "formas-encajes" && mode == 5
+    private fun isPuzzle() = family.id == "formas-encajes" && mode == 6
     private fun isDifferences() = family.id == "percepcion" && mode == 8
 
     private fun differenceIndexAt(x: Float, y: Float): Int {
@@ -175,7 +227,7 @@ class LogicBlockGame(
             feedback = "Lleva el objeto hasta una canasta"
             return
         }
-        val destination = if (x < 480f) 0 else 1
+        val destination = ((x - 90f) / (780f / sortDestinations.size)).toInt().coerceIn(sortDestinations.indices)
         if (sortItems[sortIndex].destination == destination) {
             score += 100
             sortIndex++
@@ -187,6 +239,32 @@ class LogicBlockGame(
             score = (score - 10).coerceAtLeast(0)
             feedback = "Ese grupo no corresponde"
         }
+    }
+
+    private fun binomialIndexAt(x: Float, y: Float): Int {
+        if (x !in 560f..760f || y !in 185f..385f) return -1
+        val col = ((x - 560f) / 100f).toInt().coerceAtMost(1)
+        val row = ((385f - y) / 100f).toInt().coerceAtMost(1)
+        return row * 2 + col
+    }
+
+    private fun dropPuzzle(x: Float, y: Float) {
+        val pieceListIndex = draggingPuzzle
+        draggingPuzzle = -1
+        if (pieceListIndex !in puzzlePieces.indices || x !in 330f..630f || y !in 220f..420f) return
+        val col = ((x - 330f) / 150f).toInt().coerceAtMost(1)
+        val row = ((420f - y) / 100f).toInt().coerceAtMost(1)
+        val slot = row * 2 + col
+        val piece = puzzlePieces[pieceListIndex]
+        if (piece == slot) {
+            puzzleSlots = puzzleSlots.toMutableList().also { it[slot] = piece }
+            puzzlePieces = puzzlePieces.toMutableList().also { it.removeAt(pieceListIndex) }
+            if (puzzlePieces.isEmpty()) {
+                score = 1000 - level * 5
+                screen = Screen.RESULT
+                onComplete(family.id, level, score)
+            } else feedback = "¡Pieza colocada!"
+        } else feedback = "Esa pieza pertenece a otro espacio"
     }
 
     private fun sequenceIndexAt(x: Float): Int {
@@ -242,7 +320,7 @@ class LogicBlockGame(
         button(305f, "NIVEL +")
         text("${family.modes[mode]} · Nivel $level", 690f, 516f, Color.WHITE, Align.center)
         text(round.prompt, 480f, 430f, Color(0xE0C23CFF.toInt()), Align.center)
-        if (family.id == "orden-secuencias") renderSequence() else if (isSensorySort()) renderSensorySort() else if (isDifferences()) renderDifferences() else round.options.forEachIndexed { index, label ->
+        if (isSequenceMode()) renderSequence() else if (isSortMode()) renderSort() else if (isDifferences()) renderDifferences() else if (isBinomial()) renderBinomial() else if (isPuzzle()) renderPuzzle() else round.options.forEachIndexed { index, label ->
                 val x = 170f + (index % 2) * 320f
                 val y = 275f - (index / 2) * 130f
                 box(x, y, 280f, 105f, Color(0x243E78FF.toInt()))
@@ -252,17 +330,51 @@ class LogicBlockGame(
         text(feedback, 480f, 70f, Color.LIGHT_GRAY, Align.center)
     }
 
-    private fun renderSensorySort() {
-        val definition = sortRound ?: return
-        box(90f, 105f, 350f, 125f, Color(0x6B4FA3FF.toInt()))
-        box(520f, 105f, 350f, 125f, Color(0x3154B5FF.toInt()))
-        text(definition.left, 265f, 178f, Color.WHITE, Align.center)
-        text(definition.right, 695f, 178f, Color.WHITE, Align.center)
+    private fun renderSort() {
+        val width = 780f / sortDestinations.size
+        sortDestinations.forEachIndexed { index, label ->
+            val x = 90f + index * width
+            box(x + 5f, 105f, width - 10f, 125f, if (index % 2 == 0) Color(0x6B4FA3FF.toInt()) else Color(0x3154B5FF.toInt()))
+            text(label, x + width / 2f, 178f, Color.WHITE, Align.center)
+        }
         if (sortIndex in sortItems.indices) {
             box(340f, 270f, 280f, 115f, if (draggingSort) Color(0xE0C23CFF.toInt()) else Color(0x4C9A5FFF.toInt()))
             text(sortItems[sortIndex].label, 480f, 338f, Color.WHITE, Align.center)
+            if (isShapeSort()) geometryIcon(395f, 325f, sortItems[sortIndex].label, sortItems[sortIndex].destination)
         }
     }
+
+    private fun renderBinomial() {
+        text("PATRÓN", 320f, 405f, Color.LIGHT_GRAY, Align.center)
+        text("TU CUBO", 660f, 405f, Color.LIGHT_GRAY, Align.center)
+        renderColorGrid(220f, 185f, binomialGoal)
+        renderColorGrid(560f, 185f, binomialCurrent)
+    }
+
+    private fun renderColorGrid(left: Float, bottom: Float, colors: List<Int>) {
+        val palette = listOf(Color(0xD9433AFF.toInt()), Color(0x3E7AA3FF.toInt()), Color(0xE0C23CFF.toInt()), Color(0x4C7A3AFF.toInt()))
+        colors.forEachIndexed { index, color ->
+            val x = left + (index % 2) * 100f
+            val y = bottom + (1 - index / 2) * 100f
+            box(x + 4f, y + 4f, 92f, 92f, palette[color])
+        }
+    }
+
+    private fun renderPuzzle() {
+        repeat(4) { slot ->
+            val x = 330f + (slot % 2) * 150f
+            val y = 320f - (slot / 2) * 100f
+            box(x + 5f, y + 5f, 140f, 90f, if (puzzleSlots[slot] != null) Color(0x4C9A5FFF.toInt()) else Color(0x243E78FF.toInt()))
+            text(if (puzzleSlots[slot] != null) puzzleLabel(slot) else "${slot + 1}", x + 75f, y + 58f, Color.WHITE, Align.center)
+        }
+        puzzlePieces.forEachIndexed { index, piece ->
+            val x = 260f + index * 110f
+            box(x, 90f, 95f, 80f, if (index == draggingPuzzle) Color(0xE0C23CFF.toInt()) else Color(0x6B4FA3FF.toInt()))
+            text(puzzleLabel(piece), x + 48f, 140f, Color.WHITE, Align.center)
+        }
+    }
+
+    private fun puzzleLabel(piece: Int) = listOf("Sol", "Nube", "Árbol", "Casa")[piece]
 
     private fun renderDifferences() {
         val count = differenceCellCount(level)
@@ -300,7 +412,7 @@ class LogicBlockGame(
         val width = 780f / sequence.size
         sequence.forEachIndexed { index, label ->
             val x = 90f + index * width
-            val height = if (mode == 0) 45f + label.toInt() * 7f else 110f
+            val height = if (family.id == "orden-secuencias" && mode == 0) 45f + label.toInt() * 7f else if (family.id == "formas-encajes") 45f + label.toInt() * 7f else 110f
             box(x + 5f, 200f, width - 10f, height, if (index == dragging) Color(0xE0C23CFF.toInt()) else Color(0x6B4FA3FF.toInt()))
             text(label, x + width / 2f, 265f, Color.WHITE, Align.center)
         }
