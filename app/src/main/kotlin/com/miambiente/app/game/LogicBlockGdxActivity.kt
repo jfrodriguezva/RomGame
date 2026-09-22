@@ -6,6 +6,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 import com.miambiente.app.data.ProgressStore
 import com.rominagame.core.LogicBlockGame
 import com.rominagame.core.LanguageGame
+import com.rominagame.core.CurriculumGame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,6 +34,7 @@ class LogicBlockGdxActivity : AndroidApplication() {
         }
         val game = when (familyId) {
             "palabras-sonidos", "construye-palabras" -> LanguageGame(familyId, complete)
+            "numeros-cantidades", "clasifica-mundo", "naturaleza-planeta", "personas-comunidad", "vida-practica" -> CurriculumGame(familyId, complete)
             else -> LogicBlockGame(familyId, complete)
         }
         initialize(game, config)

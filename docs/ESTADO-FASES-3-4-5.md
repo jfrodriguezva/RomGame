@@ -22,7 +22,12 @@ Estado: **en ejecución**.
 | Orden y secuencias | LibGDX | Migrada: seis modos con orden canónico y arrastre |
 | Palabras y sonidos | LibGDX | Migrada: ocho modos de fonética, alfabeto y trazo |
 | Construye palabras | LibGDX | Migrada: cuatro modos de construcción, clasificación e inglés |
-| Las ocho familias normales restantes | Compose | Pendientes de migración |
+| Números y cantidades | LibGDX | Migrada: nueve modos de conteo, orden, clasificación y reconocimiento |
+| Clasifica el mundo | LibGDX | Migrada: siete clasificaciones temáticas por arrastre |
+| Naturaleza y planeta | LibGDX | Migrada: siete modos de reconocimiento, clasificación y orden |
+| Personas y comunidad | LibGDX | Migrada: cinco modos de reconocimiento y secuencia |
+| Vida práctica | LibGDX | Migrada: seis modos de clasificación y procesos ordenados |
+| Las tres familias normales restantes | Compose | Pendientes de migración |
 
 El bloque lógico nuevo comparte infraestructura de render, entrada, selector
 de 20 niveles, resultado y persistencia. Orden y secuencias ya distingue torre,
@@ -47,6 +52,11 @@ secuencia progresiva del abecedario, formación letra por letra, clasificación
 gramatical por arrastre y trazos táctiles. Conserva las doce modalidades de
 las dos familias consolidadas y 20 niveles por modalidad.
 
+El bloque curricular central conserva 34 modalidades en cinco familias. Su
+motor distingue conteo táctil, clasificación por arrastre, secuencias
+reordenables y selección contextual. Cada modalidad dispone de 20 niveles y
+guarda progreso con el identificador de su familia consolidada.
+
 ## Fase 4 — potenciación individual
 
 Estado: **en ejecución, detenida hasta cerrar fase 3**.
@@ -66,7 +76,7 @@ alternativa accesible por toque, turnos y pruebas.
 
 ## Validación del checkpoint actual
 
-- 114 pruebas unitarias sin fallos.
+- 118 pruebas unitarias sin fallos.
 - Android Lint sin errores.
 - APK debug generado e instalado.
 - Percepción sensorial abierta desde el catálogo en emulador dentro de
@@ -74,3 +84,5 @@ alternativa accesible por toque, turnos y pruebas.
 - Binomio y Rompecabezas abiertos y manipulados en emulador, sin excepción
   fatal ni ANR.
 - Palabras y sonidos abierto desde el catálogo en emulador con sus ocho modos.
+- Números y cantidades abierto desde el catálogo en emulador con sus nueve
+  modos; APK y lint validados.
