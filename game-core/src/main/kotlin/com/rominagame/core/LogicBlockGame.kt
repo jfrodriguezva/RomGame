@@ -39,6 +39,8 @@ class LogicBlockGame(
     private var sortIndex = 0
     private var draggingSort = false
     private var oddIndex = 0
+    private var paused = false
+    private var tutorial = false
     private var binomialGoal = emptyList<Int>()
     private var binomialCurrent = emptyList<Int>()
     private var puzzlePieces = emptyList<Int>()
@@ -74,11 +76,13 @@ class LogicBlockGame(
         }
     }
 
-    private fun start(selected: Int = mode) {
+    private fun start(selected: Int = mode, showTutorial: Boolean = false) {
         mode = selected
         step = 0
         score = 0
         feedback = "Resuelve ${roundsForLevel(level)} retos"
+        paused = false
+        tutorial = showTutorial
         round = logicRound(family.id, mode, level, step)
         if (isSequenceMode()) {
             expectedSequence = if (family.id == "orden-secuencias") sequenceFor(mode, level) else cylinderSequence(level)
@@ -124,15 +128,19 @@ class LogicBlockGame(
                 family.modes.indices.forEach { index ->
                     val left = 75f + (index % cols) * 290f
                     val bottom = 355f - (index / cols) * 110f
-                    if (x in left..left + 250f && y in bottom..bottom + 80f) start(index)
+                    if (x in left..left + 250f && y in bottom..bottom + 80f) start(index, true)
                 }
             }
             Screen.PLAY -> {
+                if (tutorial) { tutorial = false; return }
+                if (paused) { if (y > 485f && x in 500f..640f) paused = false; return }
                 if (y > 485f) {
                     when {
-                        x < 145f -> screen = Screen.MODES
-                        x < 300f -> { level = (level - 1).coerceAtLeast(1); start() }
-                        x < 455f -> { level = (level + 1).coerceAtMost(20); start() }
+                        x < 115f -> screen = Screen.MODES
+                        x < 230f -> { level = (level - 1).coerceAtLeast(1); start() }
+                        x < 345f -> { level = (level + 1).coerceAtMost(20); start() }
+                        x < 460f -> start()
+                        x < 575f -> paused = true
                     }
                     return
                 }
@@ -315,10 +323,12 @@ class LogicBlockGame(
     }
 
     private fun renderPlay() {
-        button(18f, "MODOS")
-        button(160f, "NIVEL -")
-        button(305f, "NIVEL +")
-        text("${family.modes[mode]} · Nivel $level", 690f, 516f, Color.WHITE, Align.center)
+        compactButton(8f, "MODOS")
+        compactButton(123f, "NIVEL -")
+        compactButton(238f, "NIVEL +")
+        compactButton(353f, "REINICIAR")
+        compactButton(468f, if (paused) "SEGUIR" else "PAUSA")
+        text("${family.modes[mode]} · Nivel $level", 770f, 516f, Color.WHITE, Align.center)
         text(round.prompt, 480f, 430f, Color(0xE0C23CFF.toInt()), Align.center)
         if (isSequenceMode()) renderSequence() else if (isSortMode()) renderSort() else if (isDifferences()) renderDifferences() else if (isBinomial()) renderBinomial() else if (isPuzzle()) renderPuzzle() else round.options.forEachIndexed { index, label ->
                 val x = 170f + (index % 2) * 320f
@@ -328,6 +338,8 @@ class LogicBlockGame(
                 text(label, x + 140f, y + 63f, Color.WHITE, Align.center)
             }
         text(feedback, 480f, 70f, Color.LIGHT_GRAY, Align.center)
+        if (tutorial) renderOverlay("CÓMO JUGAR", logicTutorial(family.id), "TOCA PARA EMPEZAR")
+        if (paused) renderOverlay("PAUSA", "Tu partida está guardada en pantalla.", "TOCA SEGUIR")
     }
 
     private fun renderSort() {
@@ -421,7 +433,8 @@ class LogicBlockGame(
 
     private fun renderResult() {
         text("NIVEL SUPERADO", 480f, 410f, Color.WHITE, Align.center)
-        text("Puntuación: $score", 480f, 330f, Color(0xE0C23CFF.toInt()), Align.center)
+        val earned = starsForScore(score)
+        text("Puntuación: $score   Estrellas: $earned/3", 480f, 330f, Color(0xE0C23CFF.toInt()), Align.center)
         box(230f, 80f, 220f, 75f, Color(0x3D507AFF.toInt()))
         box(510f, 80f, 220f, 75f, Color(0x4C9A5FFF.toInt()))
         text("MODOS", 340f, 128f, Color.WHITE, Align.center)
@@ -432,6 +445,8 @@ class LogicBlockGame(
         box(x, 488f, 120f, 40f, Color(0x3D507AFF.toInt()))
         text(label, x + 60f, 516f, Color.WHITE, Align.center)
     }
+    private fun compactButton(x:Float,label:String){box(x,488f,107f,40f,Color(0x3D507AFF.toInt()));text(label,x+53f,516f,Color.WHITE,Align.center)}
+    private fun renderOverlay(title:String,body:String,action:String){box(150f,145f,660f,250f,Color(0x111A2CFA.toInt()));text(title,480f,345f,Color(0xE0C23CFF.toInt()),Align.center);text(body,480f,275f,Color.WHITE,Align.center);text(action,480f,205f,Color.LIGHT_GRAY,Align.center)}
 
     private fun box(x: Float, y: Float, width: Float, height: Float, color: Color) {
         shapes.begin(ShapeRenderer.ShapeType.Filled)

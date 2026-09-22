@@ -74,7 +74,9 @@ pantalla retirada seguía siendo dependencia del producto.
 Estado: **en ejecución, detenida hasta cerrar fase 3**.
 
 - Memoria y observación: primer juego terminado en esta fase.
-- Las otras trece familias normales: pendientes.
+- Percepción sensorial, Formas y encajes y Orden y secuencias: tutorial, pausa,
+  reinicio y valoración por estrellas añadidos; pulido individual en curso.
+- Las otras diez familias normales: pendientes de potenciación.
 - Juegos de mesa y Arcade: fuera del alcance de esta fase.
 
 ## Fase 5 — juegos de mesa
