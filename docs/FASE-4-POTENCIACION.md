@@ -13,7 +13,9 @@ mesa y Arcade permanecen fuera hasta las fases 5 y 6.
 | Percepción sensorial | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 | Formas y encajes | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 | Orden y secuencias | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
-| Otras diez familias | Base fase 3 | Pendiente | Pendiente | 20 × modo | Básico |
+| Palabras y sonidos | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
+| Construye palabras | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
+| Otras ocho familias | Base fase 3 | Pendiente | Pendiente | 20 × modo | Básico |
 
 ## Primer bloque potenciado
 
@@ -34,3 +36,13 @@ Se añadió:
 Validación: tutorial de Percepción abierto desde el catálogo en emulador, sin
 excepción fatal ni ANR. La fase no se dará por terminada hasta completar y
 recorrer las 14 familias.
+
+## Bloque de lenguaje potenciado
+
+Las doce modalidades cuentan con instrucciones propias para vocales,
+abecedario, sonidos iniciales, rimas, sílabas, mayúsculas, trazos, construcción
+de palabras, clasificación gramatical e inglés. Pausa también bloquea los
+gestos de trazo y arrastre, evitando que una partida avance detrás del panel.
+
+Validación: tutorial y pausa de Abecedario recorridos en emulador; 123 pruebas
+unitarias totales sin fallos.

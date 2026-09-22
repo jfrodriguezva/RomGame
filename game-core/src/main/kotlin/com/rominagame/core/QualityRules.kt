@@ -20,3 +20,23 @@ fun logicTutorial(familyId: String, mode: MemoryMode? = null): String = when (fa
     }
     else -> "Completa el objetivo del nivel."
 }
+
+fun languageTutorial(familyId: String, mode: Int): String = if (familyId == "palabras-sonidos") {
+    listOf(
+        "Escucha la consigna y distingue vocales de consonantes.",
+        "Toca las letras en orden para completar el abecedario.",
+        "Busca la letra con la que comienza la palabra.",
+        "Compara los sonidos finales y encuentra la rima.",
+        "Separa la palabra en golpes de voz y cuenta sus sílabas.",
+        "Relaciona cada letra minúscula con su mayúscula.",
+        "Desliza el dedo siguiendo la forma de la letra.",
+        "Traza la guía completa sin levantar el dedo demasiado pronto.",
+    )[mode]
+} else {
+    listOf(
+        "Toca las letras en el orden correcto para formar la palabra.",
+        "Arrastra la palabra al grupo singular o plural.",
+        "Arrastra cada palabra al artículo que le corresponde.",
+        "Relaciona la palabra en español con su equivalente en inglés.",
+    )[mode]
+}

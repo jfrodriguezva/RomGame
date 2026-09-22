@@ -11,4 +11,8 @@ class QualityRulesTest {
     @Test fun `logical tutorials are specific`() {
         assertTrue(logicTutorial("percepcion").contains("clasifícalo")); assertTrue(logicTutorial("orden-secuencias").contains("Arrastra"))
     }
+    @Test fun `language tutorials cover every mode`() {
+        assertTrue((0..7).all { languageTutorial("palabras-sonidos", it).isNotBlank() })
+        assertTrue((0..3).all { languageTutorial("construye-palabras", it).isNotBlank() })
+    }
 }
