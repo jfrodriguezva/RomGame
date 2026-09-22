@@ -30,4 +30,17 @@ class LogicBlockRulesTest {
         assertEquals("Mariposa", sequenceFor(4, 20).last())
         assertEquals(7, sequenceFor(2, 20).size)
     }
+
+    @Test fun `sensory classifications are balanced`() {
+        (1..5).forEach { mode ->
+            val round = sensorySort(mode)
+            assertEquals(3, round.items.count { it.destination == 0 })
+            assertEquals(3, round.items.count { it.destination == 1 })
+        }
+    }
+
+    @Test fun `visual differences grow without exceeding the board`() {
+        assertEquals(9, differenceCellCount(1))
+        assertEquals(15, differenceCellCount(20))
+    }
 }

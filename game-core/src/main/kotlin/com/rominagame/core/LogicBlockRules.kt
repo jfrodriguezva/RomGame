@@ -12,6 +12,9 @@ data class LogicRound(
     val answer: Int,
 )
 
+data class SortItem(val label: String, val destination: Int)
+data class SortRound(val left: String, val right: String, val items: List<SortItem>)
+
 val logicFamilies = listOf(
     LogicFamily("percepcion", "Percepción sensorial", listOf("Colores", "Texturas", "Temperatura", "Peso", "Sabores", "Olores", "Sentidos", "Sombras", "Diferencias")),
     LogicFamily("formas-encajes", "Formas y encajes", listOf("Formas", "Sólidos", "Lados", "Orificios", "Cilindros", "Binomio", "Rompecabezas")),
@@ -53,6 +56,16 @@ fun logicRound(familyId: String, mode: Int, level: Int, step: Int): LogicRound {
 }
 
 fun roundsForLevel(level: Int): Int = (3 + (level - 1) / 4).coerceAtMost(7)
+fun differenceCellCount(level: Int): Int = (9 + (level - 1) / 3).coerceAtMost(15)
+
+fun sensorySort(mode: Int): SortRound = when (mode) {
+    1 -> SortRound("ÁSPERO", "LISO", listOf(SortItem("Piedra", 0), SortItem("Ladrillo", 0), SortItem("Bellota", 0), SortItem("Espejo", 1), SortItem("Hielo", 1), SortItem("Huevo", 1)))
+    2 -> SortRound("CALIENTE", "FRÍO", listOf(SortItem("Fuego", 0), SortItem("Café", 0), SortItem("Sol", 0), SortItem("Nieve", 1), SortItem("Hielo", 1), SortItem("Helado", 1)))
+    3 -> SortRound("PESADO", "LIGERO", listOf(SortItem("Pesa", 0), SortItem("Roca", 0), SortItem("Elefante", 0), SortItem("Pluma", 1), SortItem("Globo", 1), SortItem("Mariposa", 1)))
+    4 -> SortRound("DULCE", "SALADO", listOf(SortItem("Caramelo", 0), SortItem("Paleta", 0), SortItem("Pastel", 0), SortItem("Pretzel", 1), SortItem("Papas", 1), SortItem("Sal", 1)))
+    5 -> SortRound("HUELE BIEN", "HUELE MAL", listOf(SortItem("Flor", 0), SortItem("Pastel", 0), SortItem("Limón", 0), SortItem("Calcetín", 1), SortItem("Basura", 1), SortItem("Zorrillo", 1)))
+    else -> error("Mode $mode is not a sensory classification")
+}
 
 fun sequenceFor(mode: Int, level: Int): List<String> {
     val full = when (mode) {

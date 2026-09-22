@@ -33,6 +33,11 @@ class LogicBlockGame(
     private var expectedSequence = emptyList<String>()
     private var sequence = emptyList<String>()
     private var dragging = -1
+    private var sortRound: SortRound? = null
+    private var sortItems = emptyList<SortItem>()
+    private var sortIndex = 0
+    private var draggingSort = false
+    private var oddIndex = 0
 
     override fun create() {
         shapes = ShapeRenderer()
@@ -45,6 +50,11 @@ class LogicBlockGame(
                 return true
             }
             override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+                if (draggingSort && screen == Screen.PLAY) {
+                    val point = viewport.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+                    dropSort(point.x, point.y)
+                    return true
+                }
                 if (family.id != "orden-secuencias" || dragging < 0 || screen != Screen.PLAY) return false
                 val point = viewport.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
                 dropSequence(point.x)
@@ -62,6 +72,17 @@ class LogicBlockGame(
         if (family.id == "orden-secuencias") {
             expectedSequence = sequenceFor(mode, level)
             sequence = expectedSequence.shuffled().let { if (it == expectedSequence && it.size > 1) it.reversed() else it }
+        }
+        if (isSensorySort()) {
+            sortRound = sensorySort(mode)
+            sortItems = sortRound!!.items.shuffled().take((4 + level / 8).coerceAtMost(6))
+            sortIndex = 0
+            draggingSort = false
+            feedback = "Arrastra cada objeto a su grupo"
+        }
+        if (isDifferences()) {
+            oddIndex = kotlin.random.Random.nextInt(differenceCellCount(level))
+            feedback = "Encuentra el símbolo diferente"
         }
         screen = Screen.PLAY
     }
@@ -90,6 +111,20 @@ class LogicBlockGame(
                     feedback = if (dragging >= 0) "Arrastra la pieza a su lugar" else feedback
                     return
                 }
+                if (isSensorySort() && y in 235f..390f && x in 340f..620f) {
+                    draggingSort = true
+                    feedback = "Suelta sobre el grupo correcto"
+                    return
+                }
+                if (isDifferences()) {
+                    val selected = differenceIndexAt(x, y)
+                    if (selected == oddIndex) {
+                        score = 1000 - level * 5
+                        screen = Screen.RESULT
+                        onComplete(family.id, level, score)
+                    } else if (selected >= 0) feedback = "Mira con atención: ese no cambia"
+                    return
+                }
                 val option = if (y in 95f..355f) {
                     val col = ((x - 170f) / 320f).toInt()
                     val row = ((355f - y) / 130f).toInt()
@@ -114,6 +149,43 @@ class LogicBlockGame(
             Screen.RESULT -> if (y < 180f) {
                 if (x < 480f) screen = Screen.MODES else { level = (level + 1).coerceAtMost(20); start() }
             }
+        }
+    }
+
+    private fun isSensorySort() = family.id == "percepcion" && mode in 1..5
+    private fun isDifferences() = family.id == "percepcion" && mode == 8
+
+    private fun differenceIndexAt(x: Float, y: Float): Int {
+        val count = differenceCellCount(level)
+        val cols = if (count <= 9) 3 else 5
+        val rows = (count + cols - 1) / cols
+        val width = 120f
+        val height = 95f
+        val left = (960f - cols * width) / 2f
+        val bottom = 105f + (285f - rows * height) / 2f
+        if (x !in left..left + cols * width || y !in bottom..bottom + rows * height) return -1
+        val col = ((x - left) / width).toInt().coerceAtMost(cols - 1)
+        val row = ((y - bottom) / height).toInt().coerceAtMost(rows - 1)
+        return (row * cols + col).takeIf { it < count } ?: -1
+    }
+
+    private fun dropSort(x: Float, y: Float) {
+        draggingSort = false
+        if (y !in 105f..235f || sortIndex !in sortItems.indices) {
+            feedback = "Lleva el objeto hasta una canasta"
+            return
+        }
+        val destination = if (x < 480f) 0 else 1
+        if (sortItems[sortIndex].destination == destination) {
+            score += 100
+            sortIndex++
+            if (sortIndex >= sortItems.size) {
+                screen = Screen.RESULT
+                onComplete(family.id, level, score)
+            } else feedback = "¡Correcto! Faltan ${sortItems.size - sortIndex}"
+        } else {
+            score = (score - 10).coerceAtLeast(0)
+            feedback = "Ese grupo no corresponde"
         }
     }
 
@@ -170,13 +242,58 @@ class LogicBlockGame(
         button(305f, "NIVEL +")
         text("${family.modes[mode]} · Nivel $level", 690f, 516f, Color.WHITE, Align.center)
         text(round.prompt, 480f, 430f, Color(0xE0C23CFF.toInt()), Align.center)
-        if (family.id == "orden-secuencias") renderSequence() else round.options.forEachIndexed { index, label ->
+        if (family.id == "orden-secuencias") renderSequence() else if (isSensorySort()) renderSensorySort() else if (isDifferences()) renderDifferences() else round.options.forEachIndexed { index, label ->
                 val x = 170f + (index % 2) * 320f
                 val y = 275f - (index / 2) * 130f
                 box(x, y, 280f, 105f, Color(0x243E78FF.toInt()))
+                if (family.id == "formas-encajes") geometryIcon(x + 48f, y + 52f, label, index)
                 text(label, x + 140f, y + 63f, Color.WHITE, Align.center)
             }
         text(feedback, 480f, 70f, Color.LIGHT_GRAY, Align.center)
+    }
+
+    private fun renderSensorySort() {
+        val definition = sortRound ?: return
+        box(90f, 105f, 350f, 125f, Color(0x6B4FA3FF.toInt()))
+        box(520f, 105f, 350f, 125f, Color(0x3154B5FF.toInt()))
+        text(definition.left, 265f, 178f, Color.WHITE, Align.center)
+        text(definition.right, 695f, 178f, Color.WHITE, Align.center)
+        if (sortIndex in sortItems.indices) {
+            box(340f, 270f, 280f, 115f, if (draggingSort) Color(0xE0C23CFF.toInt()) else Color(0x4C9A5FFF.toInt()))
+            text(sortItems[sortIndex].label, 480f, 338f, Color.WHITE, Align.center)
+        }
+    }
+
+    private fun renderDifferences() {
+        val count = differenceCellCount(level)
+        val cols = if (count <= 9) 3 else 5
+        val rows = (count + cols - 1) / cols
+        val width = 120f
+        val height = 95f
+        val left = (960f - cols * width) / 2f
+        val bottom = 105f + (285f - rows * height) / 2f
+        repeat(count) { index ->
+            val x = left + (index % cols) * width
+            val y = bottom + (index / cols) * height
+            box(x + 5f, y + 5f, width - 10f, height - 10f, Color(0x243E78FF.toInt()))
+            shapes.begin(ShapeRenderer.ShapeType.Filled)
+            shapes.color = if (index == oddIndex) Color(0xE0C23CFF.toInt()) else Color(0xE6E8F0FF.toInt())
+            if (index == oddIndex) shapes.triangle(x + 60f, y + 70f, x + 30f, y + 25f, x + 90f, y + 25f)
+            else shapes.circle(x + 60f, y + 48f, 27f, 32)
+            shapes.end()
+        }
+    }
+
+    private fun geometryIcon(x: Float, y: Float, label: String, index: Int) {
+        shapes.begin(ShapeRenderer.ShapeType.Filled)
+        shapes.color = Color(0xF3DBE3FF.toInt())
+        when {
+            label.contains("Círculo", true) || label.contains("Esfera", true) -> shapes.circle(x, y, 25f, 32)
+            label.contains("Triángulo", true) || label.contains("Pirámide", true) -> shapes.triangle(x, y + 28f, x - 27f, y - 24f, x + 27f, y - 24f)
+            index % 2 == 0 -> shapes.rect(x - 25f, y - 25f, 50f, 50f)
+            else -> shapes.rect(x - 30f, y - 20f, 60f, 40f)
+        }
+        shapes.end()
     }
 
     private fun renderSequence() {
