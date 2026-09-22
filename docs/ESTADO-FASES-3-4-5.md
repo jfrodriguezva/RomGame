@@ -92,7 +92,7 @@ juego.
 
 ## Fase 5 — juegos de mesa
 
-Estado: **siguiente fase; preparación iniciada tras cerrar la fase 4**.
+Estado: **terminada**.
 
 No comenzará hasta cerrar las fases 3 y 4. Comprende seis familias: Alineación
 y duelo, Dados y recorridos, Solitarios, Lotería y bingo, Estrategia de tablero
@@ -126,10 +126,19 @@ un tablero LibGDX común con arrastre, toque, destinos resaltados y modos CPU o
 local. Damas fue abierto desde el catálogo y se corrigió la orientación del
 tablero durante la validación visual.
 
+Sexto bloque terminado: Dominó y Adivina quién usan reglas puras y una mesa
+LibGDX común. Dominó conserva doble-6, extremos explícitos, pozo, bloqueo y
+puntuación; Adivina quién pregunta por tres atributos y permite arrastrar cada
+candidato a descarte o adivinanza. Ambos fueron abiertos desde el catálogo.
+
+La fase quedó cerrada después de retirar las 15 pantallas Compose de mesa y
+sus pruebas duplicadas. Todo el catálogo de mesa abre ahora el motor LibGDX.
+
 ## Validación del checkpoint actual
 
-- 161 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
-  retirado fueron sustituidas por las pruebas de reglas del laberinto LibGDX.
+- 103 pruebas unitarias vigentes sin fallos: 72 de `game-core` y 31 Android.
+  Las pruebas antiguas ligadas a pantallas Compose fueron retiradas sólo tras
+  quedar cubiertas por las pruebas de reglas del motor.
 - Android Lint sin errores.
 - APK debug generado e instalado.
 - Percepción sensorial abierta desde el catálogo en emulador dentro de

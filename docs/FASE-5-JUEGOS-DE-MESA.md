@@ -2,18 +2,18 @@
 
 Inicio: 22 de septiembre de 2026
 
-Estado: **en ejecución**. La fase 4 quedó cerrada antes de iniciar este trabajo.
+Estado: **terminada**. La fase 4 quedó cerrada antes de iniciar este trabajo.
 
 ## Alcance consolidado
 
 | Familia | Modalidades | Estado de reglas heredadas | Migración |
 |---|---|---|---|
-| Alineación y duelo | Gato, Cuatro en línea, Piedra-papel-tijera | Reglas trasladadas a `game-core`; primera superficie LibGDX arrastrable integrada | En ejecución |
-| Dados y recorridos | Oca, Serpientes y escaleras, Dado de retos | Reglas y superficie LibGDX con dado y ficha arrastrable | En validación |
-| Solitarios | Klondike, Araña | Reglas reales y mesa LibGDX con secuencias arrastrables | En validación |
-| Lotería y bingo | Lotería mexicana, Bingo con imágenes | Cartones LibGDX con marcador arrastrable y canto estricto | En validación |
-| Estrategia de tablero | Damas, Damas chinas, Ajedrez | Reglas puras y tablero LibGDX arrastrable con CPU/local | En validación |
-| Deducción y fichas | Dominó, Adivina quién | Dominó doble-6 y eliminación por atributos | Sexto bloque |
+| Alineación y duelo | Gato, Cuatro en línea, Piedra-papel-tijera | Reglas y superficie LibGDX con arrastre/toque, CPU y modo local | Terminado |
+| Dados y recorridos | Oca, Serpientes y escaleras, Dado de retos | Reglas y superficie LibGDX con dado y ficha arrastrable | Terminado |
+| Solitarios | Klondike, Araña | Reglas reales y mesa LibGDX con secuencias arrastrables | Terminado |
+| Lotería y bingo | Lotería mexicana, Bingo con imágenes | Cartones LibGDX con marcador arrastrable y canto estricto | Terminado |
+| Estrategia de tablero | Damas, Damas chinas, Ajedrez | Reglas puras y tablero LibGDX arrastrable con CPU/local | Terminado |
+| Deducción y fichas | Dominó, Adivina quién | Dominó doble-6 y eliminación por atributos | Terminado |
 
 Total: 6 familias y 15 modalidades.
 
@@ -125,7 +125,23 @@ al propio rey atacado.
 Los tres comparten tablero LibGDX con piezas arrastrables, selección por toque,
 destinos legales resaltados, CPU y dos jugadores locales, tutorial, pausa y
 reinicio. Se corrigió la orientación para que el bando del jugador aparezca
-abajo. Se añadieron ocho pruebas específicas; el proyecto suma 161 pruebas.
+abajo. Se añadieron ocho pruebas específicas.
 
 Validación inicial: Damas abierto desde el catálogo, tablero y tutorial
 renderizados sin excepción fatal ni ANR.
+
+## Deducción y fichas
+
+Dominó conserva el set doble-6 de 28 fichas, reparto de siete, pozo, cadena con
+extremos izquierdo y derecho elegibles, orientación de fichas, pase, partida
+bloqueada y desempate por puntos. Incluye CPU y dos jugadores locales.
+
+Adivina quién usa 12 candidatos y preguntas con respuesta sí/no por color,
+tamaño y hábitat. Los candidatos se descartan de forma coherente con la
+respuesta; además, cada carta se puede arrastrar manualmente a las zonas de
+descarte o adivinanza.
+
+Ambos fueron abiertos desde el catálogo en emulador, mostraron tutorial y
+tablero sin excepción fatal ni ANR. Se retiraron las 15 pantallas Compose de
+mesa y sus pruebas duplicadas. Validación final desde limpio: 103 pruebas
+vigentes, Android Lint sin errores y APK debug generado.
