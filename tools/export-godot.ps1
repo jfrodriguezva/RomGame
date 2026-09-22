@@ -24,6 +24,10 @@ foreach ($relative in $generated) {
     $target = Join-Path $project $relative
     if (Test-Path -LiteralPath $target) { Remove-Item -LiteralPath $target -Force }
 }
+Get-ChildItem (Join-Path $project "scripts") -File |
+    Where-Object { $_.Extension -in ".gdc", ".remap" } |
+    Remove-Item -Force
+Get-ChildItem $project -File -Filter "*.remap" | Remove-Item -Force
 $exported = Join-Path $project ".godot/exported"
 if (Test-Path -LiteralPath $exported) { Remove-Item -LiteralPath $exported -Recurse -Force }
 

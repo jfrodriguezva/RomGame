@@ -8,9 +8,9 @@ Estado: **en ejecución**. La fase 5 está terminada.
 
 | Familia | Modalidades | Modalidad objetivo | Estado |
 |---|---|---|---|
-| Bloques | Bloques | Caída, rotación, líneas y progresión | Pendiente |
-| La víbora | La víbora | Movimiento continuo, comida y colisión | Pendiente |
-| Rompe ladrillos | Rompe ladrillos | Pala, rebotes, ladrillos y mejoras | Pendiente |
+| Bloques | Bloques | Caída, rotación, líneas y progresión | Implementado; validación headless |
+| La víbora | La víbora | Movimiento continuo, comida y colisión | Implementado; validación headless |
+| Rompe ladrillos | Rompe ladrillos | Pala, rebotes, ladrillos y mejoras | Implementado; validación headless |
 | Mosaico sorpresa | Mosaico sorpresa | Trazado y captura de territorio con enemigos | Pendiente |
 | Vaqueros del ocaso | Vaqueros del ocaso | Acción lateral, plataformas, disparos y jefes | Pendiente |
 | Comepuntos | Comepuntos | Laberinto, puntos, energizantes e IA perseguidora | Pendiente |
@@ -31,6 +31,20 @@ El emulador disponible usa SwiftShader. OpenGL excede su límite de uniformes y
 Vulkan inicia la escena pero falla al presentar la cola (`VkResult 5`). Es una
 limitación gráfica del emulador; la validación visual final debe repetirse en
 un dispositivo o emulador con aceleración gráfica funcional.
+
+## Primer bloque jugable
+
+- Bloques conserva siete tetrominós, rotación con desplazamiento lateral,
+  caída suave y dura, eliminación de una a cuatro líneas, puntuación, siguiente
+  pieza, incremento de nivel y velocidad.
+- La víbora conserva avance continuo, giro sin reversa inmediata, crecimiento,
+  comida en celdas libres, colisión contra bordes/cuerpo y aumento de ritmo.
+- Rompe ladrillos conserva pala arrastrable, lanzamiento, rebotes por cara,
+  vidas, marcador y tres disposiciones progresivas de ladrillos.
+
+Los tres scripts pasan exportación limpia y arranque headless con su ID. El
+exportador elimina todos los `.gdc` y `.remap` anteriores para impedir que un
+binario obsoleto oculte errores de GDScript.
 
 ## Criterio de fidelidad
 
