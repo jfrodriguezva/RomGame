@@ -121,9 +121,14 @@ Cuarto bloque en validación: Lotería mexicana y Bingo abren cartones LibGDX y
 usan marcadores por arrastre o toque. Las reglas rechazan cartas no cantadas y
 comprueban cartón completo o líneas de bingo, respectivamente.
 
+Quinto bloque en validación: Damas, Damas chinas y Ajedrez usan reglas puras y
+un tablero LibGDX común con arrastre, toque, destinos resaltados y modos CPU o
+local. Damas fue abierto desde el catálogo y se corrigió la orientación del
+tablero durante la validación visual.
+
 ## Validación del checkpoint actual
 
-- 153 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
+- 161 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
   retirado fueron sustituidas por las pruebas de reglas del laberinto LibGDX.
 - Android Lint sin errores.
 - APK debug generado e instalado.

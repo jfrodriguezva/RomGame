@@ -12,7 +12,7 @@ Estado: **en ejecución**. La fase 4 quedó cerrada antes de iniciar este trabaj
 | Dados y recorridos | Oca, Serpientes y escaleras, Dado de retos | Reglas y superficie LibGDX con dado y ficha arrastrable | En validación |
 | Solitarios | Klondike, Araña | Reglas reales y mesa LibGDX con secuencias arrastrables | En validación |
 | Lotería y bingo | Lotería mexicana, Bingo con imágenes | Cartones LibGDX con marcador arrastrable y canto estricto | En validación |
-| Estrategia de tablero | Damas, Damas chinas, Ajedrez | Captura obligatoria, saltos, jaque y CPU | Quinto bloque |
+| Estrategia de tablero | Damas, Damas chinas, Ajedrez | Reglas puras y tablero LibGDX arrastrable con CPU/local | En validación |
 | Deducción y fichas | Dominó, Adivina quién | Dominó doble-6 y eliminación por atributos | Sexto bloque |
 
 Total: 6 familias y 15 modalidades.
@@ -113,3 +113,19 @@ patrones ganadores.
 Validación inicial: Lotería abierta desde el catálogo con canto, marcador y
 cartón 4×4; se corrigió el tamaño de texto de nombres largos. Compilación y 153
 pruebas unitarias sin fallos.
+
+## Estrategia de tablero
+
+Damas conserva captura obligatoria en todo el tablero, coronación y capturas
+encadenadas. Damas chinas permite pasos y cadenas de saltos sobre cualquier
+canica sin capturarla. Ajedrez conserva movimientos por pieza, doble paso de
+peón, promoción, bloqueo de piezas, jaque y rechazo de movimientos que dejan
+al propio rey atacado.
+
+Los tres comparten tablero LibGDX con piezas arrastrables, selección por toque,
+destinos legales resaltados, CPU y dos jugadores locales, tutorial, pausa y
+reinicio. Se corrigió la orientación para que el bando del jugador aparezca
+abajo. Se añadieron ocho pruebas específicas; el proyecto suma 161 pruebas.
+
+Validación inicial: Damas abierto desde el catálogo, tablero y tutorial
+renderizados sin excepción fatal ni ANR.
