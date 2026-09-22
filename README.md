@@ -14,13 +14,16 @@ completos, con modos, niveles, progresión y controles táctiles de calidad.
   por fases.
 - Fase 2 terminada: 111 accesos se consolidaron en 29 juegos con modos y ocho
   categorías; el selector de edad fue retirado.
-- Fase 3 iniciada: LibGDX 1.14.2 está integrado y `Memoria y observación` tiene
-  el primer tablero OpenGL jugable.
+- Fase 3 terminada para el primer bloque: LibGDX 1.14.2 está integrado.
+- Fase 4 en ejecución: `Memoria y observación` ya ofrece cuatro modos, 20
+  niveles por modo, progreso persistente y reglas probadas.
 
 La estrategia completa está en
 [`docs/PLAN-RECONSTRUCCION-ANDROID.md`](docs/PLAN-RECONSTRUCCION-ANDROID.md) y el
 inventario de la aplicación retirada en
 [`docs/INVENTARIO-FASE-0.md`](docs/INVENTARIO-FASE-0.md).
+El cierre del primer juego de la fase 4 se detalla en
+[`docs/FASE-4-MEMORIA-Y-OBSERVACION.md`](docs/FASE-4-MEMORIA-Y-OBSERVACION.md).
 
 ## Tecnología objetivo
 

@@ -9,19 +9,51 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.viewport.FitViewport
+import kotlin.random.Random
 
-class MemoriaGame(private val onComplete:(Int)->Unit={}):ApplicationAdapter(){
-    private val viewport=FitViewport(960f,540f)
-    private lateinit var shapes:ShapeRenderer;private lateinit var batch:SpriteBatch;private lateinit var font:BitmapFont
-    private var cards=emptyList<Card>();private var first:Int?=null;private var locked=false;private var moves=0
-    data class Card(val symbol:Char,val open:Boolean=false,val solved:Boolean=false)
+class MemoriaGame(private val onComplete:(String,Int,Int)->Unit={_,_,_->}):ApplicationAdapter(){
+    private enum class Screen{MENU,PLAY,RESULT}
+    private val viewport=FitViewport(960f,540f);private lateinit var shapes:ShapeRenderer;private lateinit var batch:SpriteBatch;private lateinit var font:BitmapFont
+    private var screen=Screen.MENU;private var mode=MemoryMode.PAIRS;private var level=1;private var generation=0
+    private var deck=emptyList<Char>();private var open=emptySet<Int>();private var solved=emptySet<Int>();private var first:Int?=null;private var locked=false
+    private var moves=0;private var playerScore=0;private var cpuScore=0;private var message="Elige un modo";private var preview=false
+    private var missingIndex=0;private var missingAnswer='A';private var choices=emptyList<Char>();private var search:SearchDeck?=null;private var found=emptySet<Int>()
 
-    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=BitmapFont().apply{data.setScale(2.4f)};reset();Gdx.input.inputProcessor=object:InputAdapter(){override fun touchDown(x:Int,y:Int,p:Int,b:Int):Boolean{tap(x,y);return true}}}
-    private fun reset(){cards=(('A'..'F').flatMap{listOf(it,it)}).shuffled().map{Card(it)};first=null;locked=false;moves=0}
-    private fun tap(screenX:Int,screenY:Int){if(locked)return;val p=viewport.unproject(Vector3(screenX.toFloat(),screenY.toFloat(),0f));val col=((p.x-170f)/160f).toInt();val row=((p.y-55f)/145f).toInt();if(col !in 0..3||row !in 0..2)return;val index=row*4+col;val card=cards[index];if(card.open||card.solved)return;cards=cards.toMutableList().also{it[index]=card.copy(open=true)};val previous=first;if(previous==null){first=index;return};moves++;locked=true;if(cards[previous].symbol==cards[index].symbol){cards=cards.toMutableList().also{it[previous]=it[previous].copy(solved=true);it[index]=it[index].copy(solved=true)};first=null;locked=false;if(cards.all{it.solved})Timer.schedule(object:Timer.Task(){override fun run(){onComplete(moves)}},.5f)}else Timer.schedule(object:Timer.Task(){override fun run(){cards=cards.toMutableList().also{it[previous]=it[previous].copy(open=false);it[index]=it[index].copy(open=false)};first=null;locked=false}},.75f)}
-    override fun render(){Gdx.gl.glClearColor(.055f,.075f,.12f,1f);Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);viewport.apply();shapes.projectionMatrix=viewport.camera.combined;batch.projectionMatrix=viewport.camera.combined;shapes.begin(ShapeRenderer.ShapeType.Filled);cards.forEachIndexed{i,c->val x=180f+(i%4)*160f;val y=65f+(i/4)*145f;shapes.color=when{c.solved->Color(0x6FBE73FF.toInt());c.open->Color(0xE0B45CFF.toInt());else->Color(0x3154B5FF.toInt())};shapes.rect(x,y,135f,115f)};shapes.end();batch.begin();font.color=Color.WHITE;font.draw(batch,"MEMORIA  Movimientos: $moves",260f,520f);cards.forEachIndexed{i,c->if(c.open||c.solved)font.draw(batch,c.symbol.toString(),225f+(i%4)*160f,138f+(i/4)*145f)};batch.end()}
+    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=BitmapFont().apply{data.setScale(2f)};Gdx.input.inputProcessor=object:InputAdapter(){override fun touchDown(x:Int,y:Int,p:Int,b:Int):Boolean{tap(x,y);return true}}}
+    private fun start(selected:MemoryMode=mode){mode=selected;screen=Screen.PLAY;generation++;locked=false;open=emptySet();solved=emptySet();first=null;moves=0;playerScore=0;cpuScore=0;found=emptySet();val d=memoryDifficulty(mode,level)
+        when(mode){
+            MemoryMode.PAIRS,MemoryMode.TURNS->{deck=pairDeck(d.cells/2);message=if(mode==MemoryMode.TURNS)"Tu turno: encuentra una pareja" else "Encuentra todas las parejas"}
+            MemoryMode.MISSING->{deck=('A'..'Z').take(d.cells).shuffled();missingIndex=Random.nextInt(deck.size);missingAnswer=deck[missingIndex];choices=(listOf(missingAnswer)+('A'..'Z').filter{it !in deck}.shuffled().take(3)).shuffled();preview=true;message="Memoriza las fichas";val g=generation;Timer.schedule(object:Timer.Task(){override fun run(){if(g==generation){preview=false;message="Que letra falta?"}}},d.previewSeconds)}
+            MemoryMode.SEARCH->{search=searchDeck(d.cells,d.targets);message="Encuentra todas las ${search!!.target}"}
+        }
+    }
+    private fun complete(score:Int){screen=Screen.RESULT;message="Nivel superado";onComplete(mode.id,level,score)}
+    private fun tap(screenX:Int,screenY:Int){val p=viewport.unproject(Vector3(screenX.toFloat(),screenY.toFloat(),0f));when(screen){Screen.MENU->tapMenu(p.x,p.y);Screen.RESULT->if(p.y<170f){if(p.x<480f)screen=Screen.MENU else{level=(level+1).coerceAtMost(20);start()}};Screen.PLAY->tapPlay(p.x,p.y)}}
+    private fun tapMenu(x:Float,y:Float){MemoryMode.entries.forEachIndexed{i,m->val left=180f+(i%2)*310f;val bottom=270f-(i/2)*160f;if(x in left..left+280f&&y in bottom..bottom+125f)start(m)}}
+    private fun tapPlay(x:Float,y:Float){if(y>485f){when{ x<145f->screen=Screen.MENU;x<300f->{level=(level-1).coerceAtLeast(1);start()};x<455f->{level=(level+1).coerceAtMost(20);start()}};return};if(locked)return
+        if(mode==MemoryMode.MISSING&&!preview&&y<90f){val option=((x-250f)/120f).toInt();if(option in choices.indices){moves++;if(choices[option]==missingAnswer)complete(100-moves*3)else message="Intenta otra vez"};return}
+        val index=indexAt(x,y)?:return
+        when(mode){MemoryMode.PAIRS,MemoryMode.TURNS->tapPair(index);MemoryMode.SEARCH->tapSearch(index);MemoryMode.MISSING->Unit}
+    }
+    private fun indexAt(x:Float,y:Float):Int?{val d=memoryDifficulty(mode,level);val cellW=(700f/d.cols).coerceAtMost(150f);val cellH=(360f/d.rows).coerceAtMost(125f);val width=cellW*d.cols;val height=cellH*d.rows;val left=(960f-width)/2;val bottom=105f+(360f-height)/2;if(x !in left..left+width||y !in bottom..bottom+height)return null;val col=((x-left)/cellW).toInt().coerceAtMost(d.cols-1);val row=((y-bottom)/cellH).toInt().coerceAtMost(d.rows-1);return row*d.cols+col}
+    private fun tapPair(index:Int){if(index in open||index in solved)return;open=open+index;val previous=first;if(previous==null){first=index;return};moves++;locked=true;if(deck[previous]==deck[index]){solved=solved+previous+index;open=emptySet();first=null;locked=false;if(mode==MemoryMode.TURNS)playerScore++;if(solved.size==deck.size)complete(if(mode==MemoryMode.TURNS)playerScore*20-cpuScore*5 else 100-moves*2)}else{val g=generation;Timer.schedule(object:Timer.Task(){override fun run(){if(g==generation){open=emptySet();first=null;if(mode==MemoryMode.TURNS)cpuTurn()else locked=false}}},.65f)}}
+    private fun cpuTurn(){message="Turno de la computadora";val available=deck.indices.filter{it !in solved}.shuffled();if(available.size<2){locked=false;return};val a=available[0];val match=available.drop(1).firstOrNull{deck[it]==deck[a]};val b=if(Random.nextFloat()<(.25f+level*.025f)&&match!=null)match else available[1];open=setOf(a,b);val g=generation;Timer.schedule(object:Timer.Task(){override fun run(){if(g!=generation)return;if(deck[a]==deck[b]){solved=solved+a+b;cpuScore++;if(solved.size==deck.size){complete(playerScore*20-cpuScore*5);return}};open=emptySet();message="Tu turno";locked=false}},.8f)}
+    private fun tapSearch(index:Int){val s=search?:return;if(index in s.targetIndexes){found=found+index;message="${found.size}/${s.targetIndexes.size} encontrados";if(found.containsAll(s.targetIndexes))complete(100-moves*2)}else{moves++;message="Busca la letra ${s.target}"}}
+    override fun render(){Gdx.gl.glClearColor(.04f,.06f,.1f,1f);Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);viewport.apply();shapes.projectionMatrix=viewport.camera.combined;batch.projectionMatrix=viewport.camera.combined;when(screen){Screen.MENU->renderMenu();Screen.PLAY->renderPlay();Screen.RESULT->renderResult()}}
+    private fun renderMenu(){title("MEMORIA Y OBSERVACION",490f);text("Cuatro modos, veinte niveles cada uno",480f,450f,Color.LIGHT_GRAY,Align.center);MemoryMode.entries.forEachIndexed{i,m->val x=180f+(i%2)*310f;val y=270f-(i/2)*160f;box(x,y,280f,125f,Color(0x3154B5FF.toInt()));text(m.title,x+140f,y+72f,Color.WHITE,Align.center)}}
+    private fun renderPlay(){box(18f,488f,120f,40f,Color(0x3D507AFF.toInt()));box(160f,488f,130f,40f,Color(0x3D507AFF.toInt()));box(305f,488f,130f,40f,Color(0x3D507AFF.toInt()));text("MENU",78f,516f,Color.WHITE,Align.center);text("NIVEL -",225f,516f,Color.WHITE,Align.center);text("NIVEL +",370f,516f,Color.WHITE,Align.center);text("${mode.title}  Nivel $level",610f,516f,Color.WHITE,Align.center);text(message,480f,472f,Color(0xE0C23CFF.toInt()),Align.center)
+        when(mode){MemoryMode.PAIRS,MemoryMode.TURNS->renderPairs();MemoryMode.MISSING->renderMissing();MemoryMode.SEARCH->renderSearch()}}
+    private fun renderPairs(){renderGrid(deck.size){i->when{i in solved->Color(0x4C9A5FFF.toInt());i in open->Color(0xC89A45FF.toInt());else->Color(0x243E78FF.toInt())} to if(i in open||i in solved)deck[i].toString() else ""};text(if(mode==MemoryMode.TURNS)"Tu: $playerScore   CPU: $cpuScore" else "Movimientos: $moves",480f,82f,Color.WHITE,Align.center)}
+    private fun renderMissing(){renderGrid(deck.size){i->Color(0x3154B5FF.toInt()) to if(preview||i!=missingIndex)deck[i].toString() else "?"};if(!preview)choices.forEachIndexed{i,c->val x=250f+i*120f;box(x,25f,100f,55f,Color(0x6B4FA3FF.toInt()));text(c.toString(),x+50f,62f,Color.WHITE,Align.center)}}
+    private fun renderSearch(){val s=search?:return;renderGrid(s.symbols.size){i->(if(i in found)Color(0x4C9A5FFF.toInt())else Color(0x243E78FF.toInt())) to s.symbols[i].toString()};text("Objetivo: ${s.target}    Errores: $moves",480f,82f,Color.WHITE,Align.center)}
+    private fun renderGrid(count:Int,content:(Int)->Pair<Color,String>){val d=memoryDifficulty(mode,level);val cw=(700f/d.cols).coerceAtMost(150f);val ch=(360f/d.rows).coerceAtMost(125f);val left=(960f-cw*d.cols)/2;val bottom=105f+(360f-ch*d.rows)/2;(0 until count).forEach{i->val x=left+(i%d.cols)*cw;val y=bottom+(i/d.cols)*ch;val(c,label)=content(i);box(x+5f,y+5f,cw-10f,ch-10f,c);if(label.isNotEmpty())text(label,x+cw/2,y+ch/2+12f,Color.WHITE,Align.center)}}
+    private fun renderResult(){title(message,400f);text("${mode.title} - Nivel $level",480f,330f,Color.WHITE,Align.center);box(230f,80f,220f,75f,Color(0x3D507AFF.toInt()));box(510f,80f,220f,75f,Color(0x4C9A5FFF.toInt()));text("MODOS",340f,128f,Color.WHITE,Align.center);text("SIGUIENTE",620f,128f,Color.WHITE,Align.center)}
+    private fun box(x:Float,y:Float,w:Float,h:Float,color:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=color;shapes.rect(x,y,w,h);shapes.end()}
+    private fun title(value:String,y:Float){text(value,480f,y,Color.WHITE,Align.center)}
+    private fun text(value:String,x:Float,y:Float,color:Color,align:Int=Align.left){batch.begin();font.color=color;font.draw(batch,value,x-220f,y,440f,align,false);batch.end()}
     override fun resize(width:Int,height:Int)=viewport.update(width,height,true)
-    override fun dispose(){shapes.dispose();batch.dispose();font.dispose()}
+    override fun dispose(){generation++;shapes.dispose();batch.dispose();font.dispose()}
 }
