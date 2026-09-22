@@ -12,7 +12,7 @@ paridad.
 
 ## Fase 3 — migración a LibGDX
 
-Estado: **en ejecución**.
+Estado: **terminada**.
 
 | Familia normal | Motor | Estado |
 |---|---|---|
@@ -62,9 +62,12 @@ guarda progreso con el identificador de su familia consolidada.
 Las 14 familias normales ya cuentan con motor LibGDX. El último bloque añade
 lienzo táctil, coloreado, collage por arrastre, teclado musical, patrones,
 objetivos con detección estricta, canasta por arrastre y laberintos navegables.
-El modo Globo ignora explícitamente cualquier toque fuera del objetivo. La
-fase 3 permanece abierta únicamente para retirar las rutas Compose sustituidas
-y ejecutar el recorrido de regresión posterior a esa limpieza.
+El modo Globo ignora explícitamente cualquier toque fuera del objetivo.
+
+La limpieza final eliminó 86 rutas educativas y 86 pantallas Compose
+sustituidas. Permanecen 23 archivos de pantalla: navegación/configuración,
+Juegos de mesa y Arcade. Una compilación desde `clean` confirmó que ninguna
+pantalla retirada seguía siendo dependencia del producto.
 
 ## Fase 4 — potenciación individual
 
@@ -85,7 +88,8 @@ alternativa accesible por toque, turnos y pruebas.
 
 ## Validación del checkpoint actual
 
-- 122 pruebas unitarias sin fallos.
+- 120 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
+  retirado fueron sustituidas por las pruebas de reglas del laberinto LibGDX.
 - Android Lint sin errores.
 - APK debug generado e instalado.
 - Percepción sensorial abierta desde el catálogo en emulador dentro de
@@ -97,3 +101,5 @@ alternativa accesible por toque, turnos y pruebas.
   modos; APK y lint validados.
 - Globo validado en emulador: tocar el fondo mantiene 0 puntos y tocar el
   objetivo incrementa el contador; sin excepción fatal ni ANR.
+- Compilación limpia, lint y APK correctos después de eliminar físicamente las
+  pantallas sustituidas; aplicación instalada y abierta en `MainActivity`.
