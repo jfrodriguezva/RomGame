@@ -11,7 +11,7 @@ Estado: **en ejecución**. La fase 4 quedó cerrada antes de iniciar este trabaj
 | Alineación y duelo | Gato, Cuatro en línea, Piedra-papel-tijera | Reglas trasladadas a `game-core`; primera superficie LibGDX arrastrable integrada | En ejecución |
 | Dados y recorridos | Oca, Serpientes y escaleras, Dado de retos | Reglas y superficie LibGDX con dado y ficha arrastrable | En validación |
 | Solitarios | Klondike, Araña | Reglas reales y mesa LibGDX con secuencias arrastrables | En validación |
-| Lotería y bingo | Lotería mexicana, Bingo con imágenes | Baraja/cartón, canto y marcado | Cuarto bloque |
+| Lotería y bingo | Lotería mexicana, Bingo con imágenes | Cartones LibGDX con marcador arrastrable y canto estricto | En validación |
 | Estrategia de tablero | Damas, Damas chinas, Ajedrez | Captura obligatoria, saltos, jaque y CPU | Quinto bloque |
 | Deducción y fichas | Dominó, Adivina quién | Dominó doble-6 y eliminación por atributos | Sexto bloque |
 
@@ -97,3 +97,19 @@ automático de la nueva carta superior. Se añadieron nueve pruebas de reglas.
 Validación inicial: Klondike abierto desde el catálogo con reparto 1–7, 24
 cartas en mazo y robo al descarte; sin excepción fatal ni ANR. El total del
 proyecto asciende a 148 pruebas unitarias sin fallos.
+
+## Lotería y bingo
+
+Lotería usa un mazo infantil de 36 cartas distintas y cartón tradicional 4×4.
+El gritón puede cantar cartas ausentes y la acción “No está” sólo avanza cuando
+la afirmación es correcta. Bingo conserva el cartón 3×3 y gana con fila,
+columna o diagonal.
+
+En ambos, el marcador se arrastra desde la reserva hasta la casilla cantada o
+se coloca por selección y toque. Una casilla distinta o ya marcada se rechaza.
+Se añadieron tutorial, pausa, reinicio y cinco pruebas de mazo, marcado y
+patrones ganadores.
+
+Validación inicial: Lotería abierta desde el catálogo con canto, marcador y
+cartón 4×4; se corrigió el tamaño de texto de nombres largos. Compilación y 153
+pruebas unitarias sin fallos.

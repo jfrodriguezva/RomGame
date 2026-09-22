@@ -117,9 +117,13 @@ Tercer bloque en validación: Klondike y Araña trasladaron sus reglas reales a
 `game-core` y ya abren una mesa LibGDX con arrastre de cartas y secuencias.
 Klondike fue abierto desde el catálogo y se validó el robo al descarte.
 
+Cuarto bloque en validación: Lotería mexicana y Bingo abren cartones LibGDX y
+usan marcadores por arrastre o toque. Las reglas rechazan cartas no cantadas y
+comprueban cartón completo o líneas de bingo, respectivamente.
+
 ## Validación del checkpoint actual
 
-- 148 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
+- 153 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
   retirado fueron sustituidas por las pruebas de reglas del laberinto LibGDX.
 - Android Lint sin errores.
 - APK debug generado e instalado.
