@@ -15,4 +15,8 @@ class QualityRulesTest {
         assertTrue((0..7).all { languageTutorial("palabras-sonidos", it).isNotBlank() })
         assertTrue((0..3).all { languageTutorial("construye-palabras", it).isNotBlank() })
     }
+    @Test fun `curriculum tutorials cover all 34 modes`() {
+        val tutorials = curriculumFamilies.flatMap { family -> family.modes.indices.map { curriculumTutorial(family.id, it) } }
+        assertEquals(34, tutorials.size); assertTrue(tutorials.all { it.isNotBlank() })
+    }
 }

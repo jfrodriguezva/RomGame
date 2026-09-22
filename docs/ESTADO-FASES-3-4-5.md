@@ -7,7 +7,7 @@
 Una fase no se considera terminada solo por integrar el motor o mostrar un
 menú. Cada familia debe conservar sus modalidades, ejecutar su juego nuevo,
 guardar progreso, tener pruebas de reglas y pasar pruebas, lint y recorrido en
-emulador. Las pantallas Compose anteriores se conservan hasta alcanzar esa
+emulador. Las pantallas Compose sustituidas se eliminan al alcanzar esa
 paridad.
 
 ## Fase 3 — migración a LibGDX
@@ -46,8 +46,7 @@ de cuatro piezas con destino exacto.
 
 **Bloque lógico de fase 3 cerrado:** las tres familias abren desde el catálogo,
 conservan sus 22 modalidades, guardan progreso y sus reglas están cubiertas por
-pruebas. Las pantallas Compose históricas permanecen temporalmente como
-referencia hasta la limpieza final de la fase.
+pruebas.
 
 El bloque de lenguaje incorpora un motor propio: cuestionarios fonéticos,
 secuencia progresiva del abecedario, formación letra por letra, clasificación
@@ -71,14 +70,18 @@ pantalla retirada seguía siendo dependencia del producto.
 
 ## Fase 4 — potenciación individual
 
-Estado: **en ejecución, detenida hasta cerrar fase 3**.
+Estado: **en ejecución**. La fase 3 ya está cerrada.
 
 - Memoria y observación: primer juego terminado en esta fase.
 - Percepción sensorial, Formas y encajes y Orden y secuencias: tutorial, pausa,
   reinicio y valoración por estrellas añadidos; pulido individual en curso.
 - Palabras y sonidos y Construye palabras: tutorial por modalidad, pausa,
   reinicio y valoración por estrellas añadidos.
-- Las otras ocho familias normales: pendientes de potenciación.
+- Números, Clasifica el mundo, Naturaleza y planeta, Personas y comunidad y
+  Vida práctica: 34 modalidades con tutorial contextual, pausa, reinicio y
+  valoración por estrellas.
+- Taller creativo, Coordinación y reflejos y Laberintos y recorridos:
+  pendientes de potenciación.
 - Juegos de mesa y Arcade: fuera del alcance de esta fase.
 
 ## Fase 5 — juegos de mesa
@@ -92,7 +95,7 @@ alternativa accesible por toque, turnos y pruebas.
 
 ## Validación del checkpoint actual
 
-- 120 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
+- 124 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
   retirado fueron sustituidas por las pruebas de reglas del laberinto LibGDX.
 - Android Lint sin errores.
 - APK debug generado e instalado.
@@ -102,7 +105,8 @@ alternativa accesible por toque, turnos y pruebas.
   fatal ni ANR.
 - Palabras y sonidos abierto desde el catálogo en emulador con sus ocho modos.
 - Números y cantidades abierto desde el catálogo en emulador con sus nueve
-  modos; APK y lint validados.
+  modos; tutorial de Contar y pausa bloqueante validados; APK correcto y sin
+  excepción fatal ni ANR.
 - Globo validado en emulador: tocar el fondo mantiene 0 puntos y tocar el
   objetivo incrementa el contador; sin excepción fatal ni ANR.
 - Compilación limpia, lint y APK correctos después de eliminar físicamente las

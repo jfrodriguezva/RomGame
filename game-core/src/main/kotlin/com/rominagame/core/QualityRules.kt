@@ -40,3 +40,13 @@ fun languageTutorial(familyId: String, mode: Int): String = if (familyId == "pal
         "Relaciona la palabra en español con su equivalente en inglés.",
     )[mode]
 }
+
+fun curriculumTutorial(familyId: String, mode: Int): String {
+    val selected = curriculumFamily(familyId).modes[mode]
+    return when (selected.mechanic) {
+        CurriculumMechanic.COUNT -> "Toca cada elemento una sola vez y comprueba la cantidad."
+        CurriculumMechanic.SORT -> "Arrastra ${selected.title.lowercase()} al grupo que le corresponde."
+        CurriculumMechanic.ORDER -> "Arrastra los elementos hasta formar la secuencia correcta."
+        CurriculumMechanic.QUIZ -> "Observa ${selected.title.lowercase()} y selecciona la respuesta correcta."
+    }
+}

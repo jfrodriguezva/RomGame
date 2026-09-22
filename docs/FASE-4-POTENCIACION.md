@@ -15,7 +15,12 @@ mesa y Arcade permanecen fuera hasta las fases 5 y 6.
 | Orden y secuencias | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 | Palabras y sonidos | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
 | Construye palabras | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
-| Otras ocho familias | Base fase 3 | Pendiente | Pendiente | 20 × modo | Básico |
+| Números y cantidades | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
+| Clasifica el mundo | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
+| Naturaleza y planeta | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
+| Personas y comunidad | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
+| Vida práctica | Sí | Sí | Sí | 20 × modo | Puntuación y estrellas |
+| Últimas tres familias | Base fase 3 | Pendiente | Pendiente | 20 × modo | Básico |
 
 ## Primer bloque potenciado
 
@@ -46,3 +51,16 @@ gestos de trazo y arrastre, evitando que una partida avance detrás del panel.
 
 Validación: tutorial y pausa de Abecedario recorridos en emulador; 123 pruebas
 unitarias totales sin fallos.
+
+## Bloque curricular central potenciado
+
+Las 34 modalidades de Números, Clasifica el mundo, Naturaleza y planeta,
+Personas y comunidad y Vida práctica ahora presentan una instrucción acorde a
+su mecánica: conteo táctil, clasificación por arrastre, orden o selección. El
+panel superior permite cambiar de nivel, reiniciar y pausar sin perder el
+estado visible; mientras tutorial o pausa están activos se bloquean también
+los gestos de arrastre.
+
+Validación: tutorial de `Números → Contar` y pausa recorridos en emulador. APK
+generado correctamente, sin excepción fatal ni ANR; 124 pruebas unitarias
+totales sin fallos.
