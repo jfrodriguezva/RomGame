@@ -14,6 +14,9 @@ keystore.properties
 *.iml
 .DS_Store
 Thumbs.db
+.tools/
+app/src/main/assets/.godot/editor/
+app/src/main/assets/.godot/exported/**/file_cache
 
 # Runtime reports
 captures/

@@ -28,6 +28,9 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        androidResources {
+            ignoreAssetsPattern = "!.svn:!.git:!.gitignore:!.ds_store:!*.scc:<dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"
+        }
     }
 
     signingConfigs {
@@ -87,6 +90,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.activity:activity-compose:1.9.2")
+    implementation("androidx.fragment:fragment-ktx:1.8.4")
 
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -97,6 +101,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.2")
 
     implementation(project(":game-core"))
+    implementation("org.godotengine:godot:4.7.2.stable")
     implementation("com.badlogicgames.gdx:gdx-backend-android:$gdxVersion")
     gdxNatives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a")
     gdxNatives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a")
