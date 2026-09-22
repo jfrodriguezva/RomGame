@@ -113,9 +113,13 @@ Segundo bloque en validación: Oca, Serpientes y Dado de retos ya usan LibGDX.
 Oca fue recorrida con tirada, resaltado y arrastre estricto de la ficha. Las
 reglas cubren llegada exacta, casillas especiales y 40 retos distintos.
 
+Tercer bloque en validación: Klondike y Araña trasladaron sus reglas reales a
+`game-core` y ya abren una mesa LibGDX con arrastre de cartas y secuencias.
+Klondike fue abierto desde el catálogo y se validó el robo al descarte.
+
 ## Validación del checkpoint actual
 
-- 139 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
+- 148 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
   retirado fueron sustituidas por las pruebas de reglas del laberinto LibGDX.
 - Android Lint sin errores.
 - APK debug generado e instalado.

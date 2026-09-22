@@ -10,7 +10,7 @@ Estado: **en ejecución**. La fase 4 quedó cerrada antes de iniciar este trabaj
 |---|---|---|---|
 | Alineación y duelo | Gato, Cuatro en línea, Piedra-papel-tijera | Reglas trasladadas a `game-core`; primera superficie LibGDX arrastrable integrada | En ejecución |
 | Dados y recorridos | Oca, Serpientes y escaleras, Dado de retos | Reglas y superficie LibGDX con dado y ficha arrastrable | En validación |
-| Solitarios | Klondike, Araña | Reglas de secuencia, fundaciones, reparto y movimientos múltiples | Tercer bloque |
+| Solitarios | Klondike, Araña | Reglas reales y mesa LibGDX con secuencias arrastrables | En validación |
 | Lotería y bingo | Lotería mexicana, Bingo con imágenes | Baraja/cartón, canto y marcado | Cuarto bloque |
 | Estrategia de tablero | Damas, Damas chinas, Ajedrez | Captura obligatoria, saltos, jaque y CPU | Quinto bloque |
 | Deducción y fichas | Dominó, Adivina quién | Dominó doble-6 y eliminación por atributos | Sexto bloque |
@@ -82,3 +82,18 @@ Se añadieron pausa, reinicio, tutorial y seis pruebas de reglas. Validación:
 Oca abierta desde el catálogo, tirada de dado, destino resaltado y ficha
 arrastrada a la casilla correcta; sin excepción fatal ni ANR. El proyecto suma
 139 pruebas unitarias sin fallos.
+
+## Solitarios
+
+Klondike conserva 52 cartas, siete columnas, mazo y descarte de una carta,
+fundaciones por palo, alternancia de color y movimiento de secuencias. Araña
+conserva 104 cartas de un palo, diez columnas, reparto de diez, secuencias
+descendentes y retirada automática de cada bloque Rey→As.
+
+Ambos permiten arrastrar cartas o secuencias completas y usar selección por
+toque. Incluyen tutorial, pausa, reinicio, validación de destinos y revelado
+automático de la nueva carta superior. Se añadieron nueve pruebas de reglas.
+
+Validación inicial: Klondike abierto desde el catálogo con reparto 1–7, 24
+cartas en mazo y robo al descarte; sin excepción fatal ni ANR. El total del
+proyecto asciende a 148 pruebas unitarias sin fallos.
