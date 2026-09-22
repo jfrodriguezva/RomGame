@@ -2,7 +2,7 @@
 
 Inicio: 22 de septiembre de 2026
 
-Estado: **en ejecución**. La fase 5 está terminada.
+Estado: **terminada**. La fase 5 también está terminada.
 
 ## Alcance
 
@@ -12,11 +12,11 @@ Estado: **en ejecución**. La fase 5 está terminada.
 | La víbora | La víbora | Movimiento continuo, comida y colisión | Implementado; validación headless |
 | Rompe ladrillos | Rompe ladrillos | Pala, rebotes, ladrillos y mejoras | Implementado; validación headless |
 | Mosaico sorpresa | Mosaico sorpresa | Trazado y captura de territorio con enemigos | Implementado; validación headless |
-| Vaqueros del ocaso | Vaqueros del ocaso | Acción lateral, plataformas, disparos y jefes | Pendiente |
+| Vaqueros del ocaso | Vaqueros del ocaso | Acción lateral, plataformas, disparos y jefes | Implementado; validación headless |
 | Comepuntos | Comepuntos | Laberinto, puntos, energizantes e IA perseguidora | Implementado; validación headless |
 | Rescate de nieve | Rescate de nieve | Plataformas, nieve acumulativa y cadenas | Implementado; validación headless |
-| Escuadrón estelar | Escuadrón estelar | Shooter sobre rieles, puntería y jefes | Pendiente |
-| Gran premio | Gran premio, Carreras | Circuitos, rivales, vueltas y progresión | Pendiente |
+| Escuadrón estelar | Escuadrón estelar | Shooter sobre rieles, puntería y jefes | Implementado; validación headless |
+| Gran premio | Gran premio, Carreras | Circuitos, rivales, vueltas y progresión | Implementado; validación headless |
 
 ## Integración terminada
 
@@ -25,7 +25,10 @@ Estado: **en ejecución**. La fase 5 está terminada.
 - El proyecto se exporta a recursos compilados mediante
   `tools/export-godot.ps1`; Android carga `project.binary` directamente.
 - Se unificó el `FileProvider` de Godot con el usado para compartir dibujos.
-- El APK compila, instala y el log confirma `ARCADE_READY:tetris`.
+- El puente `RomGameProgress` registra partidas y niveles completados en el
+  mismo `ProgressStore` de Android.
+- Se eliminaron las diez rutas y cinco pantallas Compose que duplicaban Arcade.
+- El APK compila y los diez IDs confirman `ARCADE_READY`.
 
 El emulador disponible usa SwiftShader. OpenGL excede su límite de uniformes y
 Vulkan inicia la escena pero falla al presentar la cola (`VkResult 5`). Es una
@@ -58,6 +61,28 @@ binario obsoleto oculte errores de GDScript.
 
 Los seis modos implementados pasan compilación desde fuente, exportación limpia
 y arranque headless con el ID correspondiente.
+
+## Bloque final jugable
+
+- Vaqueros del ocaso ofrece desplazamiento lateral, salto, disparos, enemigos
+  con proyectiles, plataformas, recorrido con cámara y jefe por nivel.
+- Escuadrón estelar usa profundidad simulada, avance sobre rieles, mira táctil,
+  oleadas, impactos, escudos y jefes de sector.
+- Gran premio contiene circuitos, acelerador, freno, dirección, rivales,
+  colisiones, posición, tres vueltas y campeonato de tres circuitos.
+- Carreras reutiliza la conducción pero conserva su modalidad propia de
+  tráfico contrarreloj, golpes, tramos y tiempo adicional por progreso.
+
+La matriz final compila y arranca los diez modos en headless. La validación
+Android incluye pruebas unitarias, lint, ensamblado e instalación del APK; la
+comprobación visual queda sujeta a un dispositivo con aceleración gráfica por
+la limitación de SwiftShader descrita arriba.
+
+Validación de cierre: 72 pruebas de reglas en `game-core`, 9 pruebas del módulo
+Android, lint sin errores, `assembleDebug` correcto e instalación exitosa en
+`emulator-5554`. En Android también se confirmó el registro del complemento
+`RomGameProgress` y la recepción de `--game-id`; SwiftShader impide presentar
+la escena, por lo que la inspección visual final requiere GPU funcional.
 
 ## Criterio de fidelidad
 

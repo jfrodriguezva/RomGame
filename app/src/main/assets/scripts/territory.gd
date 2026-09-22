@@ -3,7 +3,9 @@ const COLS:=30;const ROWS:=17;const CELL:=26;const ORIGIN:=Vector2(90,65)
 var safe:Dictionary={};var trail:Array[Vector2i]=[];var player:=Vector2i(0,0);var direction:=Vector2i.RIGHT;var enemy:=Vector2(15,8);var enemy_velocity:=Vector2(3.2,2.6);var step_time:=0.0;var captured:=0.0;var lives:=3;var level:=1;var paused:=false;var over:=false;var touch_start:=Vector2.ZERO
 func _ready()->void:reset()
 func reset()->void:
- safe.clear();trail.clear();player=Vector2i(0,0);direction=Vector2i.RIGHT;enemy=Vector2(15,8);lives=3;level=1;paused=false;over=false
+ lives=3;level=1;paused=false;over=false;enemy_velocity=Vector2(3.2,2.6);setup_level()
+func setup_level()->void:
+ safe.clear();trail.clear();player=Vector2i(0,0);direction=Vector2i.RIGHT;enemy=Vector2(15,8)
  for x in COLS:safe[Vector2i(x,0)]=true;safe[Vector2i(x,ROWS-1)]=true
  for y in ROWS:safe[Vector2i(0,y)]=true;safe[Vector2i(COLS-1,y)]=true
  update_percent();queue_redraw()
@@ -56,6 +58,8 @@ func capture_area()->void:
   enemy_velocity*=1.18
   if level>3:
    over=true
+  else:
+   setup_level()
 func update_percent()->void:captured=100.0*float(safe.size())/float(COLS*ROWS)
 func _unhandled_input(event:InputEvent)->void:
  if event is InputEventKey and event.pressed:
