@@ -109,9 +109,13 @@ Gato fue validado en emulador. Los modos locales, tutorial y pausa ya están
 integrados; el bloque no se considera cerrado hasta completar el recorrido de
 las tres variantes y retirar sus pantallas sustituidas.
 
+Segundo bloque en validación: Oca, Serpientes y Dado de retos ya usan LibGDX.
+Oca fue recorrida con tirada, resaltado y arrastre estricto de la ficha. Las
+reglas cubren llegada exacta, casillas especiales y 40 retos distintos.
+
 ## Validación del checkpoint actual
 
-- 133 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
+- 139 pruebas unitarias vigentes sin fallos. Dos pruebas del laberinto Compose
   retirado fueron sustituidas por las pruebas de reglas del laberinto LibGDX.
 - Android Lint sin errores.
 - APK debug generado e instalado.

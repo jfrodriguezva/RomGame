@@ -9,7 +9,7 @@ Estado: **en ejecución**. La fase 4 quedó cerrada antes de iniciar este trabaj
 | Familia | Modalidades | Estado de reglas heredadas | Migración |
 |---|---|---|---|
 | Alineación y duelo | Gato, Cuatro en línea, Piedra-papel-tijera | Reglas trasladadas a `game-core`; primera superficie LibGDX arrastrable integrada | En ejecución |
-| Dados y recorridos | Oca, Serpientes y escaleras, Dado de retos | Dado animado, avance y casillas especiales | Segundo bloque |
+| Dados y recorridos | Oca, Serpientes y escaleras, Dado de retos | Reglas y superficie LibGDX con dado y ficha arrastrable | En validación |
 | Solitarios | Klondike, Araña | Reglas de secuencia, fundaciones, reparto y movimientos múltiples | Tercer bloque |
 | Lotería y bingo | Lotería mexicana, Bingo con imágenes | Baraja/cartón, canto y marcado | Cuarto bloque |
 | Estrategia de tablero | Damas, Damas chinas, Ajedrez | Captura obligatoria, saltos, jaque y CPU | Quinto bloque |
@@ -69,3 +69,16 @@ fatal ni ANR. El bloque ya incluye modo contra CPU y dos jugadores locales,
 tutorial, pausa y reinicio. En Piedra-papel-tijera local, la primera elección
 se oculta antes de entregar el dispositivo al segundo jugador. Falta completar
 el recorrido de las otras dos modalidades antes de retirar Compose.
+
+## Dados y recorridos
+
+Oca y Serpientes conservan el recorrido serpenteante, llegada con tirada
+exacta y sus saltos, puentes, pozos, escaleras y serpientes. Después de tirar,
+la única casilla de destino se resalta y la ficha debe arrastrarse hasta ella;
+también puede seleccionarse y colocarse por toque. Dado de retos conserva 40
+actividades y exige arrastrar el dado a su zona de lanzamiento.
+
+Se añadieron pausa, reinicio, tutorial y seis pruebas de reglas. Validación:
+Oca abierta desde el catálogo, tirada de dado, destino resaltado y ficha
+arrastrada a la casilla correcta; sin excepción fatal ni ANR. El proyecto suma
+139 pruebas unitarias sin fallos.
