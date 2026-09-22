@@ -27,10 +27,16 @@ import com.miambiente.app.theme.Tinta
         TextButton(onClick=onVolver){Text("← Volver")}
         Text("${familia.emoji} ${familia.titulo}",fontWeight=FontWeight.ExtraBold,color=Tinta,fontSize=26.sp)
         Text(familia.descripcion,color=TextoSuave,modifier=Modifier.padding(vertical=6.dp))
-        if(familia.motor==Motor.LIBGDX){Button(onClick={onAbrirMotor(familia.id)},modifier=Modifier.padding(vertical=8.dp)){Text("🎮 Jugar versión enriquecida")}}
-        Text("Elige un modo",fontWeight=FontWeight.Bold,color=Tinta,modifier=Modifier.padding(top=8.dp,bottom=10.dp))
-        LazyVerticalGrid(GridCells.Adaptive(170.dp),horizontalArrangement=Arrangement.spacedBy(12.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
-            items(juegos,key={it.id}){juego->Card(onClick={onAbrirJuego(juego.id)},shape=RoundedCornerShape(18.dp),colors=CardDefaults.cardColors(containerColor=Color.White),modifier=Modifier.height(120.dp)){Column(Modifier.padding(14.dp)){Text("${juego.emoji}  ${juego.title}",fontWeight=FontWeight.Bold,color=Tinta);Text(juego.description,color=TextoSuave,fontSize=11.sp,modifier=Modifier.padding(top=8.dp))}}}
+        if(familia.motor==Motor.LIBGDX){
+            Button(onClick={onAbrirMotor(familia.id)},modifier=Modifier.padding(vertical=16.dp).fillMaxWidth()){
+                Text("🎮 Jugar · ${familia.modos.size} modalidades")
+            }
+            Text("Los modos y niveles se eligen dentro del juego.",color=TextoSuave)
+        }else{
+            Text("Elige un modo",fontWeight=FontWeight.Bold,color=Tinta,modifier=Modifier.padding(top=8.dp,bottom=10.dp))
+            LazyVerticalGrid(GridCells.Adaptive(170.dp),horizontalArrangement=Arrangement.spacedBy(12.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
+                items(juegos,key={it.id}){juego->Card(onClick={onAbrirJuego(juego.id)},shape=RoundedCornerShape(18.dp),colors=CardDefaults.cardColors(containerColor=Color.White),modifier=Modifier.height(120.dp)){Column(Modifier.padding(14.dp)){Text("${juego.emoji}  ${juego.title}",fontWeight=FontWeight.Bold,color=Tinta);Text(juego.description,color=TextoSuave,fontSize=11.sp,modifier=Modifier.padding(top=8.dp))}}}
+            }
         }
     }
 }
