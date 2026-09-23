@@ -8,6 +8,11 @@ import com.rominagame.core.LogicBlockGame
 import com.rominagame.core.LanguageGame
 import com.rominagame.core.CurriculumGame
 import com.rominagame.core.FinalBlockGame
+import com.rominagame.core.CreativePlatform
+import com.rominagame.core.CreativeStudioGame
+import com.miambiente.app.data.SoundPlayer
+import androidx.core.content.FileProvider
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -16,6 +21,7 @@ import kotlinx.coroutines.launch
 
 class LogicBlockGdxActivity : AndroidApplication() {
     private val persistenceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var studioSound: SoundPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,13 +42,29 @@ class LogicBlockGdxActivity : AndroidApplication() {
         val game = when (familyId) {
             "palabras-sonidos", "construye-palabras" -> LanguageGame(familyId, complete)
             "numeros-cantidades", "clasifica-mundo", "naturaleza-planeta", "personas-comunidad", "vida-practica" -> CurriculumGame(familyId, complete)
-            "taller-creativo", "coordinacion-reflejos", "laberintos" -> FinalBlockGame(familyId, complete)
+            "taller-creativo" -> {
+                studioSound = SoundPlayer()
+                CreativeStudioGame(object : CreativePlatform {
+                    override fun playInstrument(instrument: Int, note: Int) { studioSound?.tocarInstrumento(instrument, note) }
+                    override fun shareDrawing(absolutePath: String) {
+                        runOnUiThread {
+                            val file = File(absolutePath)
+                            val uri = FileProvider.getUriForFile(this@LogicBlockGdxActivity, "$packageName.fileprovider", file)
+                            startActivity(android.content.Intent.createChooser(android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                                type = "image/png"; putExtra(android.content.Intent.EXTRA_STREAM, uri); addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }, "Compartir mi dibujo"))
+                        }
+                    }
+                }, complete)
+            }
+            "coordinacion-reflejos", "laberintos" -> FinalBlockGame(familyId, complete)
             else -> LogicBlockGame(familyId, complete)
         }
         initialize(game, config)
     }
 
     override fun onDestroy() {
+        studioSound?.liberar()
         persistenceScope.cancel()
         super.onDestroy()
     }

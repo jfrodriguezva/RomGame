@@ -12,6 +12,22 @@
 No existe capa web, WebView ni servidor. Compose no ejecuta juegos: las 20
 familias normales y de mesa usan LibGDX; las nueve familias Arcade usan Godot.
 
+La versión Android declarada es `1.0.0` (`versionCode` 1). Esta entrega no se
+publica ni firma para distribución.
+
+## Taller creativo
+
+`CreativeStudioGame` implementa Pizarra y el estudio musical sobre LibGDX. La
+pizarra mantiene un `Pixmap` transparente para los trazos, historial acotado a
+14 estados y composición del fondo al exportar PNG. La galería se almacena en
+el directorio privado `files/galeria`, que es el único expuesto al selector de
+compartir mediante `FileProvider`.
+
+`CreativeStudioRules` concentra herramientas, paleta, simetrías, notas e
+instrumentos verificables sin Android. `SoundPlayer` genera al iniciar las 49
+combinaciones de siete notas por siete instrumentos como PCM local y las
+reproduce con `AudioTrack`; no descarga muestras ni requiere Internet.
+
 ## Catálogo y motores
 
 `CatalogoConsolidado.kt` define 29 `FamiliaJuego`. Cada modalidad aparece una

@@ -1,5 +1,7 @@
 # RominaGame
 
+Versión actual: **1.0.0**.
+
 RominaGame es una plataforma Android offline de juegos tradicionales,
 educativos, de mesa y Arcade. La aplicación anfitriona es Kotlin/Compose; los
 juegos normales y de mesa se ejecutan en LibGDX y Arcade en Godot integrado.
@@ -12,6 +14,8 @@ juegos normales y de mesa se ejecutan en LibGDX y Arcade en Godot integrado.
 - Progreso y configuración locales mediante DataStore.
 - Sin React, Next.js, Capacitor, WebView, servidor ni permiso de Internet.
 - Fase 7: calidad, distribución y preparación de publicación.
+- Taller creativo migrado a LibGDX: Pizarra completa y estudio musical de
+  siete notas con xilófono, piano, guitarra, flauta, trompeta, acordeón y arpa.
 
 La historia y los criterios están en
 [Plan de reconstrucción](docs/PLAN-RECONSTRUCCION-ANDROID.md). El cierre de la

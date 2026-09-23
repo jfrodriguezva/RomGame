@@ -32,6 +32,19 @@ Vaqueros del ocaso, Comepuntos, Rescate de nieve, Escuadrón estelar, Gran
 premio y Carreras. Se ejecutan a pantalla horizontal con controles táctiles,
 pausa, reinicio, vidas o puntuación y progresión propia.
 
+## Taller creativo
+
+La modalidad **Pizarra** conserva el dibujo libre en el motor LibGDX. Incluye
+lápiz, crayón, marcador, neón, aerosol, relleno, sellos y borrador; 16 colores,
+cuatro grosores, simetría tipo mandala, fondos, cuadrículas y guías. También
+permite deshacer, rehacer, iniciar una hoja nueva, guardar, abrir o borrar
+dibujos de la galería local y compartir una copia PNG mediante Android.
+
+**Xilófono** e **Instrumentos** forman un estudio de siete notas: Do, Re, Mi,
+Fa, Sol, La y Si. Se puede cambiar entre xilófono, piano, guitarra, flauta,
+trompeta, acordeón y arpa; cada instrumento utiliza un timbre sintetizado
+propio y funciona completamente sin conexión.
+
 ## Ajustes y progreso
 
 El engrane de la pantalla inicial permite cambiar nombre, sonido, voz,
