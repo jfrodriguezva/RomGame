@@ -1,11 +1,10 @@
 # Plan maestro de reconstrucción de RominaGame
 
-Estado: **propuesta para aprobación antes de ejecutar cambios destructivos**  
+Estado: **fases 0–7 terminadas**
 Fecha: 21 de septiembre de 2026
 
-> **Aprobado y en ejecución.** Las fases 0 y 1 comenzaron el 21 de septiembre
-> de 2026. El proyecto Android nativo fue promovido a la raíz y las capas
-> React/Next/Capacitor fueron retiradas.
+> **Aprobado y ejecutado.** El proyecto Android nativo fue promovido a la raíz,
+> las capas web fueron retiradas y las fases funcionales 0–6 concluyeron.
 
 ## 1. Objetivo acordado
 
@@ -296,3 +295,11 @@ La primera entrega ejecutable será exclusivamente Fase 0 y Fase 1:
 
 No se consolidará ni migrará ningún juego en esa primera entrega. Esto evita
 mezclar una limpieza destructiva con cambios funcionales difíciles de auditar.
+
+### Fase 7 — Calidad y distribución
+
+Después de completar todos los motores, la fase 7 prepara una entrega
+repetible: auditoría de contratos, migración de progreso legado, seguridad del
+manifiesto, pruebas de arquitectura, CI para reglas y Android, APK debug, AAB
+release, firma documentada y manuales vigentes. Sus criterios y evidencia se
+registran en `FASE-7-CALIDAD-Y-DISTRIBUCION.md`.

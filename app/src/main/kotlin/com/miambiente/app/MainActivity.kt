@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -18,13 +19,15 @@ import com.miambiente.app.game.LogicBlockGdxActivity
 import com.miambiente.app.game.MemoriaGdxActivity
 import com.miambiente.app.game.AlignmentGdxActivity
 import com.miambiente.app.game.GodotArcadeActivity
+import com.miambiente.app.model.FAMILIAS
 import com.miambiente.app.theme.MiAmbienteTheme
 import com.miambiente.app.ui.screens.*
+import kotlinx.coroutines.launch
 
 object Ruta { const val INICIO="inicio";const val AJUSTES="ajustes";const val FAMILIA="familia/{id}" }
 
 class MainActivity:ComponentActivity(){
- override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);enableEdgeToEdge();val services=Services(applicationContext);setContent{MiAmbienteTheme{CompositionLocalProvider(LocalServices provides services){
+ override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);enableEdgeToEdge();val services=Services(applicationContext);lifecycleScope.launch{services.progress.migrarFamilias(FAMILIAS.associate{it.id to it.modos})};setContent{MiAmbienteTheme{CompositionLocalProvider(LocalServices provides services){
   val settings by produceState<com.miambiente.app.data.Settings?>(null,services){services.settings.settings.collect{value=it}};val actual=settings?:return@CompositionLocalProvider;val nav=rememberNavController();val volver={nav.popBackStack();Unit}
   NavHost(navController=nav,startDestination=Ruta.INICIO){
    composable(Ruta.INICIO){HomeScreen(onAbrirFamilia={nav.navigate("familia/$it")},onAjustes={nav.navigate(Ruta.AJUSTES)},nombre=actual.nombre)}

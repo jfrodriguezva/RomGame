@@ -50,9 +50,8 @@ Validación del bloque:
 - Recorrido en emulador: apertura desde el catálogo, menú LibGDX con los cuatro
   modos y salida sin bloqueo ni ANR.
 
-## Pendiente de la fase 4
+## Cierre de la fase 4
 
-Continuar con las familias normales consolidadas, priorizando las de reglas
-claras (clasificación, secuencias y encajes). Audio, arte final y efectos más
-elaborados se incorporarán por juego sin convertirlos en una plantilla
-genérica. Juegos de mesa y Arcade no se modificarán en esta fase.
+Las demás familias normales se completaron después de este primer bloque con
+reglas, niveles y presentación propias. Juegos de mesa y Arcade se mantuvieron
+fuera de esta fase y se ejecutaron posteriormente en las fases 5 y 6.

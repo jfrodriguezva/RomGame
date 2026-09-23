@@ -14,7 +14,7 @@
             android:name=".game.GodotArcadeActivity"
             android:screenOrientation="landscape"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout|smallestScreenSize"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".game.AlignmentGdxActivity"
             android:screenOrientation="landscape"

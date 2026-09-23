@@ -6,7 +6,9 @@ on:
     branches: [main]
     paths:
       - "app/**"
+      - "game-core/**"
       - "gradle/**"
+      - "tools/**"
       - "*.gradle.kts"
       - "gradle.properties"
       - "gradlew"
@@ -25,12 +27,17 @@ jobs:
           java-version: "21"
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-      - name: Build, test and lint
+      - name: Test rules and Android integration
         run: |
           chmod +x gradlew
-          ./gradlew testDebugUnitTest lintDebug assembleDebug --no-daemon
-      - name: Upload APK artifact
+          ./gradlew :game-core:test :app:testDebugUnitTest lintDebug assembleDebug bundleRelease --no-daemon
+      - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
           name: romina-game-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload unsigned release bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: romina-game-aab
+          path: app/build/outputs/bundle/release/app-release.aab

@@ -94,34 +94,34 @@ juego.
 
 Estado: **terminada**.
 
-No comenzará hasta cerrar las fases 3 y 4. Comprende seis familias: Alineación
+Comenzó después de cerrar las fases 3 y 4. Comprende seis familias: Alineación
 y duelo, Dados y recorridos, Solitarios, Lotería y bingo, Estrategia de tablero
 y Deducción y fichas. El criterio incluye reglas completas, drag-and-drop,
 alternativa accesible por toque, turnos y pruebas.
 
 El inventario de las 15 modalidades y el criterio de paridad están detallados
 en `FASE-5-JUEGOS-DE-MESA.md`. Se conservarán las reglas ya implementadas y la
-migración comenzará por Alineación y duelo.
+migración se completó comenzando por Alineación y duelo.
 
-Primer bloque en ejecución: Gato, Cuatro en línea y Piedra-papel-tijera ya
+Primer bloque terminado: Gato, Cuatro en línea y Piedra-papel-tijera
 tienen reglas puras y superficie LibGDX con arrastre más alternativa por toque.
 Gato fue validado en emulador. Los modos locales, tutorial y pausa ya están
 integrados; el bloque no se considera cerrado hasta completar el recorrido de
 las tres variantes y retirar sus pantallas sustituidas.
 
-Segundo bloque en validación: Oca, Serpientes y Dado de retos ya usan LibGDX.
+Segundo bloque terminado: Oca, Serpientes y Dado de retos usan LibGDX.
 Oca fue recorrida con tirada, resaltado y arrastre estricto de la ficha. Las
 reglas cubren llegada exacta, casillas especiales y 40 retos distintos.
 
-Tercer bloque en validación: Klondike y Araña trasladaron sus reglas reales a
+Tercer bloque terminado: Klondike y Araña trasladaron sus reglas reales a
 `game-core` y ya abren una mesa LibGDX con arrastre de cartas y secuencias.
 Klondike fue abierto desde el catálogo y se validó el robo al descarte.
 
-Cuarto bloque en validación: Lotería mexicana y Bingo abren cartones LibGDX y
+Cuarto bloque terminado: Lotería mexicana y Bingo abren cartones LibGDX y
 usan marcadores por arrastre o toque. Las reglas rechazan cartas no cantadas y
 comprueban cartón completo o líneas de bingo, respectivamente.
 
-Quinto bloque en validación: Damas, Damas chinas y Ajedrez usan reglas puras y
+Quinto bloque terminado: Damas, Damas chinas y Ajedrez usan reglas puras y
 un tablero LibGDX común con arrastre, toque, destinos resaltados y modos CPU o
 local. Damas fue abierto desde el catálogo y se corrigió la orientación del
 tablero durante la validación visual.

@@ -18,12 +18,12 @@ data class FamiliaJuego(
     val descripcion: String,
     val categoria: Categoria,
     val modos: List<String>,
-    val motor: Motor = Motor.COMPOSE,
+    val motor: Motor = Motor.LIBGDX,
 )
 
-enum class Motor { COMPOSE, LIBGDX, GODOT }
+enum class Motor { LIBGDX, GODOT }
 
-private fun familia(id:String,titulo:String,emoji:String,descripcion:String,categoria:Categoria,vararg modos:String,motor:Motor=Motor.COMPOSE)=
+private fun familia(id:String,titulo:String,emoji:String,descripcion:String,categoria:Categoria,vararg modos:String,motor:Motor=Motor.LIBGDX)=
     FamiliaJuego(id,titulo,emoji,descripcion,categoria,modos.toList(),motor)
 
 val FAMILIAS = listOf(
@@ -42,12 +42,12 @@ val FAMILIAS = listOf(
     familia("coordinacion-reflejos","Coordinación y reflejos","🎯","Objetivos móviles, ritmo y reacción",Categoria.COORDINACION,"burbujas","canasta","globo","topo","vibra-adivina","reflejo-color",motor=Motor.LIBGDX),
     familia("laberintos","Laberintos y recorridos","🌀","Rutas, exploración y obstáculos",Categoria.LOGICA,"laberinto","arana",motor=Motor.LIBGDX),
 
-    familia("alineacion","Alineación y duelo","⭕","Gato, cuatro en línea y piedra-papel-tijera",Categoria.MESA,"gato","conecta4","rps"),
-    familia("recorridos-tablero","Dados y recorridos","🎲","Oca, serpientes y retos",Categoria.MESA,"oca","serpientes","dado"),
-    familia("cartas-solitario","Solitarios","🃏","Clásico y araña con dificultades",Categoria.MESA,"solitario","arana-cartas"),
-    familia("loterias","Lotería y bingo","🎯","Cartones, cantos y reconocimiento",Categoria.MESA,"loteria","bingo"),
-    familia("estrategia-tablero","Estrategia de tablero","♞","Damas, damas chinas y ajedrez",Categoria.MESA,"damas","damas-chinas","ajedrez"),
-    familia("deduccion-fichas","Deducción y fichas","🕵️","Dominó y Adivina quién",Categoria.MESA,"domino","adivinaquien"),
+    familia("alineacion","Alineación y duelo","⭕","Gato, cuatro en línea y piedra-papel-tijera",Categoria.MESA,"gato","conecta4","rps",motor=Motor.LIBGDX),
+    familia("recorridos-tablero","Dados y recorridos","🎲","Oca, serpientes y retos",Categoria.MESA,"oca","serpientes","dado",motor=Motor.LIBGDX),
+    familia("cartas-solitario","Solitarios","🃏","Clásico y araña con dificultades",Categoria.MESA,"solitario","arana-cartas",motor=Motor.LIBGDX),
+    familia("loterias","Lotería y bingo","🎯","Cartones, cantos y reconocimiento",Categoria.MESA,"loteria","bingo",motor=Motor.LIBGDX),
+    familia("estrategia-tablero","Estrategia de tablero","♞","Damas, damas chinas y ajedrez",Categoria.MESA,"damas","damas-chinas","ajedrez",motor=Motor.LIBGDX),
+    familia("deduccion-fichas","Deducción y fichas","🕵️","Dominó y Adivina quién",Categoria.MESA,"domino","adivinaquien",motor=Motor.LIBGDX),
 
     familia("tetris","Bloques","🧱","Completa líneas",Categoria.ARCADE,"tetris",motor=Motor.GODOT),
     familia("snake","La víbora","🐍","Come y no choques",Categoria.ARCADE,"snake",motor=Motor.GODOT),

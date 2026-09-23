@@ -1,63 +1,40 @@
 # RominaGame
 
-RominaGame es una plataforma Android offline de juegos tradicionales. El
-proyecto está en reconstrucción para ofrecer menos juegos aislados y más juegos
-completos, con modos, niveles, progresión y controles táctiles de calidad.
+RominaGame es una plataforma Android offline de juegos tradicionales,
+educativos, de mesa y Arcade. La aplicación anfitriona es Kotlin/Compose; los
+juegos normales y de mesa se ejecutan en LibGDX y Arcade en Godot integrado.
 
-## Estado actual
+## Estado
 
-- Aplicación Android nativa con Kotlin y Jetpack Compose.
-- Sin React, Next.js, Capacitor, WebView ni dependencias de Node.
-- Catálogo y progreso completamente locales.
-- Android 7.0 o posterior (`minSdk 24`).
-- La consolidación del catálogo y la migración a motores de juego se realizará
-  por fases.
-- Fase 2 terminada: 111 accesos se consolidaron en 29 juegos con modos y ocho
-  categorías; el selector de edad fue retirado.
-- Fase 3 terminada: las 14 familias normales usan LibGDX y las rutas/pantallas
-  Compose sustituidas fueron eliminadas tras una compilación limpia.
-- Fase 4 terminada: las 14 familias y sus 84 modalidades tienen tutorial,
-  pausa, reinicio, niveles y resultado con estrellas.
-- Fase 5 en ejecución: migración de los 15 juegos de mesa a reglas puras y
-  tableros LibGDX con drag-and-drop y alternativa por toque.
+- Fases 0–6 terminadas y auditadas.
+- 29 familias, 100 modalidades y ocho categorías, sin filtros por edad.
+- 20 familias LibGDX y nueve familias Godot.
+- Progreso y configuración locales mediante DataStore.
+- Sin React, Next.js, Capacitor, WebView, servidor ni permiso de Internet.
+- Fase 7: calidad, distribución y preparación de publicación.
 
-La estrategia completa está en
-[`docs/PLAN-RECONSTRUCCION-ANDROID.md`](docs/PLAN-RECONSTRUCCION-ANDROID.md) y el
-inventario de la aplicación retirada en
-[`docs/INVENTARIO-FASE-0.md`](docs/INVENTARIO-FASE-0.md).
-El cierre del primer juego de la fase 4 se detalla en
-[`docs/FASE-4-MEMORIA-Y-OBSERVACION.md`](docs/FASE-4-MEMORIA-Y-OBSERVACION.md).
-El estado exacto y los criterios de cierre están en
-[`docs/ESTADO-FASES-3-4-5.md`](docs/ESTADO-FASES-3-4-5.md).
+La historia y los criterios están en
+[Plan de reconstrucción](docs/PLAN-RECONSTRUCCION-ANDROID.md). El cierre de la
+fase 7 está en [FASE-7-CALIDAD-Y-DISTRIBUCION.md](docs/FASE-7-CALIDAD-Y-DISTRIBUCION.md).
 
-## Tecnología objetivo
+## Verificación
 
-- Jetpack Compose para navegación, catálogo, ajustes y progreso.
-- LibGDX para juegos normales y juegos de mesa.
-- Godot para la categoría Arcade.
-
-## Compilar y verificar
-
-Requisitos: JDK 21 y Android SDK configurado mediante `ANDROID_HOME`.
-
-En Windows:
+Requisitos: JDK 21 y Android SDK definido en `ANDROID_HOME`.
 
 ```powershell
-.\gradlew.bat testDebugUnitTest lintDebug assembleDebug --no-daemon
+.\gradlew.bat :game-core:test :app:testDebugUnitTest lintDebug assembleDebug bundleRelease --no-daemon
 ```
 
-En Linux o macOS:
+Artefactos:
 
-```bash
-./gradlew testDebugUnitTest lintDebug assembleDebug --no-daemon
+- APK instalable: `app/build/outputs/apk/debug/app-debug.apk`
+- AAB de release sin firma en CI: `app/build/outputs/bundle/release/app-release.aab`
+
+Para regenerar los recursos compilados de Arcade:
+
+```powershell
+.\tools\export-godot.ps1
 ```
 
-El APK debug se genera en `app/build/outputs/apk/debug/app-debug.apk`.
-
-## Instalar mediante ADB
-
-```bash
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-```
-
-La aplicación no necesita conexión ni solicita permiso de Internet.
+El AAB queda listo para firmarse al proporcionar un `keystore.properties` local basado en
+`keystore.properties.example`. Los secretos de firma no se versionan.

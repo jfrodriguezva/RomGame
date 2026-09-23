@@ -12,7 +12,17 @@ class CatalogoConsolidadoTest {
     }
 
     @Test fun catalogoVisibleQuedaReducido(){
-        assertTrue(FAMILIAS.size in 25..35)
+        assertEquals(29, FAMILIAS.size)
         assertTrue(FAMILIAS.all{it.modos.isNotEmpty()})
+    }
+
+    @Test fun cadaCategoriaUsaElMotorAcordado(){
+        assertTrue(FAMILIAS.filter { it.categoria == Categoria.ARCADE }.all { it.motor == Motor.GODOT })
+        assertTrue(FAMILIAS.filter { it.categoria != Categoria.ARCADE }.all { it.motor == Motor.LIBGDX })
+    }
+
+    @Test fun elModeloNoContieneEdad(){
+        val campos = GameDef::class.java.declaredFields.map { it.name.lowercase() }
+        assertTrue(campos.none { "edad" in it || "age" in it })
     }
 }
