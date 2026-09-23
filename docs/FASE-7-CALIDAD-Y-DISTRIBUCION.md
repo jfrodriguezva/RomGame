@@ -40,7 +40,7 @@ presentar la escena Vulkan.
 - Lint Android sin errores.
 - Construcción limpia de 111 tareas, incluyendo APK debug y AAB release.
 - APK de 322,781,809 bytes instalado correctamente en `emulator-5554`.
-- AAB release sin firma de 111,691,307 bytes generado correctamente y firma
+- AAB release sin firma de 111,691,441 bytes generado correctamente y firma
   local documentada mediante `keystore.properties`.
 - Las diez modalidades Godot arrancaron sin errores en ejecución headless.
 - Inicio, 29 familias, categoría Arcade y sus nueve fichas comprobados mediante
