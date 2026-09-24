@@ -1,44 +1,61 @@
 # RominaGame
 
-Versión actual: **1.0.0**.
+RominaGame es una plataforma Android offline de juegos tradicionales. El
+proyecto reúne materiales educativos, herramientas creativas, juegos de mesa y
+Arcade en una sola aplicación nativa y completamente offline.
 
-RominaGame es una plataforma Android offline de juegos tradicionales,
-educativos, de mesa y Arcade. La aplicación anfitriona es Kotlin/Compose; los
-juegos normales y de mesa se ejecutan en LibGDX y Arcade en Godot integrado.
+## Estado actual
 
-## Estado
+- Aplicación Android nativa con Kotlin y Jetpack Compose.
+- Sin React, Next.js, Capacitor, WebView ni dependencias de Node.
+- Catálogo completo de 111 juegos y materiales, sin filtros por edad.
+- Categorías propias para Juegos de mesa y Arcade.
+- Pizarra completa restaurada y estudio de siete instrumentos con siete notas.
+- Catálogo y progreso completamente locales.
+- Android 7.0 o posterior (`minSdk 24`).
+- Versión de aplicación: **1.0.0**.
 
-- Fases 0–6 terminadas y auditadas.
-- 29 familias, 100 modalidades y ocho categorías, sin filtros por edad.
-- 20 familias LibGDX y nueve familias Godot.
-- Progreso y configuración locales mediante DataStore.
-- Sin React, Next.js, Capacitor, WebView, servidor ni permiso de Internet.
-- Fase 7: calidad, distribución y preparación de publicación.
-- Taller creativo migrado a LibGDX: Pizarra completa y estudio musical de
-  siete notas con xilófono, piano, guitarra, flauta, trompeta, acordeón y arpa.
+La estrategia completa está en
+[`docs/PLAN-RECONSTRUCCION-ANDROID.md`](docs/PLAN-RECONSTRUCCION-ANDROID.md) y el
+inventario de la aplicación retirada en
+[`docs/INVENTARIO-FASE-0.md`](docs/INVENTARIO-FASE-0.md).
 
-La historia y los criterios están en
-[Plan de reconstrucción](docs/PLAN-RECONSTRUCCION-ANDROID.md). El cierre de la
-fase 7 está en [FASE-7-CALIDAD-Y-DISTRIBUCION.md](docs/FASE-7-CALIDAD-Y-DISTRIBUCION.md).
+## Tecnología actual
 
-## Verificación
+- Jetpack Compose para navegación, catálogo, ajustes y progreso.
+- Jetpack Compose también contiene las pantallas jugables restauradas de mesa
+  y Arcade. La integración experimental que dejaba juegos en blanco se retiró
+  de la versión 1.0.0.
 
-Requisitos: JDK 21 y Android SDK definido en `ANDROID_HOME`.
+## Recuperación 1.0.0
+
+La versión 1.0.0 vuelve a la última base Android nativa completa y recupera las
+pantallas que se habían sustituido durante las fases experimentales. Conserva
+el proyecto sin React/Next/Capacitor, restaura la salida común de cada juego y
+mantiene Arcade visible como una categoría independiente.
+
+## Compilar y verificar
+
+Requisitos: JDK 21 y Android SDK configurado mediante `ANDROID_HOME`.
+
+En Windows:
 
 ```powershell
-.\gradlew.bat :game-core:test :app:testDebugUnitTest lintDebug assembleDebug bundleRelease --no-daemon
+.\gradlew.bat testDebugUnitTest lintDebug assembleDebug --no-daemon
 ```
 
-Artefactos:
+En Linux o macOS:
 
-- APK instalable: `app/build/outputs/apk/debug/app-debug.apk`
-- AAB de release sin firma en CI: `app/build/outputs/bundle/release/app-release.aab`
-
-Para regenerar los recursos compilados de Arcade:
-
-```powershell
-.\tools\export-godot.ps1
+```bash
+./gradlew testDebugUnitTest lintDebug assembleDebug --no-daemon
 ```
 
-El AAB queda listo para firmarse al proporcionar un `keystore.properties` local basado en
-`keystore.properties.example`. Los secretos de firma no se versionan.
+El APK debug se genera en `app/build/outputs/apk/debug/app-debug.apk`.
+
+## Instalar mediante ADB
+
+```bash
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+La aplicación no necesita conexión ni solicita permiso de Internet.

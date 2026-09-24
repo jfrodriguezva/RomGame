@@ -15,4 +15,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "MiAmbienteNativo"
 include(":app")
-include(":game-core")

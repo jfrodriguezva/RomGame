@@ -5,8 +5,10 @@ import android.speech.tts.TextToSpeech
 import java.util.Locale
 
 /**
- * Voz local mediante `android.speech.tts.TextToSpeech`; no requiere red ni
- * archivos de audio incluidos en el APK.
+ * Equivalente nativo de lib/speech.ts. La versión web depende de que el
+ * navegador tenga voces en español instaladas (variable según el
+ * dispositivo); `android.speech.tts.TextToSpeech` es parte del sistema
+ * operativo, así que esa dependencia desaparece por completo en nativo.
  */
 class Speech(context: Context) {
     private var listo = false
@@ -15,7 +17,7 @@ class Speech(context: Context) {
     init {
         tts = TextToSpeech(context.applicationContext) { estado ->
             if (estado == TextToSpeech.SUCCESS) {
-                tts?.language = Locale.Builder().setLanguage("es").setRegion("MX").build()
+                tts?.language = Locale("es", "MX")
                 // Bug real reportado: "voz menos robótica y más cálida y
                 // amigable". El motor por defecto suena plano porque usa
                 // la voz compacta de menor calidad y el tono/velocidad

@@ -3,6 +3,7 @@ package com.miambiente.app.data
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,7 @@ const val NOMBRE_POR_DEFECTO = "Romina"
  * `collectAsState()` en vez de leer un valor de una vez.
  */
 data class Settings(
+    val edad: Int? = null,
     val nombre: String = NOMBRE_POR_DEFECTO,
     val sonido: Boolean = true,
     val voz: Boolean = true,
@@ -32,6 +34,7 @@ data class Settings(
 
 class SettingsStore(private val context: Context) {
     private object Claves {
+        val EDAD = intPreferencesKey("edad")
         val NOMBRE = stringPreferencesKey("nombre")
         val SONIDO = booleanPreferencesKey("sonido")
         val VOZ = booleanPreferencesKey("voz")
@@ -42,6 +45,7 @@ class SettingsStore(private val context: Context) {
 
     val settings: Flow<Settings> = context.settingsDataStore.data.map { p ->
         Settings(
+            edad = p[Claves.EDAD]?.takeIf { it > 0 },
             nombre = p[Claves.NOMBRE] ?: NOMBRE_POR_DEFECTO,
             sonido = p[Claves.SONIDO] ?: true,
             voz = p[Claves.VOZ] ?: true,
@@ -49,6 +53,10 @@ class SettingsStore(private val context: Context) {
             musica = p[Claves.MUSICA] ?: true,
             calma = p[Claves.CALMA] ?: false,
         )
+    }
+
+    suspend fun setEdad(edad: Int) {
+        context.settingsDataStore.edit { it[Claves.EDAD] = edad }
     }
 
     suspend fun setNombre(nombre: String) {

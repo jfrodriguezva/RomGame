@@ -1,70 +1,248 @@
-# RominaGame — Manual de usuario
+# Mi Ambiente — Manual de usuario
 
-## Inicio y categorías
+> **Actualización 1.0.0.** La aplicación ya no solicita edad ni oculta juegos.
+> Los 111 juegos y materiales se muestran por categorías; Juegos de mesa y
+> Arcade tienen apartados propios.
 
-La pantalla inicial muestra 29 juegos agrupados en ocho categorías:
+Ambiente Montessori digital para niños de 2 a 6 años: 96 materiales — 91 con
+100 niveles cada uno (8 500 en total) y 5 actividades libres, sin niveles ni
+puntaje, entre ellas una pizarra de dibujo libre. Todo en español, sin
+conexión, sin cuentas, sin publicidad y sin enviar un solo dato fuera del
+dispositivo.
 
-1. Lógica y rompecabezas
-2. Palabras e idiomas
-3. Números
-4. Mundo y naturaleza
-5. Creatividad y música
-6. Coordinación y reflejos
-7. Juegos de mesa
-8. Arcade
+## 1. Qué es
 
-No hay selector, bloqueo ni recomendación por edad. El usuario elige una
-categoría, abre una familia y selecciona la modalidad o comienza la campaña.
+Mi Ambiente es una réplica digital de un salón Montessori. Corre como app web
+y se instala como APK de Android para usarse sin internet. No es "otra app de
+juegos": cada decisión de diseño viene de la pedagogía Montessori, no de
+mecánicas de videojuego.
 
-## Juegos LibGDX
+Al entrar se abre directamente el menú. El carrusel superior permite cambiar
+entre categorías y siempre deja accesibles todos los juegos. La pizarra y el
+xilófono aparecen además en Acceso rápido.
 
-Los juegos normales ofrecen selector de modalidad y nivel, tutorial, pausa,
-reinicio, puntuación, estrellas y pantalla de resultado. Los juegos de mesa
-permiten arrastrar fichas, cartas o piezas y también tocar origen y destino.
+## 2. Qué la hace Montessori
 
-Las familias de mesa incluyen alineación, recorridos con dados, solitarios,
-lotería y bingo, estrategia de tablero, dominó y deducción.
+- **Control del error.** Corrige el material, no la app. No hay "perdiste" ni
+  cruces rojas: si la pieza no es la que toca, vuelve al canasto y aparece
+  "Esa todavía no. Busca otra".
+- **Lección de tres periodos.** Los materiales de nomenclatura recorren
+  nombrar → reconocer → evocar a lo largo de los 100 niveles, con el modelo
+  oculto en las últimas etapas.
+- **Aislar la dificultad.** Cada nivel cambia una sola variable. La torre
+  rosa no se "acelera": primero pierde el número de apoyo, luego los tamaños
+  se acercan, luego se invierte la serie.
+- **Vocabulario que crece.** El orden de presentación (p. ej. el triángulo
+  escaleno hasta cerca del nivel 90) vive en los datos, no se improvisa.
+- **Fonética, no nombres de letras.** La app dice "mmm", no "eme".
+- **Repetir no es retroceder.** Las estrellas se dan una sola vez por nivel.
+- **Ambiente preparado, también visual.** Paleta de papel, madera y lino;
+  "modo calma" quita fondo animado y confeti.
+- **Inglés mínimo, a propósito.** Treinta palabras concretas, sin gramática.
 
-## Arcade
+## 3. Las áreas y los 96 materiales
 
-Arcade contiene Bloques, La víbora, Rompe ladrillos, Mosaico sorpresa,
-Vaqueros del ocaso, Comepuntos, Rescate de nieve, Escuadrón estelar, Gran
-premio y Carreras. Se ejecutan a pantalla horizontal con controles táctiles,
-pausa, reinicio, vidas o puntuación y progresión propia.
+| Área | Materiales | Qué desarrolla |
+|---|---|---|
+| 🫗 Vida práctica | 8 | Coordinación, orden, concentración, independencia |
+| 🔴 Sensorial | 21 | Los cinco sentidos, más peso y temperatura |
+| ✍️ Lenguaje | 12 | Del sonido a la letra, y de la letra a la palabra |
+| 🔢 Matemáticas | 10 | Cantidad concreta antes que número abstracto |
+| 🌍 Cultura y naturaleza | 22 | El mundo, los seres vivos y su clasificación |
+| 🎨 Expresión libre | 4 | Crear sin consigna, sin puntaje y sin prisa |
+| 🤝 Juegos en compañía | 11 | Turnos, gracia y cortesía |
+| 🤸 Movimiento | 8 | Control del cuerpo y coordinación ojo-mano |
 
-## Taller creativo
+Todas las áreas superan ya el rango de variedad que se acordó como objetivo
+inicial (ver `RECOVERY.md`, sección "Roadmap activo").
 
-La modalidad **Pizarra** conserva el dibujo libre en el motor LibGDX. Incluye
-lápiz, crayón, marcador, neón, aerosol, relleno, sellos y borrador; 16 colores,
-cuatro grosores, simetría tipo mandala, fondos, cuadrículas y guías. También
-permite deshacer, rehacer, iniciar una hoja nueva, guardar, abrir o borrar
-dibujos de la galería local y compartir una copia PNG mediante Android.
+Catálogo completo con slug, edad orientativa y objetivo pedagógico de cada
+material: `data/games.ts`.
 
-**Xilófono** e **Instrumentos** forman un estudio de siete notas: Do, Re, Mi,
-Fa, Sol, La y Si. Se puede cambiar entre xilófono, piano, guitarra, flauta,
-trompeta, acordeón y arpa; cada instrumento utiliza un timbre sintetizado
-propio y funciona completamente sin conexión.
+Materiales agregados para acercar la variedad de la app a la de las apps
+Montessori comerciales:
 
-## Ajustes y progreso
+- **El ciclo de la mariposa** (`ciclo-vida`, cultura) — ordenar huevo,
+  oruga, crisálida y mariposa; seriación por tiempo, no por tamaño.
+- **Formas de tierra y agua** (`tierra-agua`, cultura) — isla, lago,
+  península, cabo, golfo, estrecho, istmo, archipiélago.
+- **El sistema solar** (`sistema-solar`, cultura) — ordenar los ocho
+  planetas por distancia al Sol.
+- **Partes de la planta** (`partes-planta`, cultura) — raíz, tallo, hoja,
+  flor y fruto.
+- **Cuenta las sílabas** (`silabas`, lenguaje) — clasificar palabras por sus
+  golpes de voz, conciencia fonológica previa a la letra.
+- **El o la** (`el-la`, lenguaje) — reconocer el género gramatical de un
+  sustantivo.
+- **Pinza de transferencia** (`pinza`, vida práctica) — mover objetos de
+  uno en uno; tomar uno de más es el error.
+- **Los husos** (`husos`, matemáticas) — corresponder cantidad con número
+  del 0 al 9, incluido el cero.
+- **Pares e impares** (`pares-impares`, matemáticas) — ¿la cantidad se
+  reparte en parejas exactas?
+- **Xilófono** (`xilofono`, expresión libre) — instrumento libre; cada
+  barra es el color de un área del ambiente.
+- **Collage libre** (`collage`, expresión libre) — tocar el lienzo coloca
+  una estampa (flores, animales, cielo, vehículos...), tocar una estampa
+  puesta la quita; cinco escenas de fondo para elegir. Sin arrastrar, sin
+  niveles, sin meta: composición espacial libre.
+- **Áspero o liso** (`textura`, sensorial) — las clásicas tablillas
+  rugosas y lisas.
+- **Mayúsculas y minúsculas** (`mayusculas`, lenguaje) — reconocer las dos
+  formas de una misma letra.
+- **¿Cuántos lados tiene?** (`lados`, matemáticas) — clasifica las figuras
+  del gabinete de geometría por su número de lados.
+- **Los cinco sentidos** (`sentidos`, cultura) — vista, oído, olfato,
+  gusto y tacto.
+- **Día y noche** (`dia-noche`, cultura) — ¿es de día o de noche?
+- **Mitades y enteros** (`mitades`, matemáticas) — primer contacto con la
+  fracción, siempre concreto.
+- **Palabras que riman** (`rimas`, lenguaje) — dos familias fijas de rima.
+- **Singular y plural** (`singular-plural`, lenguaje) — la palabra junto a
+  su cantidad concreta.
+- **Banderas del mundo** (`banderas`, cultura) — seis banderas dibujadas
+  planas.
+- **Partes del cuerpo** (`cuerpo`, cultura) — cabeza, ojo, mano, brazo,
+  pierna y pie.
+- **El ciclo del agua** (`ciclo-agua`, cultura) — sol, nube, lluvia, río.
+- **Instrumentos musicales** (`instrumentos`, sensorial) — nomenclatura.
+- **Caliente o frío** (`temperatura`, sensorial) — sentido térmico.
+- **Grande, mediano o chico** (`tamanos`, vida práctica) — clasificación
+  en tres canastas.
+- **¿Qué hora es?** (`reloj`, matemáticas) — las doce horas en punto.
+- **¿Qué come?** (`dieta-animal`, cultura) — herbívoro, carnívoro u
+  omnívoro.
+- **Estados del agua** (`estados-agua`, cultura) — sólido, líquido o gas.
+- **Pesado o ligero** (`peso`, sensorial) — sentido bárico.
+- **Dulce o salado** (`sabor`, sensorial) — sentido gustativo.
+- **La rutina de la mañana** (`rutina`, vida práctica) — despertar,
+  vestirse, desayunar, ir a la escuela.
+- **Los colores** (`colores`, sensorial) — tabletas de color.
+- **Cuerpos geométricos** (`solidos`, sensorial) — esfera, cubo, cono,
+  cilindro, pirámide.
+- **El tiempo** (`tiempo`, cultura) — soleado, lluvioso, nublado, ventoso,
+  nevado, con tormenta.
+- **Los días de la semana** (`dias-semana`, cultura) — lunes a domingo.
+- **¿Dónde vive?** (`habitat`, cultura) — selva, desierto, océano, polo.
+- **Fruta o verdura** (`fruta-verdura`, cultura) — clasificación botánica.
+- **Poner la mesa** (`mesa`, vida práctica) — mantel, plato, cubiertos,
+  vaso.
+- **Huele bien o mal** (`olfato`, sensorial) — sentido olfativo.
+- **Las estaciones del año** (`estaciones`, cultura) — primavera a
+  invierno, en orden.
+- **Oficios y profesiones** (`oficios`, cultura) — bombero, doctora,
+  cocinero, maestra, policía, granjera.
+- **Medios de transporte** (`transporte`, cultura) — tierra, aire o agua.
+- **Lavarse las manos** (`lavado-manos`, vida práctica) — mojar, jabón,
+  tallar, enjuagar, secar.
+- **Toca la cara** (`cara`, cultura) — nomenclatura de la cara tocando
+  directo sobre el dibujo (ojo, nariz, boca, oreja, ceja, mejilla, pelo,
+  mentón), no eligiendo de una lista.
+- **Encaja la figura** (`orificios`, sensorial) — encajes de formas
+  geométricas: la pieza solo entra en su agujero exacto, no en uno
+  parecido.
 
-El engrane de la pantalla inicial permite cambiar nombre, sonido, voz,
-vibración, música y modo calmado. Partidas, niveles y estrellas se guardan
-localmente. Al actualizar desde una versión anterior, el progreso conocido se
-conserva y se agrega a la familia consolidada correspondiente.
+Con este material, el catálogo cubre los cinco sentidos con al menos un
+material práctico cada uno: vista, oído, olfato, gusto y tacto.
 
-## Privacidad
+Seis juegos de mesa nuevos, todos contra la computadora, área Juegos en
+compañía:
 
-La aplicación funciona sin cuenta y sin conexión. No solicita permiso de
-Internet ni envía progreso, nombre o actividad a servidores. Borrar los datos
-de la aplicación desde Android elimina la configuración y el progreso local.
+- **Memoria por turnos** (`memoria-turnos`) — versión competitiva del
+  memorama: la computadora recuerda las cartas que ya se voltearon
+  (incluidas las del jugador) y las usa si le conviene.
+- **¿Qué falta?** (`que-falta`) — el juego de Kim: memorizar una bandeja
+  de objetos, uno desaparece, decir cuál era.
+- **El juego de la oca** (`oca`) — como serpientes y escaleras pero con
+  tres efectos de casilla: oca (tira otra vez), puente (salta adelante)
+  y pozo (retrocede unos pasos, nunca al inicio).
+- **Dominó de imágenes** (`domino`) — fichas por dibujo, no por número;
+  la fila solo crece hacia la derecha para que sea fácil de seguir.
+- **Bingo con imágenes** (`bingo`) — se anuncia un dibujo con voz, se
+  busca y se marca en el cartón.
+- **Cuatro en línea** (`conecta4`) — alinear cuatro fichas antes que la
+  computadora, que sabe ganar y bloquear cuando puede.
 
-## Instalación de prueba
+Cinco actividades son libres a propósito y no tienen niveles: la pizarra, el
+juego del silencio, el dado de retos, el xilófono y el collage libre.
 
-Con depuración USB habilitada:
+## 4. La pizarra (`/pizarra`)
+
+Además del lienzo libre, dos apartados nuevos en el cajón de herramientas:
+
+- **Colorear** — elige una figura (casa, sol, estrella, corazón, círculo,
+  cuadrado, triángulo, rombo) y queda marcada sobre la hoja, lista para
+  rellenar con cualquiera de las ocho pinturas. A diferencia del material
+  "Colorear" (que rellena regiones tocándolas), aquí se pinta a mano libre
+  con el pincel encima del contorno, como un libro para colorear real.
+- **Misión** — una galería de íconos (☀️🏠🐟🌳🐱⭐🌸🦋🚗🎈🐶🌈); tocar uno lo
+  fija arriba del lienzo pidiendo "dibuja esto". El niño dibuja libre y
+  toca "¡Listo!" cuando termina: hay confeti y pasa a otra misión. Nadie
+  evalúa el resultado — es estructura y variedad, no una prueba.
+
+
+Lienzo a pantalla completa para dibujar con el dedo: ocho herramientas
+(lápiz, crayón con textura, marcador translúcido, neón, aerosol, cubeta de
+relleno, sellos, borrador), grosor variable por presión, modo mandala
+(simetría radial de 2/4/6/8 ejes), siete hojas, guías punteadas de letras,
+números y formas, deshacer/rehacer, galería local de 12 dibujos y
+compartir/descargar PNG.
+
+## 5. Los 100 niveles
+
+Cada material recorre 10 etapas de 10 niveles (`lib/levels.ts`). Dentro de
+una etapa la dificultad casi no cambia; al saltar de etapa entra una
+variable nueva. Las etapas tienen nombre: 🌱 Primeros pasos, 🌿 Ya lo
+entiendo… hasta 👑 Maestro.
+
+## 6. La vista "Mamá y papá" (`/padres`)
+
+Ventana para entender qué está trabajando el niño, sin ranking ni
+comparación con otros niños:
+
+- Resumen: niveles logrados, estrellas, materiales tocados, veces jugado.
+- Nombre del niño (para saludarlo al entrar).
+- Interruptores: sonidos, voz, modo calma.
+- Borrar progreso, con confirmación.
+
+## 7. Instalar el APK en una tablet
+
+Archivo: `android/app/build/outputs/apk/debug/app-debug.apk`. Requiere
+Android 7.0+.
+
+**Opción A — copiar el archivo:**
+
+1. Copia el APK a la tablet (USB, Drive, WhatsApp, correo).
+2. Ábrelo desde el explorador de archivos (carpeta *Descargas*).
+3. Activa "Permitir instalar de esta fuente" cuando Android lo pida.
+4. Toca **Instalar**. Si Play Protect avisa, elige **Instalar de todos
+   modos** (normal: no viene de la tienda).
+5. Aparece como **Mi Ambiente** 🦉.
+
+**Opción B — por cable con adb** (con depuración USB activada):
 
 ```bash
-adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Para una publicación se debe instalar el APK derivado del AAB firmado, no el
-APK de depuración.
+## 8. Antes de dar la tablet al niño
+
+En Ajustes de Android: fijar la pantalla (Seguridad → Fijar apps), brillo
+automático apagado, volumen a la mitad. En la app, en "Mamá y papá": nombre,
+modo calma si se distrae, y apagar la voz si la tablet no tiene voz en
+español instalada.
+
+## 9. Privacidad
+
+La app no hace ninguna petición de red. Todo el contenido viaja dentro del
+APK y el progreso se guarda solo en el dispositivo. Funciona igual en modo
+avión. Declara un único permiso (`INTERNET`, sin uso real, añadido por
+Capacitor por omisión). No pide cámara, micrófono, ubicación, contactos ni
+almacenamiento. Sin cuentas, sin publicidad, sin analítica.
+
+## 10. Límites honestos
+
+- No sustituye el material real: un cubo de madera pesa, rueda y se cae.
+- El progreso vive solo en el dispositivo; se borra si se desinstala la app.
+- Los tiempos y tolerancias (`data/levels/`) están calibrados a ojo, no
+  medidos con usuarios reales.
