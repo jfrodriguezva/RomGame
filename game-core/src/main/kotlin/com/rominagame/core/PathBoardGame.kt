@@ -17,7 +17,7 @@ import kotlin.random.Random
 class PathBoardGame(private val gameId:String,private val onComplete:(String,Int,Int)->Unit={_,_,_->}):ApplicationAdapter(){
  private val viewport=FitViewport(960f,540f);private lateinit var shapes:ShapeRenderer;private lateinit var batch:SpriteBatch;private lateinit var font:BitmapFont
  private var position=0;private var roll:Int?=null;private var pending:PathMove?=null;private var dragging=false;private var selected=false;private var drag=Vector2();private var message="Toca el dado para tirar";private var paused=false;private var tutorial=true;private var challenges=0
- override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=BitmapFont().apply{data.setScale(1.45f)};Gdx.input.inputProcessor=object:InputAdapter(){
+ override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=GameTypography.create(23);Gdx.input.inputProcessor=object:InputAdapter(){
   override fun touchDown(x:Int,y:Int,p:Int,b:Int):Boolean{val v=point(x,y);if(tutorial){tutorial=false;return true};if(paused){if(v.y>485f&&v.x in 158f..288f)paused=false;return true};if(v.y>485f){if(v.x<148f)reset()else if(v.x<298f)paused=true;return true};if(gameId=="dado"){if(v.x in 90f..250f&&v.y in 170f..330f){dragging=true;drag.set(v.x,v.y)};return true};if(roll==null&&v.x in 65f..205f&&v.y in 115f..255f){roll=Random.nextInt(1,7);pending=pathMove(position,roll!!,last(),jumps());message=if(pending==null)"Necesitas el número exacto para llegar" else "Arrastra la ficha a ${pending!!.rolledTarget}";if(pending==null)roll=null;return true};if(pending!=null&&pawnContains(v.x,v.y)){dragging=true;selected=true;drag.set(v.x,v.y);return true};if(selected)drop(v.x,v.y);return true}
   override fun touchDragged(x:Int,y:Int,p:Int):Boolean{if(!dragging||paused||tutorial)return false;val v=point(x,y);drag.set(v.x,v.y);return true}
   override fun touchUp(x:Int,y:Int,p:Int,b:Int):Boolean{if(!dragging)return false;dragging=false;val v=point(x,y);if(gameId=="dado")dropDie(v.x,v.y)else drop(v.x,v.y);return true}
@@ -36,6 +36,6 @@ class PathBoardGame(private val gameId:String,private val onComplete:(String,Int
  private fun die(x:Float,y:Float){box(x-52f,y-52f,104f,104f,Color(0xF4F0E8FF.toInt()));text("DADO",x,y+7f,Color(0x182847FF.toInt()))}
  private fun button(x:Float,label:String){box(x,488f,130f,40f,Color(0x3D507AFF.toInt()));text(label,x+65f,516f,Color.WHITE)}
  private fun overlay(title:String,body:String){box(150f,120f,660f,335f,Color(0x111B30F2.toInt()));text(title,480f,360f,Color(0xE0C23CFF.toInt()));text(body,480f,270f,Color.WHITE);text("TOCA PARA CONTINUAR",480f,180f,Color.LIGHT_GRAY)}
- private fun box(x:Float,y:Float,w:Float,h:Float,c:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=c;shapes.rect(x,y,w,h);shapes.end()};private fun text(v:String,x:Float,y:Float,c:Color){batch.begin();font.color=c;font.draw(batch,v,x-220f,y,440f,Align.center,false);batch.end()}
+ private fun box(x:Float,y:Float,w:Float,h:Float,c:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=c;shapes.roundedRect(x,y,w,h);shapes.end()};private fun text(v:String,x:Float,y:Float,c:Color){batch.begin();font.color=c;font.draw(batch,v,x-220f,y,440f,Align.center,false);batch.end()}
  override fun resize(w:Int,h:Int)=viewport.update(w,h,true);override fun dispose(){shapes.dispose();batch.dispose();font.dispose()}
 }

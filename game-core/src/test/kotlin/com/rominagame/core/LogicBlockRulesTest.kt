@@ -5,6 +5,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LogicBlockRulesTest {
+    @Test fun `identificadores antiguos no cierran el motor`() {
+        assertEquals("percepcion", logicFamily("percepcion-sensorial").id)
+        assertEquals("formas-encajes", logicFamily("formas-y-encajes").id)
+        assertEquals("percepcion", logicFamily("desconocido").id)
+    }
     @Test fun `three logical families preserve every consolidated mode`() {
         assertEquals(listOf(9, 7, 6), logicFamilies.map { it.modes.size })
     }

@@ -107,6 +107,10 @@ dependencies {
     gdxNatives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a")
     gdxNatives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86")
     gdxNatives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64")
+    gdxNatives("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a")
+    gdxNatives("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a")
+    gdxNatives("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86")
+    gdxNatives("com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64")
 
     // Persistencia — equivalente nativo de zustand+localStorage (settings.ts, progressStore.ts).
     implementation("androidx.datastore:datastore-preferences:1.1.1")

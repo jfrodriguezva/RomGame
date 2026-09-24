@@ -50,7 +50,7 @@ class LogicBlockGame(
     override fun create() {
         shapes = ShapeRenderer()
         batch = SpriteBatch()
-        font = BitmapFont().apply { data.setScale(1.65f) }
+        font = GameTypography.create(25)
         Gdx.input.inputProcessor = object : InputAdapter() {
             override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
                 val point = viewport.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
@@ -451,7 +451,7 @@ class LogicBlockGame(
     private fun box(x: Float, y: Float, width: Float, height: Float, color: Color) {
         shapes.begin(ShapeRenderer.ShapeType.Filled)
         shapes.color = color
-        shapes.rect(x, y, width, height)
+        shapes.roundedRect(x, y, width, height)
         shapes.end()
     }
 

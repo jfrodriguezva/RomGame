@@ -25,7 +25,8 @@ class LogicBlockGdxActivity : AndroidApplication() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val familyId = intent.getStringExtra(EXTRA_FAMILY_ID) ?: run { finish(); return }
+        val familyId = intent.getStringExtra(EXTRA_FAMILY_ID)?.trim().orEmpty()
+        if (familyId.isEmpty()) { finish(); return }
         val progress = ProgressStore(applicationContext)
         val config = AndroidApplicationConfiguration().apply {
             useImmersiveMode = true
@@ -61,7 +62,11 @@ class LogicBlockGdxActivity : AndroidApplication() {
             else -> LogicBlockGame(familyId, complete)
         }
         initialize(game, config)
+        installGameChrome()
     }
+
+    @Deprecated("Android back compatibility")
+    override fun onBackPressed() = finish()
 
     override fun onDestroy() {
         studioSound?.liberar()

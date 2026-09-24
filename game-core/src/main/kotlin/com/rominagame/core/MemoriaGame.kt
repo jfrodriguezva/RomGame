@@ -23,7 +23,7 @@ class MemoriaGame(private val onComplete:(String,Int,Int)->Unit={_,_,_->}):Appli
     private var missingIndex=0;private var missingAnswer='A';private var choices=emptyList<Char>();private var search:SearchDeck?=null;private var found=emptySet<Int>()
     private var paused=false;private var tutorial=false;private var resultScore=0
 
-    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=BitmapFont().apply{data.setScale(1.6f)};Gdx.input.inputProcessor=object:InputAdapter(){override fun touchDown(x:Int,y:Int,p:Int,b:Int):Boolean{tap(x,y);return true}}}
+    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=GameTypography.create(25);Gdx.input.inputProcessor=object:InputAdapter(){override fun touchDown(x:Int,y:Int,p:Int,b:Int):Boolean{tap(x,y);return true}}}
     private fun start(selected:MemoryMode=mode,showTutorial:Boolean=false){mode=selected;screen=Screen.PLAY;generation++;locked=false;paused=false;tutorial=showTutorial;open=emptySet();solved=emptySet();first=null;moves=0;playerScore=0;cpuScore=0;found=emptySet();val d=memoryDifficulty(mode,level)
         when(mode){
             MemoryMode.PAIRS,MemoryMode.TURNS->{deck=pairDeck(d.cells/2);message=if(mode==MemoryMode.TURNS)"Tu turno: encuentra una pareja" else "Encuentra todas las parejas"}
@@ -55,7 +55,7 @@ class MemoriaGame(private val onComplete:(String,Int,Int)->Unit={_,_,_->}):Appli
     private fun renderResult(){title(message,400f);text("Puntuación $resultScore · Estrellas ${starsForScore(resultScore)}/3",480f,330f,Color(0xE0C23CFF.toInt()),Align.center);box(230f,80f,220f,75f,Color(0x3D507AFF.toInt()));box(510f,80f,220f,75f,Color(0x4C9A5FFF.toInt()));text("MODOS",340f,128f,Color.WHITE,Align.center);text("SIGUIENTE",620f,128f,Color.WHITE,Align.center)}
     private fun compactButton(x:Float,label:String){box(x,488f,107f,40f,Color(0x3D507AFF.toInt()));text(label,x+53f,516f,Color.WHITE,Align.center)}
     private fun overlay(title:String,body:String,footer:String){box(150f,120f,660f,335f,Color(0x111B30F2.toInt()));text(title,480f,365f,Color(0xE0C23CFF.toInt()),Align.center);text(body,480f,275f,Color.WHITE,Align.center);text(footer,480f,185f,Color.LIGHT_GRAY,Align.center)}
-    private fun box(x:Float,y:Float,w:Float,h:Float,color:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=color;shapes.rect(x,y,w,h);shapes.end()}
+    private fun box(x:Float,y:Float,w:Float,h:Float,color:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=color;shapes.roundedRect(x,y,w,h);shapes.end()}
     private fun title(value:String,y:Float){text(value,480f,y,Color.WHITE,Align.center)}
     private fun text(value:String,x:Float,y:Float,color:Color,align:Int=Align.left){batch.begin();font.color=color;font.draw(batch,value,x-220f,y,440f,align,false);batch.end()}
     override fun resize(width:Int,height:Int)=viewport.update(width,height,true)

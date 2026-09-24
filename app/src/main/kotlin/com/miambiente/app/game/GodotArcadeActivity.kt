@@ -18,6 +18,7 @@ class GodotArcadeActivity : GodotActivity() {
         super.onCreate(savedInstanceState)
         val gameId = intent.getStringExtra(EXTRA_GAME_ID) ?: "tetris"
         persistenceScope.launch { ProgressStore(applicationContext).registrarJugada(gameId) }
+        installGameChrome()
     }
 
     override fun getCommandLine(): MutableList<String> {
@@ -35,6 +36,9 @@ class GodotArcadeActivity : GodotActivity() {
         persistenceScope.cancel()
         super.onDestroy()
     }
+
+    @Deprecated("Android back compatibility")
+    override fun onBackPressed() = finish()
 
     companion object {
         const val EXTRA_GAME_ID = "gameId"

@@ -19,7 +19,7 @@ class AlignmentGame(private val gameId:String,private val onComplete:(String,Int
     private var dragging=false;private var selected=false;private var drag=Vector2();private var choiceIndex=0;private var message="Arrastra una ficha o toca origen y destino";private var finished=false
     private var tic=MutableList<Char?>(9){null};private var connect=MutableList<Char?>(42){null};private var wins=0;private var losses=0;private var draws=0
     private var vsCpu=true;private var turn='X';private var paused=false;private var tutorial=true;private var handoff=false;private var firstDuel:DuelChoice?=null
-    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=BitmapFont().apply{data.setScale(1.6f)};Gdx.input.inputProcessor=object:InputAdapter(){
+    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=GameTypography.create(25);Gdx.input.inputProcessor=object:InputAdapter(){
         override fun touchDown(x:Int,y:Int,p:Int,b:Int):Boolean{val v=point(x,y);if(tutorial){tutorial=false;return true};if(handoff){handoff=false;message="Jugador 2: elige en secreto";return true};if(paused){if(v.y>485f&&v.x in 298f..428f)paused=false;return true};if(v.y>485f){when{v.x<148f->reset();v.x<288f->{vsCpu=!vsCpu;reset()};v.x<438f->paused=true};return true};if(sourceContains(v.x,v.y)){dragging=true;selected=true;drag.set(v.x,v.y);if(gameId=="rps")choiceIndex=((v.x-150f)/125f).toInt().coerceIn(0,2);return true};if(selected)place(v.x,v.y);return true}
         override fun touchDragged(x:Int,y:Int,p:Int):Boolean{if(!dragging||paused||tutorial||handoff)return false;val v=point(x,y);drag.set(v.x,v.y);return true}
         override fun touchUp(x:Int,y:Int,p:Int,b:Int):Boolean{if(!dragging||paused||tutorial||handoff)return false;dragging=false;val v=point(x,y);place(v.x,v.y);return true}
@@ -46,7 +46,7 @@ class AlignmentGame(private val gameId:String,private val onComplete:(String,Int
     private fun button(x:Float,label:String){box(x,488f,130f,40f,Color(0x3D507AFF.toInt()));text(label,x+65f,516f,Color.WHITE)}
     private fun overlay(title:String,body:String,footer:String){box(150f,120f,660f,335f,Color(0x111B30F2.toInt()));text(title,480f,365f,Color(0xE0C23CFF.toInt()));text(body,480f,275f,Color.WHITE);text(footer,480f,185f,Color.LIGHT_GRAY)}
     private fun token(x:Float,y:Float,color:Color,label:String="",radius:Float=45f){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=color;shapes.circle(x,y,radius,32);shapes.end();if(label.isNotEmpty())text(label,x,y+11f,Color(0x101522FF.toInt()))}
-    private fun box(x:Float,y:Float,w:Float,h:Float,c:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=c;shapes.rect(x,y,w,h);shapes.end()}
+    private fun box(x:Float,y:Float,w:Float,h:Float,c:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=c;shapes.roundedRect(x,y,w,h);shapes.end()}
     private fun text(v:String,x:Float,y:Float,c:Color){batch.begin();font.color=c;font.draw(batch,v,x-220f,y,440f,Align.center,false);batch.end()}
     override fun resize(w:Int,h:Int)=viewport.update(w,h,true);override fun dispose(){shapes.dispose();batch.dispose();font.dispose()}
 }

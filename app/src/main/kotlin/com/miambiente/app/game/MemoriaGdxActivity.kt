@@ -18,6 +18,8 @@ class MemoriaGdxActivity:AndroidApplication(){
         val progress=ProgressStore(applicationContext)
         val config=AndroidApplicationConfiguration().apply{useImmersiveMode=true;useAccelerometer=false;useCompass=false}
         initialize(MemoriaGame{mode,level,score->persistenceScope.launch{progress.completarNivel("memoria-observacion-$mode",level);progress.registrarJugada("memoria-observacion");setResult(RESULT_OK,intent.putExtra("mode",mode).putExtra("level",level).putExtra("score",score))}},config)
+        installGameChrome()
     }
+    @Deprecated("Android back compatibility") override fun onBackPressed()=finish()
     override fun onDestroy(){persistenceScope.cancel();super.onDestroy()}
 }

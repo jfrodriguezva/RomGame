@@ -22,7 +22,7 @@ class FinalBlockGame(familyId:String,private val onComplete:(String,Int,Int)->Un
     private var target=Vector2(480f,280f);private var drawing=false;private val strokes=mutableListOf<Vector2>();private var colored=mutableSetOf<Int>();private var dragging=false
     private var patternGoal=List(4){it};private var pattern=List(4){(it+1)%4};private var mazePos=0 to 0
     private var paused=false;private var tutorial=false
-    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=BitmapFont().apply{data.setScale(1.6f)};Gdx.input.inputProcessor=object:InputAdapter(){
+    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=GameTypography.create(25);Gdx.input.inputProcessor=object:InputAdapter(){
         override fun touchDown(x:Int,y:Int,p:Int,b:Int):Boolean{val v=point(x,y);tap(v.x,v.y);return true}
         override fun touchDragged(x:Int,y:Int,p:Int):Boolean{if(paused||tutorial)return false;val v=point(x,y);if(mechanic()==FinalMechanic.DRAW&&screen==Screen.PLAY&&drawing){strokes+=Vector2(v.x,v.y);if(strokes.size>=45)finish();return true};return false}
         override fun touchUp(x:Int,y:Int,p:Int,b:Int):Boolean{if(paused||tutorial){drawing=false;dragging=false;return false};drawing=false;if(!dragging)return false;val v=point(x,y);dragging=false;if(mechanic()==FinalMechanic.BASKET){if(v.x in 650f..830f&&v.y in 250f..370f)finish()else feedback="Lleva la pelota dentro de la canasta"}else if(v.x in 250f..710f&&v.y in 160f..390f){progress++;if(progress>=4)finish()else feedback="Pieza colocada"};return true}
@@ -60,6 +60,6 @@ class FinalBlockGame(familyId:String,private val onComplete:(String,Int,Int)->Un
     private fun renderResult(){text("NIVEL SUPERADO",480f,405f,Color.WHITE);text("Puntuación $score · Estrellas ${starsForScore(score)}/3",480f,330f,Color(0xE0C23CFF.toInt()));box(230f,80f,220f,75f,Color(0x3D507AFF.toInt()));box(510f,80f,220f,75f,Color(0x4C9A5FFF.toInt()));text("MODOS",340f,128f,Color.WHITE);text("SIGUIENTE",620f,128f,Color.WHITE)}
     private fun compactButton(x:Float,label:String){box(x,488f,107f,40f,Color(0x3D507AFF.toInt()));text(label,x+53f,516f,Color.WHITE)}
     private fun overlay(title:String,body:String,footer:String){box(150f,120f,660f,335f,Color(0x111B30F2.toInt()));text(title,480f,365f,Color(0xE0C23CFF.toInt()));text(body,480f,275f,Color.WHITE);text(footer,480f,185f,Color.LIGHT_GRAY)}
-    private fun box(x:Float,y:Float,w:Float,h:Float,c:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=c;shapes.rect(x,y,w,h);shapes.end()};private fun text(v:String,x:Float,y:Float,c:Color){batch.begin();font.color=c;font.draw(batch,v,x-220f,y,440f,Align.center,false);batch.end()}
+    private fun box(x:Float,y:Float,w:Float,h:Float,c:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=c;shapes.roundedRect(x,y,w,h);shapes.end()};private fun text(v:String,x:Float,y:Float,c:Color){batch.begin();font.color=c;font.draw(batch,v,x-220f,y,440f,Align.center,false);batch.end()}
     override fun resize(w:Int,h:Int)=viewport.update(w,h,true);override fun dispose(){shapes.dispose();batch.dispose();font.dispose()}
 }

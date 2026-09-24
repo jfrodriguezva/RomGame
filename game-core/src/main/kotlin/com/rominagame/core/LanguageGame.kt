@@ -23,7 +23,7 @@ class LanguageGame(familyId: String, private val onComplete: (String, Int, Int) 
     private var paused = false; private var tutorial = false
 
     override fun create() {
-        shapes = ShapeRenderer(); batch = SpriteBatch(); font = BitmapFont().apply { data.setScale(1.7f) }
+        shapes = ShapeRenderer(); batch = SpriteBatch(); font = GameTypography.create(26)
         Gdx.input.inputProcessor = object : InputAdapter() {
             override fun touchDown(x: Int, y: Int, pointer: Int, button: Int): Boolean { val p = point(x, y); tap(p.x, p.y); return true }
             override fun touchDragged(x: Int, y: Int, pointer: Int): Boolean {
@@ -73,7 +73,7 @@ class LanguageGame(familyId: String, private val onComplete: (String, Int, Int) 
     private fun button(x: Float, label: String) { box(x, 488f, 120f, 40f, Color(0x3D507AFF.toInt())); text(label, x + 60f, 516f, Color.WHITE) }
     private fun compactButton(x:Float,label:String){box(x,488f,107f,40f,Color(0x3D507AFF.toInt()));text(label,x+53f,516f,Color.WHITE)}
     private fun overlay(title:String,body:String,action:String){box(150f,145f,660f,250f,Color(0x111A2CFA.toInt()));text(title,480f,345f,Color(0xE0C23CFF.toInt()));text(body,480f,275f,Color.WHITE);text(action,480f,205f,Color.LIGHT_GRAY)}
-    private fun box(x: Float, y: Float, w: Float, h: Float, color: Color) { shapes.begin(ShapeRenderer.ShapeType.Filled); shapes.color = color; shapes.rect(x, y, w, h); shapes.end() }
+    private fun box(x: Float, y: Float, w: Float, h: Float, color: Color) { shapes.begin(ShapeRenderer.ShapeType.Filled); shapes.color = color; shapes.roundedRect(x, y, w, h); shapes.end() }
     private fun text(value: String, x: Float, y: Float, color: Color) { batch.begin(); font.color = color; font.draw(batch, value, x - 220f, y, 440f, Align.center, false); batch.end() }
     override fun resize(width: Int, height: Int) = viewport.update(width, height, true)
     override fun dispose() { shapes.dispose(); batch.dispose(); font.dispose() }

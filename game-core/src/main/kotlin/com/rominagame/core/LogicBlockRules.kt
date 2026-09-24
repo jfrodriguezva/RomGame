@@ -22,7 +22,15 @@ val logicFamilies = listOf(
     LogicFamily("orden-secuencias", "Orden y secuencias", listOf("Torre rosa", "Escalera marrón", "Días", "Estaciones", "Ciclo de vida", "Ciclo del agua")),
 )
 
-fun logicFamily(id: String): LogicFamily = logicFamilies.first { it.id == id }
+fun logicFamily(id: String): LogicFamily {
+    val normalized = when (id.trim().lowercase()) {
+        "percepcion-sensorial" -> "percepcion"
+        "formas", "formas-y-encajes" -> "formas-encajes"
+        "orden", "secuencias" -> "orden-secuencias"
+        else -> id.trim().lowercase()
+    }
+    return logicFamilies.firstOrNull { it.id == normalized } ?: logicFamilies.first()
+}
 
 fun logicRound(familyId: String, mode: Int, level: Int, step: Int): LogicRound {
     val family = logicFamily(familyId)

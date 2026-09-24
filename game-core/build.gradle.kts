@@ -9,5 +9,6 @@ kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarg
 
 dependencies {
     api("com.badlogicgames.gdx:gdx:1.14.2")
+    api("com.badlogicgames.gdx:gdx-freetype:1.14.2")
     testImplementation("junit:junit:4.13.2")
 }

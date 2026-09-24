@@ -21,7 +21,7 @@ class CurriculumGame(familyId: String, private val onComplete: (String, Int, Int
     private var expected=emptyList<String>(); private var ordered=emptyList<String>(); private var counted=emptySet<Int>(); private var feedback="Elige una modalidad"
     private var paused=false;private var tutorial=false
 
-    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=BitmapFont().apply{data.setScale(1.55f)};Gdx.input.inputProcessor=object:InputAdapter(){
+    override fun create(){shapes=ShapeRenderer();batch=SpriteBatch();font=GameTypography.create(24);Gdx.input.inputProcessor=object:InputAdapter(){
         override fun touchDown(x:Int,y:Int,p:Int,b:Int):Boolean{val v=point(x,y);tap(v.x,v.y);return true}
         override fun touchUp(x:Int,y:Int,p:Int,b:Int):Boolean{if(paused||tutorial)return false;val v=point(x,y);when{draggingSort->{draggingSort=false;dropSort(v.x,v.y)};draggingOrder>=0->{dropOrder(v.x);draggingOrder=-1};else->return false};return true}
     }}
@@ -51,7 +51,7 @@ class CurriculumGame(familyId: String, private val onComplete: (String, Int, Int
     private fun renderOrder(){val w=780f/ordered.size;ordered.forEachIndexed{i,label->val x=90f+i*w;box(x+5f,205f,w-10f,105f,if(i==draggingOrder)Color(0xE0C23CFF.toInt())else Color(0x6B4FA3FF.toInt()));text(label,x+w/2,268f,Color.WHITE)}}
     private fun renderCount(){val count=countTarget(level);repeat(count){i->val x=165f+(i%6)*105f;val y=145f+(i/6)*100f;shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=if(i in counted)Color(0x4C9A5FFF.toInt())else Color(0xE0C23CFF.toInt());shapes.circle(x+50f,y+48f,30f,24);shapes.end()};text("${counted.size} / $count",480f,115f,Color.WHITE)}
     private fun renderResult(){text("NIVEL SUPERADO",480f,405f,Color.WHITE);text("Puntuación $score · Estrellas ${starsForScore(score)}/3",480f,330f,Color(0xE0C23CFF.toInt()));box(230f,80f,220f,75f,Color(0x3D507AFF.toInt()));box(510f,80f,220f,75f,Color(0x4C9A5FFF.toInt()));text("MODOS",340f,128f,Color.WHITE);text("SIGUIENTE",620f,128f,Color.WHITE)}
-    private fun button(x:Float,label:String){box(x,488f,120f,40f,Color(0x3D507AFF.toInt()));text(label,x+60f,516f,Color.WHITE)};private fun box(x:Float,y:Float,w:Float,h:Float,c:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=c;shapes.rect(x,y,w,h);shapes.end()};private fun text(v:String,x:Float,y:Float,c:Color){batch.begin();font.color=c;font.draw(batch,v,x-220f,y,440f,Align.center,false);batch.end()}
+    private fun button(x:Float,label:String){box(x,488f,120f,40f,Color(0x3D507AFF.toInt()));text(label,x+60f,516f,Color.WHITE)};private fun box(x:Float,y:Float,w:Float,h:Float,c:Color){shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.color=c;shapes.roundedRect(x,y,w,h);shapes.end()};private fun text(v:String,x:Float,y:Float,c:Color){batch.begin();font.color=c;font.draw(batch,v,x-220f,y,440f,Align.center,false);batch.end()}
     private fun compactButton(x:Float,label:String){box(x,488f,107f,40f,Color(0x3D507AFF.toInt()));text(label,x+53f,516f,Color.WHITE)}
     private fun overlay(title:String,body:String,action:String){box(150f,145f,660f,250f,Color(0x111A2CFA.toInt()));text(title,480f,345f,Color(0xE0C23CFF.toInt()));text(body,480f,275f,Color.WHITE);text(action,480f,205f,Color.LIGHT_GRAY)}
     override fun resize(w:Int,h:Int)=viewport.update(w,h,true);override fun dispose(){shapes.dispose();batch.dispose();font.dispose()}
