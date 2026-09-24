@@ -8,8 +8,10 @@ Arcade en una sola aplicación nativa y completamente offline.
 
 - Aplicación Android nativa con Kotlin y Jetpack Compose.
 - Sin React, Next.js, Capacitor, WebView ni dependencias de Node.
-- Catálogo completo de 111 juegos y materiales, sin filtros por edad.
-- Categorías propias para Juegos de mesa y Arcade.
+- Catálogo consolidado en 21 materiales y 100 modos, sin filtros por edad.
+- Los juegos similares viven como modos de un mismo material y conservan su
+  pantalla, niveles y progreso independiente.
+- Los 11 Arcade están temporalmente ocultos hasta que se corrijan y validen.
 - Pizarra completa restaurada y estudio de siete instrumentos con siete notas.
 - Catálogo y progreso completamente locales.
 - Android 7.0 o posterior (`minSdk 24`).
@@ -23,16 +25,15 @@ inventario de la aplicación retirada en
 ## Tecnología actual
 
 - Jetpack Compose para navegación, catálogo, ajustes y progreso.
-- Jetpack Compose también contiene las pantallas jugables restauradas de mesa
-  y Arcade. La integración experimental que dejaba juegos en blanco se retiró
-  de la versión 1.0.0.
+- Jetpack Compose contiene las pantallas jugables restauradas. La integración
+  experimental que dejaba juegos en blanco se retiró de la versión 1.0.0.
 
 ## Recuperación 1.0.0
 
 La versión 1.0.0 vuelve a la última base Android nativa completa y recupera las
 pantallas que se habían sustituido durante las fases experimentales. Conserva
 el proyecto sin React/Next/Capacitor, restaura la salida común de cada juego y
-mantiene Arcade visible como una categoría independiente.
+mantiene el código Arcade fuera del catálogo visible hasta su reparación.
 
 ## Compilar y verificar
 

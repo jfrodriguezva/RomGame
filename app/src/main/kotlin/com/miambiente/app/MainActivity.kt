@@ -83,6 +83,7 @@ import com.miambiente.app.ui.screens.MemoramaScreen
 import com.miambiente.app.ui.screens.MemoriaTurnosScreen
 import com.miambiente.app.ui.screens.MesaScreen
 import com.miambiente.app.ui.screens.MesaSilencioScreen
+import com.miambiente.app.ui.screens.MaterialConsolidadoScreen
 import com.miambiente.app.ui.screens.MitadesScreen
 import com.miambiente.app.ui.screens.NumerosScreen
 import com.miambiente.app.ui.screens.OcaScreen
@@ -169,6 +170,13 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(Ruta.AJUSTES) { AjustesScreen(volver) }
+                        composable("material/{materialId}") { entrada ->
+                            MaterialConsolidadoScreen(
+                                materialId = entrada.arguments?.getString("materialId").orEmpty(),
+                                onAbrirModo = { id -> navController.navigate(id) },
+                                onVolver = volver,
+                            )
+                        }
 
                         // --- MaterialQuiz ---
                         composable("formas") { FormasScreen(volver) }

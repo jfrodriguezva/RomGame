@@ -1,8 +1,8 @@
 # Mi Ambiente — Manual de usuario
 
 > **Actualización 1.0.0.** La aplicación ya no solicita edad ni oculta juegos.
-> Los 111 juegos y materiales se muestran por categorías; Juegos de mesa y
-> Arcade tienen apartados propios.
+> Los juegos similares se reúnen en 21 materiales con 100 modos conservados.
+> Los Arcade están temporalmente ocultos mientras se corrigen.
 
 Ambiente Montessori digital para niños de 2 a 6 años: 96 materiales — 91 con
 100 niveles cada uno (8 500 en total) y 5 actividades libres, sin niveles ni
@@ -18,8 +18,8 @@ juegos": cada decisión de diseño viene de la pedagogía Montessori, no de
 mecánicas de videojuego.
 
 Al entrar se abre directamente el menú. El carrusel superior permite cambiar
-entre categorías y siempre deja accesibles todos los juegos. La pizarra y el
-xilófono aparecen además en Acceso rápido.
+entre categorías; al abrir un material se elige uno de sus modos. La pizarra y
+el xilófono aparecen además en Acceso rápido.
 
 ## 2. Qué la hace Montessori
 
