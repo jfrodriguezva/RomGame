@@ -8,11 +8,11 @@ Arcade en una sola aplicación nativa y completamente offline.
 
 - Aplicación Android nativa con Kotlin y Jetpack Compose.
 - Sin React, Next.js, Capacitor, WebView ni dependencias de Node.
-- Catálogo consolidado en 21 materiales y 100 modos, sin filtros por edad.
+- Catálogo consolidado en 21 materiales y 99 modos, sin filtros por edad.
 - Los juegos similares viven como modos de un mismo material y conservan su
   pantalla, niveles y progreso independiente.
 - Los 11 Arcade están temporalmente ocultos hasta que se corrijan y validen.
-- Pizarra completa restaurada y estudio de siete instrumentos con siete notas.
+- Pizarra completa restaurada; el xilófono integra siete instrumentos con siete notas.
 - Catálogo y progreso completamente locales.
 - Android 7.0 o posterior (`minSdk 24`).
 - Versión de aplicación: **1.0.0**.

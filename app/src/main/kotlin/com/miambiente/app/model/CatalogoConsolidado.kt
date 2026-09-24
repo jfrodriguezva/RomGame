@@ -49,7 +49,7 @@ val MATERIALES_CONSOLIDADOS = listOf(
     material("naturaleza-planeta", "Naturaleza y planeta", "🌎", "Animales, plantas, geografía, espacio y clima", CategoriaMaterial.MUNDO, "animales", "partes-planta", "continentes", "tierra-agua", "sistema-solar", "tiempo", "banderas"),
     material("personas-comunidad", "Personas y comunidad", "🧑‍🤝‍🧑", "Cuerpo, emociones, profesiones y convivencia", CategoriaMaterial.MUNDO, "cuerpo", "cara", "emociones", "oficios", "mesa-silencio"),
 
-    material("taller-creativo", "Taller creativo y musical", "🎨", "Dibujo, color, collage y siete instrumentos", CategoriaMaterial.CREATIVIDAD, "pizarra", "colorear", "collage", "xilofono", "instrumentos", "patron"),
+    material("taller-creativo", "Taller creativo y musical", "🎨", "Dibujo, color, collage y siete instrumentos", CategoriaMaterial.CREATIVIDAD, "pizarra", "colorear", "collage", "xilofono", "patron"),
 
     material("vida-practica", "Vida práctica", "🫗", "Rutinas, higiene, mesa y coordinación fina", CategoriaMaterial.COORDINACION, "vida-practica", "pinza", "tamanos", "rutina", "mesa", "lavado-manos"),
     material("coordinacion", "Coordinación y reflejos", "🎯", "Precisión, ritmo, vibración y reacción", CategoriaMaterial.COORDINACION, "burbujas", "canasta", "globo", "vibra-adivina", "reflejo-color"),

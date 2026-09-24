@@ -1,7 +1,7 @@
 # Mi Ambiente — Manual de usuario
 
 > **Actualización 1.0.0.** La aplicación ya no solicita edad ni oculta juegos.
-> Los juegos similares se reúnen en 21 materiales con 100 modos conservados.
+> Los juegos similares se reúnen en 21 materiales con 99 modos conservados.
 > Los Arcade están temporalmente ocultos mientras se corrigen.
 
 Ambiente Montessori digital para niños de 2 a 6 años: 96 materiales — 91 con

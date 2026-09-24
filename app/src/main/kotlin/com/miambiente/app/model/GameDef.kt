@@ -27,7 +27,6 @@ val CATALOGO = listOf(
     GameDef("formas", "Gabinete de figuras", "🔺", "Círculo, cuadrado, triángulo", Area.SENSORIAL, 3, "Gabinete de geometría", "Reconocer figuras por su contorno y nombrarlas."),
     GameDef("cuerpo", "Partes del cuerpo", "🧍", "Cabeza, ojo, mano, brazo, pierna y pie", Area.CULTURA, 3, "Nomenclatura del cuerpo humano", "Vocabulario y conciencia del propio cuerpo."),
     GameDef("colores", "Los colores", "🎨", "Tabletas de color", Area.SENSORIAL, 3, "Cajas de color", "Nomenclatura de las tabletas de color."),
-    GameDef("instrumentos", "Instrumentos musicales", "🎹", "Xilófono, piano, guitarra, flauta, trompeta, acordeón y arpa", Area.CREATIVA, 2, "Estudio musical", "Exploración libre de siete notas y siete timbres."),
     GameDef("oficios", "Oficios y profesiones", "🚒", "Bombero, doctora, cocinero, maestra, policía", Area.CULTURA, 4, "Nomenclatura", "Vocabulario de oficios y su utilidad social."),
     GameDef("transporte", "Medios de transporte", "🚂", "Tierra, aire o agua", Area.CULTURA, 3, "Clasificación de transportes", "Relacionar cada vehículo con el medio por el que se mueve."),
 
@@ -122,7 +121,7 @@ val CATALOGO = listOf(
     GameDef("pizarra", "La pizarra grande", "🖍️", "Dibuja lo que quieras", Area.CREATIVA, 2, "Pizarra y trazo libre", "Expresión libre, trazo amplio y experimentación con el color.", libre = true),
     GameDef("collage", "Collage libre", "🖼️", "Coloca estampas donde quieras", Area.CREATIVA, 2, "Collage y composición libre", "Composición espacial libre y motricidad fina de precisión.", libre = true),
     GameDef("colorear", "Colorear", "🎨", "Pinta el dibujo", Area.CREATIVA, 3, "Dibujo dirigido", "Color, límites y paciencia; también relaja."),
-    GameDef("xilofono", "Xilófono", "🎼", "Toca y escucha, sin reglas", Area.CREATIVA, 3, "Instrumento de exploración sonora", "Exploración musical libre.", libre = true),
+    GameDef("xilofono", "Xilófono e instrumentos", "🎼", "Xilófono, piano, guitarra, flauta, trompeta, acordeón y arpa", Area.CREATIVA, 3, "Estudio de exploración sonora", "Exploración musical libre con siete instrumentos y siete notas.", libre = true),
     GameDef("mesa-silencio", "El juego del silencio", "🤫", "Respira y escucha", Area.PRACTICA, 3, "Juego del silencio", "Autorregulación, escucha y control voluntario del cuerpo.", libre = true),
     GameDef("cara", "Toca la cara", "🙂", "Toca la parte que se pide", Area.CULTURA, 2, "Nomenclatura de la cara", "Vocabulario de la cara, tocando directo sobre el dibujo."),
     GameDef("alfabeto-movil", "Alfabeto móvil", "🔡", "Forma la palabra con letras", Area.LENGUAJE, 4, "Alfabeto móvil", "Escribir antes de saber escribir: componer palabras con sonidos."),

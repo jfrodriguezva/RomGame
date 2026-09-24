@@ -8,16 +8,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,11 +37,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.LocalServices
+import com.miambiente.app.data.InstrumentoSonoro
 import com.miambiente.app.data.Patron
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.ui.GameShell
 
 private data class Barra(val nombre: String, val color: Color)
+private data class OpcionInstrumento(val sonido: InstrumentoSonoro, val nombre: String, val emoji: String)
+
+private val INSTRUMENTOS = listOf(
+    OpcionInstrumento(InstrumentoSonoro.XILOFONO, "Xilófono", "🎼"),
+    OpcionInstrumento(InstrumentoSonoro.PIANO, "Piano", "🎹"),
+    OpcionInstrumento(InstrumentoSonoro.GUITARRA, "Guitarra", "🎸"),
+    OpcionInstrumento(InstrumentoSonoro.FLAUTA, "Flauta", "🪈"),
+    OpcionInstrumento(InstrumentoSonoro.TROMPETA, "Trompeta", "🎺"),
+    OpcionInstrumento(InstrumentoSonoro.ACORDEON, "Acordeón", "🪗"),
+    OpcionInstrumento(InstrumentoSonoro.ARPA, "Arpa", "🎶"),
+)
 
 private val BARRAS = listOf(
     Barra("Do", Color(0xFFD9433A)),
@@ -56,25 +76,39 @@ private val BARRAS = listOf(
 fun XilofonoScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
     val juego = buscarJuego("xilofono")!!
+    var instrumento by remember { mutableStateOf(INSTRUMENTOS.first()) }
 
-    GameShell(juego = juego, consigna = "Toca y escucha, sin reglas", onVolver = onVolver) {
-        Row(
-            Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 28.dp),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
-        ) {
-            BARRAS.forEachIndexed { i, barra ->
-                // Cada barra siguiente es un poco más corta: más corta =
-                // más aguda, la misma relación física que un xilófono real.
-                val altoFraccion = 1f - i * 0.07f
-                BarraXilofono(
-                    barra = barra,
-                    altoFraccion = altoFraccion,
-                    modifier = Modifier.weight(1f).fillMaxHeight(),
-                    onTocar = {
-                        services.sound.tocarNota(i)
-                        services.haptics.vibrar(Patron.TOQUE)
-                    },
-                )
+    GameShell(juego = juego, consigna = "Elige un instrumento y toca Do, Re, Mi, Fa, Sol, La y Si", onVolver = onVolver) {
+        Column(Modifier.fillMaxSize()) {
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+            ) {
+                items(INSTRUMENTOS) { opcion ->
+                    FilterChip(
+                        selected = instrumento == opcion,
+                        onClick = { instrumento = opcion },
+                        label = { Text("${opcion.emoji} ${opcion.nombre}") },
+                        colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFFFFE6A7)),
+                    )
+                }
+            }
+            Row(
+                Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 12.dp),
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+            ) {
+                BARRAS.forEachIndexed { i, barra ->
+                    val altoFraccion = 1f - i * 0.07f
+                    BarraXilofono(
+                        barra = barra,
+                        altoFraccion = altoFraccion,
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                        onTocar = {
+                            services.sound.tocarInstrumento(instrumento.sonido, i)
+                            services.haptics.vibrar(Patron.TOQUE)
+                        },
+                    )
+                }
             }
         }
     }

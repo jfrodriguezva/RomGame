@@ -73,7 +73,6 @@ import com.miambiente.app.ui.screens.HabitatScreen
 import com.miambiente.app.ui.screens.HomeScreen
 import com.miambiente.app.ui.screens.HusosScreen
 import com.miambiente.app.ui.screens.InglesScreen
-import com.miambiente.app.ui.screens.InstrumentosScreen
 import com.miambiente.app.ui.screens.LaberintoScreen
 import com.miambiente.app.ui.screens.LadosScreen
 import com.miambiente.app.ui.screens.LavadoManosScreen
@@ -182,7 +181,6 @@ class MainActivity : ComponentActivity() {
                         composable("formas") { FormasScreen(volver) }
                         composable("cuerpo") { CuerpoScreen(volver) }
                         composable("colores") { ColoresScreen(volver) }
-                        composable("instrumentos") { InstrumentosScreen(volver) }
                         composable("oficios") { OficiosScreen(volver) }
 
                         // --- MaterialOrdenar ---
