@@ -4,10 +4,12 @@ import android.app.Activity
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
+import android.window.OnBackInvokedDispatcher
 
 /** Navegacion comun y siempre accesible sobre LibGDX y Godot. */
 internal fun Activity.installGameChrome() {
@@ -36,4 +38,9 @@ internal fun Activity.installGameChrome() {
             topMargin = dp(12)
         },
     )
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        onBackInvokedDispatcher.registerOnBackInvokedCallback(
+            OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+        ) { finish() }
+    }
 }

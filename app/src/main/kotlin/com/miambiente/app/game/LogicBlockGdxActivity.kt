@@ -65,9 +65,6 @@ class LogicBlockGdxActivity : AndroidApplication() {
         installGameChrome()
     }
 
-    @Deprecated("Android back compatibility")
-    override fun onBackPressed() = finish()
-
     override fun onDestroy() {
         studioSound?.liberar()
         persistenceScope.cancel()

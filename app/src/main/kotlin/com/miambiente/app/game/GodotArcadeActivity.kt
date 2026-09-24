@@ -23,24 +23,40 @@ class GodotArcadeActivity : GodotActivity() {
 
     override fun getCommandLine(): MutableList<String> {
         val gameId = intent.getStringExtra(EXTRA_GAME_ID) ?: "tetris"
-        return super.getCommandLine().toMutableList().apply {
-            add("--")
-            add("--game-id=$gameId")
-        }
+        return arcadeCommandLine(super.getCommandLine(), gameId).toMutableList()
     }
 
     override fun getHostPlugins(godot: Godot): Set<GodotPlugin> =
         setOf(RomGameProgressPlugin(godot, applicationContext, persistenceScope))
+
+    /**
+     * La implementación base usa ProcessPhoenix.forceQuit y mata también
+     * MainActivity. Un Arcade debe cerrar solo su pantalla y regresar al
+     * catálogo, nunca terminar todo RomGame.
+     */
+    override fun onGodotForceQuit(instance: Godot) {
+        runOnUiThread {
+            if (!isFinishing) finish()
+        }
+    }
 
     override fun onDestroy() {
         persistenceScope.cancel()
         super.onDestroy()
     }
 
-    @Deprecated("Android back compatibility")
-    override fun onBackPressed() = finish()
-
     companion object {
         const val EXTRA_GAME_ID = "gameId"
     }
 }
+
+/**
+ * Fuerza OpenGL en Android. Vulkan cerraba el proceso completo en
+ * dispositivos sin un controlador Vulkan estable (incluido el emulador).
+ */
+internal fun arcadeCommandLine(base: List<String>, gameId: String): List<String> =
+    base + listOf(
+        "--rendering-method", "gl_compatibility",
+        "--rendering-driver", "opengl3",
+        "--", "--game-id=$gameId",
+    )
