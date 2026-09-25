@@ -31,4 +31,16 @@ class SunsetRidersLogicTest {
         assertTrue(intervaloSpawnParaDistancia(100) < intervaloSpawnParaDistancia(0))
         assertTrue(intervaloSpawnParaDistancia(1000) >= 600L)
     }
+
+    @Test
+    fun `la ronda de jefe llega justo antes del ultimo bandido objetivo`() {
+        assertFalse(esRondaDeJefe(derrotados = 10, objetivo = 12))
+        assertTrue(esRondaDeJefe(derrotados = 11, objetivo = 12))
+    }
+
+    @Test
+    fun `el jefe aguanta varios golpes, un bandido comun solo uno`() {
+        org.junit.Assert.assertEquals(1, vidasParaBandido(esJefe = false))
+        org.junit.Assert.assertEquals(GOLPES_JEFE, vidasParaBandido(esJefe = true))
+    }
 }

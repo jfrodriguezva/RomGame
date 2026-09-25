@@ -54,8 +54,20 @@ private const val INVULNERABILIDAD_NANOS = 900_000_000L
 internal enum class EstadoJugador { DE_PIE, AGACHADO, SALTANDO }
 internal enum class TipoDisparo { ALTO, BAJO }
 
-internal data class Bandido(val id: Int, val x: Float, val velX: Float, val proximoDisparoEn: Long)
+internal const val GOLPES_JEFE = 3
+
+internal data class Bandido(
+    val id: Int, val x: Float, val velX: Float, val proximoDisparoEn: Long,
+    val vidas: Int = 1, val esJefe: Boolean = false,
+)
 internal data class BalaVaqueros(val id: Int, val x: Float, val tipo: TipoDisparo?, val deEnemigo: Boolean)
+
+/** El último bandido de la ronda (justo antes de llegar al objetivo) es el
+ * jefe — cierre real de la ronda, como el jefe de fin de nivel del arcade
+ * original, en vez de terminar de golpe al derrotar a uno más. */
+internal fun esRondaDeJefe(derrotados: Int, objetivo: Int = OBJETIVO_BANDIDOS): Boolean = derrotados == objetivo - 1
+
+internal fun vidasParaBandido(esJefe: Boolean): Int = if (esJefe) GOLPES_JEFE else 1
 
 /** Un tiro alto se esquiva agachado; uno bajo (a ras de piso) se esquiva saltando —
  * de pie no esquiva ninguno, igual que en el arcade real. */
@@ -114,8 +126,9 @@ fun VaquerosScreen(onVolver: () -> Unit) {
 
     fun saltar() {
         if (!terminado && alturaSalto == 0f) {
-            velocidadSalto = IMPULSO_SALTO
-            alturaSalto = 1f
+            val (h, v) = iniciarSalto(IMPULSO_SALTO)
+            alturaSalto = h
+            velocidadSalto = v
             services.sound.tocar(Efecto.CLICK)
         }
     }
@@ -144,18 +157,23 @@ fun VaquerosScreen(onVolver: () -> Unit) {
             if (invulnerableHasta != 0L && ahora > invulnerableHasta) invulnerableHasta = 0L
 
             if (alturaSalto > 0f) {
-                velocidadSalto -= GRAVEDAD * dt
-                alturaSalto = (alturaSalto + velocidadSalto * dt).coerceAtLeast(0f)
-                if (alturaSalto <= 0f) { alturaSalto = 0f; velocidadSalto = 0f }
+                val (h, v) = avanzarSalto(alturaSalto, velocidadSalto, GRAVEDAD, dt)
+                alturaSalto = h
+                velocidadSalto = v
             }
 
-            if (tiempoTranscurridoMs >= proximoBandidoEn) {
+            // Mientras el jefe esté vivo no entran bandidos comunes — la
+            // ronda se concentra en él, igual que en el arcade original.
+            if (tiempoTranscurridoMs >= proximoBandidoEn && bandidos.none { it.esJefe }) {
                 proximoBandidoEn = tiempoTranscurridoMs + intervaloSpawnParaDistancia(distancia)
+                val esJefe = esRondaDeJefe(derrotados)
                 bandidos = bandidos + Bandido(
                     id = siguienteId++,
                     x = ANCHO + 20f,
-                    velX = -velocidadBanditoParaDistancia(distancia),
+                    velX = -velocidadBanditoParaDistancia(distancia) * (if (esJefe) 0.6f else 1f),
                     proximoDisparoEn = tiempoTranscurridoMs + 700L + Random.nextLong(600L),
+                    vidas = vidasParaBandido(esJefe),
+                    esJefe = esJefe,
                 )
             }
 
@@ -198,9 +216,18 @@ fun VaquerosScreen(onVolver: () -> Unit) {
                     val nx = bala.x + VEL_BALA_JUGADOR * dt
                     val golpeado = bandidosRestantes.firstOrNull { circuloChocaRect(nx, SUELO_Y - 15f, 4f, it.x - 10f, SUELO_Y - 30f, 20f, 30f) }
                     if (golpeado != null) {
-                        bandidosRestantes.remove(golpeado)
-                        derrotados += 1
-                        services.sound.tocar(Efecto.CORRECT)
+                        val vidasRestantes = golpeado.vidas - 1
+                        if (vidasRestantes <= 0) {
+                            bandidosRestantes.remove(golpeado)
+                            // Al jefe se le cuenta como el resto de bandidos
+                            // que faltaban de una vez: derrotarlo cierra la
+                            // ronda, no suma de a uno como un bandido más.
+                            derrotados += if (golpeado.esJefe) (OBJETIVO_BANDIDOS - derrotados) else 1
+                            services.sound.tocar(Efecto.CORRECT)
+                        } else {
+                            bandidosRestantes[bandidosRestantes.indexOf(golpeado)] = golpeado.copy(vidas = vidasRestantes)
+                            services.sound.tocar(Efecto.CLICK)
+                        }
                     } else if (nx < ANCHO) {
                         balasRestantes.add(bala.copy(x = nx))
                     }
@@ -229,6 +256,7 @@ fun VaquerosScreen(onVolver: () -> Unit) {
         consigna = when {
             terminado && gano -> "¡Pueblo a salvo! $OBJETIVO_BANDIDOS bandidos atrapados"
             terminado -> "Un bandido te derribó — bandidos atrapados: $derrotados"
+            bandidos.any { it.esJefe } -> "¡El jefe de la banda! Resiste $GOLPES_JEFE disparos"
             else -> "Bandidos $derrotados/$OBJETIVO_BANDIDOS · Vidas $vidas"
         },
         onVolver = onVolver,
@@ -250,10 +278,11 @@ fun VaquerosScreen(onVolver: () -> Unit) {
                         .background(Color(0xFF70452D)),
                 )
                 bandidos.forEach { b ->
+                    val tam = if (b.esJefe) 46f else 30f
                     Box(
-                        modifier = Modifier.offset(x = (b.x - 15f).dp, y = (SUELO_Y - 30f).dp).size(width = 30.dp, height = 30.dp),
+                        modifier = Modifier.offset(x = (b.x - tam / 2f).dp, y = (SUELO_Y - tam).dp).size(width = tam.dp, height = tam.dp),
                         contentAlignment = Alignment.Center,
-                    ) { Text("🤠", fontSize = 22.sp) }
+                    ) { Text(if (b.esJefe) "🤠👑" else "🤠", fontSize = if (b.esJefe) 26.sp else 22.sp) }
                 }
                 balas.forEach { bala ->
                     val y = if (bala.deEnemigo) {
