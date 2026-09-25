@@ -46,6 +46,27 @@ import kotlinx.coroutines.launch
 // SnowBrosScreen.kt) con la modalidad de juego genuina de cada uno. Este
 // archivo se queda solo con los dos arcades que no se pidió rehacer.
 
+/** Cada cuánto aparece el siguiente enemigo: baja con los puntos, sin pasar de 550ms. */
+internal fun intervaloEnemigoEscuadron(puntos: Int): Long =
+    (1_150L - puntos * 35L).coerceAtLeast(550L)
+
+/** ¿El enemigo del carril actual golpea el escudo? */
+internal fun impactaEscudo(carril: Int, enemigo: Int): Boolean = carril == enemigo
+
+/** ¿El disparo, hecho en `carril`, acierta al enemigo? */
+internal fun disparoAcierta(carril: Int, enemigo: Int): Boolean = carril == enemigo
+
+internal fun ganoEscuadron(puntos: Int): Boolean = puntos >= 15
+
+/** Cada cuánto avanza el siguiente obstáculo: baja con la distancia, sin pasar de 260ms. */
+internal fun intervaloObstaculoGranPremio(distancia: Int): Long =
+    (480L - distancia * 7L).coerceAtLeast(260L)
+
+/** ¿El carril actual choca con el obstáculo que llega a la fila del jugador? */
+internal fun chocaGranPremio(carril: Int, obstaculo: Int): Boolean = carril == obstaculo
+
+internal fun ganoGranPremio(distancia: Int): Boolean = distancia >= 30
+
 /** Shooter espacial por carriles con ciclos discretos para no saturar recomposición. */
 @Composable
 fun EscuadronEstelarScreen(onVolver: () -> Unit) {
@@ -64,19 +85,19 @@ fun EscuadronEstelarScreen(onVolver: () -> Unit) {
         if (!jugando) return@LaunchedEffect
         while (jugando && escudo > 0 && puntos < 15) {
             enemigo = (0..2).random()
-            delay((1_150L - puntos * 35L).coerceAtLeast(550L))
-            if (jugando && enemigo == carril) escudo--
+            delay(intervaloEnemigoEscuadron(puntos))
+            if (jugando && impactaEscudo(carril, enemigo)) escudo--
         }
         if (jugando) {
             jugando = false
-            if (puntos >= 15) { services.sound.tocar(Efecto.WIN); scope.launch { services.progress.completarNivel(juego.id, 1) } }
+            if (ganoEscuadron(puntos)) { services.sound.tocar(Efecto.WIN); scope.launch { services.progress.completarNivel(juego.id, 1) } }
             else services.sound.tocar(Efecto.WRONG)
         }
     }
 
     fun disparar() {
         if (!jugando) return
-        if (carril == enemigo) { puntos++; enemigo = -1; services.sound.tocar(Efecto.CORRECT) }
+        if (disparoAcierta(carril, enemigo)) { puntos++; enemigo = -1; services.sound.tocar(Efecto.CORRECT) }
         else services.sound.tocar(Efecto.CLICK)
     }
 
@@ -117,14 +138,14 @@ fun GranPremioScreen(onVolver: () -> Unit) {
     LaunchedEffect(ronda, jugando) {
         if (!jugando) return@LaunchedEffect
         while (jugando && distancia < 30) {
-            delay((480L - distancia * 7L).coerceAtLeast(260L))
+            delay(intervaloObstaculoGranPremio(distancia))
             fila++
             if (fila >= 6) {
-                if (carril == obstaculo) { jugando = false; services.sound.tocar(Efecto.WRONG); break }
+                if (chocaGranPremio(carril, obstaculo)) { jugando = false; services.sound.tocar(Efecto.WRONG); break }
                 distancia++; fila = 0; obstaculo = (0..2).random()
             }
         }
-        if (jugando && distancia >= 30) { jugando = false; services.sound.tocar(Efecto.WIN); scope.launch { services.progress.completarNivel(juego.id, 1) } }
+        if (jugando && ganoGranPremio(distancia)) { jugando = false; services.sound.tocar(Efecto.WIN); scope.launch { services.progress.completarNivel(juego.id, 1) } }
     }
 
     GameShell(juego, if (jugando) "Meta: $distancia/30" else if (distancia >= 30) "¡Primer lugar!" else "Cambia de carril para esquivar", onVolver = onVolver, acciones = { Button(onClick = ::iniciar) { Text(if (jugando) "Reiniciar" else "Arrancar") } }) {
