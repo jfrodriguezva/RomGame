@@ -73,6 +73,13 @@ private fun tableroVacioTetris(): List<List<Color?>> = List(TETRIS_FILAS) { List
 
 private fun piezaInicial(pieza: PiezaTetris) = EstadoPiezaTetris(pieza, 0, fila = -1, col = TETRIS_COLS / 2 - pieza.n / 2)
 
+/** Dónde caería la pieza si se soltara ahora — la "pieza fantasma" que ayuda a planear sin depender de reflejos, clave para el público infantil de esta app. */
+internal fun posicionFantasma(estado: EstadoPiezaTetris, tablero: List<List<Color?>>): EstadoPiezaTetris {
+    var candidato = estado
+    while (!colisionaTetris(candidato.copy(fila = candidato.fila + 1), tablero)) candidato = candidato.copy(fila = candidato.fila + 1)
+    return candidato
+}
+
 /**
  * Tetris real, no una versión decorativa: caída continua, las 7 piezas
  * clásicas con sus 4 rotaciones (calculadas por rotación de matriz, no
@@ -155,9 +162,7 @@ fun TetrisScreen(onVolver: () -> Unit) {
 
     fun caidaDura() {
         if (terminado) return
-        var candidato = actual
-        while (!colisionaTetris(candidato.copy(fila = candidato.fila + 1), tablero)) candidato = candidato.copy(fila = candidato.fila + 1)
-        actual = candidato
+        actual = posicionFantasma(actual, tablero)
         services.sound.tocar(Efecto.CLICK)
         fijarPieza()
     }
@@ -180,6 +185,7 @@ fun TetrisScreen(onVolver: () -> Unit) {
     }
 
     val ocupadasActual = celdasOcupadasTetris(actual).toSet()
+    val ocupadasFantasma = celdasOcupadasTetris(posicionFantasma(actual, tablero)).toSet() - ocupadasActual
 
     GameShell(
         juego = juego,
@@ -206,7 +212,12 @@ fun TetrisScreen(onVolver: () -> Unit) {
                                     for (c in 0 until TETRIS_COLS) {
                                         val colorFijo = tablero[f][c]
                                         val esActual = (f to c) in ocupadasActual
-                                        val color = colorFijo ?: if (esActual) actual.pieza.color else Color.Transparent
+                                        val esFantasma = (f to c) in ocupadasFantasma
+                                        val color = colorFijo ?: when {
+                                            esActual -> actual.pieza.color
+                                            esFantasma -> actual.pieza.color.copy(alpha = 0.25f)
+                                            else -> Color.Transparent
+                                        }
                                         Box(
                                             modifier = Modifier
                                                 .size(CELDA_TETRIS)

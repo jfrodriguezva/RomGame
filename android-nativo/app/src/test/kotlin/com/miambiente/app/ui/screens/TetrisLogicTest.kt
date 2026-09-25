@@ -57,4 +57,23 @@ class TetrisLogicTest {
         val estado = EstadoPiezaTetris(PIEZAS_TETRIS[0], 0, fila = -1, col = 0)
         assertFalse(colisionaTetris(estado, tablero))
     }
+
+    @Test
+    fun `la pieza fantasma cae hasta el fondo del tablero vacio`() {
+        val tablero = List(TETRIS_FILAS) { List(TETRIS_COLS) { null as androidx.compose.ui.graphics.Color? } }
+        val o = PIEZAS_TETRIS[1] // pieza O: ocupa 2 filas de alto
+        val estado = EstadoPiezaTetris(o, 0, fila = 0, col = 0)
+        val fantasma = posicionFantasma(estado, tablero)
+        assertEquals(TETRIS_FILAS - 2, fantasma.fila)
+    }
+
+    @Test
+    fun `la pieza fantasma se detiene justo encima de una pila existente`() {
+        val color = androidx.compose.ui.graphics.Color(0xFF000000)
+        val tablero = List(TETRIS_FILAS) { fila -> List(TETRIS_COLS) { if (fila == 10) color else null } }
+        val o = PIEZAS_TETRIS[1]
+        val estado = EstadoPiezaTetris(o, 0, fila = 0, col = 0)
+        val fantasma = posicionFantasma(estado, tablero)
+        assertEquals(8, fantasma.fila)
+    }
 }
