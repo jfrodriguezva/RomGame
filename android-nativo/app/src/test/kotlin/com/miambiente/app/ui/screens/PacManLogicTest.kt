@@ -58,4 +58,18 @@ class PacManLogicTest {
         val nuevaPos = moverFantasmaAsustado(FANTASMA_PASILLO, JUGADOR_PASILLO, PACMAN_COLS, PACMAN_FILAS, CELDAS_LIBRES_PACMAN)
         assertTrue(distanciaManhattan(nuevaPos, JUGADOR_PASILLO, PACMAN_COLS) >= distanciaAntes)
     }
+
+    @Test
+    fun `la celda emboscada queda por delante del jugador en su direccion`() {
+        val jugador = 4 * PACMAN_COLS + 4
+        val objetivo = celdaObjetivoEmboscada(jugador, DireccionPacman.DERECHA, PACMAN_COLS, PACMAN_FILAS, pasos = 3)
+        assertEquals(4 * PACMAN_COLS + 7, objetivo)
+    }
+
+    @Test
+    fun `la celda emboscada se recorta a los limites del tablero`() {
+        val jugador = 0 * PACMAN_COLS + 1
+        val objetivo = celdaObjetivoEmboscada(jugador, DireccionPacman.ARRIBA, PACMAN_COLS, PACMAN_FILAS, pasos = 5)
+        assertEquals(0, objetivo / PACMAN_COLS)
+    }
 }

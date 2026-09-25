@@ -88,6 +88,24 @@ internal fun moverFantasmaAsustado(fantasma: Int, jugador: Int, cols: Int, filas
     return opciones.maxByOrNull { distanciaManhattan(it, jugador, cols) } ?: fantasma
 }
 
+/** Celda "pasos" adelante del jugador en la dirección en la que camina — el
+ * objetivo del fantasma emboscador, que no persigue al jugador sino a donde
+ * va a estar (igual que Pinky en el Pac-Man original, distinto de Blinky que
+ * sí persigue directo). Se recorta a los límites del tablero, no necesita
+ * ser una celda libre: `moverFantasmaPersiguiendo` solo la usa como referencia
+ * de distancia. */
+internal fun celdaObjetivoEmboscada(jugador: Int, direccion: DireccionPacman, cols: Int, filas: Int, pasos: Int = 3): Int {
+    val (df, dc) = when (direccion) {
+        DireccionPacman.ARRIBA -> -1 to 0
+        DireccionPacman.ABAJO -> 1 to 0
+        DireccionPacman.IZQUIERDA -> 0 to -1
+        DireccionPacman.DERECHA -> 0 to 1
+    }
+    val fila = (jugador / cols + df * pasos).coerceIn(0, filas - 1)
+    val col = (jugador % cols + dc * pasos).coerceIn(0, cols - 1)
+    return fila * cols + col
+}
+
 /**
  * Comepuntos — copia de la modalidad Pac-Man: laberinto en tiempo real (no
  * por turnos como la primera versión), fantasmas que persiguen de verdad
@@ -166,11 +184,17 @@ fun ComepuntosScreen(onVolver: () -> Unit) {
             val energizado = energizadoTicks > 0
             if (energizadoTicks > 0) energizadoTicks -= 1
 
-            fantasmas = fantasmas.map { f ->
-                if (energizado) {
-                    moverFantasmaAsustado(f, jugador, PACMAN_COLS, PACMAN_FILAS, CELDAS_LIBRES_PACMAN)
-                } else {
-                    moverFantasmaPersiguiendo(f, jugador, PACMAN_COLS, PACMAN_FILAS, CELDAS_LIBRES_PACMAN)
+            fantasmas = fantasmas.mapIndexed { i, f ->
+                when {
+                    energizado -> moverFantasmaAsustado(f, jugador, PACMAN_COLS, PACMAN_FILAS, CELDAS_LIBRES_PACMAN)
+                    // El primer fantasma persigue directo (como Blinky); el
+                    // segundo embosca por delante del jugador (como Pinky) —
+                    // así no basta con correr en línea recta para escapar.
+                    i == 0 -> moverFantasmaPersiguiendo(f, jugador, PACMAN_COLS, PACMAN_FILAS, CELDAS_LIBRES_PACMAN)
+                    else -> {
+                        val objetivo = celdaObjetivoEmboscada(jugador, direccion, PACMAN_COLS, PACMAN_FILAS)
+                        moverFantasmaPersiguiendo(f, objetivo, PACMAN_COLS, PACMAN_FILAS, CELDAS_LIBRES_PACMAN)
+                    }
                 }
             }
 
