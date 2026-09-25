@@ -49,4 +49,10 @@ class PangLogicTest {
         assertTrue(circuloChocaRect(bx = 50f, by = 200f, r = 20f, rx = 48.5f, ry = 50f, rw = 3f, rh = 350f))
         assertFalse(circuloChocaRect(bx = 100f, by = 200f, r = 20f, rx = 48.5f, ry = 50f, rw = 3f, rh = 350f))
     }
+
+    @Test
+    fun `deberiaCaerPowerUpPang es determinista dado un azar fijo`() {
+        assertTrue(deberiaCaerPowerUpPang(0.1f))
+        assertFalse(deberiaCaerPowerUpPang(0.9f))
+    }
 }

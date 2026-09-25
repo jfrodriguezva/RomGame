@@ -52,11 +52,24 @@ private const val GROSOR_ARPON = 3f
 private const val VIDAS_INICIALES = 3
 private const val INVULNERABILIDAD_NANOS = 1_000_000_000L
 private const val VELOCIDAD_JUGADOR_BOTON = 200f
+private const val VELOCIDAD_POWERUP = 70f
+private const val RADIO_POWERUP = 9f
+private const val DURACION_POWERUP_NANOS = 8_000_000_000L
+private const val PROBABILIDAD_POWERUP_PANG = 0.3f
 
 private val COLORES_TAMANO = mapOf(3 to Color(0xFF3E9BE0), 2 to Color(0xFF6FBF73), 1 to Color(0xFFE0C23C))
 
 internal data class BurbujaState(val id: Int, val x: Float, val y: Float, val velX: Float, val velY: Float, val tamano: Int)
 internal data class ArponState(val alturaActual: Float, val retrayendo: Boolean)
+
+internal enum class TipoPowerUpPang { ARPON_RAPIDO, JUGADOR_RAPIDO, BURBUJAS_LENTAS, VIDA_EXTRA }
+internal data class PowerUpPang(val id: Int, val x: Float, val y: Float, val tipo: TipoPowerUpPang)
+
+/** Reutiliza el mismo criterio que `deberiaCaerPowerUp` de Arkanoid (umbral
+ * determinístico dado un azar externo, testeable sin `Random` real), con su
+ * propia probabilidad — solo cae al reventar una burbuja hasta el final,
+ * no en cada división. */
+internal fun deberiaCaerPowerUpPang(azar: Float): Boolean = azar < PROBABILIDAD_POWERUP_PANG
 
 /** El radio crece con el tamaño: 1 (chica) → 20, 2 (mediana) → 28, 3 (grande) → 36. */
 internal fun radioDe(tamano: Int): Float = 12f + tamano * 8f
@@ -87,13 +100,29 @@ internal fun burbujasParaNivel(nivel: Int): List<BurbujaState> {
     }
 }
 
+private fun colorPowerUpPang(tipo: TipoPowerUpPang): Color = when (tipo) {
+    TipoPowerUpPang.ARPON_RAPIDO -> Color(0xFFE0C23C)
+    TipoPowerUpPang.JUGADOR_RAPIDO -> Color(0xFF6FBF73)
+    TipoPowerUpPang.BURBUJAS_LENTAS -> Color(0xFFA97FC7)
+    TipoPowerUpPang.VIDA_EXTRA -> Color(0xFFE0925C)
+}
+
+private fun emojiPowerUpPang(tipo: TipoPowerUpPang): String = when (tipo) {
+    TipoPowerUpPang.ARPON_RAPIDO -> "⚡"
+    TipoPowerUpPang.JUGADOR_RAPIDO -> "👟"
+    TipoPowerUpPang.BURBUJAS_LENTAS -> "🐌"
+    TipoPowerUpPang.VIDA_EXTRA -> "❤️"
+}
+
 /**
  * Pang — arpón fijo que sube y se retrae, burbujas que rebotan con
  * gravedad en paredes/techo/suelo y se dividen en dos más chicas al ser
  * tocadas, generado de cero. Física real por cuadro (mismo patrón que
  * Arkanoid: `withFrameNanos`), colisión círculo-rectángulo reutilizada de
  * `ArkanoidScreen.kt` (`circuloChocaRect`), tratando el arpón como un
- * rectángulo angosto en vez de duplicar la fórmula de colisión.
+ * rectángulo angosto en vez de duplicar la fórmula de colisión. Power-ups
+ * que caen al reventar una burbuja del todo (arpón rápido, jugador rápido,
+ * burbujas lentas, vida extra), mismo patrón de caída/captura que Arkanoid.
  */
 @Composable
 fun PangScreen(onVolver: () -> Unit) {
@@ -111,6 +140,12 @@ fun PangScreen(onVolver: () -> Unit) {
     var invulnerableHasta by remember { mutableStateOf(0L) }
     var terminado by remember { mutableStateOf(false) }
     var mostrandoNivel by remember { mutableStateOf(false) }
+    var powerUps by remember { mutableStateOf(listOf<PowerUpPang>()) }
+    var siguienteIdPowerUp by remember { mutableStateOf(0) }
+    var velArpon by remember { mutableStateOf(VEL_ARPON) }
+    var velArponExpiraEn by remember { mutableStateOf(0L) }
+    var velocidadJugador by remember { mutableStateOf(VELOCIDAD_JUGADOR_BOTON) }
+    var velocidadJugadorExpiraEn by remember { mutableStateOf(0L) }
 
     fun reiniciar() {
         nivel = 1
@@ -123,6 +158,11 @@ fun PangScreen(onVolver: () -> Unit) {
         invulnerableHasta = 0L
         terminado = false
         mostrandoNivel = false
+        powerUps = emptyList()
+        velArpon = VEL_ARPON
+        velArponExpiraEn = 0L
+        velocidadJugador = VELOCIDAD_JUGADOR_BOTON
+        velocidadJugadorExpiraEn = 0L
     }
 
     fun disparar() {
@@ -142,16 +182,37 @@ fun PangScreen(onVolver: () -> Unit) {
             if (terminado || mostrandoNivel) break
 
             if (invulnerableHasta != 0L && ahora > invulnerableHasta) invulnerableHasta = 0L
+            if (velArponExpiraEn != 0L && ahora > velArponExpiraEn) { velArpon = VEL_ARPON; velArponExpiraEn = 0L }
+            if (velocidadJugadorExpiraEn != 0L && ahora > velocidadJugadorExpiraEn) { velocidadJugador = VELOCIDAD_JUGADOR_BOTON; velocidadJugadorExpiraEn = 0L }
 
             arpon?.let { a ->
                 arpon = if (!a.retrayendo) {
-                    val nuevaAltura = a.alturaActual - VEL_ARPON * dt
+                    val nuevaAltura = a.alturaActual - velArpon * dt
                     if (nuevaAltura <= 0f) a.copy(alturaActual = 0f, retrayendo = true) else a.copy(alturaActual = nuevaAltura)
                 } else {
-                    val nuevaAltura = a.alturaActual + VEL_ARPON * dt
+                    val nuevaAltura = a.alturaActual + velArpon * dt
                     if (nuevaAltura >= Y_JUGADOR) null else a.copy(alturaActual = nuevaAltura)
                 }
             }
+
+            // Power-ups cayendo: si el jugador los atrapa, se aplica su
+            // efecto; si no, siguen cayendo hasta llegar al suelo.
+            val powerUpsVivos = mutableListOf<PowerUpPang>()
+            for (p in powerUps) {
+                val ny = p.y + VELOCIDAD_POWERUP * dt
+                if (circuloChocaRect(p.x, ny, RADIO_POWERUP, jugadorX - ANCHO_JUGADOR / 2f, Y_JUGADOR, ANCHO_JUGADOR, ALTO_JUGADOR)) {
+                    when (p.tipo) {
+                        TipoPowerUpPang.ARPON_RAPIDO -> { velArpon = VEL_ARPON * 1.6f; velArponExpiraEn = ahora + DURACION_POWERUP_NANOS }
+                        TipoPowerUpPang.JUGADOR_RAPIDO -> { velocidadJugador = VELOCIDAD_JUGADOR_BOTON * 1.6f; velocidadJugadorExpiraEn = ahora + DURACION_POWERUP_NANOS }
+                        TipoPowerUpPang.BURBUJAS_LENTAS -> burbujas = burbujas.map { it.copy(velX = it.velX * 0.6f, velY = it.velY * 0.6f) }
+                        TipoPowerUpPang.VIDA_EXTRA -> vidas += 1
+                    }
+                    services.sound.tocar(Efecto.CORRECT)
+                } else if (ny < Y_JUGADOR) {
+                    powerUpsVivos.add(p.copy(y = ny))
+                }
+            }
+            powerUps = powerUpsVivos
 
             var perdioVida = false
             val siguientes = mutableListOf<BurbujaState>()
@@ -173,10 +234,17 @@ fun PangScreen(onVolver: () -> Unit) {
                 )
                 if (golpeadaPorArpon) {
                     arpon = arponActual!!.copy(retrayendo = true)
-                    siguientes.addAll(dividirBurbuja(b0.copy(x = x, y = y, velX = vx, velY = vy), siguienteIdBurbuja))
+                    val hijas = dividirBurbuja(b0.copy(x = x, y = y, velX = vx, velY = vy), siguienteIdBurbuja)
+                    siguientes.addAll(hijas)
                     siguienteIdBurbuja += 2
                     puntaje += 10
                     services.sound.tocar(Efecto.CORRECT)
+                    // Solo cuando la burbuja revienta del todo (no cuando se
+                    // divide en dos) puede caer un power-up — igual criterio
+                    // que un ladrillo roto en Arkanoid.
+                    if (hijas.isEmpty() && deberiaCaerPowerUpPang(kotlin.random.Random.nextFloat())) {
+                        powerUps = powerUps + PowerUpPang(siguienteIdPowerUp++, x, y, TipoPowerUpPang.entries.random())
+                    }
                     continue
                 }
 
@@ -206,6 +274,11 @@ fun PangScreen(onVolver: () -> Unit) {
                     burbujas = burbujasParaNivel(nivel)
                     siguienteIdBurbuja = burbujas.size
                     arpon = null
+                    powerUps = emptyList()
+                    velArpon = VEL_ARPON
+                    velArponExpiraEn = 0L
+                    velocidadJugador = VELOCIDAD_JUGADOR_BOTON
+                    velocidadJugadorExpiraEn = 0L
                     mostrandoNivel = false
                 }
                 break
@@ -249,6 +322,16 @@ fun PangScreen(onVolver: () -> Unit) {
                                 .background(COLORES_TAMANO[b.tamano] ?: Color.White),
                         )
                     }
+                    powerUps.forEach { p ->
+                        Box(
+                            modifier = Modifier
+                                .offset(x = (p.x - RADIO_POWERUP).dp, y = (p.y - RADIO_POWERUP).dp)
+                                .size((RADIO_POWERUP * 2).dp)
+                                .clip(CircleShape)
+                                .background(colorPowerUpPang(p.tipo)),
+                            contentAlignment = Alignment.Center,
+                        ) { Text(emojiPowerUpPang(p.tipo), fontSize = 9.sp) }
+                    }
                     Box(
                         modifier = Modifier
                             .offset(x = (jugadorX - ANCHO_JUGADOR / 2f).dp, y = Y_JUGADOR.dp)
@@ -259,9 +342,9 @@ fun PangScreen(onVolver: () -> Unit) {
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(30.dp), modifier = Modifier.padding(top = 10.dp)) {
-                BotonMantenerArcade("⬅️") { dt -> jugadorX = (jugadorX - VELOCIDAD_JUGADOR_BOTON * dt).coerceIn(ANCHO_JUGADOR / 2f, ANCHO - ANCHO_JUGADOR / 2f) }
+                BotonMantenerArcade("⬅️") { dt -> jugadorX = (jugadorX - velocidadJugador * dt).coerceIn(ANCHO_JUGADOR / 2f, ANCHO - ANCHO_JUGADOR / 2f) }
                 BotonArcade("🔫") { disparar() }
-                BotonMantenerArcade("➡️") { dt -> jugadorX = (jugadorX + VELOCIDAD_JUGADOR_BOTON * dt).coerceIn(ANCHO_JUGADOR / 2f, ANCHO - ANCHO_JUGADOR / 2f) }
+                BotonMantenerArcade("➡️") { dt -> jugadorX = (jugadorX + velocidadJugador * dt).coerceIn(ANCHO_JUGADOR / 2f, ANCHO - ANCHO_JUGADOR / 2f) }
             }
         }
     }
