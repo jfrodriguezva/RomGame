@@ -42,8 +42,41 @@ private const val ANCHO = COLS * CELDA
 private const val ALTO = FILAS * CELDA
 private const val VIDAS_INICIALES = 3
 private const val OBJETIVO = 0.75f
+private const val VELOCIDAD_PERSECUCION = 78f
+
+private val COLOR_IMAGEN_CENTRO = Color(0xFFFFC94D)
+private val COLOR_IMAGEN_RAYOS = Color(0xFFFFE08A)
+private val COLOR_IMAGEN_FONDO = Color(0xFF82C8A0)
+private val COLOR_MARCO = Color(0xFF3A5A46)
 
 internal data class EnemigoQix(val x: Float, val y: Float, val velX: Float, val velY: Float)
+
+/** El "mosaico" que se va revelando en el interior al reclamar territorio:
+ * un sol simple por distancia al centro, no una imagen externa — no hay
+ * assets en este proyecto, así que la imagen se genera. El borde (ya
+ * reclamado desde el inicio) se queda fuera del dibujo, como el marco. */
+internal fun colorDeImagen(indice: Int, cols: Int, filas: Int): Color {
+    val fila = indice / cols
+    val col = indice % cols
+    val cx = (cols - 1) / 2f
+    val cy = (filas - 1) / 2f
+    val dx = (col - cx) / cx
+    val dy = (fila - cy) / cy
+    val dist = kotlin.math.sqrt(dx * dx + dy * dy)
+    return when {
+        dist < 0.35f -> COLOR_IMAGEN_CENTRO
+        dist < 0.85f -> COLOR_IMAGEN_RAYOS
+        else -> COLOR_IMAGEN_FONDO
+    }
+}
+
+/** Vector unitario de `(0,0)` hacia `(dx,dy)` — a qué dirección debe virar
+ * un enemigo para acercarse a un punto, sin importar qué tan lejos esté.
+ * `(0,0)` si ya está en el objetivo (evita dividir entre cero). */
+internal fun direccionHaciaObjetivo(dx: Float, dy: Float): Pair<Float, Float> {
+    val dist = kotlin.math.hypot(dx.toDouble(), dy.toDouble()).toFloat()
+    return if (dist < 0.0001f) 0f to 0f else (dx / dist) to (dy / dist)
+}
 
 internal fun vecinos4(indice: Int, cols: Int, filas: Int): List<Int> {
     val fila = indice / cols
@@ -117,7 +150,11 @@ internal fun porcentajeReclamado(safe: Set<Int>, cols: Int, filas: Int): Float {
  * quedaron separadas del resto se reclaman de una vez (salvo la que tenga
  * un enemigo adentro). Si un enemigo toca el trazo mientras se dibuja, se
  * pierde una vida y el trazo se borra. Termina al reclamar el 75% o al
- * quedarse sin vidas.
+ * quedarse sin vidas. El interior reclamado revela un mosaico (un sol
+ * generado por distancia al centro, ya que no hay assets de imagen en el
+ * proyecto) en vez de quedar liso, y los enemigos cazan el trazo activo en
+ * vez de solo deambular — el peligro real, como en el arcade original, es
+ * mientras se está dibujando.
  */
 @Composable
 fun MosaicoScreen(onVolver: () -> Unit) {
@@ -204,15 +241,37 @@ fun MosaicoScreen(onVolver: () -> Unit) {
             if (terminado) break
 
             enemigos = enemigos.map { e ->
-                var x = e.x + e.velX * dt
-                var y = e.y + e.velY * dt
-                var vx = e.velX
-                var vy = e.velY
-                if (x < CELDA / 2f) { x = CELDA / 2f; vx = abs(vx) }
-                if (x > ANCHO - CELDA / 2f) { x = ANCHO - CELDA / 2f; vx = -abs(vx) }
-                if (y < CELDA / 2f) { y = CELDA / 2f; vy = abs(vy) }
-                if (y > ALTO - CELDA / 2f) { y = ALTO - CELDA / 2f; vy = -abs(vy) }
-                e.copy(x = x, y = y, velX = vx, velY = vy)
+                // Mientras hay trazo activo, el enemigo lo caza (como el Qix
+                // real persiguiendo la línea que se está dibujando) — sin
+                // trazo, sigue con su deambular normal de rebotes. La
+                // velocidad de deambular (`velX`/`velY`) NUNCA se sobreescribe
+                // con la de persecución: si se guardara, el enemigo se
+                // quedaría con la velocidad de caza (o congelado, si llegó a
+                // tocar el centro de la celda objetivo) incluso después de
+                // que el trazo se sella y ya no hay nada que perseguir.
+                val trazoMasCercano = trazo.minByOrNull { i ->
+                    val cx = (i % COLS) * CELDA + CELDA / 2f
+                    val cy = (i / COLS) * CELDA + CELDA / 2f
+                    (cx - e.x) * (cx - e.x) + (cy - e.y) * (cy - e.y)
+                }
+                if (trazoMasCercano != null) {
+                    val cx = (trazoMasCercano % COLS) * CELDA + CELDA / 2f
+                    val cy = (trazoMasCercano / COLS) * CELDA + CELDA / 2f
+                    val (dx, dy) = direccionHaciaObjetivo(cx - e.x, cy - e.y)
+                    val x = (e.x + dx * VELOCIDAD_PERSECUCION * dt).coerceIn(CELDA / 2f, ANCHO - CELDA / 2f)
+                    val y = (e.y + dy * VELOCIDAD_PERSECUCION * dt).coerceIn(CELDA / 2f, ALTO - CELDA / 2f)
+                    e.copy(x = x, y = y)
+                } else {
+                    var x = e.x + e.velX * dt
+                    var y = e.y + e.velY * dt
+                    var vx = e.velX
+                    var vy = e.velY
+                    if (x < CELDA / 2f) { x = CELDA / 2f; vx = abs(vx) }
+                    if (x > ANCHO - CELDA / 2f) { x = ANCHO - CELDA / 2f; vx = -abs(vx) }
+                    if (y < CELDA / 2f) { y = CELDA / 2f; vy = abs(vy) }
+                    if (y > ALTO - CELDA / 2f) { y = ALTO - CELDA / 2f; vy = -abs(vy) }
+                    e.copy(x = x, y = y, velX = vx, velY = vy)
+                }
             }
 
             val celdasEnemigosAhora = enemigos.map { celdaDe(it.x, it.y) }
@@ -248,7 +307,8 @@ fun MosaicoScreen(onVolver: () -> Unit) {
                     val col = i % COLS
                     val color = when {
                         i in trazo -> Color(0xFFE0C23C)
-                        i in safe -> Color(0xFF82C8A0)
+                        i in safe && celdaBorde(i, COLS, FILAS) -> COLOR_MARCO
+                        i in safe -> colorDeImagen(i, COLS, FILAS)
                         else -> Color(0xFF26384A)
                     }
                     Box(

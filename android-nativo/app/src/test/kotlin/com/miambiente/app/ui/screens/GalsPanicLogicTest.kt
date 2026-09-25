@@ -65,4 +65,27 @@ class GalsPanicLogicTest {
         val despues = porcentajeReclamado(soloBorde + setOf(6, 7, 8), cols, filas)
         assertTrue(despues > antes)
     }
+
+    @Test
+    fun `el centro de la imagen es distinto del fondo`() {
+        val cols = 12
+        val filas = 16
+        val centro = (filas / 2) * cols + cols / 2
+        val esquina = 0
+        assertTrue(colorDeImagen(centro, cols, filas) != colorDeImagen(esquina, cols, filas))
+    }
+
+    @Test
+    fun `direccionHaciaObjetivo da un vector unitario`() {
+        val (dx, dy) = direccionHaciaObjetivo(3f, 4f)
+        assertEquals(0.6f, dx, 0.001f)
+        assertEquals(0.8f, dy, 0.001f)
+    }
+
+    @Test
+    fun `direccionHaciaObjetivo en el mismo punto no da direccion`() {
+        val (dx, dy) = direccionHaciaObjetivo(0f, 0f)
+        assertEquals(0f, dx)
+        assertEquals(0f, dy)
+    }
 }
