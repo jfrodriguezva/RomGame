@@ -34,8 +34,34 @@ import com.miambiente.app.ui.materials.MarcadorArcade
 import com.miambiente.app.ui.materials.MarcoArcade
 import kotlinx.coroutines.delay
 
-private const val HOYOS = 9
-private const val DURACION_RONDA_S = 30
+internal const val HOYOS = 9
+internal const val DURACION_RONDA_S = 30
+
+/** Cuánto ha avanzado la ronda, en "unidades de dificultad" — tope en 20 para que la velocidad no siga subiendo pasado ese punto. */
+internal fun avanceRondaTopo(tiempoRestante: Int): Int =
+    (DURACION_RONDA_S - tiempoRestante).coerceAtMost(20)
+
+/** Cuánto tiempo queda arriba el topo: baja con el avance, sin pasar de 400ms para que siga siendo alcanzable. */
+internal fun duracionTopoArriba(avance: Int): Long =
+    (900L - avance * 25L).coerceAtLeast(400L)
+
+/** Pausa entre apariciones: baja con el avance, sin pasar de 180ms. */
+internal fun pausaEntreTopos(avance: Int): Long =
+    (500L - avance * 10L).coerceAtLeast(180L)
+
+/** Elige el siguiente hoyo distinto al actual; `azar` (en [0,1)) es la fuente
+ * de azar externa, mismo patrón que `deberiaCaerPowerUp` en Arkanoid — así
+ * se puede probar sin depender de `Random` real. Se mapea multiplicando en
+ * vez de con módulo sobre un índice ya generado: `indice.mod(candidatos.size)`
+ * sesga un hoyo (el que corresponde al resto de dividir `hoyos` entre
+ * `candidatos.size`) para que salga casi el doble de veces que los demás. */
+internal fun siguienteHoyoTopo(actual: Int?, azar: Float, hoyos: Int = HOYOS): Int {
+    val candidatos = (0 until hoyos).filter { it != actual }
+    val indice = (azar * candidatos.size).toInt().coerceIn(0, candidatos.size - 1)
+    return candidatos[indice]
+}
+
+internal fun ganoRondaTopo(puntaje: Int): Boolean = puntaje >= 10
 
 /**
  * Atrapa al topo (whack-a-mole) — arcade clásico, generado de cero.
@@ -78,12 +104,12 @@ fun TopoScreen(onVolver: () -> Unit) {
     LaunchedEffect(rondaId, jugando) {
         if (!jugando) return@LaunchedEffect
         while (jugando) {
-            val avance = (DURACION_RONDA_S - tiempoRestante).coerceAtMost(20)
-            val duracionArriba = (900L - avance * 25L).coerceAtLeast(400L)
-            val pausa = (500L - avance * 10L).coerceAtLeast(180L)
+            val avance = avanceRondaTopo(tiempoRestante)
+            val duracionArriba = duracionTopoArriba(avance)
+            val pausa = pausaEntreTopos(avance)
             delay(pausa)
             if (!jugando) break
-            val siguiente = (0 until HOYOS).filter { it != activo }.random()
+            val siguiente = siguienteHoyoTopo(activo, kotlin.random.Random.nextFloat())
             activo = siguiente
             delay(duracionArriba)
             if (activo == siguiente) activo = null
@@ -100,7 +126,7 @@ fun TopoScreen(onVolver: () -> Unit) {
             jugando = false
             activo = null
             services.sound.tocar(Efecto.WIN)
-            if (puntaje >= 10) services.progress.completarNivel(juego.id, 1)
+            if (ganoRondaTopo(puntaje)) services.progress.completarNivel(juego.id, 1)
         }
     }
 
