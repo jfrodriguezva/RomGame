@@ -48,4 +48,28 @@ class SnowBrosLogicTest {
         val rodando = patearEnemigo(atrapado, direccion = -1)
         assertEquals(-VEL_RODADA, rodando.velX)
     }
+
+    @Test
+    fun `un enemigo patrullando cerca lastima al jugador en el piso`() {
+        val enemigo = EnemigoNieve(id = 0, x = 100f, velX = 5f)
+        assertTrue(jugadorEnPeligro(jugadorX = 100f, alturaSalto = 0f, enemigo = enemigo))
+    }
+
+    @Test
+    fun `saltar esquiva al enemigo aunque este cerca`() {
+        val enemigo = EnemigoNieve(id = 0, x = 100f, velX = 5f)
+        assertFalse(jugadorEnPeligro(jugadorX = 100f, alturaSalto = 40f, enemigo = enemigo))
+    }
+
+    @Test
+    fun `un enemigo ya atrapado no lastima aunque este cerca`() {
+        val enemigo = EnemigoNieve(id = 0, x = 100f, velX = 0f, golpes = 3, atrapado = true)
+        assertFalse(jugadorEnPeligro(jugadorX = 100f, alturaSalto = 0f, enemigo = enemigo))
+    }
+
+    @Test
+    fun `un enemigo lejos no lastima aunque no se salte`() {
+        val enemigo = EnemigoNieve(id = 0, x = 300f, velX = 5f)
+        assertFalse(jugadorEnPeligro(jugadorX = 100f, alturaSalto = 0f, enemigo = enemigo))
+    }
 }

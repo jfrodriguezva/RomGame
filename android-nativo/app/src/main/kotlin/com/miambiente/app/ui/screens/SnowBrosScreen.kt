@@ -50,6 +50,8 @@ internal const val VEL_RODADA = 230f
 private const val VEL_PROYECTIL = 240f
 private const val ALCANCE_PATADA = 30f
 private const val VELOCIDAD_JUGADOR_BOTON = 200f
+private const val GRAVEDAD_SALTO = 620f
+private const val IMPULSO_SALTO = 340f
 
 internal data class EnemigoNieve(
     val id: Int, val x: Float, val velX: Float,
@@ -70,14 +72,22 @@ internal fun registrarGolpe(enemigo: EnemigoNieve): EnemigoNieve {
 internal fun patearEnemigo(enemigo: EnemigoNieve, direccion: Int): EnemigoNieve =
     if (enemigo.atrapado && !enemigo.rodando) enemigo.copy(rodando = true, velX = VEL_RODADA * direccion) else enemigo
 
+/** Saltar esquiva a un enemigo todavía patrullando (sin atrapar) — el verbo
+ * central de Snow Bros ("saltar y disparar nieve") que faltaba: antes solo
+ * se podía disparar o retroceder para evitar el contacto. */
+internal fun jugadorEnPeligro(jugadorX: Float, alturaSalto: Float, enemigo: EnemigoNieve, radioEnemigo: Float = RADIO_ENEMIGO): Boolean =
+    alturaSalto <= 0f && !enemigo.atrapado && abs(enemigo.x - jugadorX) < radioEnemigo + 12f
+
 /**
  * Rescate de nieve — copia de la modalidad Snow Bros: la nieve no mata al
  * toque, hace falta pegarle 3 veces a un enemigo para atraparlo dentro de
  * una bola quieta, y solo entonces se la puede patear para que ruede y
  * arrase con cualquier otro enemigo en su camino (matanza en cadena real,
- * no uno por uno). Simplificación declarada: una sola plataforma a nivel
- * de piso (sin saltar entre niveles), para concentrar el esfuerzo en el
- * ciclo real de atrapar-y-patear, que es lo que distingue a este arcade.
+ * no uno por uno), y salto para esquivar a un enemigo todavía patrullando
+ * (el verbo central de "saltar y disparar nieve" del arcade original).
+ * Simplificación declarada: una sola plataforma a nivel de piso (sin subir
+ * entre niveles), para concentrar el esfuerzo en el ciclo real de
+ * atrapar-y-patear, que es lo que distingue a este arcade.
  */
 @Composable
 fun NieveScreen(onVolver: () -> Unit) {
@@ -93,6 +103,8 @@ fun NieveScreen(onVolver: () -> Unit) {
 
     var jugadorX by remember { mutableStateOf(ANCHO / 2f) }
     var mirando by remember { mutableStateOf(1) }
+    var alturaSalto by remember { mutableStateOf(0f) }
+    var velocidadSalto by remember { mutableStateOf(0f) }
     var enemigos by remember { mutableStateOf(enemigosIniciales()) }
     var proyectiles by remember { mutableStateOf(listOf<ProyectilNieve>()) }
     var siguienteId by remember { mutableStateOf(10) }
@@ -105,6 +117,8 @@ fun NieveScreen(onVolver: () -> Unit) {
     fun reiniciar() {
         jugadorX = ANCHO / 2f
         mirando = 1
+        alturaSalto = 0f
+        velocidadSalto = 0f
         enemigos = enemigosIniciales()
         proyectiles = emptyList()
         puntaje = 0
@@ -120,6 +134,15 @@ fun NieveScreen(onVolver: () -> Unit) {
         services.sound.tocar(Efecto.CLICK)
     }
 
+    fun saltar() {
+        if (!terminado && alturaSalto == 0f) {
+            val (h, v) = iniciarSalto(IMPULSO_SALTO)
+            alturaSalto = h
+            velocidadSalto = v
+            services.sound.tocar(Efecto.CLICK)
+        }
+    }
+
     LaunchedEffect(terminado) {
         if (terminado) return@LaunchedEffect
         var anterior = withFrameNanos { it }
@@ -130,6 +153,12 @@ fun NieveScreen(onVolver: () -> Unit) {
             if (terminado) break
 
             if (invulnerableHasta != 0L && ahora > invulnerableHasta) invulnerableHasta = 0L
+
+            if (alturaSalto > 0f) {
+                val (h, v) = avanzarSalto(alturaSalto, velocidadSalto, GRAVEDAD_SALTO, dt)
+                alturaSalto = h
+                velocidadSalto = v
+            }
 
             // Patrulla, o rueda si ya la patearon; atrapada-y-quieta no se mueve.
             enemigos = enemigos.map { e ->
@@ -179,8 +208,9 @@ fun NieveScreen(onVolver: () -> Unit) {
             // Solo un enemigo todavía patrullando (sin atrapar) lastima al
             // jugador — uno ya atrapado (quieto o rodando) es inofensivo
             // para quien lo pateó, igual que la bola es "tuya" en el
-            // arcade real una vez que la mandaste a rodar.
-            val peligroso = enemigos.firstOrNull { !it.atrapado && abs(it.x - jugadorX) < RADIO_ENEMIGO + 12f }
+            // arcade real una vez que la mandaste a rodar. Saltando por
+            // encima también lo esquiva, como en el arcade original.
+            val peligroso = enemigos.firstOrNull { jugadorEnPeligro(jugadorX, alturaSalto, it) }
             if (peligroso != null && invulnerableHasta == 0L) {
                 vidas -= 1
                 invulnerableHasta = ahora + INVULNERABILIDAD_NANOS
@@ -251,12 +281,12 @@ fun NieveScreen(onVolver: () -> Unit) {
                     }
                     Box(
                         modifier = Modifier
-                            .offset(x = (jugadorX - 15f).dp, y = (SUELO_Y - 30f).dp)
+                            .offset(x = (jugadorX - 15f).dp, y = (SUELO_Y - 30f - alturaSalto).dp)
                             .size(width = 30.dp, height = 30.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .background(if (invulnerableHasta != 0L) Color(0xFFE0925C) else Color(0xFF6FBF73)),
                         contentAlignment = Alignment.Center,
-                    ) { Text(if (mirando > 0) "🙂" else "🙃", fontSize = 18.sp) }
+                    ) { Text(if (alturaSalto > 0f) "🤸" else if (mirando > 0) "🙂" else "🙃", fontSize = 18.sp) }
                 }
             }
             Text(
@@ -271,6 +301,7 @@ fun NieveScreen(onVolver: () -> Unit) {
                     jugadorX = (jugadorX - VELOCIDAD_JUGADOR_BOTON * dt).coerceIn(RADIO_ENEMIGO, ANCHO - RADIO_ENEMIGO)
                 }
                 BotonArcade("❄️") { disparar() }
+                BotonArcade("🤸") { saltar() }
                 BotonMantenerArcade("➡️") { dt ->
                     mirando = 1
                     jugadorX = (jugadorX + VELOCIDAD_JUGADOR_BOTON * dt).coerceIn(RADIO_ENEMIGO, ANCHO - RADIO_ENEMIGO)
