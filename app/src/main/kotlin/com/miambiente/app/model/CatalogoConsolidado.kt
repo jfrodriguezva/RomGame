@@ -30,8 +30,7 @@ private fun material(
 
 /**
  * Catálogo visible: reúne actividades semejantes sin borrar sus pantallas,
- * reglas, niveles ni progreso. Los Arcade quedan deliberadamente fuera hasta
- * que vuelvan a superar una validación funcional individual.
+ * reglas, niveles ni progreso.
  */
 val MATERIALES_CONSOLIDADOS = listOf(
     material("percepcion", "Percepción sensorial", "🔴", "Color, textura, peso, temperatura y sentidos", CategoriaMaterial.LOGICA, "colores", "textura", "temperatura", "peso", "sabor", "olfato", "sentidos", "sombras", "diferencias"),
@@ -54,19 +53,12 @@ val MATERIALES_CONSOLIDADOS = listOf(
     material("vida-practica", "Vida práctica", "🫗", "Rutinas, higiene, mesa y coordinación fina", CategoriaMaterial.COORDINACION, "vida-practica", "pinza", "tamanos", "rutina", "mesa", "lavado-manos"),
     material("coordinacion", "Coordinación y reflejos", "🎯", "Precisión, ritmo, vibración y reacción", CategoriaMaterial.COORDINACION, "burbujas", "canasta", "globo", "vibra-adivina", "reflejo-color"),
 
-    material("alineacion", "Alineación y duelo", "⭕", "Gato, cuatro en línea y piedra, papel o tijera", CategoriaMaterial.MESA, "gato", "conecta4", "rps"),
-    material("recorridos-tablero", "Dados y recorridos", "🎲", "Oca, serpientes, escaleras y retos", CategoriaMaterial.MESA, "oca", "serpientes", "dado"),
+    material("alineacion", "Alineación y duelo", "⭕", "Gato y piedra, papel o tijera", CategoriaMaterial.MESA, "gato", "rps"),
     material("memoria-mesa", "Memoria por turnos", "🧠", "Encuentra parejas contra la computadora", CategoriaMaterial.MESA, "memoria-turnos"),
-    material("cartas-solitario", "Solitarios", "🃏", "Solitario clásico y araña", CategoriaMaterial.MESA, "solitario", "arana-cartas"),
-    material("loterias", "Lotería y bingo", "🎯", "Cartones, cantos y reconocimiento", CategoriaMaterial.MESA, "loteria", "bingo"),
-    material("estrategia-tablero", "Estrategia de tablero", "♞", "Damas, damas chinas y ajedrez", CategoriaMaterial.MESA, "damas", "damas-chinas", "ajedrez"),
-    material("deduccion-fichas", "Deducción y fichas", "🕵️", "Dominó y Adivina quién", CategoriaMaterial.MESA, "domino", "adivinaquien"),
+    material("domino", "Dominó", "🀄", "Encaja tu ficha por número", CategoriaMaterial.MESA, "domino"),
+    material("busca-objetos", "Encuentra los objetos", "🔟", "Diez objetos escondidos en una escena", CategoriaMaterial.MESA, "diez-objetos"),
+    material("busca-diferencias", "Encuentra las diferencias", "🖼️", "Diez diferencias entre dos imágenes", CategoriaMaterial.MESA, "diez-diferencias"),
 )
 
 fun buscarMaterialConsolidado(id: String) = MATERIALES_CONSOLIDADOS.find { it.id == id }
 fun juegosDe(material: MaterialConsolidado) = material.modos.mapNotNull(::buscarJuego)
-
-val IDS_ARCADE_OCULTOS = setOf(
-    "tetris", "snake", "arkanoid", "topo", "mosaico", "vaqueros",
-    "comepuntos", "nieve", "escuadron-estelar", "gran-premio", "carreras",
-)

@@ -17,49 +17,30 @@ import com.miambiente.app.ui.screens.AbecedarioScreen
 import com.miambiente.app.ui.screens.AnimalesScreen
 import com.miambiente.app.ui.screens.BanderasScreen
 import com.miambiente.app.ui.screens.BarrasNumericasScreen
-import com.miambiente.app.ui.screens.AdivinaQuienScreen
 import com.miambiente.app.ui.screens.AlfabetoMovilScreen
 import com.miambiente.app.ui.screens.AranaScreen
 import com.miambiente.app.ui.screens.BancoDoradoScreen
 import com.miambiente.app.ui.screens.BinomioScreen
-import com.miambiente.app.ui.screens.BingoScreen
-import com.miambiente.app.ui.screens.LoteriaScreen
 import com.miambiente.app.ui.screens.BurbujasScreen
 import com.miambiente.app.ui.screens.CanastaScreen
 import com.miambiente.app.ui.screens.CaraScreen
-import com.miambiente.app.ui.screens.CarrerasScreen
 import com.miambiente.app.ui.screens.CicloAguaScreen
 import com.miambiente.app.ui.screens.CicloVidaScreen
 import com.miambiente.app.ui.screens.CilindrosScreen
 import com.miambiente.app.ui.screens.CollageScreen
 import com.miambiente.app.ui.screens.ColorearScreen
 import com.miambiente.app.ui.screens.ColoresScreen
-import com.miambiente.app.ui.screens.Conecta4Screen
 import com.miambiente.app.ui.screens.ContarScreen
 import com.miambiente.app.ui.screens.ContinentesScreen
 import com.miambiente.app.ui.screens.CuerpoScreen
-import com.miambiente.app.ui.screens.DadoScreen
-import com.miambiente.app.ui.screens.AjedrezScreen
 import com.miambiente.app.ui.screens.AjustesScreen
-import com.miambiente.app.ui.screens.ArkanoidScreen
-import com.miambiente.app.ui.screens.MosaicoScreen
-import com.miambiente.app.ui.screens.VaquerosScreen
-import com.miambiente.app.ui.screens.ComepuntosScreen
-import com.miambiente.app.ui.screens.NieveScreen
-import com.miambiente.app.ui.screens.EscuadronEstelarScreen
-import com.miambiente.app.ui.screens.GranPremioScreen
-import com.miambiente.app.ui.screens.DamasChinasScreen
-import com.miambiente.app.ui.screens.DamasScreen
-import com.miambiente.app.ui.screens.SnakeScreen
-import com.miambiente.app.ui.screens.TetrisScreen
-import com.miambiente.app.ui.screens.TopoScreen
-import com.miambiente.app.ui.screens.SolitarioScreen
-import com.miambiente.app.ui.screens.SolitarioAranaScreen
 import com.miambiente.app.ui.screens.DiaNocheScreen
 import com.miambiente.app.ui.screens.DominoScreen
 import com.miambiente.app.ui.screens.DiasSemanaScreen
 import com.miambiente.app.ui.screens.DietaAnimalScreen
 import com.miambiente.app.ui.screens.DiferenciasScreen
+import com.miambiente.app.ui.screens.DiezObjetosScreen
+import com.miambiente.app.ui.screens.DiezDiferenciasScreen
 import com.miambiente.app.ui.screens.ElLaScreen
 import com.miambiente.app.ui.screens.EmocionesScreen
 import com.miambiente.app.ui.screens.EscaleraMarronScreen
@@ -85,7 +66,6 @@ import com.miambiente.app.ui.screens.MesaSilencioScreen
 import com.miambiente.app.ui.screens.MaterialConsolidadoScreen
 import com.miambiente.app.ui.screens.MitadesScreen
 import com.miambiente.app.ui.screens.NumerosScreen
-import com.miambiente.app.ui.screens.OcaScreen
 import com.miambiente.app.ui.screens.ObjetosScreen
 import com.miambiente.app.ui.screens.OficiosScreen
 import com.miambiente.app.ui.screens.OlfatoScreen
@@ -106,7 +86,6 @@ import com.miambiente.app.ui.screens.RutinaScreen
 import com.miambiente.app.ui.screens.SaborScreen
 import com.miambiente.app.ui.screens.SentidosScreen
 import com.miambiente.app.ui.screens.SeresVivosScreen
-import com.miambiente.app.ui.screens.SerpientesScreen
 import com.miambiente.app.ui.screens.SilabasScreen
 import com.miambiente.app.ui.screens.SingularPluralScreen
 import com.miambiente.app.ui.screens.SistemaSolarScreen
@@ -260,9 +239,6 @@ class MainActivity : ComponentActivity() {
                         composable("diferencias") { DiferenciasScreen(volver) }
                         composable("objetos") { ObjetosScreen(volver) }
                         composable("memoria-turnos") { MemoriaTurnosScreen(volver) }
-                        composable("oca") { OcaScreen(volver) }
-                        composable("serpientes") { SerpientesScreen(volver) }
-                        composable("dado") { DadoScreen(volver) }
                         composable("patron") { PatronScreen(volver) }
                         composable("pizarra") { PizarraScreen(volver) }
                         composable("collage") { CollageScreen(volver) }
@@ -276,26 +252,9 @@ class MainActivity : ComponentActivity() {
                         composable("binomio") { BinomioScreen(volver) }
                         composable("tabla-cien") { TablaCienScreen(volver) }
                         composable("banco-dorado") { BancoDoradoScreen(volver) }
-                        composable("bingo") { BingoScreen(volver) }
-                        composable("loteria") { LoteriaScreen(volver) }
                         composable("domino") { DominoScreen(volver) }
-                        composable("conecta4") { Conecta4Screen(volver) }
-                        composable("adivinaquien") { AdivinaQuienScreen(volver) }
-                        composable("damas") { DamasScreen(volver) }
-                        composable("damas-chinas") { DamasChinasScreen(volver) }
-                        composable("tetris") { TetrisScreen(volver) }
-                        composable("snake") { SnakeScreen(volver) }
-                        composable("arkanoid") { ArkanoidScreen(volver) }
-                        composable("topo") { TopoScreen(volver) }
-                        composable("mosaico") { MosaicoScreen(volver) }
-                        composable("vaqueros") { VaquerosScreen(volver) }
-                        composable("comepuntos") { ComepuntosScreen(volver) }
-                        composable("nieve") { NieveScreen(volver) }
-                        composable("escuadron-estelar") { EscuadronEstelarScreen(volver) }
-                        composable("gran-premio") { GranPremioScreen(volver) }
-                        composable("solitario") { SolitarioScreen(volver) }
-                        composable("arana-cartas") { SolitarioAranaScreen(volver) }
-                        composable("ajedrez") { AjedrezScreen(volver) }
+                        composable("diez-objetos") { DiezObjetosScreen(volver) }
+                        composable("diez-diferencias") { DiezDiferenciasScreen(volver) }
 
                         // --- Movimiento y coordinación ---
                         composable("laberinto") { LaberintoScreen(volver) }
@@ -303,7 +262,6 @@ class MainActivity : ComponentActivity() {
                         composable("canasta") { CanastaScreen(volver) }
                         composable("globo") { GloboScreen(volver) }
                         composable("arana") { AranaScreen(volver) }
-                        composable("carreras") { CarrerasScreen(volver) }
 
                         // --- Exclusivos de la versión nativa ---
                         composable("vibra-adivina") { VibraAdivinaScreen(volver) }

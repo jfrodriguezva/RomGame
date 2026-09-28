@@ -18,3 +18,11 @@ Thumbs.db
 # Runtime reports
 captures/
 *.hprof
+
+# Restos de la versión web retirada (React/Next/Capacitor): no forman parte
+# del producto nativo y no deben reintroducirse (ver AGENTS.md).
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo

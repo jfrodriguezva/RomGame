@@ -6,17 +6,15 @@ import org.junit.Test
 
 class CatalogoConsolidadoTest {
     @Test
-    fun `cada juego no arcade aparece exactamente en un material`() {
+    fun `cada juego del catalogo aparece exactamente en un material`() {
         val visibles = MATERIALES_CONSOLIDADOS.flatMap { it.modos }
-        val esperados = CATALOGO.map { it.id }.filterNot { it in IDS_ARCADE_OCULTOS }
+        val esperados = CATALOGO.map { it.id }
         assertEquals("Hay modos repetidos entre materiales", visibles.toSet().size, visibles.size)
         assertEquals(esperados.toSet(), visibles.toSet())
     }
 
     @Test
-    fun `ningun arcade aparece en el catalogo consolidado`() {
-        val visibles = MATERIALES_CONSOLIDADOS.flatMap { it.modos }.toSet()
-        assertTrue(visibles.intersect(IDS_ARCADE_OCULTOS).isEmpty())
+    fun `no existe categoria arcade`() {
         assertTrue(CategoriaMaterial.entries.none { it.name == "ARCADE" })
     }
 }

@@ -114,9 +114,6 @@ val CATALOGO = listOf(
     GameDef("diferencias", "¿Qué es distinto?", "🔍", "Encuentra lo diferente", Area.SENSORIAL, 4, "Pares y contrastes", "Discriminación visual fina y atención al detalle."),
     GameDef("objetos", "Encuentra los objetos", "🔎", "Busca entre muchos", Area.SENSORIAL, 4, "Búsqueda visual", "Atención selectiva y rastreo visual ordenado."),
     GameDef("memoria-turnos", "Memoria por turnos", "🧠", "Encuentra más parejas que la computadora", Area.COMPANIA, 2, "Juego de mesa", "Esperar el turno, memoria y aceptar perder o ganar sin drama."),
-    GameDef("oca", "El juego de la oca", "🦢", "Tira el dado, oca, puente o pozo", Area.COMPANIA, 2, "Juego de mesa", "Esperar el turno y aceptar el azar."),
-    GameDef("serpientes", "Serpientes y escaleras", "🐍", "Tira el dado y avanza", Area.COMPANIA, 2, "Juego de mesa", "Contar avanzando y tolerar la sorpresa."),
-    GameDef("dado", "Dado de retos", "🎲", "Tira el dado y muévete", Area.COMPANIA, 3, "Movimiento dirigido", "Escuchar una consigna y ejecutarla con el cuerpo.", libre = true),
     GameDef("patron", "Las campanas", "🔔", "Repite la melodía", Area.SENSORIAL, 4, "Campanas Montessori", "Memoria auditiva y discriminación de tonos."),
     GameDef("pizarra", "La pizarra grande", "🖍️", "Dibuja lo que quieras", Area.CREATIVA, 2, "Pizarra y trazo libre", "Expresión libre, trazo amplio y experimentación con el color.", libre = true),
     GameDef("collage", "Collage libre", "🖼️", "Coloca estampas donde quieras", Area.CREATIVA, 2, "Collage y composición libre", "Composición espacial libre y motricidad fina de precisión.", libre = true),
@@ -130,30 +127,9 @@ val CATALOGO = listOf(
     GameDef("binomio", "El cubo del binomio", "🧊", "Arma el cubo de colores", Area.SENSORIAL, 4, "Cubo del binomio", "Patrón espacial y orden; base sensorial del álgebra."),
     GameDef("tabla-cien", "La tabla del cien", "💯", "Coloca del 1 al 100", Area.MATEMATICAS, 4, "Tabla del cien", "Secuencia numérica y estructura de la decena."),
     GameDef("banco-dorado", "El banco dorado", "🟡", "Unidades, decenas y centenas", Area.MATEMATICAS, 4, "Perlas doradas", "Sistema decimal a la vista: componer números grandes."),
-    GameDef("bingo", "Bingo con imágenes", "🎱", "Escucha, busca y marca en tu cartón", Area.COMPANIA, 2, "Juego de mesa", "Vocabulario, atención y correspondencia."),
-    GameDef("loteria", "Lotería mexicana", "🃏", "El gritón canta y tú marcas tu cartón", Area.COMPANIA, 2, "Lotería mexicana", "Escuchar con atención, reconocer por el nombre y esperar su turno."),
     GameDef("domino", "Dominó", "🀄", "Encaja tu ficha por número", Area.COMPANIA, 2, "Juego de mesa", "Correspondencia numérica y esperar el turno."),
-    GameDef("conecta4", "Cuatro en línea", "🔵", "Alinea cuatro fichas antes que la computadora", Area.COMPANIA, 2, "Juego de mesa", "Planeación simple y anticipar la jugada del otro."),
-    GameDef("adivinaquien", "Adivina quién es", "🕵️", "Pregunta y descubre", Area.COMPANIA, 2, "Juego de deducción", "Razonamiento lógico por eliminación."),
-    GameDef("damas", "Damas inglesas", "⚫", "Captura y corona tus fichas", Area.COMPANIA, 2, "Juego de mesa", "Planeación a varios pasos y anticipar capturas del rival."),
-    GameDef("damas-chinas", "Damas chinas", "🔺", "Lleva tus canicas al otro lado de la estrella", Area.COMPANIA, 2, "Juego de mesa", "Planeación de rutas y saltos encadenados."),
-    // "🎴" en vez de un carácter del bloque Unicode "Playing Cards" (como
-    // "🂡"): ese bloque casi nunca tiene glifo de color en las fuentes —
-    // el mismo bug de iconos que no se ven, encontrado y corregido antes
-    // con el dominó.
-    GameDef("solitario", "Solitario", "🎴", "Ordena las cartas por palo y color", Area.COMPANIA, 2, "Juego de cartas", "Paciencia, clasificación y estrategia en solitario."),
-    GameDef("arana-cartas", "Solitario araña", "🕸️", "Arma secuencias del As al Rey", Area.COMPANIA, 2, "Juego de cartas", "Planeación a varios pasos y memoria de lo ya visto."),
-    GameDef("ajedrez", "Ajedrez", "♞", "Da jaque mate al rey contrario", Area.COMPANIA, 2, "Juego de mesa", "Planeación a varios pasos y anticipar la jugada del rival."),
-    GameDef("tetris", "Tetris", "🧱", "Acomoda las piezas y completa líneas", Area.COMPANIA, 2, "Juego de mesa", "Rotación mental, planeación espacial y reflejos."),
-    GameDef("snake", "La víbora", "🐍", "Come y no choques", Area.COMPANIA, 2, "Juego arcade", "Planeación de ruta, reflejos y control del error."),
-    GameDef("arkanoid", "Rompe ladrillos", "🧱", "Rebota la pelota y rompe todos los ladrillos", Area.COMPANIA, 2, "Juego arcade", "Coordinación ojo-mano y anticipar trayectorias."),
-    GameDef("topo", "Atrapa al topo", "🐹", "Tócalo antes de que se esconda", Area.COMPANIA, 2, "Juego arcade", "Tiempo de reacción y atención sostenida."),
-    GameDef("mosaico", "Mosaico sorpresa", "🖼️", "Descubre la imagen sin tocar a los guardianes", Area.COMPANIA, 4, "Arcade de territorio", "Planeación espacial, prudencia y control de impulsos."),
-    GameDef("vaqueros", "Vaqueros del ocaso", "🤠", "Protege el pueblo y atrapa a los bandidos", Area.COMPANIA, 5, "Arcade de puntería", "Atención visual, precisión y velocidad de reacción."),
-    GameDef("comepuntos", "Comepuntos", "🟡", "Come todos los puntos y evita a los fantasmas", Area.COMPANIA, 4, "Laberinto arcade", "Planeación de rutas, orientación y anticipación."),
-    GameDef("nieve", "Rescate de nieve", "⛄", "Convierte a los traviesos en bolas de nieve", Area.COMPANIA, 4, "Arcade de plataformas", "Secuenciación, precisión y atención dividida."),
-    GameDef("escuadron-estelar", "Escuadrón estelar", "🚀", "Pilota, apunta y protege la galaxia", Area.COMPANIA, 5, "Arcade espacial", "Coordinación ojo-mano y anticipación de trayectorias."),
-    GameDef("gran-premio", "Gran premio", "🏁", "Cambia de carril y llega primero", Area.COMPANIA, 4, "Arcade de carreras", "Reflejos, anticipación y toma rápida de decisiones."),
+    GameDef("diez-objetos", "Encuentra los objetos", "🔟", "Busca los diez objetos escondidos en la escena", Area.COMPANIA, 3, "Juego de buscar y encontrar", "Atención selectiva y rastreo visual ordenado sobre una escena completa."),
+    GameDef("diez-diferencias", "Encuentra las diferencias", "🖼️", "Compara dos imágenes y halla las diez diferencias", Area.COMPANIA, 3, "Juego de comparar imágenes", "Discriminación visual fina y atención al detalle entre dos escenas casi iguales."),
 
     // --- Movimiento y coordinación (independientes) ---
     GameDef("laberinto", "Laberinto", "🌀", "Encuentra la salida", Area.MOVIMIENTO, 4, "Control del movimiento", "Planear una ruta y seguirla sin chocar."),
@@ -161,7 +137,6 @@ val CATALOGO = listOf(
     GameDef("canasta", "Atrapa las estrellas", "🧺", "Mueve la canasta", Area.MOVIMIENTO, 3, "Coordinación ojo-mano", "Anticipar una trayectoria y responder a tiempo."),
     GameDef("globo", "El globo volador", "🎈", "No dejes que caiga", Area.MOVIMIENTO, 3, "Coordinación ojo-mano", "Ritmo y constancia del toque."),
     GameDef("arana", "La araña pintora", "🕷️", "Descubre la imagen", Area.MOVIMIENTO, 4, "Recorrido y estrategia", "Recorrer un espacio completo evitando obstáculos."),
-    GameDef("carreras", "Carreras", "🏎️", "Esquiva y llega a la meta", Area.MOVIMIENTO, 4, "Reflejos", "Atención sostenida y respuesta veloz."),
 
     // --- Exclusivos de la versión nativa (no existen en la web) ---
     GameDef("vibra-adivina", "Vibra y adivina", "📳", "Siente los pulsos y cuenta", Area.SENSORIAL, 4, "Percepción táctil", "Refinar el tacto sintiendo patrones de vibración reales — imposible en la versión web."),
