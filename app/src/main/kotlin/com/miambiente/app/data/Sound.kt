@@ -21,9 +21,7 @@ enum class Efecto { CORRECT, WRONG, WIN, CLICK, STAR }
 
 private const val TASA_MUESTREO = 44100
 
-// Escala pentatónica mayor (Do-Re-Mi-Sol-La): sin semitonos disonantes, así
-// que cualquier combinación de teclas que un niño toque suena musical —
-// nunca hay una "nota equivocada", como en un xilófono real de jardín.
+// Escala de Do mayor (Do a Si): las siete barras de un xilófono de jardín.
 private val FRECUENCIAS_NOTAS = doubleArrayOf(
     261.63, // Do4
     293.66, // Re4
@@ -93,17 +91,19 @@ class SoundPlayer {
     private val generador = ToneGenerator(AudioManager.STREAM_MUSIC, 70)
 
     // Una pista por nota (no una compartida): así dos teclas tocadas rápido
-    // seguido pueden sonar superpuestas, como mallets reales, en vez de
-    // cortarse una a la otra.
+    // seguido suenan superpuestas, como mallets reales, en vez de cortarse
+    // una a la otra. Volver a tocar la MISMA barra sí reinicia su sonido,
+    // igual que en un instrumento real. Las pistas son estáticas y se
+    // reutilizan, así que un toque no crea ni destruye un AudioTrack; solo
+    // se conservan las del instrumento en uso (7 como máximo) para no
+    // agotar las pistas de audio del sistema.
     // Se genera cada nota la primera vez que se toca. Precargar 49 buffers PCM
     // en el hilo principal hacía que Android mantuviera visible el splash
     // durante varios segundos antes de mostrar el menú.
-    private val sonidosInstrumentos = Array(InstrumentoSonoro.entries.size) {
-        arrayOfNulls<ShortArray>(FRECUENCIAS_NOTAS.size)
-    }
-    private var pistaInstrumento: AudioTrack? = null
+    private var instrumentoCargado: InstrumentoSonoro? = null
+    private val pistasNotas = arrayOfNulls<AudioTrack>(FRECUENCIAS_NOTAS.size)
 
-    /** Nota real de xilófono (barra percutida, sintetizada) — cada índice es un grado de la escala pentatónica. */
+    /** Nota real de xilófono (barra percutida, sintetizada) — cada índice es un grado de la escala. */
     fun tocarNota(indice: Int) {
         tocarInstrumento(InstrumentoSonoro.XILOFONO, indice)
     }
@@ -111,13 +111,24 @@ class SoundPlayer {
     @Synchronized
     fun tocarInstrumento(instrumento: InstrumentoSonoro, nota: Int) {
         if (!activo) return
+        if (instrumento != instrumentoCargado) {
+            liberarNotas()
+            instrumentoCargado = instrumento
+        }
         val indice = nota.coerceIn(0, FRECUENCIAS_NOTAS.lastIndex)
-        val sonido = sonidosInstrumentos[instrumento.ordinal][indice]
-            ?: sintetizarInstrumento(instrumento, FRECUENCIAS_NOTAS[indice]).also {
-                sonidosInstrumentos[instrumento.ordinal][indice] = it
-            }
-        pistaInstrumento?.run { stop(); release() }
-        pistaInstrumento = crearPistaEstatica(sonido).also { it.play() }
+        val pista = pistasNotas[indice]
+            ?: crearPistaEstatica(sintetizarInstrumento(instrumento, FRECUENCIAS_NOTAS[indice]))
+                .also { pistasNotas[indice] = it }
+        pista.stop()
+        pista.reloadStaticData()
+        pista.play()
+    }
+
+    private fun liberarNotas() {
+        pistasNotas.forEachIndexed { indice, pista ->
+            pista?.run { stop(); release() }
+            pistasNotas[indice] = null
+        }
     }
 
     fun tocar(efecto: Efecto) {
@@ -132,9 +143,10 @@ class SoundPlayer {
         generador.startTone(tono, 120)
     }
 
+    @Synchronized
     fun liberar() {
         generador.release()
-        pistaInstrumento?.run { stop(); release() }
-        pistaInstrumento = null
+        liberarNotas()
+        instrumentoCargado = null
     }
 }

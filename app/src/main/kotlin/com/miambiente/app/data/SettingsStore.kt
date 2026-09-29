@@ -63,13 +63,16 @@ class SettingsStore(private val context: Context) {
         context.settingsDataStore.edit { it[Claves.NOMBRE] = nombre }
     }
 
-    suspend fun toggleSonido() = toggle(Claves.SONIDO)
-    suspend fun toggleVoz() = toggle(Claves.VOZ)
-    suspend fun toggleVibracion() = toggle(Claves.VIBRACION)
-    suspend fun toggleMusica() = toggle(Claves.MUSICA)
-    suspend fun toggleCalma() = toggle(Claves.CALMA)
+    suspend fun toggleSonido() = toggle(Claves.SONIDO, porDefecto = true)
+    suspend fun toggleVoz() = toggle(Claves.VOZ, porDefecto = true)
+    suspend fun toggleVibracion() = toggle(Claves.VIBRACION, porDefecto = true)
+    suspend fun toggleMusica() = toggle(Claves.MUSICA, porDefecto = true)
+    suspend fun toggleCalma() = toggle(Claves.CALMA, porDefecto = false)
 
-    private suspend fun toggle(clave: androidx.datastore.preferences.core.Preferences.Key<Boolean>) {
-        context.settingsDataStore.edit { it[clave] = !(it[clave] ?: true) }
+    // `porDefecto` debe coincidir con el de `settings`: si no, el primer
+    // toque sobre un ajuste nunca guardado escribe el mismo valor que ya se
+    // mostraba y parece no hacer nada.
+    private suspend fun toggle(clave: androidx.datastore.preferences.core.Preferences.Key<Boolean>, porDefecto: Boolean) {
+        context.settingsDataStore.edit { it[clave] = !(it[clave] ?: porDefecto) }
     }
 }

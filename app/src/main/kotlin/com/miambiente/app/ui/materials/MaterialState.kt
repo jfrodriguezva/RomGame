@@ -28,7 +28,9 @@ class MaterialState(
     val juego: GameDef,
     private val scope: CoroutineScope,
 ) {
-    var nivel by mutableStateOf(1)
+    // Retoma donde se quedó: el primer nivel todavía sin completar. Antes
+    // siempre arrancaba en 1 aunque el progreso ya estuviera guardado.
+    var nivel by mutableStateOf(services.progress.nivelGuardado(juego.id).coerceIn(1, 100))
         private set
     var nota by mutableStateOf<String?>(null)
         private set

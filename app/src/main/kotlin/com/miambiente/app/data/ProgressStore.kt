@@ -1,13 +1,18 @@
 package com.miambiente.app.data
 
 import android.content.Context
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.miambiente.app.model.estrellasPara
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 private val Context.progressDataStore by preferencesDataStore(name = "progreso")
 
@@ -24,11 +29,24 @@ data class GameProgress(
  * dispositivo — se pierde si se desinstala, por diseño (igual que la
  * versión web).
  */
-class ProgressStore(private val context: Context) {
+class ProgressStore(private val context: Context, scope: CoroutineScope) {
     private fun claveCompletados(id: String) = stringPreferencesKey("${id}_completados")
     private fun claveNivel(id: String) = intPreferencesKey("${id}_nivel")
     private fun claveEstrellas(id: String) = intPreferencesKey("${id}_estrellas")
     private fun claveVeces(id: String) = intPreferencesKey("${id}_veces")
+
+    // Copia en memoria, siempre al día, de todo el progreso. Permite que un
+    // material sepa en qué nivel arrancar sin esperar una lectura async (que
+    // haría aparecer el nivel 1 un instante y leer su consigna en voz alta).
+    private val cache: StateFlow<Preferences?> =
+        context.progressDataStore.data.stateIn(scope, SharingStarted.Eagerly, null)
+
+    /** `true` en cuanto el progreso guardado terminó de leerse por primera vez. */
+    val listo: StateFlow<Boolean> =
+        cache.map { it != null }.stateIn(scope, SharingStarted.Eagerly, false)
+
+    /** Último nivel desbloqueado de un material, donde conviene retomarlo. */
+    fun nivelGuardado(id: String): Int = cache.value?.get(claveNivel(id)) ?: 1
 
     fun progresoDe(id: String): Flow<GameProgress> = context.progressDataStore.data.map { p ->
         GameProgress(

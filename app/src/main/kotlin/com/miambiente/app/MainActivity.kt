@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.navigation.compose.NavHost
@@ -118,10 +119,11 @@ object Ruta {
 }
 
 class MainActivity : ComponentActivity() {
+    private val services: Services get() = (application as RominaApp).services
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val services = Services(applicationContext)
 
         setContent {
             MiAmbienteTheme {
@@ -131,7 +133,12 @@ class MainActivity : ComponentActivity() {
                     val settings by produceState<com.miambiente.app.data.Settings?>(initialValue = null, services) {
                         services.settings.settings.collect { value = it }
                     }
+                    // También espera el progreso guardado: cada material
+                    // arranca en su último nivel desbloqueado y lo lee de
+                    // forma síncrona al abrirse.
+                    val progresoListo by services.progress.listo.collectAsState()
                     val actual = settings ?: return@CompositionLocalProvider
+                    if (!progresoListo) return@CompositionLocalProvider
 
                     val navController = rememberNavController()
                     val volver: () -> Unit = { navController.popBackStack() }
@@ -270,5 +277,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    // Al pasar a segundo plano (botón de inicio, pantalla apagada) se
+    // silencia todo: sin esto el fondo musical seguía en bucle y la voz
+    // terminaba su consigna con la app ya cerrada.
+    override fun onStop() {
+        super.onStop()
+        services.musica.pausar()
+        services.speech.callar()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        services.musica.reanudar()
     }
 }
