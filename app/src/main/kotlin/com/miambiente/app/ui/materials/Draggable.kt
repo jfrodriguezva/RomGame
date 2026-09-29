@@ -28,7 +28,9 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -43,12 +45,10 @@ import kotlinx.coroutines.launch
  * MaterialClasificar son por toques allá, por arrastre real aquí).
  *
  * `descripcion` es opcional para no romper las llamadas ya existentes,
- * pero cuando se da, TalkBack puede al menos anunciar QUÉ es cada pieza
- * u objetivo — el gesto de arrastrar en sí no tiene una alternativa
- * accesible todavía (eso necesitaría acciones de accesibilidad
- * personalizadas: "tomar" y luego "soltar aquí" con doble toque, no solo
- * una descripción). Documentado como limitación real, no resuelta del
- * todo, en el README.
+ * pero cuando se da, TalkBack puede anunciar QUÉ es cada pieza u
+ * objetivo. El gesto de arrastrar en sí tiene su alternativa accesible en
+ * `accionesAccesibles` de `PiezaArrastrable`: acciones personalizadas que
+ * colocan la pieza directamente, sin arrastrar.
  */
 /**
  * `resaltado` es el segundo pedazo del feedback de arrastre real: antes
@@ -90,6 +90,9 @@ fun PiezaArrastrable(
     tamano: Dp,
     clave: Any,
     descripcion: String? = null,
+    // Alternativa al arrastre para TalkBack y switch access: cada acción
+    // coloca la pieza directamente (p. ej. "Poner en Vivo").
+    accionesAccesibles: List<CustomAccessibilityAction> = emptyList(),
     // Bug real reportado varias veces ("sigue fallando al arrastrar y
     // colocar"): antes `onSoltar`/`onArrastrar` solo mandaban el punto
     // CENTRAL de la pieza, y `ZonaSoltar` exigía que ese único punto
@@ -123,7 +126,10 @@ fun PiezaArrastrable(
     Box(
         modifier = Modifier
             .size(tamano)
-            .then(if (descripcion != null) Modifier.semantics { contentDescription = descripcion } else Modifier)
+            .semantics {
+                if (descripcion != null) contentDescription = descripcion
+                if (accionesAccesibles.isNotEmpty()) customActions = accionesAccesibles
+            }
             .onGloballyPositioned { origenRoot = it.positionInRoot() }
             .graphicsLayer {
                 translationX = offset.value.x

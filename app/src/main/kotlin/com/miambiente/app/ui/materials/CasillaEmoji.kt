@@ -14,6 +14,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
@@ -36,6 +40,8 @@ fun CasillaEmoji(
     tamanoFuente: TextUnit = 28.sp,
     acertado: Boolean = false,
     habilitado: Boolean = true,
+    // Nombre para TalkBack cuando el emoji solo no basta (p. ej. "manzana").
+    descripcion: String? = null,
     onClick: () -> Unit,
 ) {
     val interaccion = remember { MutableInteractionSource() }
@@ -47,7 +53,11 @@ fun CasillaEmoji(
             .clip(RoundedCornerShape(12.dp))
             .background(if (acertado) Color(0xFFE9F0E4) else Color.White)
             .then(if (acertado) Modifier.border(2.dp, Color(0xFF4C7A3A), RoundedCornerShape(12.dp)) else Modifier)
-            .clickable(interactionSource = interaccion, indication = null, enabled = habilitado) { onClick() }
+            .clickable(interactionSource = interaccion, indication = null, enabled = habilitado, role = Role.Button) { onClick() }
+            .semantics {
+                if (descripcion != null) contentDescription = descripcion
+                if (acertado) stateDescription = "Encontrado"
+            }
             .padding(14.dp),
         contentAlignment = Alignment.Center,
     ) { Text(emoji, fontSize = tamanoFuente) }

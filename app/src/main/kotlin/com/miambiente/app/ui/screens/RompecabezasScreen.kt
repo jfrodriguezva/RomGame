@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
@@ -48,8 +49,7 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
 
     // Mismo bug de fondo del arrastre que en MaterialOrdenar: solapamiento
     // de rectángulos en vez de exigir el punto central exacto.
-    fun soltar(posicionCorrecta: Int, rectPieza: Rect) {
-        val ranura = ranuraRects.entries.find { (_, rect) -> rect.overlaps(rectPieza) }?.key
+    fun colocar(posicionCorrecta: Int, ranura: Int?) {
         if (ranura == posicionCorrecta) {
             estado.acierto("¡Ahí va!")
             colocadas = colocadas + posicionCorrecta
@@ -59,12 +59,17 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
         }
     }
 
+    fun soltar(posicionCorrecta: Int, rectPieza: Rect) {
+        colocar(posicionCorrecta, ranuraRects.entries.find { (_, rect) -> rect.overlaps(rectPieza) }?.key)
+    }
+
     GameShell(
         juego = juego,
         consigna = if (completo) "¡Armaste la imagen!" else "Arrastra cada pieza a su lugar",
         nota = estado.nota,
         celebrar = estado.logrado,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
         acciones = if (estado.logrado) {
             { com.miambiente.app.ui.materials.BotonSiguienteNivel(colores, onClick = estado::siguiente) }
         } else null,
@@ -112,6 +117,9 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
                             clave = posicion,
                             onArrastrar = { rect -> rectArrastre = rect },
                             onSoltar = { rect -> soltar(posicion, rect) },
+                            accionesAccesibles = PIEZAS.indices.filterNot { it in colocadas }.map { ranura ->
+                                CustomAccessibilityAction("Poner en la casilla ${ranura + 1}") { colocar(posicion, ranura); true }
+                            },
                         ) { Text(emoji, fontSize = 26.sp) }
                     }
                 }

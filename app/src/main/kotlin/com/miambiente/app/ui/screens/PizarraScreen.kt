@@ -37,6 +37,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -71,7 +72,9 @@ import com.miambiente.app.data.Patron
 import com.miambiente.app.data.borrarDeGaleria
 import com.miambiente.app.data.DibujoGuardado
 import com.miambiente.app.data.exportarParaCompartir
+import com.miambiente.app.data.guardarBorrador
 import com.miambiente.app.data.guardarEnGaleria
+import com.miambiente.app.data.leerBorrador
 import com.miambiente.app.data.leerGaleria
 import com.miambiente.app.data.uriCompartible
 import com.miambiente.app.model.GameDef
@@ -165,6 +168,20 @@ fun PizarraScreen(onVolver: () -> Unit) {
     val futuro = remember { mutableListOf<Bitmap>() }
     var puedeDeshacer by remember { mutableStateOf(false) }
     var puedeRehacer by remember { mutableStateOf(false) }
+
+    // Borrador automático: 1,5 s después del último cambio y al salir de la
+    // pizarra. El dibujo sigue ahí al volver, aunque Android haya cerrado la
+    // app en segundo plano.
+    LaunchedEffect(revision) {
+        kotlinx.coroutines.delay(1500)
+        bitmap?.let { guardarBorrador(context, it) }
+    }
+    DisposableEffect(Unit) {
+        onDispose { bitmap?.let { guardarBorrador(context, it) } }
+    }
+    // La pizarra tiene su propio marco (no `GameShell`), así que cuenta aquí
+    // su apertura para el resumen del adulto.
+    LaunchedEffect(juego.id) { services.progress.registrarJugada(juego.id) }
 
     fun mostrarAviso(texto: String) {
         aviso = texto
@@ -293,7 +310,8 @@ fun PizarraScreen(onVolver: () -> Unit) {
                             if (bitmap == null || bitmap!!.width != size.width || bitmap!!.height != size.height) {
                                 val nuevo = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
                                 val nuevoCanvas = android.graphics.Canvas(nuevo)
-                                bitmap?.let { previo -> nuevoCanvas.drawBitmap(previo, 0f, 0f, null) }
+                                val previo = bitmap ?: leerBorrador(context)
+                                previo?.let { nuevoCanvas.drawBitmap(it, 0f, 0f, null) }
                                 bitmap = nuevo
                                 androidCanvas = nuevoCanvas
                                 revision++

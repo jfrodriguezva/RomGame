@@ -88,6 +88,9 @@ class SoundPlayer {
     /** Gatea desde Ajustes ("Sonido"); `Services` lo mantiene al día. */
     @Volatile var activo: Boolean = true
 
+    /** Modo calma: sin el tono de error. `Services` lo mantiene al día. */
+    @Volatile var calma: Boolean = false
+
     private val generador = ToneGenerator(AudioManager.STREAM_MUSIC, 70)
 
     // Una pista por nota (no una compartida): así dos teclas tocadas rápido
@@ -132,7 +135,7 @@ class SoundPlayer {
     }
 
     fun tocar(efecto: Efecto) {
-        if (!activo) return
+        if (!activo || (calma && efecto == Efecto.WRONG)) return
         val tono = when (efecto) {
             Efecto.CLICK -> ToneGenerator.TONE_PROP_BEEP
             Efecto.CORRECT -> ToneGenerator.TONE_PROP_ACK

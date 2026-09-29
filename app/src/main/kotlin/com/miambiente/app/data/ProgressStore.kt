@@ -45,19 +45,28 @@ class ProgressStore(private val context: Context, scope: CoroutineScope) {
     val listo: StateFlow<Boolean> =
         cache.map { it != null }.stateIn(scope, SharingStarted.Eagerly, false)
 
-    /** Último nivel desbloqueado de un material, donde conviene retomarlo. */
-    fun nivelGuardado(id: String): Int = cache.value?.get(claveNivel(id)) ?: 1
+    /**
+     * Último nivel desbloqueado de un material, donde conviene retomarlo.
+     * `minimo` es el nivel inicial sugerido por la edad: nunca se retoma
+     * por debajo de él.
+     */
+    fun nivelGuardado(id: String, minimo: Int = 1): Int =
+        maxOf(cache.value?.get(claveNivel(id)) ?: 1, minimo).coerceIn(1, 100)
 
-    fun progresoDe(id: String): Flow<GameProgress> = context.progressDataStore.data.map { p ->
-        GameProgress(
-            completados = (p[claveCompletados(id)] ?: "")
-                .split(",").filter { it.isNotBlank() }.map { it.toInt() }.toSet(),
-            nivelDesbloqueado = p[claveNivel(id)] ?: 1,
-            estrellas = p[claveEstrellas(id)] ?: 0,
-            vecesJugado = p[claveVeces(id)] ?: 0,
-        )
-    }
+    private fun leer(p: Preferences, id: String) = GameProgress(
+        completados = leerCompletados(p[claveCompletados(id)]),
+        nivelDesbloqueado = p[claveNivel(id)] ?: 1,
+        estrellas = p[claveEstrellas(id)] ?: 0,
+        vecesJugado = p[claveVeces(id)] ?: 0,
+    )
 
+    fun progresoDe(id: String): Flow<GameProgress> = context.progressDataStore.data.map { p -> leer(p, id) }
+
+    /** Progreso de varios materiales a la vez, para el resumen del adulto. */
+    fun resumen(ids: List<String>): Flow<Map<String, GameProgress>> =
+        context.progressDataStore.data.map { p -> ids.associateWith { leer(p, it) } }
+
+    /** Cuenta una apertura del material (se muestra en el resumen del adulto). */
     suspend fun registrarJugada(id: String) {
         context.progressDataStore.edit { p ->
             val actual = p[claveVeces(id)] ?: 0
@@ -69,11 +78,10 @@ class ProgressStore(private val context: Context, scope: CoroutineScope) {
     suspend fun completarNivel(id: String, nivel: Int): Int {
         var ganadas = 0
         context.progressDataStore.edit { p ->
-            val completados = (p[claveCompletados(id)] ?: "")
-                .split(",").filter { it.isNotBlank() }.map { it.toInt() }.toMutableSet()
+            val completados = leerCompletados(p[claveCompletados(id)]).toMutableSet()
             val primeraVez = completados.add(nivel)
             p[claveCompletados(id)] = completados.joinToString(",")
-            p[claveNivel(id)] = maxOf(p[claveNivel(id)] ?: 1, minOf(nivel + 1, 100))
+            p[claveNivel(id)] = nivelTrasCompletar(p[claveNivel(id)], nivel)
             if (primeraVez) {
                 ganadas = estrellasPara(nivel)
                 p[claveEstrellas(id)] = (p[claveEstrellas(id)] ?: 0) + ganadas
@@ -82,3 +90,11 @@ class ProgressStore(private val context: Context, scope: CoroutineScope) {
         return ganadas
     }
 }
+
+/** Los niveles completados se guardan como "1,2,5"; tolera texto vacío o dañado. */
+internal fun leerCompletados(texto: String?): Set<Int> =
+    texto.orEmpty().split(",").mapNotNull { it.trim().toIntOrNull() }.toSet()
+
+/** Completar un nivel desbloquea el siguiente, sin retroceder nunca ni pasar de 100. */
+internal fun nivelTrasCompletar(desbloqueado: Int?, nivel: Int): Int =
+    maxOf(desbloqueado ?: 1, minOf(nivel + 1, 100))

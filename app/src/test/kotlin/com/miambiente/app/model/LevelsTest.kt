@@ -61,4 +61,21 @@ class LevelsTest {
         assertEquals(1, estrellasPara(1))
         assertEquals(5, estrellasPara(100))
     }
+
+    @Test
+    fun `nivelInicialPorEdad sin edad o pequenos empieza en la presentacion`() {
+        assertEquals(1, nivelInicialPorEdad(null))
+        assertEquals(1, nivelInicialPorEdad(2))
+        assertEquals(1, nivelInicialPorEdad(3))
+    }
+
+    @Test
+    fun `nivelInicialPorEdad cae siempre al inicio de una etapa`() {
+        listOf(4, 5, 6, 9).forEach { edad ->
+            val nivel = nivelInicialPorEdad(edad)
+            assertEquals(1, (nivel - 1) % STAGE_SIZE + 1)
+            assertTrue(nivel in 1..LEVEL_COUNT)
+        }
+        assertTrue(nivelInicialPorEdad(4) < nivelInicialPorEdad(5))
+    }
 }

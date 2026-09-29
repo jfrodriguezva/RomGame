@@ -83,6 +83,15 @@ class AmbientMusic {
             if (!valor) detener()
         }
 
+    /** Modo calma: la música queda a menos de la mitad del volumen. */
+    @Volatile var calma: Boolean = false
+        set(valor) {
+            field = valor
+            hilo.execute { pistas.values.forEach { it.setVolume(volumen()) } }
+        }
+
+    private fun volumen() = if (calma) 0.4f else 1f
+
     /** Cambia el fondo musical al acorde del área dada; no repite si ya es la misma. */
     fun sonarPara(area: Area) = hilo.execute {
         if (!activo || (actual == area && !enPausa)) return@execute
@@ -139,6 +148,7 @@ class AmbientMusic {
             .apply {
                 write(datos, 0, datos.size)
                 setLoopPoints(0, datos.size, -1)
+                setVolume(volumen())
             }
     }
 }

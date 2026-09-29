@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
@@ -64,9 +65,7 @@ fun MaterialTransferir(
     // Mismo bug de fondo que en MaterialOrdenar/MaterialClasificar
     // ("sigue fallando al arrastrar y colocar"): solapamiento de
     // rectángulos en vez de exigir el punto central exacto.
-    fun soltar(rectPieza: Rect) {
-        val rect = destinoRect ?: return
-        if (!rect.overlaps(rectPieza)) return
+    fun transferirUno() {
         val nuevoDestino = enDestino + 1
         if (nuevoDestino > objetivo) {
             estado.intento("Te pasaste del objetivo. Vuelve a empezar")
@@ -80,12 +79,19 @@ fun MaterialTransferir(
         }
     }
 
+    fun soltar(rectPieza: Rect) {
+        val rect = destinoRect ?: return
+        if (!rect.overlaps(rectPieza)) return
+        transferirUno()
+    }
+
     GameShell(
         juego = juego,
         consigna = if (estado.logrado) "¡Objetivo exacto!" else "$consigna (van $enDestino de $objetivo)",
         nota = estado.nota,
         celebrar = estado.logrado,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
         acciones = if (estado.logrado) {
             { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
         } else null,
@@ -114,6 +120,7 @@ fun MaterialTransferir(
                         clave = "origen-${estado.nivel}-$i-$enOrigen",
                         onArrastrar = { rect -> rectArrastre = rect },
                         onSoltar = { rect -> soltar(rect) },
+                        accionesAccesibles = listOf(CustomAccessibilityAction("Mover al destino") { transferirUno(); true }),
                     ) { render() }
                 }
             }

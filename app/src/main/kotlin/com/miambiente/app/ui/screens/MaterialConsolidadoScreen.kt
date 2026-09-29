@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -76,7 +77,9 @@ fun MaterialConsolidadoScreen(
 
 @Composable
 private fun TarjetaModo(juego: GameDef, onClick: () -> Unit) {
-    val progreso by LocalServices.current.progress.progresoDe(juego.id).collectAsState(initial = GameProgress())
+    val services = LocalServices.current
+    val flujo = remember(juego.id) { services.progress.progresoDe(juego.id) }
+    val progreso by flujo.collectAsState(initial = GameProgress())
     val tipo = when {
         juego.libre -> "Modo libre"
         juego.area.name == "COMPANIA" -> "Partida completa"

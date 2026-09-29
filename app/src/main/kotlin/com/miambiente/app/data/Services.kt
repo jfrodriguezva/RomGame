@@ -22,7 +22,7 @@ class Services(context: Context) {
     // sonido, vibración y música de verdad.
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    val settings = SettingsStore(context)
+    val settings = SettingsStore(context, scope)
     val progress = ProgressStore(context, scope)
     val speech = Speech(context)
     val sound = SoundPlayer()
@@ -35,6 +35,12 @@ class Services(context: Context) {
                 sound.activo = s.sonido
                 haptics.activo = s.vibracion
                 musica.activo = s.musica
+                // Modo calma: voz más lenta, música más baja, sin tono ni
+                // vibración de error (el confeti lo apaga `GameShell`).
+                speech.calma = s.calma
+                sound.calma = s.calma
+                haptics.calma = s.calma
+                if (musica.calma != s.calma) musica.calma = s.calma
             }
         }
     }

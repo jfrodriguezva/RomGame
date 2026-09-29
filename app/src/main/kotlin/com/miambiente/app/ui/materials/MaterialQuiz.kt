@@ -38,7 +38,7 @@ data class ItemQuiz<T>(val valor: T, val id: String, val nombre: String)
 
 private const val RONDA = 5
 
-private fun periodoPara(nivel: Int): Int = when {
+internal fun periodoPara(nivel: Int): Int = when {
     etapaDe(nivel) <= 1 -> 1
     etapaDe(nivel) <= 2 -> 2
     else -> 3
@@ -106,6 +106,7 @@ fun <T> MaterialQuiz(
         nota = estado.nota,
         celebrar = estado.logrado,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
         acciones = if (estado.logrado) {
             { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
         } else null,
@@ -183,7 +184,7 @@ private fun ProgresoRonda(aciertos: Int, meta: Int, color: Color, modifier: Modi
     }
 }
 
-private fun <T> generarOpciones(items: List<ItemQuiz<T>>, objetivo: ItemQuiz<T>, n: Int): List<ItemQuiz<T>> {
+internal fun <T> generarOpciones(items: List<ItemQuiz<T>>, objetivo: ItemQuiz<T>, n: Int): List<ItemQuiz<T>> {
     val distractores = items.filter { it.id != objetivo.id }.shuffled().take(n - 1)
     return (distractores + objetivo).shuffled()
 }

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.Executors
 
 /**
  * Galería de dibujos de la pizarra — equivalente nativo de la parte de
@@ -58,3 +59,29 @@ fun exportarParaCompartir(context: Context, bitmap: Bitmap, colorFondo: Int): Fi
     FileOutputStream(archivo).use { compuesto.compress(Bitmap.CompressFormat.PNG, 100, it) }
     return archivo
 }
+
+// --- Borrador de la pizarra ---
+// El dibujo en curso se guarda solo, para que no se pierda si Android cierra
+// la app en segundo plano o si se sale de la pizarra sin guardarlo en la
+// galería. Se escribe en un hilo propio (comprimir un PNG del tamaño de la
+// pantalla tarda) y vía archivo temporal + rename, para que un cierre a
+// medio escribir nunca deje un borrador corrupto.
+private val hiloBorrador = Executors.newSingleThreadExecutor { tarea ->
+    Thread(tarea, "borrador-pizarra").apply { isDaemon = true }
+}
+
+private fun archivoBorrador(context: Context) = File(context.filesDir, "borrador-pizarra.png")
+
+fun guardarBorrador(context: Context, bitmap: Bitmap) {
+    val copia = bitmap.copy(Bitmap.Config.ARGB_8888, false) ?: return
+    val destino = archivoBorrador(context)
+    hiloBorrador.execute {
+        val temporal = File(destino.parentFile, "${destino.name}.tmp")
+        FileOutputStream(temporal).use { copia.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        temporal.renameTo(destino)
+        copia.recycle()
+    }
+}
+
+fun leerBorrador(context: Context): Bitmap? =
+    archivoBorrador(context).takeIf { it.exists() }?.let { android.graphics.BitmapFactory.decodeFile(it.absolutePath) }

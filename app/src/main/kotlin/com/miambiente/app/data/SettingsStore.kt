@@ -6,8 +6,12 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 private val Context.settingsDataStore by preferencesDataStore(name = "ajustes")
 
@@ -32,7 +36,7 @@ data class Settings(
     val calma: Boolean = false,
 )
 
-class SettingsStore(private val context: Context) {
+class SettingsStore(private val context: Context, scope: CoroutineScope) {
     private object Claves {
         val EDAD = intPreferencesKey("edad")
         val NOMBRE = stringPreferencesKey("nombre")
@@ -54,6 +58,13 @@ class SettingsStore(private val context: Context) {
             calma = p[Claves.CALMA] ?: false,
         )
     }
+
+    /**
+     * Copia síncrona de los ajustes (`null` hasta la primera lectura). La
+     * usa quien necesita un valor al instante, como el nivel inicial de un
+     * material según la edad.
+     */
+    val actual: StateFlow<Settings?> = settings.stateIn(scope, SharingStarted.Eagerly, null)
 
     suspend fun setEdad(edad: Int) {
         context.settingsDataStore.edit { it[Claves.EDAD] = edad }

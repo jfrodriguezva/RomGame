@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
@@ -69,8 +70,7 @@ fun <T> MaterialClasificar(
     // arrastrar y colocar"): exigir que el punto central de la pieza
     // caiga dentro de la canasta es muy poco tolerante. Ahora basta con
     // que los rectángulos se solapen.
-    fun soltar(item: ItemClasificar<T>, rectPieza: Rect) {
-        val canastaId = canastaRects.entries.find { (_, rect) -> rect.overlaps(rectPieza) }?.key ?: return
+    fun clasificar(item: ItemClasificar<T>, canastaId: String) {
         if (canastaId == item.categoria) {
             estado.acierto("¡Correcto!")
             pendientes = pendientes.filter { it.id != item.id }
@@ -81,12 +81,18 @@ fun <T> MaterialClasificar(
         }
     }
 
+    fun soltar(item: ItemClasificar<T>, rectPieza: Rect) {
+        val canastaId = canastaRects.entries.find { (_, rect) -> rect.overlaps(rectPieza) }?.key ?: return
+        clasificar(item, canastaId)
+    }
+
     GameShell(
         juego = juego,
         consigna = if (completo) "¡Clasificaste todo!" else consigna,
         nota = estado.nota,
         celebrar = estado.logrado,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
         acciones = if (estado.logrado) {
             { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
         } else null,
@@ -116,6 +122,9 @@ fun <T> MaterialClasificar(
                             clave = item.id,
                             onArrastrar = { rect -> rectArrastre = rect },
                             onSoltar = { rect -> soltar(item, rect) },
+                            accionesAccesibles = canastas.map { canasta ->
+                                CustomAccessibilityAction("Poner en ${canasta.nombre}") { clasificar(item, canasta.id); true }
+                            },
                         ) { render(item.valor) }
                     }
                 }

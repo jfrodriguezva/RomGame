@@ -98,6 +98,7 @@ fun MaterialOrdenar(
         nota = estado.nota,
         celebrar = estado.logrado,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
         acciones = if (estado.logrado) {
             { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
         } else null,
