@@ -35,6 +35,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.model.GameDef
+import com.miambiente.app.model.Resultado
+import com.miambiente.app.model.Transferencia
 import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
 
@@ -57,11 +59,13 @@ fun MaterialTransferir(
     val colores = coloresDe(juego.area)
     // El objetivo sale del nivel actual; antes cada pantalla lo calculaba
     // con `phasedInt(1, …)` y quedaba fijo en el del nivel 1.
-    val objetivo = calcularObjetivo(estado.nivel)
-    val total = origenPara(objetivo).coerceAtLeast(objetivo)
-
-    var enOrigen by remember(estado.nivel) { mutableStateOf(total) }
-    var enDestino by remember(estado.nivel) { mutableStateOf(0) }
+    var bandeja by remember(estado.nivel) {
+        val objetivo = calcularObjetivo(estado.nivel)
+        mutableStateOf(Transferencia.nueva(objetivo, origenPara(objetivo)))
+    }
+    val objetivo = bandeja.objetivo
+    val enOrigen = bandeja.enOrigen
+    val enDestino = bandeja.enDestino
     var destinoRect by remember(estado.nivel) { mutableStateOf<Rect?>(null) }
     var rectArrastre by remember(estado.nivel) { mutableStateOf<Rect?>(null) }
 
@@ -69,16 +73,13 @@ fun MaterialTransferir(
     // ("sigue fallando al arrastrar y colocar"): solapamiento de
     // rectángulos en vez de exigir el punto central exacto.
     fun transferirUno() {
-        val nuevoDestino = enDestino + 1
-        if (nuevoDestino > objetivo) {
-            estado.intento("Te pasaste del objetivo. Vuelve a empezar")
-            enOrigen = total
-            enDestino = 0
-        } else {
-            estado.acierto("¡Uno más!")
-            enOrigen -= 1
-            enDestino = nuevoDestino
-            if (nuevoDestino == objetivo) estado.completar()
+        val (nueva, resultado) = bandeja.transferirUno()
+        bandeja = nueva
+        when (resultado) {
+            Resultado.ACIERTO -> estado.acierto("¡Uno más!")
+            Resultado.COMPLETO -> { estado.acierto("¡Uno más!"); estado.completar() }
+            Resultado.ERROR -> estado.intento("Te pasaste del objetivo. Vuelve a empezar")
+            else -> Unit
         }
     }
 

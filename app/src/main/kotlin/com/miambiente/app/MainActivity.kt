@@ -66,7 +66,9 @@ class MainActivity : ComponentActivity() {
                         composable(Ruta.AJUSTES) {
                             AjustesScreen(onVolver = volver, onVerProgreso = { navController.navigate(Ruta.PROGRESO) })
                         }
-                        composable(Ruta.PROGRESO) { ProgresoScreen(volver) }
+                        composable(Ruta.PROGRESO) {
+                            ProgresoScreen(onVolver = volver, onAbrirJuego = { id -> navController.navigate(id) })
+                        }
                         composable("material/{materialId}") { entrada ->
                             MaterialConsolidadoScreen(
                                 materialId = entrada.arguments?.getString("materialId").orEmpty(),

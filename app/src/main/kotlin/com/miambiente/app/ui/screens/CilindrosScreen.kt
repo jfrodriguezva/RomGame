@@ -10,6 +10,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.CURVA_CILINDROS
 import com.miambiente.app.model.phasedInt
 import com.miambiente.app.ui.materials.MaterialOrdenar
 
@@ -18,7 +19,7 @@ import com.miambiente.app.ui.materials.MaterialOrdenar
 fun CilindrosScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("cilindros")!!,
-        calcularN = { nivel -> phasedInt(nivel, listOf(3, 4, 4, 5, 5, 6, 7, 8, 9, 10, 10)) },
+        calcularN = { nivel -> phasedInt(nivel, CURVA_CILINDROS) },
         tamanoPara = { posicion, n -> (16 + (n - posicion + 1) * 8).dp },
         render = { _, _ -> Box(Modifier.fillMaxSize().clip(CircleShape).background(Color(0xFFA97FC7))) },
         consigna = "Arrastra cada cilindro a su hueco exacto",

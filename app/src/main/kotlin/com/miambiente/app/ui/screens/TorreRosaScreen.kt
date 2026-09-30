@@ -10,6 +10,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.CURVA_TORRE_ROSA
 import com.miambiente.app.model.phasedInt
 import com.miambiente.app.ui.materials.MaterialOrdenar
 
@@ -20,7 +21,7 @@ fun TorreRosaScreen(onVolver: () -> Unit) {
 
     MaterialOrdenar(
         juego = juego,
-        calcularN = { nivel -> phasedInt(nivel, listOf(3, 4, 4, 5, 5, 6, 7, 8, 9, 10, 10)) },
+        calcularN = { nivel -> phasedInt(nivel, CURVA_TORRE_ROSA) },
         tamanoPara = { posicion, n -> (24 + (n - posicion + 1) * 12).dp },
         render = { _, tamano ->
             Box(Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp)).background(Color(0xFFE0669C)))

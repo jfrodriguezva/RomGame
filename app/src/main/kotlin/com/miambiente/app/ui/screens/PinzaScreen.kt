@@ -4,6 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.CURVA_PINZA
 import com.miambiente.app.model.phasedInt
 import com.miambiente.app.ui.materials.MaterialTransferir
 
@@ -12,7 +13,7 @@ import com.miambiente.app.ui.materials.MaterialTransferir
 fun PinzaScreen(onVolver: () -> Unit) {
     MaterialTransferir(
         juego = buscarJuego("pinza")!!,
-        calcularObjetivo = { nivel -> phasedInt(nivel, listOf(3, 4, 4, 5, 5, 6, 7, 8, 9, 10, 10)) },
+        calcularObjetivo = { nivel -> phasedInt(nivel, CURVA_PINZA) },
         origenPara = { objetivo -> objetivo + 4 },
         render = { Text("🔴", fontSize = 28.sp) },
         consigna = "Mueve de uno en uno",

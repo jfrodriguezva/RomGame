@@ -11,6 +11,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.CURVA_ESCALERA_MARRON
 import com.miambiente.app.model.phasedInt
 import com.miambiente.app.ui.materials.MaterialOrdenar
 
@@ -19,7 +20,7 @@ import com.miambiente.app.ui.materials.MaterialOrdenar
 fun EscaleraMarronScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("escalera-marron")!!,
-        calcularN = { nivel -> phasedInt(nivel, listOf(3, 4, 4, 5, 5, 6, 7, 7, 7, 7, 7)) },
+        calcularN = { nivel -> phasedInt(nivel, CURVA_ESCALERA_MARRON) },
         tamanoPara = { posicion, n -> (20 + (n - posicion + 1) * 10).dp },
         render = { _, _ ->
             Box(Modifier.fillMaxWidth().fillMaxHeight(0.6f).clip(RoundedCornerShape(4.dp)).background(Color(0xFF8A5A2B)))

@@ -30,9 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.GameProgress
 import com.miambiente.app.data.LocalServices
+import com.miambiente.app.data.ResumenSemana
+import com.miambiente.app.data.hoyEpoch
+import com.miambiente.app.data.resumirSemana
 import com.miambiente.app.model.CATALOGO
 import com.miambiente.app.model.CategoriaMaterial
 import com.miambiente.app.model.MATERIALES_CONSOLIDADOS
+import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.model.juegosDe
 import com.miambiente.app.theme.Papel
 import com.miambiente.app.theme.TextoSuave
@@ -44,7 +48,7 @@ import com.miambiente.app.theme.Tinta
  * parte. Agrupado por categoría y material, igual que el inicio.
  */
 @Composable
-fun ProgresoScreen(onVolver: () -> Unit) {
+fun ProgresoScreen(onVolver: () -> Unit, onAbrirJuego: (String) -> Unit = {}) {
     val services = LocalServices.current
     val ids = remember { CATALOGO.map { it.id } }
     val resumen = remember(services) { services.progress.resumen(ids) }
@@ -53,6 +57,13 @@ fun ProgresoScreen(onVolver: () -> Unit) {
     val estrellas = progreso.values.sumOf { it.estrellas }
     val niveles = progreso.values.sumOf { it.completados.size }
     val usados = progreso.values.count { it.vecesJugado > 0 }
+
+    val materialDe = remember {
+        MATERIALES_CONSOLIDADOS.flatMap { m -> m.modos.map { it to m.id } }.toMap()
+    }
+    val semana = remember(progreso) {
+        resumirSemana(progreso, ids, { materialDe[it] ?: it }, hoyEpoch())
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(Papel).safeDrawingPadding(),
@@ -74,6 +85,7 @@ fun ProgresoScreen(onVolver: () -> Unit) {
                 Cifra("🧩", "$usados/${ids.size}", "modos usados", Modifier.weight(1f))
             }
         }
+        item(key = "semana") { TarjetaSemana(semana, onAbrirJuego) }
         CategoriaMaterial.entries.forEach { categoria ->
             item(key = categoria.name) {
                 Text(
@@ -97,6 +109,54 @@ fun ProgresoScreen(onVolver: () -> Unit) {
                             FilaModo("${juego.emoji} ${juego.title}", progreso[juego.id] ?: GameProgress())
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+/** Nombre con emoji de un modo, para las listas del resumen. */
+private fun nombreDe(id: String): String = buscarJuego(id)?.let { "${it.emoji} ${it.title}" } ?: id
+
+@Composable
+private fun TarjetaSemana(semana: ResumenSemana, onAbrirJuego: (String) -> Unit) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(1.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+    ) {
+        Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text("Esta semana", fontWeight = FontWeight.ExtraBold, color = Tinta, fontSize = 16.sp)
+            Text(
+                if (semana.diasActivos == 0) "Todavía no ha jugado en los últimos 7 días."
+                else "Jugó ${semana.diasActivos} de los últimos 7 días.",
+                color = Tinta,
+                fontSize = 13.sp,
+            )
+            if (semana.modosSemana.isNotEmpty()) {
+                Text("Lo que más practicó", fontWeight = FontWeight.Bold, color = Tinta, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+                semana.modosSemana.take(5).forEach { Text("• ${nombreDe(it)}", color = TextoSuave, fontSize = 12.sp) }
+            }
+            if (semana.cuesta.isNotEmpty()) {
+                Text("Le está costando", fontWeight = FontWeight.Bold, color = Tinta, fontSize = 13.sp, modifier = Modifier.padding(top = 4.dp))
+                semana.cuesta.forEach { Text("• ${nombreDe(it)}", color = TextoSuave, fontSize = 12.sp) }
+                Text(
+                    "Conviene volver a un nivel anterior desde el selector, o jugarlo juntos un rato.",
+                    color = TextoSuave,
+                    fontSize = 11.sp,
+                )
+            }
+            semana.sugerencia?.let { id ->
+                Row(
+                    Modifier.fillMaxWidth().padding(top = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Para variar", fontWeight = FontWeight.Bold, color = Tinta, fontSize = 13.sp)
+                        Text(nombreDe(id), color = TextoSuave, fontSize = 12.sp)
+                    }
+                    TextButton(onClick = { onAbrirJuego(id) }) { Text("Abrir", color = Tinta, fontWeight = FontWeight.Bold) }
                 }
             }
         }

@@ -1,7 +1,48 @@
 # Plan maestro de reconstrucción de RominaGame
 
-Estado: **propuesta para aprobación antes de ejecutar cambios destructivos**  
-Fecha: 21 de septiembre de 2026
+Estado: **en ejecución; decisiones vigentes al 30 de septiembre de 2026 en la
+sección 0**  
+Fecha original: 21 de septiembre de 2026
+
+## 0. Estado vigente (30 de septiembre de 2026)
+
+Esta sección manda sobre el resto del documento, que se conserva como
+historia de las decisiones.
+
+**Hecho:**
+
+- Fases 0 y 1: la aplicación web y Capacitor se retiraron; el proyecto
+  Android vive en la raíz.
+- Fase 2: el catálogo se consolidó en **19 materiales con 89 modos**, en siete
+  categorías (Lógica y rompecabezas, Palabras e idiomas, Números, Mundo y
+  naturaleza, Creatividad y música, Coordinación y vida práctica, Juegos de
+  mesa). Cada modo conserva su pantalla, sus niveles y su progreso.
+- Selector de nivel, modo calma, vista de progreso con resumen semanal para
+  el adulto y borrador automático de la pizarra.
+- Base técnica: Kotlin 2.4, AGP 9.4, Gradle 9.8, `targetSdk` 37, R8 en
+  release, CI en cada PR.
+- Calidad: reglas puras con pruebas unitarias para los patrones de
+  seriación y transferencia, el progreso y el resumen del adulto; recorrido
+  instrumentado que abre las 111 pantallas y exige áreas táctiles de 48dp.
+
+**Decisiones que reemplazan a las originales:**
+
+| Original | Vigente |
+|---|---|
+| Juegos normales y de mesa en LibGDX (fases 3 a 5) | **Se quedan en Jetpack Compose.** La migración a LibGDX produjo pantallas en blanco y se revirtió en la versión 1.0.0; no se retoma salvo que un juego concreto lo necesite y alcance paridad verificable. |
+| Categoría Arcade en Godot (fase 6) | **Retirada.** Los 11 arcade se eliminaron el 28 de septiembre por no superar la validación; no hay integración con Godot. |
+| Juegos de mesa completos (ajedrez, damas, oca, lotería…) | **Solo infantiles:** gato, piedra papel o tijera, memoria por turnos, dominó, Encuentra los objetos y Encuentra las diferencias. |
+| Sin selector ni ajuste de edad | **La edad existe solo para elegir el nivel inicial** (etapa 1 hasta 3 años, una etapa más por año hasta la 4). No oculta, filtra ni bloquea contenido, y los niveles anteriores siguen abiertos. |
+
+**Siguiente trabajo:**
+
+1. Probar la voz y el release firmado en al menos un dispositivo físico
+   (definición de terminado, sección 7, punto 8).
+2. Fase 4 sobre Compose: revisar cada material uno por uno (curva de
+   dificultad, instrucciones interactivas, mejor marca), empezando por los
+   que el resumen del adulto muestre como más difíciles.
+3. Llevar a funciones puras con pruebas la lógica que aún vive dentro de las
+   pantallas (quiz, clasificación y juegos individuales).
 
 > **Cierre de recuperación — versión 1.0.0 (24 de septiembre de 2026).** Tras
 > detectar regresiones de navegación, pantallas en blanco y pérdida de juegos,

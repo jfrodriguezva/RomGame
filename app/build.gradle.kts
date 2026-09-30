@@ -22,9 +22,10 @@ android {
     defaultConfig {
         applicationId = "com.miambiente.app"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -92,6 +93,13 @@ dependencies {
     // ganador de los juegos de mesa, generación del set de dominó) — JVM
     // puro, sin emulador: corren en segundos con `./gradlew testDebugUnitTest`.
     testImplementation("junit:junit:4.13.2")
+
+    // Recorrido en emulador: abre cada pantalla del catálogo y verifica que
+    // ninguna se cierre (`gradlew connectedDebugAndroidTest`).
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 
 kotlin {

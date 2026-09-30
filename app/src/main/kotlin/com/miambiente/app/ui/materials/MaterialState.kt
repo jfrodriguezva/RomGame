@@ -68,6 +68,7 @@ class MaterialState(
         services.sound.tocar(Efecto.CORRECT)
         services.haptics.vibrar(Patron.ACIERTO)
         mostrar(texto)
+        scope.launch { services.progress.registrarRespuesta(juego.id, acierto = true) }
     }
 
     /** Control del error: nunca hay penalización, ni vidas, ni "perdiste". */
@@ -75,6 +76,8 @@ class MaterialState(
         services.sound.tocar(Efecto.WRONG)
         services.haptics.vibrar(Patron.ERROR)
         mostrar(texto)
+        // Solo para el resumen del adulto; el niño nunca ve un conteo de errores.
+        scope.launch { services.progress.registrarRespuesta(juego.id, acierto = false) }
     }
 
     /** Cierra el nivel: otorga estrellas, guarda el progreso y celebra. */

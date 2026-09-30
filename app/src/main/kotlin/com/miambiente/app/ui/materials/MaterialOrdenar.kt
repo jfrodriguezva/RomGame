@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -28,13 +29,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.GameDef
+import com.miambiente.app.model.Resultado
+import com.miambiente.app.model.SerieOrdenar
 import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
+
+/** Lado mínimo del área que responde al dedo (guía de accesibilidad de Android). */
+internal val TOQUE_MINIMO = 48.dp
 
 /**
  * Seriación por TOQUES, no por arrastre — modelo rehecho por completo.
@@ -84,34 +92,27 @@ fun MaterialOrdenar(
     val colores = coloresDe(juego.area)
     val n = calcularN(estado.nivel)
 
-    var colocadas by remember(estado.nivel) { mutableStateOf(setOf<Int>()) }
-    var enCanasto by remember(estado.nivel) { mutableStateOf((1..n).shuffled()) }
-    var seleccionada by remember(estado.nivel) { mutableStateOf<Int?>(null) }
-
-    val completo = colocadas.size == n
+    var serie by remember(estado.nivel) { mutableStateOf(SerieOrdenar.nueva(n)) }
 
     fun tocarPieza(pieza: Int) {
         services.sound.tocar(Efecto.CLICK)
-        seleccionada = if (seleccionada == pieza) null else pieza
+        serie = serie.tocarPieza(pieza)
     }
 
     fun tocarRanura(posicion: Int) {
-        val pieza = seleccionada ?: return
-        if (posicion == pieza) {
-            estado.acierto("¡Ahí va!")
-            colocadas = colocadas + pieza
-            enCanasto = enCanasto - pieza
-            seleccionada = null
-            if (colocadas.size == n) estado.completar()
-        } else {
-            estado.intento("Ahí no va. Mira otra vez")
-            seleccionada = null
+        val (nueva, resultado) = serie.tocarLugar(posicion)
+        serie = nueva
+        when (resultado) {
+            Resultado.ACIERTO -> estado.acierto("¡Ahí va!")
+            Resultado.COMPLETO -> { estado.acierto("¡Ahí va!"); estado.completar() }
+            Resultado.ERROR -> estado.intento("Ahí no va. Mira otra vez")
+            else -> Unit
         }
     }
 
     GameShell(
         juego = juego,
-        consigna = if (completo) "¡Completaste la serie!" else if (seleccionada != null) "Ahora toca dónde va" else consigna,
+        consigna = if (serie.completa) "¡Completaste la serie!" else if (serie.seleccionada != null) "Ahora toca dónde va" else consigna,
         nota = estado.nota,
         celebrar = estado.logrado,
         onVolver = onVolver,
@@ -133,24 +134,40 @@ fun MaterialOrdenar(
                 for (i in 0 until n) {
                     val posicion = i + 1
                     val ladoRanura = tamanoPara(posicion, n)
-                    val llena = posicion in colocadas
+                    val llena = posicion in serie.colocadas
+                    // Área táctil de al menos 48dp alrededor de la ranura: la
+                    // ranura se dibuja de su tamaño real (es lo que el niño
+                    // compara), pero las más chicas (24dp en Cilindros)
+                    // quedaban difíciles de acertar con el dedo.
                     Box(
                         modifier = Modifier
-                            .size(ladoRanura)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(colores.fondo)
+                            .sizeIn(minWidth = TOQUE_MINIMO, minHeight = TOQUE_MINIMO)
                             .then(
-                                if (llena) Modifier else Modifier.border(2.dp, colores.acento.copy(alpha = 0.35f), RoundedCornerShape(6.dp)),
-                            )
-                            .then(if (!llena) Modifier.clickable { tocarRanura(posicion) } else Modifier),
+                                if (!llena) {
+                                    Modifier
+                                        .clickable(onClickLabel = "Poner aquí") { tocarRanura(posicion) }
+                                        .semantics { contentDescription = "Lugar $posicion de $n" }
+                                } else Modifier.semantics { contentDescription = "Lugar $posicion de $n, ocupado" },
+                            ),
                         contentAlignment = Alignment.Center,
                     ) {
-                        // Aparece con un pop de escala, no de golpe: sin
-                        // esto la pieza "se perdía" del canasto y una
-                        // aparecía de la nada en la casilla, sin ninguna
-                        // sensación de haber llegado ahí.
-                        val escalaLlegada by animateFloatAsState(if (llena) 1f else 0f, label = "llegadaPieza")
-                        if (llena) Box(Modifier.scale(escalaLlegada)) { render(posicion, ladoRanura) }
+                        Box(
+                            modifier = Modifier
+                                .size(ladoRanura)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(colores.fondo)
+                                .then(
+                                    if (llena) Modifier else Modifier.border(2.dp, colores.acento.copy(alpha = 0.35f), RoundedCornerShape(6.dp)),
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            // Aparece con un pop de escala, no de golpe: sin
+                            // esto la pieza "se perdía" del canasto y una
+                            // aparecía de la nada en la casilla, sin ninguna
+                            // sensación de haber llegado ahí.
+                            val escalaLlegada by animateFloatAsState(if (llena) 1f else 0f, label = "llegadaPieza")
+                            if (llena) Box(Modifier.scale(escalaLlegada)) { render(posicion, ladoRanura) }
+                        }
                     }
                 }
             }
@@ -164,24 +181,33 @@ fun MaterialOrdenar(
                 // `key(pieza)`: ata el estado (acá solo visual, pero es el
                 // mismo hábito que evitó el bug de reciclaje por posición
                 // del modelo de arrastre anterior.
-                enCanasto.forEach { pieza ->
+                serie.enCanasto.forEach { pieza ->
                     key(pieza) {
                         val ladoPieza = tamanoPara(pieza, n)
-                        val estaSeleccionada = seleccionada == pieza
+                        val estaSeleccionada = serie.seleccionada == pieza
                         val escala by animateFloatAsState(if (estaSeleccionada) 1.12f else 1f, label = "escalaSeleccion")
                         Box(
                             modifier = Modifier
-                                .size(ladoPieza)
-                                .scale(escala)
-                                .shadow(if (estaSeleccionada) 8.dp else 3.dp, RoundedCornerShape(10.dp))
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color.White)
-                                .then(
-                                    if (estaSeleccionada) Modifier.border(3.dp, Color(0xFFE0C23C), RoundedCornerShape(10.dp)) else Modifier,
-                                )
-                                .clickable { tocarPieza(pieza) },
-                            contentAlignment = Alignment.Center,
-                        ) { render(pieza, ladoPieza) }
+                                .sizeIn(minWidth = TOQUE_MINIMO, minHeight = TOQUE_MINIMO)
+                                .clickable(onClickLabel = if (estaSeleccionada) "Soltar" else "Tomar") { tocarPieza(pieza) }
+                                .semantics {
+                                    contentDescription = "Pieza $pieza de $n" + if (estaSeleccionada) ", tomada" else ""
+                                },
+                            contentAlignment = Alignment.BottomCenter,
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(ladoPieza)
+                                    .scale(escala)
+                                    .shadow(if (estaSeleccionada) 8.dp else 3.dp, RoundedCornerShape(10.dp))
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color.White)
+                                    .then(
+                                        if (estaSeleccionada) Modifier.border(3.dp, Color(0xFFE0C23C), RoundedCornerShape(10.dp)) else Modifier,
+                                    ),
+                                contentAlignment = Alignment.Center,
+                            ) { render(pieza, ladoPieza) }
+                        }
                     }
                 }
             }
