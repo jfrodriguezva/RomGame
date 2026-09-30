@@ -19,8 +19,8 @@ private val PASOS = listOf("💦" to "Mojar", "🧼" to "Jabón", "🤲" to "Tal
 fun LavadoManosScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("lavado-manos")!!,
-        n = PASOS.size,
-        tamanoPara = { 64.dp },
+        calcularN = { PASOS.size },
+        tamanoPara = { _, _ -> 64.dp },
         render = { posicion, _ ->
             val (emoji, nombre) = PASOS[posicion - 1]
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

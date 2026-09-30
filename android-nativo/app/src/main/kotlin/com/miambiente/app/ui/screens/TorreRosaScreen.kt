@@ -17,12 +17,11 @@ import com.miambiente.app.ui.materials.MaterialOrdenar
 @Composable
 fun TorreRosaScreen(onVolver: () -> Unit) {
     val juego = buscarJuego("torre-rosa")!!
-    val n = phasedInt(1, listOf(3, 4, 4, 5, 5, 6, 7, 8, 9, 10, 10))
 
     MaterialOrdenar(
         juego = juego,
-        n = n,
-        tamanoPara = { posicion -> (24 + (n - posicion + 1) * 12).dp },
+        calcularN = { nivel -> phasedInt(nivel, listOf(3, 4, 4, 5, 5, 6, 7, 8, 9, 10, 10)) },
+        tamanoPara = { posicion, n -> (24 + (n - posicion + 1) * 12).dp },
         render = { _, tamano ->
             Box(Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp)).background(Color(0xFFE0669C)))
         },

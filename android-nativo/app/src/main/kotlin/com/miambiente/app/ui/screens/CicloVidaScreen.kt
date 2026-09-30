@@ -19,8 +19,8 @@ private val ETAPAS = listOf("🥚" to "Huevo", "🐛" to "Oruga", "🦋💤" to 
 fun CicloVidaScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("ciclo-vida")!!,
-        n = ETAPAS.size,
-        tamanoPara = { 76.dp },
+        calcularN = { ETAPAS.size },
+        tamanoPara = { _, _ -> 76.dp },
         render = { posicion, _ ->
             val (emoji, nombre) = ETAPAS[posicion - 1]
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

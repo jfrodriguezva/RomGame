@@ -42,6 +42,7 @@ import com.miambiente.app.ui.screens.AjedrezScreen
 import com.miambiente.app.ui.screens.AjustesScreen
 import com.miambiente.app.ui.screens.ArkanoidScreen
 import com.miambiente.app.ui.screens.DamasChinasScreen
+import com.miambiente.app.ui.screens.PalillosScreen
 import com.miambiente.app.ui.screens.DamasScreen
 import com.miambiente.app.ui.screens.SnakeScreen
 import com.miambiente.app.ui.screens.TetrisScreen
@@ -291,6 +292,7 @@ class MainActivity : ComponentActivity() {
                         composable("adivinaquien") { AdivinaQuienScreen(volver) }
                         composable("damas") { DamasScreen(volver) }
                         composable("damas-chinas") { DamasChinasScreen(volver) }
+                        composable("palillos") { PalillosScreen(volver) }
                         composable("tetris") { TetrisScreen(volver) }
                         composable("snake") { SnakeScreen(volver) }
                         composable("arkanoid") { ArkanoidScreen(volver) }

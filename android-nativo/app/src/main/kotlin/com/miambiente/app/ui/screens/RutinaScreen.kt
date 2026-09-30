@@ -19,8 +19,8 @@ private val PASOS = listOf("⏰" to "Despertar", "👕" to "Vestirse", "🥣" to
 fun RutinaScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("rutina")!!,
-        n = PASOS.size,
-        tamanoPara = { 76.dp },
+        calcularN = { PASOS.size },
+        tamanoPara = { _, _ -> 76.dp },
         render = { posicion, _ ->
             val (emoji, nombre) = PASOS[posicion - 1]
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

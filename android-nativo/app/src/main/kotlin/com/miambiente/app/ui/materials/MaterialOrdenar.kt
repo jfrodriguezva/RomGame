@@ -53,19 +53,29 @@ import com.miambiente.app.ui.GameShell
  * fallar a medio camino — un toque siempre se registra bien.
  *
  * `posicion` va de 1 a n.
+ *
+ * `calcularN` recibe el nivel actual (`estado.nivel`, 1 a 100) y decide
+ * cuántas piezas tiene la serie de ese nivel — así los materiales de
+ * seriación real (Torre rosa, Escalera marrón, Cilindros) sí crecen al
+ * subir de nivel en vez de repetir siempre el mismo tamaño fijo. Para
+ * los materiales de secuencia fija (días de la semana, rutina, ciclo de
+ * vida...) donde el número de piezas es un dato real del mundo y no
+ * debe cambiar con el nivel, el llamador simplemente ignora el nivel:
+ * `calcularN = { PASOS.size }`.
  */
 @Composable
 fun MaterialOrdenar(
     juego: GameDef,
-    n: Int,
+    calcularN: (nivel: Int) -> Int,
     render: @Composable (posicion: Int, tamano: Dp) -> Unit,
-    tamanoPara: (posicion: Int) -> Dp,
+    tamanoPara: (posicion: Int, n: Int) -> Dp,
     consigna: String,
     onVolver: () -> Unit,
 ) {
     val services = LocalServices.current
     val estado = rememberMaterialState(juego)
     val colores = coloresDe(juego.area)
+    val n = calcularN(estado.nivel)
 
     var colocadas by remember(estado.nivel) { mutableStateOf(setOf<Int>()) }
     var enCanasto by remember(estado.nivel) { mutableStateOf((1..n).shuffled()) }
@@ -114,7 +124,7 @@ fun MaterialOrdenar(
             ) {
                 for (i in 0 until n) {
                     val posicion = i + 1
-                    val ladoRanura = tamanoPara(posicion)
+                    val ladoRanura = tamanoPara(posicion, n)
                     val llena = posicion in colocadas
                     Box(
                         modifier = Modifier
@@ -148,7 +158,7 @@ fun MaterialOrdenar(
                 // del modelo de arrastre anterior.
                 enCanasto.forEach { pieza ->
                     key(pieza) {
-                        val ladoPieza = tamanoPara(pieza)
+                        val ladoPieza = tamanoPara(pieza, n)
                         val estaSeleccionada = seleccionada == pieza
                         val escala by animateFloatAsState(if (estaSeleccionada) 1.12f else 1f, label = "escalaSeleccion")
                         Box(

@@ -18,8 +18,8 @@ import com.miambiente.app.ui.materials.MaterialOrdenar
 fun BarrasNumericasScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("barras-numericas")!!,
-        n = 10,
-        tamanoPara = { 60.dp },
+        calcularN = { 10 },
+        tamanoPara = { _, _ -> 60.dp },
         render = { posicion, _ ->
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Row {

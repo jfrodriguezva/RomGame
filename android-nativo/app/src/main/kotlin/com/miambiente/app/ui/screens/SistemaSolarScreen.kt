@@ -28,8 +28,8 @@ private val PLANETAS = listOf(
 fun SistemaSolarScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("sistema-solar")!!,
-        n = PLANETAS.size,
-        tamanoPara = { 64.dp },
+        calcularN = { PLANETAS.size },
+        tamanoPara = { _, _ -> 64.dp },
         render = { posicion, _ ->
             val (nombre, color) = PLANETAS[posicion - 1]
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

@@ -18,8 +18,8 @@ private val ETAPAS = listOf("☀️" to "Sol", "☁️" to "Nube", "🌧️" to 
 fun CicloAguaScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("ciclo-agua")!!,
-        n = ETAPAS.size,
-        tamanoPara = { 72.dp },
+        calcularN = { ETAPAS.size },
+        tamanoPara = { _, _ -> 72.dp },
         render = { posicion, _ ->
             val (emoji, _) = ETAPAS[posicion - 1]
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

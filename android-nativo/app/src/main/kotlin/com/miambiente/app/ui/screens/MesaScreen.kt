@@ -19,8 +19,8 @@ private val PASOS = listOf("🟫" to "Mantel", "🍽️" to "Plato", "🍴" to "
 fun MesaScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("mesa")!!,
-        n = PASOS.size,
-        tamanoPara = { 76.dp },
+        calcularN = { PASOS.size },
+        tamanoPara = { _, _ -> 76.dp },
         render = { posicion, _ ->
             val (emoji, nombre) = PASOS[posicion - 1]
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

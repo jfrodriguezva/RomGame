@@ -25,8 +25,8 @@ fun VidaPracticaScreen(onVolver: () -> Unit) {
 
     MaterialOrdenar(
         juego = juego,
-        n = PASOS.size,
-        tamanoPara = { 84.dp },
+        calcularN = { PASOS.size },
+        tamanoPara = { _, _ -> 84.dp },
         render = { posicion, _ ->
             val (emoji, nombre) = PASOS[posicion - 1]
             Box(modifier = Modifier.fillMaxSize().padding(6.dp), contentAlignment = Alignment.Center) {

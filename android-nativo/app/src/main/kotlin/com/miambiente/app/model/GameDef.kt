@@ -137,6 +137,7 @@ val CATALOGO = listOf(
     GameDef("adivinaquien", "Adivina quién es", "🕵️", "Pregunta y descubre", Area.COMPANIA, 2, "Juego de deducción", "Razonamiento lógico por eliminación."),
     GameDef("damas", "Damas inglesas", "⚫", "Captura y corona tus fichas", Area.COMPANIA, 2, "Juego de mesa", "Planeación a varios pasos y anticipar capturas del rival."),
     GameDef("damas-chinas", "Damas chinas", "🔺", "Lleva tus canicas al otro lado de la estrella", Area.COMPANIA, 2, "Juego de mesa", "Planeación de rutas y saltos encadenados."),
+    GameDef("palillos", "Palillos chinos", "🥢", "Toma el palillo sin mover los demás", Area.COMPANIA, 3, "Mikado", "Pulso, paciencia y planear cuál mover primero."),
     // "🎴" en vez de un carácter del bloque Unicode "Playing Cards" (como
     // "🂡"): ese bloque casi nunca tiene glifo de color en las fuentes —
     // el mismo bug de iconos que no se ven, encontrado y corregido antes

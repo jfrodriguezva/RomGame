@@ -18,8 +18,8 @@ private val DIAS = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", 
 fun DiasSemanaScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("dias-semana")!!,
-        n = DIAS.size,
-        tamanoPara = { 64.dp },
+        calcularN = { DIAS.size },
+        tamanoPara = { _, _ -> 64.dp },
         render = { posicion, _ ->
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(DIAS[posicion - 1], fontSize = 13.sp)

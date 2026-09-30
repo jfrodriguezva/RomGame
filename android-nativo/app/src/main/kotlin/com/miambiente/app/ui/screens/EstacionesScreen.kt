@@ -19,8 +19,8 @@ private val ESTACIONES = listOf("🌸" to "Primavera", "☀️" to "Verano", "�
 fun EstacionesScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("estaciones")!!,
-        n = ESTACIONES.size,
-        tamanoPara = { 76.dp },
+        calcularN = { ESTACIONES.size },
+        tamanoPara = { _, _ -> 76.dp },
         render = { posicion, _ ->
             val (emoji, nombre) = ESTACIONES[posicion - 1]
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

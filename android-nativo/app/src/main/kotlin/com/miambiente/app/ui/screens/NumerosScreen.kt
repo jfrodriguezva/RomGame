@@ -17,8 +17,8 @@ import com.miambiente.app.ui.materials.MaterialOrdenar
 fun NumerosScreen(onVolver: () -> Unit) {
     MaterialOrdenar(
         juego = buscarJuego("numeros")!!,
-        n = 10,
-        tamanoPara = { 56.dp },
+        calcularN = { 10 },
+        tamanoPara = { _, _ -> 56.dp },
         render = { posicion, _ ->
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("$posicion", fontSize = 22.sp, fontWeight = FontWeight.Bold)
