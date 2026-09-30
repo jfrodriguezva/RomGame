@@ -18,6 +18,7 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,7 +55,7 @@ fun GloboScreen(onVolver: () -> Unit) {
         altura = 300f; velocidad = 0f; toques = 0; caido = false; completo = false
     }
 
-    LaunchedEffect(caido) {
+    LaunchedEffect(caido, completo) {
         var anterior = withFrameNanos { it }
         while (!caido && !completo) {
             val ahora = withFrameNanos { it }
@@ -77,7 +78,7 @@ fun GloboScreen(onVolver: () -> Unit) {
             Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFFDCEEFA), Color(0xFFF3FAFF)))),
         ) {
             Box(
-                Modifier.offset { IntOffset(0, altura.dp.roundToPx()) }.clickable(enabled = !caido && !completo) {
+                Modifier.align(Alignment.TopCenter).offset { IntOffset(0, altura.dp.roundToPx()) }.clickable(enabled = !caido && !completo) {
                     services.sound.tocar(Efecto.CLICK)
                     velocidad = IMPULSO
                     toques++
