@@ -11,7 +11,7 @@ enum class EstadoVoz { CARGANDO, LISTA, SIN_ESPANOL, SIN_MOTOR }
 
 // De la preferida a la más general: si falta el español de México, cualquier
 // otro español sirve mejor que quedarse mudo.
-private val LOCALES_ESPANOL = listOf(Locale("es", "MX"), Locale("es", "US"), Locale("es", "ES"), Locale("es"))
+private val LOCALES_ESPANOL = listOf("es-MX", "es-US", "es-ES", "es").map(Locale::forLanguageTag)
 
 /**
  * Voz de las consignas con el TextToSpeech del sistema. No todos los

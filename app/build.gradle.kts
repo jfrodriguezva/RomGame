@@ -2,7 +2,6 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
@@ -18,7 +17,7 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.miambiente.app"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.miambiente.app"
@@ -58,18 +57,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-
     buildFeatures {
         compose = true
-    }
-
-    sourceSets {
-        getByName("main") {
-            kotlin.srcDirs("src/main/kotlin")
-        }
-        getByName("test") {
-            kotlin.srcDirs("src/test/kotlin")
-        }
     }
 
     testOptions {
@@ -82,8 +71,8 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation("androidx.core:core-ktx:1.18.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+    implementation("androidx.core:core-ktx:1.19.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
     implementation("androidx.activity:activity-compose:1.13.0")
 
     implementation("androidx.compose.ui:ui")
@@ -92,7 +81,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.animation:animation")
 
-    implementation("androidx.navigation:navigation-compose:2.9.8")
+    implementation("androidx.navigation:navigation-compose:2.10.2")
 
     // Persistencia — equivalente nativo de zustand+localStorage (settings.ts, progressStore.ts).
     implementation("androidx.datastore:datastore-preferences:1.2.1")
