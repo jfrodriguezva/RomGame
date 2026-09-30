@@ -63,6 +63,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.PathParser
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.withScale
+import androidx.core.graphics.withTranslation
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.Guia
 import com.miambiente.app.data.GUIAS
@@ -71,6 +74,7 @@ import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Patron
 import com.miambiente.app.data.borrarDeGaleria
 import com.miambiente.app.data.DibujoGuardado
+import com.miambiente.app.data.componerConFondo
 import com.miambiente.app.data.exportarParaCompartir
 import com.miambiente.app.data.guardarBorrador
 import com.miambiente.app.data.guardarEnGaleria
@@ -308,7 +312,7 @@ fun PizarraScreen(onVolver: () -> Unit) {
                         .onSizeChanged { size ->
                             if (size.width <= 0 || size.height <= 0) return@onSizeChanged
                             if (bitmap == null || bitmap!!.width != size.width || bitmap!!.height != size.height) {
-                                val nuevo = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
+                                val nuevo = createBitmap(size.width, size.height)
                                 val nuevoCanvas = android.graphics.Canvas(nuevo)
                                 val previo = bitmap ?: leerBorrador(context)
                                 previo?.let { nuevoCanvas.drawBitmap(it, 0f, 0f, null) }
@@ -461,14 +465,6 @@ private fun androidx.compose.foundation.layout.ColumnScope.CajonAnimado(visible:
     ) { contenido() }
 }
 
-private fun componerConFondo(bitmap: Bitmap, colorFondoArgb: Int): Bitmap {
-    val salida = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-    val canvas = android.graphics.Canvas(salida)
-    canvas.drawColor(colorFondoArgb)
-    canvas.drawBitmap(bitmap, 0f, 0f, null)
-    return salida
-}
-
 private fun dibujarPatronFondo(scope: androidx.compose.ui.graphics.drawscope.DrawScope, fondoId: String) {
     val nativo = scope.drawContext.canvas.nativeCanvas
     val paint = Paint().apply { style = Paint.Style.STROKE; strokeWidth = 1f }
@@ -506,37 +502,36 @@ private fun dibujarGuia(scope: androidx.compose.ui.graphics.drawscope.DrawScope,
     val offY = (scope.size.height - lado) / 2f
     val colorTrazo = if (esOscuro) android.graphics.Color.WHITE else 0xFF8A7F70.toInt()
 
-    nativo.save()
-    nativo.translate(offX, offY)
-    nativo.scale(lado / 100f, lado / 100f)
-
-    if (g.tipo == "texto") {
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeWidth = 1.1f
-            color = colorTrazo
-            this.alpha = (alfa * 255).toInt()
-            textAlign = Paint.Align.CENTER
-            textSize = 62f
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
-            if (punteada) pathEffect = DashPathEffect(floatArrayOf(3f, 3f), 0f)
+    nativo.withTranslation(offX, offY) {
+        withScale(lado / 100f, lado / 100f) {
+            if (g.tipo == "texto") {
+                val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    style = Paint.Style.STROKE
+                    strokeWidth = 1.1f
+                    color = colorTrazo
+                    this.alpha = (alfa * 255).toInt()
+                    textAlign = Paint.Align.CENTER
+                    textSize = 62f
+                    typeface = android.graphics.Typeface.DEFAULT_BOLD
+                    if (punteada) pathEffect = DashPathEffect(floatArrayOf(3f, 3f), 0f)
+                }
+                val metrics = paint.fontMetrics
+                drawText(g.contenido, 50f, 50f - (metrics.ascent + metrics.descent) / 2, paint)
+            } else {
+                val path = PathParser.createPathFromPathData(g.contenido)
+                val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    style = Paint.Style.STROKE
+                    strokeWidth = if (punteada) 1.1f else 2.4f
+                    strokeCap = Paint.Cap.ROUND
+                    strokeJoin = Paint.Join.ROUND
+                    color = colorTrazo
+                    this.alpha = (alfa * 255).toInt()
+                    if (punteada) pathEffect = DashPathEffect(floatArrayOf(3f, 3f), 0f)
+                }
+                drawPath(path, paint)
+            }
         }
-        val metrics = paint.fontMetrics
-        nativo.drawText(g.contenido, 50f, 50f - (metrics.ascent + metrics.descent) / 2, paint)
-    } else {
-        val path = PathParser.createPathFromPathData(g.contenido)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeWidth = if (punteada) 1.1f else 2.4f
-            strokeCap = Paint.Cap.ROUND
-            strokeJoin = Paint.Join.ROUND
-            color = colorTrazo
-            this.alpha = (alfa * 255).toInt()
-            if (punteada) pathEffect = DashPathEffect(floatArrayOf(3f, 3f), 0f)
-        }
-        if (path != null) nativo.drawPath(path, paint)
     }
-    nativo.restore()
 }
 
 @Composable

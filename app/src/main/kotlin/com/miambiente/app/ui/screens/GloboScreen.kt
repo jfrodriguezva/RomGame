@@ -18,6 +18,7 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
@@ -76,7 +77,7 @@ fun GloboScreen(onVolver: () -> Unit) {
             Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFFDCEEFA), Color(0xFFF3FAFF)))),
         ) {
             Box(
-                Modifier.offset(y = altura.dp).clickable(enabled = !caido && !completo) {
+                Modifier.offset { IntOffset(0, altura.dp.roundToPx()) }.clickable(enabled = !caido && !completo) {
                     services.sound.tocar(Efecto.CLICK)
                     velocidad = IMPULSO
                     toques++
