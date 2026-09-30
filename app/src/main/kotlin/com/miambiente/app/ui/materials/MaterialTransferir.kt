@@ -47,15 +47,18 @@ import com.miambiente.app.ui.GameShell
 @Composable
 fun MaterialTransferir(
     juego: GameDef,
-    objetivo: Int,
-    origenTotal: Int,
+    calcularObjetivo: (nivel: Int) -> Int,
+    origenPara: (objetivo: Int) -> Int,
     render: @Composable () -> Unit,
     consigna: String,
     onVolver: () -> Unit,
 ) {
     val estado = rememberMaterialState(juego)
     val colores = coloresDe(juego.area)
-    val total = origenTotal.coerceAtLeast(objetivo)
+    // El objetivo sale del nivel actual; antes cada pantalla lo calculaba
+    // con `phasedInt(1, …)` y quedaba fijo en el del nivel 1.
+    val objetivo = calcularObjetivo(estado.nivel)
+    val total = origenPara(objetivo).coerceAtLeast(objetivo)
 
     var enOrigen by remember(estado.nivel) { mutableStateOf(total) }
     var enDestino by remember(estado.nivel) { mutableStateOf(0) }

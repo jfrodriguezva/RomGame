@@ -62,10 +62,27 @@ fun MaterialOrdenar(
     tamanoPara: (posicion: Int) -> Dp,
     consigna: String,
     onVolver: () -> Unit,
+) = MaterialOrdenar(juego, { n }, render, { posicion, _ -> tamanoPara(posicion) }, consigna, onVolver)
+
+/**
+ * Variante para la seriación real (Torre rosa, Escalera marrón, Cilindros):
+ * `calcularN` recibe el nivel actual y decide cuántas piezas tiene la serie.
+ * Antes esas pantallas calculaban n con `phasedInt(1, …)` y siempre salían
+ * 3 piezas, sin importar el nivel elegido.
+ */
+@Composable
+fun MaterialOrdenar(
+    juego: GameDef,
+    calcularN: (nivel: Int) -> Int,
+    render: @Composable (posicion: Int, tamano: Dp) -> Unit,
+    tamanoPara: (posicion: Int, n: Int) -> Dp,
+    consigna: String,
+    onVolver: () -> Unit,
 ) {
     val services = LocalServices.current
     val estado = rememberMaterialState(juego)
     val colores = coloresDe(juego.area)
+    val n = calcularN(estado.nivel)
 
     var colocadas by remember(estado.nivel) { mutableStateOf(setOf<Int>()) }
     var enCanasto by remember(estado.nivel) { mutableStateOf((1..n).shuffled()) }
@@ -115,7 +132,7 @@ fun MaterialOrdenar(
             ) {
                 for (i in 0 until n) {
                     val posicion = i + 1
-                    val ladoRanura = tamanoPara(posicion)
+                    val ladoRanura = tamanoPara(posicion, n)
                     val llena = posicion in colocadas
                     Box(
                         modifier = Modifier
@@ -149,7 +166,7 @@ fun MaterialOrdenar(
                 // del modelo de arrastre anterior.
                 enCanasto.forEach { pieza ->
                     key(pieza) {
-                        val ladoPieza = tamanoPara(pieza)
+                        val ladoPieza = tamanoPara(pieza, n)
                         val estaSeleccionada = seleccionada == pieza
                         val escala by animateFloatAsState(if (estaSeleccionada) 1.12f else 1f, label = "escalaSeleccion")
                         Box(

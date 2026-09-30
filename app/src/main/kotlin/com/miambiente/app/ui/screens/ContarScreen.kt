@@ -10,11 +10,10 @@ import com.miambiente.app.ui.materials.MaterialTransferir
 /** Contar y tocar — patrón MaterialTransferir (correspondencia uno a uno). */
 @Composable
 fun ContarScreen(onVolver: () -> Unit) {
-    val objetivo = phasedInt(1, listOf(2, 3, 3, 4, 5, 6, 7, 8, 9, 9, 9)).coerceIn(1, 9)
     MaterialTransferir(
         juego = buscarJuego("contar")!!,
-        objetivo = objetivo,
-        origenTotal = 9,
+        calcularObjetivo = { nivel -> phasedInt(nivel, listOf(2, 3, 3, 4, 5, 6, 7, 8, 9, 9, 9)).coerceIn(1, 9) },
+        origenPara = { 9 },
         render = { Text("🔵", fontSize = 26.sp) },
         consigna = "Cuenta y transfiere la cantidad exacta",
         onVolver = onVolver,
