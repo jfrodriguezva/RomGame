@@ -25,7 +25,6 @@ fun HabitatScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("habitat")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("selva", "Selva", Color(0xFFE9F0E4)),
             DefCanasta("desierto", "Desierto", Color(0xFFFDF1E4)),

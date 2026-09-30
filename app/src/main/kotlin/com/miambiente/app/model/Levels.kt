@@ -45,3 +45,16 @@ fun phasedInt(nivel: Int, paradas: List<Int>): Int =
 
 /** Estrellas que otorga un nivel: más nivel, más estrellas (1 a 5), igual que starsForLevel(). */
 fun estrellasPara(nivel: Int): Int = min(5, 1 + (nivel - 1) / 20)
+
+/**
+ * Nivel desde el que arranca un material nunca jugado, según la edad
+ * elegida en Ajustes: sin edad o hasta 3 años empieza en la presentación
+ * (etapa 1); cada año más salta una etapa, hasta la 4. Los niveles
+ * anteriores quedan abiertos para volver a ellos desde el selector.
+ */
+fun nivelInicialPorEdad(edad: Int?): Int = when {
+    edad == null || edad <= 3 -> 1
+    edad == 4 -> 1 + STAGE_SIZE
+    edad == 5 -> 1 + STAGE_SIZE * 2
+    else -> 1 + STAGE_SIZE * 3
+}

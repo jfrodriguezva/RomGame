@@ -22,7 +22,6 @@ fun TierraAguaScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("tierra-agua")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("tierra", "Tierra", Color(0xFFE9F0E4)),
             DefCanasta("agua", "Agua", Color(0xFFEAF1F8)),

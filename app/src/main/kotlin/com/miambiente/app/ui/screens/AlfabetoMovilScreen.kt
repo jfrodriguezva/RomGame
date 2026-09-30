@@ -3,6 +3,8 @@ package com.miambiente.app.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,50 +28,55 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.miambiente.app.data.Efecto
-import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.rondaAlfabeto
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
 
-private val PALABRAS = listOf("☀️" to "sol", "🍞" to "pan", "🌙" to "luna", "🐱" to "gato", "🌳" to "arbol")
 private data class Letra(val indice: Int, val caracter: Char)
 
-/** Alfabeto móvil — componer la palabra con letras sueltas, tocando en orden. */
+/**
+ * Alfabeto móvil — componer la palabra con letras sueltas, tocando en
+ * orden. Con el nivel las palabras son más largas (3 a 7 letras) y el banco
+ * trae letras de más que no van (`rondaAlfabeto`).
+ */
 @Composable
 fun AlfabetoMovilScreen(onVolver: () -> Unit) {
-    val services = LocalServices.current
-    val scope = rememberCoroutineScope()
     val juego = buscarJuego("alfabeto-movil")!!
+    val estado = rememberMaterialState(juego)
+    val colores = coloresDe(juego.area)
 
-    var objetivo by remember { mutableStateOf(PALABRAS.random()) }
-    var banco by remember(objetivo) {
-        mutableStateOf(objetivo.second.mapIndexed { i, c -> Letra(i, c) }.shuffled())
-    }
-    var escrito by remember(objetivo) { mutableStateOf("") }
+    val ronda = remember(estado.nivel) { rondaAlfabeto(estado.nivel) }
+    val objetivo = ronda.first
+    var banco by remember(estado.nivel) { mutableStateOf(ronda.second.mapIndexed { i, c -> Letra(i, c) }) }
+    var escrito by remember(estado.nivel) { mutableStateOf("") }
 
     fun tocar(letra: Letra) {
+        if (estado.logrado) return
         val siguiente = objetivo.second[escrito.length]
         if (letra.caracter == siguiente) {
-            services.sound.tocar(Efecto.CORRECT)
             escrito += letra.caracter
             banco = banco.filter { it.indice != letra.indice }
-            if (escrito == objetivo.second) {
-                services.sound.tocar(Efecto.WIN)
-                scope.launch { services.progress.completarNivel(juego.id, 1) }
-                scope.launch {
-                    delay(1200)
-                    objetivo = PALABRAS.filter { it.second != objetivo.second }.random()
-                    escrito = ""
-                }
-            }
+            estado.acierto("¡${letra.caracter}!")
+            if (escrito == objetivo.second) estado.completar()
         } else {
-            services.sound.tocar(Efecto.WRONG)
+            estado.intento("Esa no. Escucha: ${objetivo.second}")
         }
     }
 
-    GameShell(juego = juego, consigna = "Forma la palabra: ${objetivo.first}", onVolver = onVolver) {
+    GameShell(
+        juego = juego,
+        consigna = if (estado.logrado) "¡Escribiste ${objetivo.second}!" else "Forma la palabra: ${objetivo.first}",
+        nota = estado.nota,
+        celebrar = estado.logrado,
+        onVolver = onVolver,
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else null,
+    ) {
         Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(objetivo.first, fontSize = 72.sp)
             Row(modifier = Modifier.padding(top = 16.dp, bottom = 32.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -86,11 +93,11 @@ fun AlfabetoMovilScreen(onVolver: () -> Unit) {
                     ) { Text(if (llena) escrito[i].toString() else "", fontSize = 20.sp, fontWeight = FontWeight.Bold) }
                 }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 banco.forEach { letra ->
                     Box(
                         Modifier
-                            .size(44.dp)
+                            .size(48.dp)
                             .shadow(3.dp, RoundedCornerShape(8.dp))
                             .clip(RoundedCornerShape(8.dp))
                             .background(Color(0xFFA97FC7))

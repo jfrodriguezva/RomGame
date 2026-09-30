@@ -22,7 +22,6 @@ fun OlfatoScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("olfato")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("bien", "Huele bien", Color(0xFFE9F0E4)),
             DefCanasta("mal", "Huele mal", Color(0xFFF3ECF8)),

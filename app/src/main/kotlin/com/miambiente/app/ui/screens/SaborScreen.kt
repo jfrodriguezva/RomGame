@@ -22,7 +22,6 @@ fun SaborScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("sabor")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("dulce", "Dulce", Color(0xFFFBE9E7)),
             DefCanasta("salado", "Salado", Color(0xFFEAF1F8)),

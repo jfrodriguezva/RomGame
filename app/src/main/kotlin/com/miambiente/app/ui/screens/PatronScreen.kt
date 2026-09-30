@@ -28,9 +28,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.dificultadPatron
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 private val CAMPANAS = listOf(Color(0xFFD9433A), Color(0xFFE0C23C), Color(0xFF3E7AA3), Color(0xFF4C7A3A))
 
@@ -40,11 +45,17 @@ fun PatronScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
     val scope = rememberCoroutineScope()
     val juego = buscarJuego("patron")!!
+    val estado = rememberMaterialState(juego)
+    val colores = coloresDe(juego.area)
+    // La melodía de cada nivel tiene largo y tempo propios
+    // (`dificultadPatron`). Antes el "nivel" guardado era el largo de la
+    // melodía alcanzada, sin selector, y un error volvía a empezar de cero.
+    val d = remember(estado.nivel) { dificultadPatron(estado.nivel) }
+    val secuencia = remember(estado.nivel) { val rnd = Random(estado.nivel); List(d.longitud) { (0..3).random(rnd) } }
 
-    var secuencia by remember { mutableStateOf(listOf((0..3).random())) }
-    var mostrando by remember { mutableStateOf(true) }
-    var indiceEsperado by remember { mutableStateOf(0) }
-    var sonando by remember { mutableStateOf(-1) }
+    var mostrando by remember(estado.nivel) { mutableStateOf(true) }
+    var indiceEsperado by remember(estado.nivel) { mutableStateOf(0) }
+    var sonando by remember(estado.nivel) { mutableStateOf(-1) }
 
     fun reproducir() {
         mostrando = true
@@ -54,7 +65,7 @@ fun PatronScreen(onVolver: () -> Unit) {
             secuencia.forEach { nota ->
                 sonando = nota
                 services.sound.tocarNota(nota)
-                delay(500)
+                delay(d.notaMs)
                 sonando = -1
                 delay(200)
             }
@@ -62,31 +73,37 @@ fun PatronScreen(onVolver: () -> Unit) {
         }
     }
 
-    LaunchedEffect(Unit) { reproducir() }
-
-    fun nuevaRonda(masLarga: Boolean) {
-        secuencia = if (masLarga) secuencia + (0..3).random() else List(secuencia.size) { (0..3).random() }
-        reproducir()
-    }
+    LaunchedEffect(estado.nivel) { reproducir() }
 
     fun tocar(nota: Int) {
-        if (mostrando) return
+        if (mostrando || estado.logrado) return
         services.sound.tocarNota(nota)
         if (nota == secuencia[indiceEsperado]) {
             indiceEsperado++
-            if (indiceEsperado == secuencia.size) {
-                scope.launch { services.progress.completarNivel(juego.id, secuencia.size) }
-                scope.launch { delay(900); nuevaRonda(masLarga = true) }
-            }
+            if (indiceEsperado == secuencia.size) estado.completar()
         } else {
-            scope.launch { delay(900); nuevaRonda(masLarga = false) }
+            // Control del error: se vuelve a escuchar la misma melodía.
+            estado.intento("Escúchala otra vez")
+            scope.launch { delay(900); reproducir() }
         }
     }
 
     GameShell(
         juego = juego,
-        consigna = if (mostrando) "Escucha la melodía..." else "Ahora repítela (${secuencia.size} campanas)",
+        consigna = when {
+            estado.logrado -> "¡Repetiste la melodía!"
+            mostrando -> "Escucha la melodía..."
+            else -> "Ahora repítela (${secuencia.size} campanas)"
+        },
+        nota = estado.nota,
+        celebrar = estado.logrado,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else {
+            { Button(onClick = ::reproducir, enabled = !mostrando) { Text("🔁 Oír otra vez") } }
+        },
     ) {
         Row(
             Modifier.fillMaxSize().padding(24.dp),

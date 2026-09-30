@@ -30,42 +30,66 @@ import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.maximoBancoDorado
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
+import kotlin.random.Random
 
-/** El banco dorado — compón el número con centenas, decenas y unidades (sistema decimal a la vista). */
+/**
+ * El banco dorado — compón el número con centenas, decenas y unidades
+ * (sistema decimal a la vista). Los números crecen con el nivel: primero
+ * solo unidades, luego decenas y al final centenas (`maximoBancoDorado`).
+ */
 @Composable
 fun BancoDoradoScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
-    val scope = rememberCoroutineScope()
     val juego = buscarJuego("banco-dorado")!!
+    val estado = rememberMaterialState(juego)
+    val colores = coloresDe(juego.area)
 
-    var objetivo by remember { mutableStateOf((1..299).random()) }
-    var centenas by remember(objetivo) { mutableStateOf(0) }
-    var decenas by remember(objetivo) { mutableStateOf(0) }
-    var unidades by remember(objetivo) { mutableStateOf(0) }
+    val maximo = remember(estado.nivel) { maximoBancoDorado(estado.nivel) }
+    val objetivo = remember(estado.nivel) { (1..maximo).random(Random(estado.nivel)) }
+    var centenas by remember(estado.nivel) { mutableStateOf(0) }
+    var decenas by remember(estado.nivel) { mutableStateOf(0) }
+    var unidades by remember(estado.nivel) { mutableStateOf(0) }
 
     val cObjetivo = objetivo / 100
     val dObjetivo = (objetivo % 100) / 10
     val uObjetivo = objetivo % 10
 
     fun revisar() {
-        if (centenas == cObjetivo && decenas == dObjetivo && unidades == uObjetivo) {
-            services.sound.tocar(Efecto.WIN)
-            scope.launch { services.progress.completarNivel(juego.id, 1) }
-            scope.launch { delay(1200); objetivo = (1..299).random() }
-        } else {
-            services.sound.tocar(Efecto.CLICK)
-        }
+        if (estado.logrado) return
+        services.sound.tocar(Efecto.CLICK)
+        if (centenas == cObjetivo && decenas == dObjetivo && unidades == uObjetivo) estado.completar()
     }
 
-    GameShell(juego = juego, consigna = "Compón el número $objetivo", onVolver = onVolver) {
+    GameShell(
+        juego = juego,
+        consigna = if (estado.logrado) "¡Formaste el $objetivo!" else "Compón el número $objetivo",
+        nota = estado.nota,
+        celebrar = estado.logrado,
+        onVolver = onVolver,
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else null,
+    ) {
         Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("$centenas$decenas$unidades", fontSize = 40.sp, fontWeight = FontWeight.Bold)
+            Text(
+                when {
+                    maximo >= 100 -> "$centenas$decenas$unidades"
+                    maximo >= 10 -> "$decenas$unidades"
+                    else -> "$unidades"
+                },
+                fontSize = 40.sp,
+                fontWeight = FontWeight.Bold,
+            )
             Row(modifier = Modifier.padding(top = 24.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(24.dp)) {
-                Contador("Centenas", centenas, 9, Color(0xFFE0C23C)) { centenas = it; revisar() }
-                Contador("Decenas", decenas, 9, Color(0xFF3E7AA3)) { decenas = it; revisar() }
+                // Solo aparecen las posiciones que el nivel necesita.
+                if (maximo >= 100) Contador("Centenas", centenas, 9, Color(0xFFE0C23C)) { centenas = it; revisar() }
+                if (maximo >= 10) Contador("Decenas", decenas, 9, Color(0xFF3E7AA3)) { decenas = it; revisar() }
                 Contador("Unidades", unidades, 9, Color(0xFFD9433A)) { unidades = it; revisar() }
             }
         }

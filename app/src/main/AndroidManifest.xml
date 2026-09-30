@@ -3,6 +3,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name=".RominaApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
@@ -13,17 +14,18 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MiAmbiente"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden">
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density|fontScale|locale|layoutDirection">
             <!--
                 Bug real reportado: "todo esta en una sola vista, eso debe
                 aplicarse para telefonos". Antes `screenOrientation="portrait"`
                 bloqueaba cualquier giro sin importar el sensor del
                 dispositivo. Se quito para que gire libre (tablet y
                 celular), y se declara `configChanges` para que Android NO
-                destruya y recree la Activity al girar — sin esto, cada
+                destruya y recree la Activity al girar, ni al cambiar el
+                modo oscuro, el tamano de letra o el idioma — sin esto, cada
                 `remember { mutableStateOf(...) }` de cada material (la
-                partida de damas a medias, el solitario repartido, el
-                dibujo de la pizarra) se perderia con cada giro.
+                partida de domino a medias, el dibujo de la pizarra) se
+                perderia con cada cambio.
             -->
 
             <intent-filter>

@@ -11,6 +11,8 @@ import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Patron
 import com.miambiente.app.data.Services
 import com.miambiente.app.model.GameDef
+import com.miambiente.app.model.nivelInicialPorEdad
+import com.miambiente.app.ui.SelectorNivel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,8 +30,21 @@ class MaterialState(
     val juego: GameDef,
     private val scope: CoroutineScope,
 ) {
-    var nivel by mutableStateOf(1)
+    // Un material nunca jugado arranca según la edad elegida en Ajustes.
+    private val inicio = nivelInicialPorEdad(services.settings.actual.value?.edad)
+
+    // Retoma donde se quedó: el primer nivel todavía sin completar. Antes
+    // siempre arrancaba en 1 aunque el progreso ya estuviera guardado.
+    var nivel by mutableStateOf(services.progress.nivelGuardado(juego.id, inicio))
         private set
+
+    /** Para el selector de nivel del encabezado (`GameShell`). */
+    val selector: SelectorNivel
+        get() = SelectorNivel(
+            actual = nivel,
+            desbloqueado = { services.progress.nivelGuardado(juego.id, inicio) },
+            onElegir = ::irANivel,
+        )
     var nota by mutableStateOf<String?>(null)
         private set
     var logrado by mutableStateOf(false)
@@ -53,6 +68,7 @@ class MaterialState(
         services.sound.tocar(Efecto.CORRECT)
         services.haptics.vibrar(Patron.ACIERTO)
         mostrar(texto)
+        scope.launch { services.progress.registrarRespuesta(juego.id, acierto = true) }
     }
 
     /** Control del error: nunca hay penalización, ni vidas, ni "perdiste". */
@@ -60,6 +76,8 @@ class MaterialState(
         services.sound.tocar(Efecto.WRONG)
         services.haptics.vibrar(Patron.ERROR)
         mostrar(texto)
+        // Solo para el resumen del adulto; el niño nunca ve un conteo de errores.
+        scope.launch { services.progress.registrarRespuesta(juego.id, acierto = false) }
     }
 
     /** Cierra el nivel: otorga estrellas, guarda el progreso y celebra. */

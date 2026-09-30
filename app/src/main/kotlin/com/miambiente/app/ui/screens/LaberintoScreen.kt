@@ -30,8 +30,11 @@ import androidx.compose.ui.unit.sp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.ladoLaberinto
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
-import kotlinx.coroutines.launch
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
 import kotlin.random.Random
 
 internal data class Laberinto(val filas: Int, val columnas: Int, val caminos: Set<Int>, val entrada: Int, val salida: Int)
@@ -65,14 +68,19 @@ internal fun generarLaberinto(filasCeldas: Int = 5, columnasCeldas: Int = 5, sem
 @Composable
 fun LaberintoScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
-    val scope = rememberCoroutineScope()
     val juego = buscarJuego("laberinto")!!
-    var ronda by remember { mutableIntStateOf(1) }
-    var mapa by remember(ronda) { mutableStateOf(generarLaberinto(5, 5, ronda * 7919)) }
-    var posicion by remember(ronda) { mutableIntStateOf(mapa.entrada) }
-    var visitadas by remember(ronda) { mutableStateOf(setOf(mapa.entrada)) }
-    var pasos by remember(ronda) { mutableIntStateOf(0) }
-    var completo by remember(ronda) { mutableStateOf(false) }
+    val estado = rememberMaterialState(juego)
+    val colores = coloresDe(juego.area)
+    // El tamaño sale del nivel (3×3 a 8×8 celdas) y el laberinto de cada
+    // nivel es siempre el mismo. Antes era siempre 5×5 y el "nivel" que se
+    // guardaba era el número de rondas jugadas, sin selector.
+    val lado = remember(estado.nivel) { ladoLaberinto(estado.nivel) }
+    val mapa = remember(estado.nivel) { generarLaberinto(lado, lado, estado.nivel * 7919) }
+    var posicion by remember(estado.nivel) { mutableIntStateOf(mapa.entrada) }
+    var visitadas by remember(estado.nivel) { mutableStateOf(setOf(mapa.entrada)) }
+    var pasos by remember(estado.nivel) { mutableIntStateOf(0) }
+    var completo by remember(estado.nivel) { mutableStateOf(false) }
+    val celda = if (lado <= 5) 27.dp else if (lado <= 6) 24.dp else 20.dp
 
     fun mover(delta: Int) {
         if (completo) return
@@ -80,16 +88,21 @@ fun LaberintoScreen(onVolver: () -> Unit) {
         if (destino !in mapa.caminos) { services.sound.tocar(Efecto.WRONG); return }
         posicion = destino; visitadas = visitadas + destino; pasos++; services.sound.tocar(Efecto.CLICK)
         if (destino == mapa.salida) {
-            completo = true; services.sound.tocar(Efecto.WIN)
-            scope.launch { services.progress.completarNivel(juego.id, ronda.coerceAtMost(100)) }
+            completo = true
+            estado.completar()
         }
     }
 
     GameShell(
         juego = juego,
-        consigna = if (completo) "¡Salida encontrada en $pasos pasos!" else "Laberinto ${mapa.columnas}×${mapa.filas} · Pasos $pasos",
+        consigna = if (completo) "¡Salida encontrada en $pasos pasos!" else "Lleva al ratón al queso · Pasos $pasos",
+        nota = estado.nota,
+        celebrar = estado.logrado,
         onVolver = onVolver,
-        acciones = { Button(onClick = { ronda++ }) { Text(if (completo) "Siguiente laberinto" else "Otro laberinto") } },
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else null,
     ) {
         Column(Modifier.fillMaxSize().padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Column(Modifier.clip(RoundedCornerShape(10.dp)).background(Color(0xFF3F342C)).padding(3.dp)) {
@@ -98,7 +111,7 @@ fun LaberintoScreen(onVolver: () -> Unit) {
                         repeat(mapa.columnas) { c ->
                             val i = f * mapa.columnas + c
                             Box(
-                                Modifier.size(27.dp).background(if (i in mapa.caminos) if (i in visitadas) Color(0xFFF1E4C8) else Color.White else Color(0xFF3F342C)),
+                                Modifier.size(celda).background(if (i in mapa.caminos) if (i in visitadas) Color(0xFFF1E4C8) else Color.White else Color(0xFF3F342C)),
                                 contentAlignment = Alignment.Center,
                             ) { Text(when(i){ posicion->"🐭"; mapa.salida->"🧀"; else->"" }, fontSize=15.sp) }
                         }

@@ -22,7 +22,6 @@ fun FrutaVerduraScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("fruta-verdura")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("fruta", "Fruta", Color(0xFFFBE9E7)),
             DefCanasta("verdura", "Verdura", Color(0xFFE9F0E4)),

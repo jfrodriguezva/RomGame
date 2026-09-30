@@ -4,6 +4,7 @@ import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioTrack
 import com.miambiente.app.theme.Area
+import java.util.concurrent.Executors
 import kotlin.math.PI
 import kotlin.math.sin
 
@@ -57,8 +58,75 @@ private fun sintetizarPad(acorde: List<Double>): ShortArray {
     return buffer
 }
 
+/**
+ * Todas las operaciones corren en un único hilo propio, en orden: así la
+ * síntesis (unos segundos de PCM por área) nunca bloquea el hilo principal
+ * ni retrasa la salida del splash, y un `detener()` que llega mientras la
+ * pista todavía se sintetiza se aplica después, nunca antes, sin carreras.
+ * Cada pista se sintetiza la primera vez que se entra a su área y queda en
+ * caché para el resto de la sesión.
+ */
 class AmbientMusic {
-    private val pistas: Map<Area, AudioTrack> = Area.entries.associateWith { area ->
+    private val hilo = Executors.newSingleThreadExecutor { tarea ->
+        Thread(tarea, "musica-ambiente").apply { isDaemon = true }
+    }
+
+    // Solo se tocan desde `hilo`.
+    private val pistas = mutableMapOf<Area, AudioTrack>()
+    private var actual: Area? = null
+    private var enPausa = false
+
+    /** Gatea desde Ajustes ("Música"); si se apaga a medio material, se detiene al toque. */
+    @Volatile var activo: Boolean = true
+        set(valor) {
+            field = valor
+            if (!valor) detener()
+        }
+
+    /** Modo calma: la música queda a menos de la mitad del volumen. */
+    @Volatile var calma: Boolean = false
+        set(valor) {
+            field = valor
+            hilo.execute { pistas.values.forEach { it.setVolume(volumen()) } }
+        }
+
+    private fun volumen() = if (calma) 0.4f else 1f
+
+    /** Cambia el fondo musical al acorde del área dada; no repite si ya es la misma. */
+    fun sonarPara(area: Area) = hilo.execute {
+        if (!activo || (actual == area && !enPausa)) return@execute
+        pararActual()
+        actual = area
+        enPausa = false
+        pistaDe(area).play()
+    }
+
+    fun detener() = hilo.execute {
+        pararActual()
+        actual = null
+        enPausa = false
+    }
+
+    /** La app pasó a segundo plano: silencia sin olvidar qué área sonaba. */
+    fun pausar() = hilo.execute {
+        val area = actual ?: return@execute
+        pistas[area]?.pause()
+        enPausa = true
+    }
+
+    /** La app volvió al frente: retoma el área que sonaba antes de `pausar()`. */
+    fun reanudar() = hilo.execute {
+        val area = actual ?: return@execute
+        if (!enPausa || !activo) return@execute
+        enPausa = false
+        pistas[area]?.play()
+    }
+
+    private fun pararActual() {
+        pistas[actual]?.let { it.stop(); it.reloadStaticData() }
+    }
+
+    private fun pistaDe(area: Area): AudioTrack = pistas.getOrPut(area) {
         val datos = sintetizarPad(ACORDES.getValue(area))
         AudioTrack.Builder()
             .setAudioAttributes(
@@ -80,33 +148,7 @@ class AmbientMusic {
             .apply {
                 write(datos, 0, datos.size)
                 setLoopPoints(0, datos.size, -1)
+                setVolume(volumen())
             }
-    }
-    private var actual: Area? = null
-
-    /** Gatea desde Ajustes ("Música"); si se apaga a medio material, se detiene al toque. */
-    var activo: Boolean = true
-        set(valor) {
-            field = valor
-            if (!valor) detener()
-        }
-
-    /** Cambia el fondo musical al acorde del área dada; no repite si ya es la misma. */
-    fun sonarPara(area: Area) {
-        if (!activo || actual == area) return
-        pistas[actual]?.pause()
-        pistas[actual]?.let { it.stop(); it.reloadStaticData() }
-        actual = area
-        pistas[area]?.play()
-    }
-
-    fun detener() {
-        pistas[actual]?.pause()
-        pistas[actual]?.let { it.stop(); it.reloadStaticData() }
-        actual = null
-    }
-
-    fun liberar() {
-        pistas.values.forEach { it.release() }
     }
 }

@@ -21,7 +21,6 @@ fun RimasScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("rimas")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("ato", "...ato", Color(0xFFFBE9E7)),
             DefCanasta("osa", "...osa", Color(0xFFEAF1F8)),

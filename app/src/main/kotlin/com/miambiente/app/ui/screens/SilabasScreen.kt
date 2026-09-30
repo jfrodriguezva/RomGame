@@ -21,7 +21,6 @@ fun SilabasScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("silabas")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("1", "1 sílaba", Color(0xFFFBE9E7)),
             DefCanasta("2", "2 sílabas", Color(0xFFEAF1F8)),

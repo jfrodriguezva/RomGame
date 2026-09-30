@@ -37,8 +37,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -62,6 +65,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.PathParser
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.withScale
+import androidx.core.graphics.withTranslation
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.Guia
 import com.miambiente.app.data.GUIAS
@@ -70,9 +76,13 @@ import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Patron
 import com.miambiente.app.data.borrarDeGaleria
 import com.miambiente.app.data.DibujoGuardado
+import com.miambiente.app.data.componerConFondo
 import com.miambiente.app.data.exportarParaCompartir
+import com.miambiente.app.data.guardarBorrador
 import com.miambiente.app.data.guardarEnGaleria
+import com.miambiente.app.data.leerBorrador
 import com.miambiente.app.data.leerGaleria
+import com.miambiente.app.data.leerMiniatura
 import com.miambiente.app.data.uriCompartible
 import com.miambiente.app.model.GameDef
 import com.miambiente.app.model.buscarJuego
@@ -83,7 +93,9 @@ import com.miambiente.app.ui.materials.conSimetria
 import com.miambiente.app.ui.materials.rellenar
 import com.miambiente.app.ui.materials.sellar
 import com.miambiente.app.ui.materials.trazar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private data class DefHerramienta(val id: Herramienta, val icono: String, val nombre: String)
 
@@ -166,6 +178,20 @@ fun PizarraScreen(onVolver: () -> Unit) {
     var puedeDeshacer by remember { mutableStateOf(false) }
     var puedeRehacer by remember { mutableStateOf(false) }
 
+    // Borrador automático: 1,5 s después del último cambio y al salir de la
+    // pizarra. El dibujo sigue ahí al volver, aunque Android haya cerrado la
+    // app en segundo plano.
+    LaunchedEffect(revision) {
+        kotlinx.coroutines.delay(1500)
+        bitmap?.let { guardarBorrador(context, it) }
+    }
+    DisposableEffect(Unit) {
+        onDispose { bitmap?.let { guardarBorrador(context, it) } }
+    }
+    // La pizarra tiene su propio marco (no `GameShell`), así que cuenta aquí
+    // su apertura para el resumen del adulto.
+    LaunchedEffect(juego.id) { services.progress.registrarJugada(juego.id) }
+
     fun mostrarAviso(texto: String) {
         aviso = texto
         scope.launch { kotlinx.coroutines.delay(1600); aviso = null }
@@ -216,22 +242,31 @@ fun PizarraScreen(onVolver: () -> Unit) {
 
     fun guardar() {
         val bmp = bitmap ?: return
-        galeria = guardarEnGaleria(context, componerConFondo(bmp, fondo.base.toArgb()))
+        // La copia se toma aquí (rápido); comprimir el PNG va fuera del hilo
+        // principal para no trabar la pizarra mientras se sigue dibujando.
+        val compuesto = componerConFondo(bmp, fondo.base.toArgb())
         services.sound.tocar(Efecto.WIN)
         services.haptics.vibrar(Patron.LOGRO)
-        mostrarAviso("Guardado en la galería")
+        scope.launch {
+            galeria = withContext(Dispatchers.IO) { guardarEnGaleria(context, compuesto) }
+            mostrarAviso("Guardado en la galería")
+        }
     }
 
     fun compartir() {
         val bmp = bitmap ?: return
-        val archivo = exportarParaCompartir(context, bmp, fondo.base.toArgb())
-        val uri = uriCompartible(context, archivo)
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "image/png"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        val copia = bmp.copy(Bitmap.Config.ARGB_8888, false)
+        val colorFondo = fondo.base.toArgb()
+        scope.launch {
+            val archivo = withContext(Dispatchers.IO) { exportarParaCompartir(context, copia, colorFondo) }
+            val uri = uriCompartible(context, archivo)
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "image/png"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            context.startActivity(Intent.createChooser(intent, "Compartir mi dibujo"))
         }
-        context.startActivity(Intent.createChooser(intent, "Compartir mi dibujo"))
     }
 
     fun abrirDibujo(d: DibujoGuardado) {
@@ -291,9 +326,10 @@ fun PizarraScreen(onVolver: () -> Unit) {
                         .onSizeChanged { size ->
                             if (size.width <= 0 || size.height <= 0) return@onSizeChanged
                             if (bitmap == null || bitmap!!.width != size.width || bitmap!!.height != size.height) {
-                                val nuevo = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
+                                val nuevo = createBitmap(size.width, size.height)
                                 val nuevoCanvas = android.graphics.Canvas(nuevo)
-                                bitmap?.let { previo -> nuevoCanvas.drawBitmap(previo, 0f, 0f, null) }
+                                val previo = bitmap ?: leerBorrador(context)
+                                previo?.let { nuevoCanvas.drawBitmap(it, 0f, 0f, null) }
                                 bitmap = nuevo
                                 androidCanvas = nuevoCanvas
                                 revision++
@@ -443,12 +479,15 @@ private fun androidx.compose.foundation.layout.ColumnScope.CajonAnimado(visible:
     ) { contenido() }
 }
 
-private fun componerConFondo(bitmap: Bitmap, colorFondoArgb: Int): Bitmap {
-    val salida = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-    val canvas = android.graphics.Canvas(salida)
-    canvas.drawColor(colorFondoArgb)
-    canvas.drawBitmap(bitmap, 0f, 0f, null)
-    return salida
+/** Miniatura de la galería: se decodifica reducida y fuera del hilo principal. */
+@Composable
+private fun MiniaturaDibujo(d: DibujoGuardado, modifier: Modifier) {
+    val miniatura by produceState<ImageBitmap?>(null, d.archivo, d.fecha) {
+        value = withContext(Dispatchers.IO) { leerMiniatura(d.archivo, 200)?.asImageBitmap() }
+    }
+    Box(modifier.background(Color(0xFFF1ECE4))) {
+        miniatura?.let { androidx.compose.foundation.Image(bitmap = it, contentDescription = "Dibujo guardado", modifier = Modifier.fillMaxSize()) }
+    }
 }
 
 private fun dibujarPatronFondo(scope: androidx.compose.ui.graphics.drawscope.DrawScope, fondoId: String) {
@@ -488,37 +527,36 @@ private fun dibujarGuia(scope: androidx.compose.ui.graphics.drawscope.DrawScope,
     val offY = (scope.size.height - lado) / 2f
     val colorTrazo = if (esOscuro) android.graphics.Color.WHITE else 0xFF8A7F70.toInt()
 
-    nativo.save()
-    nativo.translate(offX, offY)
-    nativo.scale(lado / 100f, lado / 100f)
-
-    if (g.tipo == "texto") {
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeWidth = 1.1f
-            color = colorTrazo
-            this.alpha = (alfa * 255).toInt()
-            textAlign = Paint.Align.CENTER
-            textSize = 62f
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
-            if (punteada) pathEffect = DashPathEffect(floatArrayOf(3f, 3f), 0f)
+    nativo.withTranslation(offX, offY) {
+        withScale(lado / 100f, lado / 100f) {
+            if (g.tipo == "texto") {
+                val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    style = Paint.Style.STROKE
+                    strokeWidth = 1.1f
+                    color = colorTrazo
+                    this.alpha = (alfa * 255).toInt()
+                    textAlign = Paint.Align.CENTER
+                    textSize = 62f
+                    typeface = android.graphics.Typeface.DEFAULT_BOLD
+                    if (punteada) pathEffect = DashPathEffect(floatArrayOf(3f, 3f), 0f)
+                }
+                val metrics = paint.fontMetrics
+                drawText(g.contenido, 50f, 50f - (metrics.ascent + metrics.descent) / 2, paint)
+            } else {
+                val path = PathParser.createPathFromPathData(g.contenido)
+                val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    style = Paint.Style.STROKE
+                    strokeWidth = if (punteada) 1.1f else 2.4f
+                    strokeCap = Paint.Cap.ROUND
+                    strokeJoin = Paint.Join.ROUND
+                    color = colorTrazo
+                    this.alpha = (alfa * 255).toInt()
+                    if (punteada) pathEffect = DashPathEffect(floatArrayOf(3f, 3f), 0f)
+                }
+                drawPath(path, paint)
+            }
         }
-        val metrics = paint.fontMetrics
-        nativo.drawText(g.contenido, 50f, 50f - (metrics.ascent + metrics.descent) / 2, paint)
-    } else {
-        val path = PathParser.createPathFromPathData(g.contenido)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeWidth = if (punteada) 1.1f else 2.4f
-            strokeCap = Paint.Cap.ROUND
-            strokeJoin = Paint.Join.ROUND
-            color = colorTrazo
-            this.alpha = (alfa * 255).toInt()
-            if (punteada) pathEffect = DashPathEffect(floatArrayOf(3f, 3f), 0f)
-        }
-        if (path != null) nativo.drawPath(path, paint)
     }
-    nativo.restore()
 }
 
 @Composable
@@ -635,11 +673,7 @@ private fun CajonHerramientas(
                     } else {
                         Fila { galeria.forEach { d ->
                             Box {
-                                androidx.compose.foundation.Image(
-                                    bitmap = android.graphics.BitmapFactory.decodeFile(d.archivo.absolutePath).asImageBitmap(),
-                                    contentDescription = "Dibujo guardado",
-                                    modifier = Modifier.size(width = 100.dp, height = 76.dp).clip(RoundedCornerShape(12.dp)).clickable { onAbrirDibujo(d) },
-                                )
+                                MiniaturaDibujo(d, Modifier.size(width = 100.dp, height = 76.dp).clip(RoundedCornerShape(12.dp)).clickable { onAbrirDibujo(d) })
                                 Box(
                                     Modifier.align(Alignment.TopEnd).size(22.dp).clip(CircleShape).background(Color.White).clickable { onBorrarDibujo(d) },
                                     contentAlignment = Alignment.Center,

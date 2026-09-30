@@ -21,7 +21,6 @@ fun EstadosAguaScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("estados-agua")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("solido", "Sólido", Color(0xFFEAF1F8)),
             DefCanasta("liquido", "Líquido", Color(0xFFE8F2F5)),

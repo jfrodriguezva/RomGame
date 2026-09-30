@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
@@ -29,10 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miambiente.app.model.CURVA_CLASIFICAR
 import com.miambiente.app.model.GameDef
+import com.miambiente.app.model.Resultado
+import com.miambiente.app.model.RondaClasificar
+import com.miambiente.app.model.phasedInt
 import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
-import kotlin.random.Random
 
 data class ItemClasificar<T>(val valor: T, val id: String, val categoria: String)
 data class DefCanasta(val id: String, val nombre: String, val color: Color)
@@ -47,38 +51,46 @@ data class DefCanasta(val id: String, val nombre: String, val color: Color)
 fun <T> MaterialClasificar(
     juego: GameDef,
     pool: List<ItemClasificar<T>>,
-    cantidadPorRonda: Int,
     canastas: List<DefCanasta>,
     render: @Composable (T) -> Unit,
     consigna: String,
     onVolver: () -> Unit,
+    // Objetos por ronda según el nivel; antes era un número fijo (6) y los
+    // 100 niveles de cada material jugaban igual.
+    cantidadPara: (nivel: Int) -> Int = { nivel -> phasedInt(nivel, CURVA_CLASIFICAR) },
 ) {
     val estado = rememberMaterialState(juego)
     val colores = coloresDe(juego.area)
 
-    var pendientes by remember(estado.nivel) {
-        mutableStateOf(pool.shuffled(Random(estado.nivel)).take(cantidadPorRonda.coerceAtMost(pool.size)))
+    val (elegidos, rondaInicial) = remember(estado.nivel) {
+        RondaClasificar.nueva(pool, cantidadPara(estado.nivel), estado.nivel) { it.id to it.categoria }
     }
-    var acertados by remember(estado.nivel) { mutableStateOf(0) }
+    var ronda by remember(estado.nivel) { mutableStateOf(rondaInicial) }
+    val pendientes = elegidos.filter { item -> ronda.pendientes.any { it.first == item.id } }
+    val acertados = ronda.acertados
     val canastaRects = remember(estado.nivel) { mutableStateMapOf<String, Rect>() }
     var rectArrastre by remember(estado.nivel) { mutableStateOf<Rect?>(null) }
 
-    val completo = pendientes.isEmpty()
+    val completo = ronda.completa
 
     // Mismo bug de fondo que en MaterialOrdenar ("sigue fallando al
     // arrastrar y colocar"): exigir que el punto central de la pieza
     // caiga dentro de la canasta es muy poco tolerante. Ahora basta con
     // que los rectángulos se solapen.
+    fun clasificar(item: ItemClasificar<T>, canastaId: String) {
+        val (nueva, resultado) = ronda.clasificar(item.id, canastaId)
+        ronda = nueva
+        when (resultado) {
+            Resultado.ACIERTO -> estado.acierto("¡Correcto!")
+            Resultado.COMPLETO -> { estado.acierto("¡Correcto!"); estado.completar() }
+            Resultado.ERROR -> estado.intento("Esa no va ahí. Mira otra vez")
+            else -> Unit
+        }
+    }
+
     fun soltar(item: ItemClasificar<T>, rectPieza: Rect) {
         val canastaId = canastaRects.entries.find { (_, rect) -> rect.overlaps(rectPieza) }?.key ?: return
-        if (canastaId == item.categoria) {
-            estado.acierto("¡Correcto!")
-            pendientes = pendientes.filter { it.id != item.id }
-            acertados++
-            if (pendientes.isEmpty()) estado.completar()
-        } else {
-            estado.intento("Esa no va ahí. Mira otra vez")
-        }
+        clasificar(item, canastaId)
     }
 
     GameShell(
@@ -87,6 +99,7 @@ fun <T> MaterialClasificar(
         nota = estado.nota,
         celebrar = estado.logrado,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
         acciones = if (estado.logrado) {
             { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
         } else null,
@@ -98,8 +111,8 @@ fun <T> MaterialClasificar(
                 Text("Quedan: ${pendientes.size} · Acertados: $acertados", color = colores.texto, fontWeight = FontWeight.Bold, fontSize = 13.sp)
             }
 
-            // horizontalScroll: cantidadPorRonda varía por material (hasta
-            // 8 en algunos), y sin esto las piezas de más quedaban fuera de
+            // horizontalScroll: los objetos por ronda crecen con el nivel
+            // (hasta 8), y sin esto las piezas de más quedaban fuera de
             // pantalla en vez de solo apretadas.
             Row(
                 modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 16.dp).horizontalScroll(rememberScrollState()),
@@ -116,6 +129,9 @@ fun <T> MaterialClasificar(
                             clave = item.id,
                             onArrastrar = { rect -> rectArrastre = rect },
                             onSoltar = { rect -> soltar(item, rect) },
+                            accionesAccesibles = canastas.map { canasta ->
+                                CustomAccessibilityAction("Poner en ${canasta.nombre}") { clasificar(item, canasta.id); true }
+                            },
                         ) { render(item.valor) }
                     }
                 }

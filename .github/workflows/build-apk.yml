@@ -11,6 +11,14 @@ on:
       - "gradle.properties"
       - "gradlew"
       - ".github/workflows/build-apk.yml"
+  pull_request:
+    paths:
+      - "app/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - ".github/workflows/build-apk.yml"
 
 jobs:
   build:
@@ -23,12 +31,15 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      # El runner ya trae el SDK de Android. android-actions/setup-android@v3
+      # fallaba al pedir el paquete "tools", que ya no existe en sdkmanager;
+      # aquí solo se agrega la plataforma que pide compileSdk.
+      - name: Install Android platform
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" > /dev/null
       - name: Build, test and lint
         run: |
           chmod +x gradlew
-          ./gradlew testDebugUnitTest lintDebug assembleDebug --no-daemon
+          ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease --no-daemon
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:

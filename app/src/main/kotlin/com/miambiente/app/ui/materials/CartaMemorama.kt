@@ -13,6 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -57,7 +61,12 @@ fun CartaMemorama(
             .clip(forma)
             .background(if (angulo <= 90f) colorDorso else Color.White)
             .then(if (encontrada) Modifier.border(2.dp, Color(0xFF4C7A3A), forma) else Modifier)
-            .clickable(enabled = !encontrada) { onClick() },
+            .clickable(enabled = !encontrada, role = Role.Button) { onClick() }
+            .semantics {
+                // El dorso "❓" se leía como "signo de interrogación".
+                contentDescription = if (visible || encontrada) "Carta: $emoji" else "Carta boca abajo"
+                if (encontrada) stateDescription = "Pareja encontrada"
+            },
         contentAlignment = Alignment.Center,
     ) {
         if (angulo > 90f) {

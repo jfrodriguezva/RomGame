@@ -117,7 +117,7 @@ val CATALOGO = listOf(
     GameDef("patron", "Las campanas", "🔔", "Repite la melodía", Area.SENSORIAL, 4, "Campanas Montessori", "Memoria auditiva y discriminación de tonos."),
     GameDef("pizarra", "La pizarra grande", "🖍️", "Dibuja lo que quieras", Area.CREATIVA, 2, "Pizarra y trazo libre", "Expresión libre, trazo amplio y experimentación con el color.", libre = true),
     GameDef("collage", "Collage libre", "🖼️", "Coloca estampas donde quieras", Area.CREATIVA, 2, "Collage y composición libre", "Composición espacial libre y motricidad fina de precisión.", libre = true),
-    GameDef("colorear", "Colorear", "🎨", "Pinta el dibujo", Area.CREATIVA, 3, "Dibujo dirigido", "Color, límites y paciencia; también relaja."),
+    GameDef("colorear", "Colorear", "🎨", "Pinta el dibujo", Area.CREATIVA, 3, "Dibujo dirigido", "Color, límites y paciencia; también relaja.", libre = true),
     GameDef("xilofono", "Xilófono e instrumentos", "🎼", "Xilófono, piano, guitarra, flauta, trompeta, acordeón y arpa", Area.CREATIVA, 3, "Estudio de exploración sonora", "Exploración musical libre con siete instrumentos y siete notas.", libre = true),
     GameDef("mesa-silencio", "El juego del silencio", "🤫", "Respira y escucha", Area.PRACTICA, 3, "Juego del silencio", "Autorregulación, escucha y control voluntario del cuerpo.", libre = true),
     GameDef("cara", "Toca la cara", "🙂", "Toca la parte que se pide", Area.CULTURA, 2, "Nomenclatura de la cara", "Vocabulario de la cara, tocando directo sobre el dibujo."),

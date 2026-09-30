@@ -1,6 +1,9 @@
 package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +14,8 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
@@ -19,7 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.collectAsState
+import com.miambiente.app.data.EstadoVoz
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Settings
 import com.miambiente.app.theme.Papel
@@ -41,12 +50,20 @@ import kotlinx.coroutines.launch
  * la pantalla; esta pantalla cierra ese hueco.
  */
 @Composable
-fun AjustesScreen(onVolver: () -> Unit) {
+fun AjustesScreen(onVolver: () -> Unit, onVerProgreso: () -> Unit) {
     val services = LocalServices.current
     val scope = rememberCoroutineScope()
     val ajustes by services.settings.settings.collectAsState(initial = Settings())
+    val estadoVoz by services.speech.estado.collectAsState()
 
-    Column(Modifier.fillMaxSize().background(Papel).safeDrawingPadding().padding(20.dp)) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(Papel)
+            .safeDrawingPadding()
+            .verticalScroll(rememberScrollState())
+            .padding(20.dp),
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TextButton(onClick = onVolver) { Text("← Volver", color = Tinta, fontWeight = FontWeight.Bold) }
         }
@@ -65,13 +82,43 @@ fun AjustesScreen(onVolver: () -> Unit) {
         )
 
         // El nombre del saludo del inicio. Se guarda solo, como todo aqui.
+        // El texto en edición vive en estado local: si el campo leyera
+        // directo de DataStore, cada tecla haría ida y vuelta al disco y al
+        // escribir rápido se perdían letras ("Romina" quedaba "Roa").
+        var nombreEditado by remember { mutableStateOf<String?>(null) }
         OutlinedTextField(
-            value = ajustes.nombre,
-            onValueChange = { nuevo -> scope.launch { services.settings.setNombre(nuevo.take(20)) } },
+            value = nombreEditado ?: ajustes.nombre,
+            onValueChange = { nuevo ->
+                val recortado = nuevo.take(20)
+                nombreEditado = recortado
+                scope.launch { services.settings.setNombre(recortado) }
+            },
             label = { Text("¿Cómo se llama?") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
         )
+
+        // La edad solo decide desde qué nivel arranca un material que nunca
+        // se ha jugado; los niveles anteriores siguen abiertos.
+        Text("¿Cuántos años tiene?", fontWeight = FontWeight.Bold, color = Tinta, fontSize = 15.sp)
+        Text(
+            "Decide el nivel inicial de cada material nuevo. Siempre se puede volver a niveles anteriores.",
+            color = TextoSuave,
+            fontSize = 12.sp,
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.horizontalScroll(rememberScrollState()).padding(top = 6.dp, bottom = 20.dp),
+        ) {
+            listOf(null, 2, 3, 4, 5, 6).forEach { edad ->
+                FilterChip(
+                    selected = ajustes.edad == edad,
+                    onClick = { scope.launch { services.settings.setEdad(edad ?: 0) } },
+                    label = { Text(if (edad == null) "Sin elegir" else if (edad == 6) "6+" else "$edad") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Color(0xFFFFE6A7)),
+                )
+            }
+        }
 
         FilaAjuste(
             emoji = "🔊",
@@ -87,6 +134,19 @@ fun AjustesScreen(onVolver: () -> Unit) {
             activo = ajustes.voz,
             onCambiar = { scope.launch { services.settings.toggleVoz() } },
         )
+        if (ajustes.voz && (estadoVoz == EstadoVoz.SIN_ESPANOL || estadoVoz == EstadoVoz.SIN_MOTOR)) {
+            Text(
+                if (estadoVoz == EstadoVoz.SIN_MOTOR) {
+                    "⚠️ Este dispositivo no tiene un motor de voz. Instala \"Servicios de voz de Google\" para escuchar las consignas."
+                } else {
+                    "⚠️ No hay una voz en español instalada. Descárgala en Ajustes del sistema › Salida de texto a voz."
+                },
+                color = Color(0xFF9A4B1C),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 12.dp),
+            )
+        }
         FilaAjuste(
             emoji = "🎵",
             titulo = "Música de fondo",
@@ -101,6 +161,29 @@ fun AjustesScreen(onVolver: () -> Unit) {
             activo = ajustes.vibracion,
             onCambiar = { scope.launch { services.settings.toggleVibracion() } },
         )
+        FilaAjuste(
+            emoji = "🌙",
+            titulo = "Modo calma",
+            descripcion = "Voz más lenta, música más baja, sin confeti ni sonido de error",
+            activo = ajustes.calma,
+            onCambiar = { scope.launch { services.settings.toggleCalma() } },
+        )
+
+        Card(
+            onClick = onVerProgreso,
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFF4E9D7)),
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        ) {
+            Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text("📊", fontSize = 24.sp, modifier = Modifier.padding(end = 12.dp))
+                Column(Modifier.weight(1f)) {
+                    Text("Ver progreso", fontWeight = FontWeight.Bold, color = Tinta, fontSize = 15.sp)
+                    Text("Estrellas, niveles y materiales más usados", color = TextoSuave, fontSize = 12.sp)
+                }
+                Text("›", fontSize = 22.sp, color = TextoSuave)
+            }
+        }
     }
 }
 

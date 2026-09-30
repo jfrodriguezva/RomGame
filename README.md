@@ -9,7 +9,7 @@ niños.
 
 - Aplicación Android nativa con Kotlin y Jetpack Compose.
 - Sin React, Next.js, Capacitor, WebView ni dependencias de Node.
-- Catálogo consolidado en 19 materiales y 90 modos, sin filtros por edad.
+- Catálogo consolidado en 19 materiales y 89 modos, sin filtros por edad.
 - Los juegos similares viven como modos de un mismo material y conservan su
   pantalla, niveles y progreso independiente.
 - Sin categoría Arcade: se retiraron los 11 juegos de ritmo/reflejos por no
@@ -22,18 +22,26 @@ niños.
 - Pizarra completa restaurada; el xilófono integra siete instrumentos con siete notas.
 - Catálogo y progreso completamente locales.
 - Android 7.0 o posterior (`minSdk 24`).
-- Versión de aplicación: **1.0.0**.
+- Versión de aplicación: **1.1.0**. Todos los modos con niveles tienen
+  selector y dificultad que crece de verdad en sus 100 niveles.
 
-La estrategia completa está en
-[`docs/PLAN-RECONSTRUCCION-ANDROID.md`](docs/PLAN-RECONSTRUCCION-ANDROID.md) y el
-inventario de la aplicación retirada en
-[`docs/INVENTARIO-FASE-0.md`](docs/INVENTARIO-FASE-0.md).
+Documentación:
+
+- [`docs/MANUAL-USUARIO.md`](docs/MANUAL-USUARIO.md) — uso de la app, ajustes y
+  vista del adulto.
+- [`docs/MANUAL-TECNICO.md`](docs/MANUAL-TECNICO.md) — arquitectura, pruebas,
+  build y publicación.
+- [`docs/PLAN-RECONSTRUCCION-ANDROID.md`](docs/PLAN-RECONSTRUCCION-ANDROID.md) —
+  estrategia y decisiones vigentes.
+- [`docs/INVENTARIO-FASE-0.md`](docs/INVENTARIO-FASE-0.md) — inventario de la
+  aplicación web retirada.
 
 ## Tecnología actual
 
-- Jetpack Compose para navegación, catálogo, ajustes y progreso.
-- Jetpack Compose contiene las pantallas jugables restauradas. La integración
-  experimental que dejaba juegos en blanco se retiró de la versión 1.0.0.
+- Kotlin 2.4, Jetpack Compose, Android Gradle Plugin 9.4 y Gradle 9.8.
+- `compileSdk`/`targetSdk` 37, `minSdk` 24. R8 activo en release.
+- Todas las pantallas (navegación, catálogo, ajustes, progreso y juegos) son
+  Compose; no hay motores externos.
 
 ## Recuperación 1.0.0
 
@@ -59,6 +67,13 @@ En Linux o macOS:
 ```
 
 El APK debug se genera en `app/build/outputs/apk/debug/app-debug.apk`.
+
+Con un emulador o dispositivo conectado, el recorrido que abre las 111
+pantallas y verifica áreas táctiles de 48dp:
+
+```bash
+./gradlew connectedDebugAndroidTest
+```
 
 ## Instalar mediante ADB
 

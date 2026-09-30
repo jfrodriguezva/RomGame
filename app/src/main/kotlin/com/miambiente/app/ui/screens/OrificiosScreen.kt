@@ -31,7 +31,6 @@ fun OrificiosScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("orificios")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("circulo", "◯", Color(0xFFEAF1F8)),
             DefCanasta("cuadrado", "▢", Color(0xFFF3ECF8)),

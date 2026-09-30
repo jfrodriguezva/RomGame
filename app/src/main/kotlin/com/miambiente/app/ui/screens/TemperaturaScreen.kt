@@ -22,7 +22,6 @@ fun TemperaturaScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("temperatura")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("caliente", "Caliente", Color(0xFFFBE9E7)),
             DefCanasta("frio", "Frío", Color(0xFFEAF1F8)),
