@@ -51,13 +51,15 @@ val MATERIALES_CONSOLIDADOS = listOf(
     material("taller-creativo", "Taller creativo y musical", "🎨", "Dibujo, color, collage y siete instrumentos", CategoriaMaterial.CREATIVIDAD, "pizarra", "colorear", "collage", "xilofono", "patron"),
 
     material("vida-practica", "Vida práctica", "🫗", "Rutinas, higiene, mesa y coordinación fina", CategoriaMaterial.COORDINACION, "vida-practica", "pinza", "tamanos", "rutina", "mesa", "lavado-manos"),
-    material("coordinacion", "Coordinación y reflejos", "🎯", "Precisión, ritmo, vibración y reacción", CategoriaMaterial.COORDINACION, "burbujas", "canasta", "globo", "vibra-adivina", "reflejo-color"),
+    material("coordinacion", "Coordinación y reflejos", "🎯", "Precisión, ritmo, vibración y reacción", CategoriaMaterial.COORDINACION, "burbujas", "canasta", "globo", "topo", "vibra-adivina", "reflejo-color"),
+    material("clasicos", "Juegos clásicos", "🕹️", "La víbora, piezas que encajan y rompe ladrillos", CategoriaMaterial.COORDINACION, "snake", "tetris", "arkanoid"),
 
     material("alineacion", "Alineación y duelo", "⭕", "Gato y piedra, papel o tijera", CategoriaMaterial.MESA, "gato", "rps"),
     material("memoria-mesa", "Memoria por turnos", "🧠", "Encuentra parejas contra la computadora", CategoriaMaterial.MESA, "memoria-turnos"),
     material("domino", "Dominó", "🀄", "Encaja tu ficha por número", CategoriaMaterial.MESA, "domino"),
     material("busca-objetos", "Encuentra los objetos", "🔟", "Diez objetos escondidos en una escena", CategoriaMaterial.MESA, "diez-objetos"),
     material("busca-diferencias", "Encuentra las diferencias", "🖼️", "Diez diferencias entre dos imágenes", CategoriaMaterial.MESA, "diez-diferencias"),
+    material("palillos", "Palillos chinos", "🥢", "Saca varillas sin mover las demás", CategoriaMaterial.MESA, "palillos"),
 )
 
 fun buscarMaterialConsolidado(id: String) = MATERIALES_CONSOLIDADOS.find { it.id == id }

@@ -171,6 +171,31 @@ fun avanceTrazo(guia: List<Punto>, trazo: List<Punto>, tolerancia: Float): Int {
     return siguiente
 }
 
+/** Atrapa al topo: puntos para ganar la ronda de 30 s y ritmo de aparición. */
+data class DificultadTopo(val meta: Int, val arribaBaseMs: Long, val pausaBaseMs: Long)
+
+fun dificultadTopo(nivel: Int) = DificultadTopo(
+    meta = phasedInt(nivel, listOf(5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20)),
+    arribaBaseMs = phasedInt(nivel, listOf(1200, 1140, 1080, 1020, 960, 900, 840, 780, 720, 660, 600)).toLong(),
+    pausaBaseMs = phasedInt(nivel, listOf(700, 660, 620, 580, 540, 500, 460, 420, 380, 340, 300)).toLong(),
+)
+
+/** La víbora: comida para ganar y milisegundos por paso (menos, más rápida). */
+data class DificultadSnake(val meta: Int, val pasoMs: Long)
+
+fun dificultadSnake(nivel: Int) = DificultadSnake(
+    meta = phasedInt(nivel, listOf(3, 4, 5, 6, 7, 8, 10, 12, 14, 17, 20)),
+    pasoMs = phasedInt(nivel, listOf(340, 320, 300, 280, 260, 240, 220, 200, 185, 170, 150)).toLong(),
+)
+
+/** Acomoda las piezas: líneas para ganar y milisegundos por caída. */
+data class DificultadTetris(val lineas: Int, val caidaMs: Long)
+
+fun dificultadTetris(nivel: Int) = DificultadTetris(
+    lineas = phasedInt(nivel, listOf(1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20)),
+    caidaMs = phasedInt(nivel, listOf(1000, 920, 850, 780, 720, 660, 600, 540, 480, 420, 360)).toLong(),
+)
+
 data class DificultadCara(val partes: Int, val aciertos: Int)
 
 fun dificultadCara(nivel: Int) = DificultadCara(

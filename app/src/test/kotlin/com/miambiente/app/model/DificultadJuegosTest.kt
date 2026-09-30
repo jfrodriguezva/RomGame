@@ -94,6 +94,19 @@ class DificultadJuegosTest {
     }
 
     @Test
+    fun `los juegos clasicos rescatados tambien crecen con el nivel`() {
+        val topo = niveles.map(::dificultadTopo)
+        noBaja("meta del topo", topo.map { it.meta }); noSube("topo arriba", topo.map { it.arribaBaseMs }); noSube("pausa del topo", topo.map { it.pausaBaseMs })
+        cambia("meta del topo", topo.map { it.meta })
+        val snake = niveles.map(::dificultadSnake)
+        noBaja("comida de la víbora", snake.map { it.meta }); noSube("paso de la víbora", snake.map { it.pasoMs })
+        cambia("comida de la víbora", snake.map { it.meta })
+        val tetris = niveles.map(::dificultadTetris)
+        noBaja("líneas", tetris.map { it.lineas }); noSube("caída", tetris.map { it.caidaMs })
+        cambia("líneas", tetris.map { it.lineas })
+    }
+
+    @Test
     fun `la cara suma partes y aciertos`() {
         val cara = niveles.map(::dificultadCara)
         noBaja("partes", cara.map { it.partes }); noBaja("aciertos", cara.map { it.aciertos })
