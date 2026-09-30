@@ -83,6 +83,16 @@ La mayoría de los modos se arman con un patrón de `ui/materials`:
   `generarOpciones`).
 - **Rompecabezas** usa `SerieOrdenar` (pieza k en casilla k) y
   `escenaRompecabezas(nivel)`: 2×2, 3×3 o 4×4 con piezas distintas.
+- **Juegos con pantalla propia** (globo, burbujas, canasta, reflejo, vibra,
+  araña, laberinto, memorama, diferencias, objetos, campanas, binomio,
+  banco dorado, tabla del cien, alfabeto móvil, trazos y cara) usan también
+  `MaterialState` y toman sus parámetros de `model/DificultadJuegos.kt`
+  (`dificultadGlobo(nivel)`, `parejasMemorama(nivel)`, etc.). Los trazos se
+  validan con `avanceTrazo`: hay que recorrer la guía en orden.
+
+Regla: todo modo que no sea libre (`libre = true`) ni juego de mesa
+(`Area.COMPANIA`) muestra selector de nivel. El recorrido instrumentado lo
+verifica.
 - **MaterialState** — nivel, acierto, intento y completar; registra aciertos
   y errores para el resumen del adulto.
 

@@ -1,6 +1,6 @@
 # RominaGame (Mi Ambiente) — Manual de usuario
 
-Versión 1.0.0 · actualizado el 30 de septiembre de 2026.
+Versión 1.1.0 · actualizado el 30 de septiembre de 2026.
 
 Ambiente Montessori digital para niñas y niños de 2 a 6 años, para Android.
 Todo en español, sin conexión, sin cuentas, sin publicidad y sin enviar un
@@ -53,8 +53,16 @@ Arriba a la derecha de cada modo está el **selector de nivel**: permite volver
 a cualquier nivel ya abierto. Los siguientes se abren al completar el
 anterior. Al volver a un modo, se retoma el último nivel abierto.
 
-Cuatro actividades son libres a propósito y no tienen niveles: la pizarra, el
-juego del silencio, el xilófono y el collage libre.
+Cinco actividades son libres a propósito y no tienen niveles: la pizarra,
+colorear, el juego del silencio, el xilófono y el collage libre. Los juegos
+de mesa se juegan por partida completa.
+
+Todos los demás modos suben de dificultad con el nivel. Algunos ejemplos:
+el memorama pasa de 3 a 24 parejas, el laberinto de 3×3 a 8×8, las
+campanas de 2 a 8 notas, el alfabeto móvil de palabras de 3 a 7 letras con
+letras de más, la tabla del cien llega una decena más lejos en cada etapa,
+los trazos pasan de la línea recta al zigzag, la ola, los arcos y la
+espiral, y los juegos de reflejos piden más aciertos y más rapidez.
 
 ## 4. La pizarra
 

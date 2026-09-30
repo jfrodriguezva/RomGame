@@ -22,43 +22,52 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.miambiente.app.data.Efecto
-import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.hastaTablaCien
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
 
-/** La tabla del cien — coloca del 1 al 100 en orden (secuencia numérica y estructura de la decena). */
+/**
+ * La tabla del cien — coloca los números en orden (secuencia numérica y
+ * estructura de la decena). Cada nivel llega un poco más lejos, de decena
+ * en decena, hasta el 100 (`hastaTablaCien`). Antes el primer intento ya
+ * pedía los cien números seguidos.
+ */
 @Composable
 fun TablaCienScreen(onVolver: () -> Unit) {
-    val services = LocalServices.current
-    val scope = rememberCoroutineScope()
     val juego = buscarJuego("tabla-cien")!!
+    val estado = rememberMaterialState(juego)
+    val colores = coloresDe(juego.area)
+    val hasta = remember(estado.nivel) { hastaTablaCien(estado.nivel) }
 
-    var siguiente by remember { mutableStateOf(1) }
+    var siguiente by remember(estado.nivel) { mutableStateOf(1) }
 
     fun tocar(n: Int) {
+        if (estado.logrado || n < siguiente) return
         if (n == siguiente) {
-            services.sound.tocar(Efecto.CORRECT)
             siguiente++
-            if (siguiente > 100) {
-                services.sound.tocar(Efecto.WIN)
-                scope.launch { services.progress.completarNivel(juego.id, 1) }
-                scope.launch { delay(1500); siguiente = 1 }
-            }
+            estado.acierto("¡$n!")
+            if (siguiente > hasta) estado.completar()
         } else {
-            services.sound.tocar(Efecto.WRONG)
+            estado.intento("Busca el $siguiente")
         }
     }
 
     GameShell(
         juego = juego,
-        consigna = if (siguiente > 100) "¡Completaste la tabla del cien!" else "Toca el número $siguiente",
+        consigna = if (siguiente > hasta) "¡Llegaste al $hasta!" else "Toca el número $siguiente",
+        nota = estado.nota,
+        celebrar = estado.logrado,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else null,
     ) {
         LazyVerticalGrid(columns = GridCells.Fixed(10), contentPadding = androidx.compose.foundation.layout.PaddingValues(8.dp)) {
-            items(100) { i ->
+            items(hasta) { i ->
                 val n = i + 1
                 val decena = (i / 10) % 2 == 0
                 val esSiguiente = n == siguiente

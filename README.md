@@ -22,7 +22,8 @@ niños.
 - Pizarra completa restaurada; el xilófono integra siete instrumentos con siete notas.
 - Catálogo y progreso completamente locales.
 - Android 7.0 o posterior (`minSdk 24`).
-- Versión de aplicación: **1.0.0**.
+- Versión de aplicación: **1.1.0**. Todos los modos con niveles tienen
+  selector y dificultad que crece de verdad en sus 100 niveles.
 
 Documentación:
 

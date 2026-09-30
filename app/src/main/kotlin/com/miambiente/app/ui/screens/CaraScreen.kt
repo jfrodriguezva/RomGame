@@ -31,11 +31,18 @@ import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Patron
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.dificultadCara
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private data class Parte(val id: String, val nombre: String, val dx: Int, val dy: Int, val tamano: Int)
+
+/** Nombres que se piden, en el orden en que entran al subir de nivel. */
+private val NOMBRES_EN_ORDEN = listOf("el ojo", "la nariz", "la boca", "la oreja", "el pelo")
 
 private val PARTES = listOf(
     Parte("ojo-izq", "el ojo", -45, -25, 26),
@@ -63,43 +70,59 @@ private val PARTES = listOf(
  */
 @Composable
 fun CaraScreen(onVolver: () -> Unit) {
-    val services = LocalServices.current
     val scope = rememberCoroutineScope()
     val juego = buscarJuego("cara")!!
+    val estado = rememberMaterialState(juego)
+    val colores = coloresDe(juego.area)
+    // Con el nivel entran más partes (orejas y pelo, que antes se dibujaban
+    // pero no se podían tocar) y se piden más aciertos (`dificultadCara`).
+    val d = remember(estado.nivel) { dificultadCara(estado.nivel) }
+    val enJuego = remember(estado.nivel) { NOMBRES_EN_ORDEN.take(d.partes) }
 
-    var objetivo by remember { mutableStateOf(PARTES.random()) }
-    var error by remember { mutableStateOf<String?>(null) }
-    var acertada by remember { mutableStateOf<String?>(null) }
+    var objetivo by remember(estado.nivel) { mutableStateOf(enJuego.random()) }
+    var acertada by remember(estado.nivel) { mutableStateOf<String?>(null) }
+    var aciertos by remember(estado.nivel) { mutableStateOf(0) }
 
-    fun tocar(parte: Parte) {
-        if (parte.nombre == objetivo.nombre) {
-            services.sound.tocar(Efecto.CORRECT)
-            services.haptics.vibrar(Patron.ACIERTO)
-            error = null
-            acertada = parte.id
-            scope.launch { services.progress.completarNivel(juego.id, 1) }
+    fun tocar(id: String, nombre: String) {
+        if (estado.logrado || nombre !in enJuego) return
+        if (nombre == objetivo) {
+            acertada = id
+            aciertos++
+            estado.acierto("¡Es ${nombre}!")
+            if (aciertos >= d.aciertos) { estado.completar(); return }
             scope.launch {
                 delay(700)
-                objetivo = PARTES.filter { it.nombre != objetivo.nombre }.random()
+                objetivo = enJuego.filter { it != objetivo }.random()
                 acertada = null
             }
         } else {
-            services.sound.tocar(Efecto.WRONG)
-            error = "Ese no es. Intenta otra vez"
-            scope.launch { delay(900); error = null }
+            estado.intento("Ese no es. Intenta otra vez")
         }
     }
 
-    GameShell(juego = juego, consigna = "Toca ${objetivo.nombre}", nota = error, onVolver = onVolver) {
+    fun Modifier.tocable(id: String, nombre: String) =
+        if (nombre in enJuego) semantics { contentDescription = nombre }.clickable { tocar(id, nombre) } else this
+
+    GameShell(
+        juego = juego,
+        consigna = if (estado.logrado) "¡Conoces tu cara!" else "Toca $objetivo",
+        nota = estado.nota,
+        celebrar = estado.logrado,
+        onVolver = onVolver,
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else null,
+    ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Box(Modifier.size(240.dp), contentAlignment = Alignment.Center) {
                 // Orejas y pelo: antes la cara era un círculo liso, ahora
                 // se lee como una cara de verdad de un vistazo.
-                Box(Modifier.offset(x = (-104).dp).size(38.dp).clip(CircleShape).background(Color(0xFFF3DBE3)).shadow(1.dp, CircleShape))
-                Box(Modifier.offset(x = 104.dp).size(38.dp).clip(CircleShape).background(Color(0xFFF3DBE3)).shadow(1.dp, CircleShape))
+                Box(Modifier.offset(x = (-104).dp).size(48.dp).clip(CircleShape).background(Color(0xFFF3DBE3)).shadow(1.dp, CircleShape).tocable("oreja-izq", "la oreja"))
+                Box(Modifier.offset(x = 104.dp).size(48.dp).clip(CircleShape).background(Color(0xFFF3DBE3)).shadow(1.dp, CircleShape).tocable("oreja-der", "la oreja"))
                 Box(Modifier.size(220.dp).shadow(4.dp, CircleShape).clip(CircleShape).background(Color(0xFFF3DBE3))) {
                     Box(Modifier.fillMaxSize()) {
-                        Box(Modifier.offset(y = (-92).dp).size(width = 210.dp, height = 70.dp).align(Alignment.TopCenter).clip(CircleShape).background(Color(0xFF6B4A34)))
+                        Box(Modifier.offset(y = (-92).dp).size(width = 210.dp, height = 70.dp).align(Alignment.TopCenter).clip(CircleShape).background(Color(0xFF6B4A34)).tocable("pelo", "el pelo"))
                     }
                     PARTES.forEach { parte ->
                         // clickable (no pointerInput+detectTapGestures) para que
@@ -113,7 +136,7 @@ fun CaraScreen(onVolver: () -> Unit) {
                                     .align(Alignment.Center)
                                     .offset(x = parte.dx.dp, y = parte.dy.dp)
                                     .semantics { contentDescription = parte.nombre }
-                                    .clickable { tocar(parte) },
+                                    .clickable { tocar(parte.id, parte.nombre) },
                             ) {
                                 drawArc(
                                     color = Color(0xFFA23B3B),
@@ -136,7 +159,7 @@ fun CaraScreen(onVolver: () -> Unit) {
                                     .clip(CircleShape)
                                     .background(Color(0xFF3F342C))
                                     .semantics { contentDescription = parte.nombre }
-                                    .clickable { tocar(parte) },
+                                    .clickable { tocar(parte.id, parte.nombre) },
                             )
                         }
                     }

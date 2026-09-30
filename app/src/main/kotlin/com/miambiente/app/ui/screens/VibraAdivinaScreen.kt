@@ -2,6 +2,7 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
@@ -27,10 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.dificultadVibra
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -47,10 +51,16 @@ fun VibraAdivinaScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
     val scope = rememberCoroutineScope()
     val juego = buscarJuego("vibra-adivina")!!
+    val estado = rememberMaterialState(juego)
+    val colores = coloresDe(juego.area)
+    // Más pulsos posibles, más aciertos por nivel y pausas más cortas
+    // conforme sube el nivel (`dificultadVibra`); antes siempre 1 a 5.
+    val d = remember(estado.nivel) { dificultadVibra(estado.nivel) }
 
-    var objetivo by remember { mutableStateOf((1..5).random()) }
-    var vibrando by remember { mutableStateOf(false) }
-    var listo by remember { mutableStateOf(false) }
+    var objetivo by remember(estado.nivel) { mutableStateOf((1..d.maxPulsos).random()) }
+    var vibrando by remember(estado.nivel) { mutableStateOf(false) }
+    var listo by remember(estado.nivel) { mutableStateOf(false) }
+    var aciertos by remember(estado.nivel) { mutableStateOf(0) }
 
     fun vibrarPulsos() {
         vibrando = true
@@ -58,7 +68,7 @@ fun VibraAdivinaScreen(onVolver: () -> Unit) {
         scope.launch {
             repeat(objetivo) {
                 services.haptics.vibrar(com.miambiente.app.data.Patron.ACIERTO)
-                delay(450)
+                delay(d.pausaMs)
             }
             vibrando = false
             listo = true
@@ -66,30 +76,39 @@ fun VibraAdivinaScreen(onVolver: () -> Unit) {
     }
 
     fun elegir(n: Int) {
-        if (!listo) return
+        if (!listo || estado.logrado) return
         if (n == objetivo) {
-            services.sound.tocar(Efecto.WIN)
-            scope.launch { services.progress.completarNivel(juego.id, 1) }
-            objetivo = (1..5).random()
+            aciertos++
+            estado.acierto("¡Eran $objetivo!")
+            if (aciertos >= d.aciertos) estado.completar()
+            objetivo = (1..d.maxPulsos).random()
             listo = false
         } else {
-            services.sound.tocar(Efecto.WRONG)
+            estado.intento("No eran $n. Vuelve a sentirlos")
         }
     }
 
     GameShell(
         juego = juego,
         consigna = when {
+            estado.logrado -> "¡Los contaste todos!"
             vibrando -> "Siente los pulsos..."
             listo -> "¿Cuántos pulsos sentiste?"
-            else -> "Toca \"Vibrar\" y cuenta con los ojos cerrados"
+            else -> "Toca \"Vibrar\" y cuenta con los ojos cerrados ($aciertos de ${d.aciertos})"
         },
+        nota = estado.nota,
+        celebrar = estado.logrado,
         onVolver = onVolver,
-        acciones = { Button(onClick = ::vibrarPulsos, enabled = !vibrando) { Text("📳 Vibrar") } },
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else {
+            { Button(onClick = ::vibrarPulsos, enabled = !vibrando) { Text("📳 Vibrar") } }
+        },
     ) {
         Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Row(modifier = Modifier.padding(top = 48.dp), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
-                (1..5).forEach { n ->
+            Row(modifier = Modifier.padding(top = 48.dp).horizontalScroll(androidx.compose.foundation.rememberScrollState()), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)) {
+                (1..d.maxPulsos).forEach { n ->
                     val interaccion = remember { MutableInteractionSource() }
                     val presionado by interaccion.collectIsPressedAsState()
                     androidx.compose.foundation.layout.Box(

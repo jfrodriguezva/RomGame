@@ -41,10 +41,12 @@ historia de las decisiones.
 2. Fase 4 sobre Compose: revisar cada material uno por uno (curva de
    dificultad, instrucciones interactivas, mejor marca), empezando por los
    que el resumen del adulto muestre como más difíciles.
-3. Seriación, transferencia, clasificación y rompecabezas ya tienen sus
-   reglas en funciones puras con pruebas y su dificultad sale del nivel.
-   Falta hacer lo mismo con los juegos individuales que todavía guardan su
-   lógica dentro de la pantalla (pizarra, collage, xilófono, coordinación).
+3. Hecho en la versión 1.1.0: todos los modos con niveles (patrones
+   compartidos y 17 juegos con pantalla propia) toman su dificultad del
+   nivel desde funciones puras con pruebas, guardan el nivel real y tienen
+   selector. Quedan con lógica en pantalla solo las actividades libres
+   (pizarra, collage, xilófono, colorear, silencio) y los juegos de mesa,
+   que ya tienen pruebas de reglas (gato, dominó, objetos, diferencias).
 
 > **Cierre de recuperación — versión 1.0.0 (24 de septiembre de 2026).** Tras
 > detectar regresiones de navegación, pantallas en blanco y pérdida de juegos,

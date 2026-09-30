@@ -28,52 +28,74 @@ import androidx.compose.ui.unit.dp
 import com.miambiente.app.data.Efecto
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.dificultadBinomio
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
+import kotlin.random.Random
 
 private val COLORES = listOf(Color(0xFFD9433A), Color(0xFF3E7AA3), Color(0xFFE0C23C), Color(0xFF4C7A3A))
 
-/** El cubo del binomio — arma el patrón de colores (base sensorial del álgebra). */
+/**
+ * El cubo del binomio — arma el patrón de colores (base sensorial del
+ * álgebra). La cuadrícula (2×2 a 3×3) y los colores en juego salen del
+ * nivel (`dificultadBinomio`).
+ */
 @Composable
 fun BinomioScreen(onVolver: () -> Unit) {
     val services = LocalServices.current
-    val scope = rememberCoroutineScope()
     val juego = buscarJuego("binomio")!!
+    val estado = rememberMaterialState(juego)
+    val coloresArea = coloresDe(juego.area)
+    val d = remember(estado.nivel) { dificultadBinomio(estado.nivel) }
+    val paleta = COLORES.take(d.colores)
+    val total = d.lado * d.lado
 
-    var objetivo by remember { mutableStateOf(List(4) { COLORES.random() }) }
-    var actual by remember(objetivo) { mutableStateOf(List(4) { COLORES.random() }) }
-
-    fun tocar(i: Int) {
-        val siguienteColor = COLORES[(COLORES.indexOf(actual[i]) + 1) % COLORES.size]
-        actual = actual.toMutableList().also { it[i] = siguienteColor }
-        services.sound.tocar(Efecto.CLICK)
-        if (actual == objetivo) {
-            services.sound.tocar(Efecto.WIN)
-            scope.launch { services.progress.completarNivel(juego.id, 1) }
-            scope.launch { delay(1200); objetivo = List(4) { COLORES.random() } }
-        }
+    val objetivo = remember(estado.nivel) { val rnd = Random(estado.nivel); List(total) { paleta.random(rnd) } }
+    // Arranca distinto del objetivo para que siempre haya algo que hacer.
+    var actual by remember(estado.nivel) {
+        val rnd = Random(estado.nivel + 1)
+        mutableStateOf(List(total) { i -> paleta.filter { it != objetivo[i] }.random(rnd) })
     }
 
-    GameShell(juego = juego, consigna = "Toca cada cuadro hasta igualar el patrón", onVolver = onVolver) {
+    fun tocar(i: Int) {
+        if (estado.logrado) return
+        val siguienteColor = paleta[(paleta.indexOf(actual[i]) + 1) % paleta.size]
+        actual = actual.toMutableList().also { it[i] = siguienteColor }
+        services.sound.tocar(Efecto.CLICK)
+        if (actual == objetivo) estado.completar()
+    }
+
+    GameShell(
+        juego = juego,
+        consigna = if (estado.logrado) "¡Igual que el patrón!" else "Toca cada cuadro hasta igualar el patrón",
+        nota = estado.nota,
+        celebrar = estado.logrado,
+        onVolver = onVolver,
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(coloresArea, onClick = estado::siguiente) }
+        } else null,
+    ) {
         Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Patrón a copiar", modifier = Modifier.padding(bottom = 8.dp))
-            Cuadricula(objetivo, onTocar = null)
+            Cuadricula(objetivo, d.lado, onTocar = null)
             Text("Tu cubo", modifier = Modifier.padding(top = 32.dp, bottom = 8.dp))
-            Cuadricula(actual, onTocar = ::tocar)
+            Cuadricula(actual, d.lado, onTocar = ::tocar)
         }
     }
 }
 
 @Composable
-private fun Cuadricula(colores: List<Color>, onTocar: ((Int) -> Unit)?) {
+private fun Cuadricula(colores: List<Color>, lado: Int, onTocar: ((Int) -> Unit)?) {
     Column(
         modifier = Modifier.shadow(4.dp, RoundedCornerShape(10.dp)).clip(RoundedCornerShape(10.dp)).background(Color(0xFFEFE7DA)).padding(4.dp),
     ) {
-        for (fila in 0..1) {
+        for (fila in 0 until lado) {
             Row {
-                for (col in 0..1) {
-                    val i = fila * 2 + col
+                for (col in 0 until lado) {
+                    val i = fila * lado + col
                     val interaccion = remember { MutableInteractionSource() }
                     val presionado by interaccion.collectIsPressedAsState()
                     Box(

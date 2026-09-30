@@ -35,7 +35,10 @@ import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Patron
 import com.miambiente.app.model.buscarJuego
 import com.miambiente.app.model.phasedInt
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -71,7 +74,11 @@ fun AranaScreen(onVolver: () -> Unit) {
     val juego = buscarJuego("arana")!!
     val densidad = LocalDensity.current
 
-    var nivel by remember { mutableStateOf(1) }
+    val estado = rememberMaterialState(juego)
+    val colores = coloresDe(juego.area)
+    // Antes el nivel vivía solo en esta pantalla: se perdía al salir y no
+    // había selector. Ahora es el nivel guardado del material.
+    val nivel = estado.nivel
     var generacion by remember { mutableStateOf(0) }
 
     val filas = phasedInt(nivel, listOf(4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
@@ -199,19 +206,19 @@ fun AranaScreen(onVolver: () -> Unit) {
     val gano = totalCeldas > 0 && revelado.size.toFloat() / totalCeldas >= UMBRAL_VICTORIA
 
     LaunchedEffect(gano) {
-        if (gano) {
-            services.sound.tocar(Efecto.WIN)
-            scope.launch { services.progress.completarNivel(juego.id, 1) }
-            delay(1800)
-            nivel = (nivel + 1).coerceAtMost(100)
-        }
+        if (gano && !estado.logrado) estado.completar()
     }
 
     GameShell(
         juego = juego,
         consigna = if (gano) "¡La araña descubrió el dibujo!" else "Arrastra junto al borde para descubrir el dibujo — cuidado con la araña mala",
+        nota = estado.nota,
         celebrar = gano,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else null,
     ) {
         Column(Modifier.fillMaxSize().padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text("❤️".repeat(vidas) + "🖤".repeat((VIDAS_INICIALES - vidas).coerceAtLeast(0)), fontSize = 18.sp)

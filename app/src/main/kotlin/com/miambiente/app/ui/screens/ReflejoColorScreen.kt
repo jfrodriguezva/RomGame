@@ -27,10 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.miambiente.app.data.Efecto
-import com.miambiente.app.data.LocalServices
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.dificultadReflejo
+import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
+import com.miambiente.app.ui.materials.BotonSiguienteNivel
+import com.miambiente.app.ui.materials.rememberMaterialState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -43,53 +45,71 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun ReflejoColorScreen(onVolver: () -> Unit) {
-    val services = LocalServices.current
     val scope = rememberCoroutineScope()
     val juego = buscarJuego("reflejo-color")!!
+    val estado = rememberMaterialState(juego)
+    val colores = coloresDe(juego.area)
+    // Cada nivel pide varias rondas por debajo de un tiempo que baja con el
+    // nivel (`dificultadReflejo`). Antes cualquier toque bajo 600 ms daba
+    // "el nivel 1", y nada cambiaba al seguir jugando.
+    val d = remember(estado.nivel) { dificultadReflejo(estado.nivel) }
 
-    var esperando by remember { mutableStateOf(true) }
-    var listo by remember { mutableStateOf(false) }
-    var inicioNs by remember { mutableStateOf(0L) }
-    var ultimoMs by remember { mutableStateOf<Long?>(null) }
-    var mejorMs by remember { mutableStateOf<Long?>(null) }
+    var esperando by remember(estado.nivel) { mutableStateOf(true) }
+    var listo by remember(estado.nivel) { mutableStateOf(false) }
+    var inicioNs by remember(estado.nivel) { mutableStateOf(0L) }
+    var ultimoMs by remember(estado.nivel) { mutableStateOf<Long?>(null) }
+    var mejorMs by remember(estado.nivel) { mutableStateOf<Long?>(null) }
+    var logradas by remember(estado.nivel) { mutableStateOf(0) }
 
     fun nuevaRonda() {
         esperando = true
         listo = false
         scope.launch {
-            delay((1200..3000).random().toLong())
+            delay((d.esperaMinMs..d.esperaMaxMs).random())
             inicioNs = System.nanoTime()
             listo = true
             esperando = false
         }
     }
 
-    LaunchedEffect(Unit) { nuevaRonda() }
+    LaunchedEffect(estado.nivel) { nuevaRonda() }
 
     fun tocar() {
+        if (estado.logrado) return
         if (esperando) {
-            services.sound.tocar(Efecto.WRONG)
+            estado.intento("¡Todavía no! Espera el verde")
             return
         }
         if (!listo) return
         val ms = (System.nanoTime() - inicioNs) / 1_000_000
         ultimoMs = ms
         if (mejorMs == null || ms < mejorMs!!) mejorMs = ms
-        services.sound.tocar(Efecto.CORRECT)
-        if (ms < 600) scope.launch { services.progress.completarNivel(juego.id, 1) }
         listo = false
+        if (ms <= d.umbralMs) {
+            logradas++
+            estado.acierto("$ms ms")
+            if (logradas >= d.rondas) { estado.completar(); return }
+        } else {
+            estado.intento("$ms ms: un poco más rápido")
+        }
         scope.launch { delay(900); nuevaRonda() }
     }
 
     GameShell(
         juego = juego,
         consigna = when {
-            esperando -> "Espera el color..."
+            estado.logrado -> "¡Qué reflejos!"
+            esperando -> "Espera el color... ($logradas de ${d.rondas})"
             listo -> "¡Toca ahora!"
             else -> "Toca cuando cambie de color"
         },
-        nota = ultimoMs?.let { "Tu tiempo: ${it} ms" + (mejorMs?.let { m -> " · Mejor: ${m} ms" } ?: "") },
+        nota = estado.nota ?: ultimoMs?.let { "Tu tiempo: ${it} ms · Meta: ${d.umbralMs} ms" + (mejorMs?.let { m -> " · Mejor: ${m} ms" } ?: "") },
+        celebrar = estado.logrado,
         onVolver = onVolver,
+        selectorNivel = estado.selector,
+        acciones = if (estado.logrado) {
+            { BotonSiguienteNivel(colores, onClick = estado::siguiente) }
+        } else null,
     ) {
         Box(
             Modifier

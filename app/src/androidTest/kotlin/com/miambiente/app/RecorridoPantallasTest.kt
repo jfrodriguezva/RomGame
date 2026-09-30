@@ -9,6 +9,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
@@ -16,6 +17,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.miambiente.app.data.LocalServices
 import com.miambiente.app.data.Services
+import com.miambiente.app.theme.Area
+import com.miambiente.app.model.CATALOGO
 import com.miambiente.app.model.MATERIALES_CONSOLIDADOS
 import com.miambiente.app.theme.MiAmbienteTheme
 import com.miambiente.app.ui.PANTALLAS
@@ -81,6 +84,7 @@ class RecorridoPantallasTest {
         }
 
         val pequenos = mutableMapOf<String, Int>()
+        val sinSelector = mutableListOf<String>()
         for (id in pantallas.keys) {
             try {
                 regla.runOnUiThread { actual = id }
@@ -88,6 +92,9 @@ class RecorridoPantallasTest {
                 regla.onRoot().assertExists()
                 val n = tocablesPequenos()
                 if (n > 0) pequenos[id] = n
+                // Un modo que anuncia "100 niveles progresivos" debe dejar
+                // elegir nivel; antes ~20 no tenían selector.
+                if (id in conNiveles && !tieneSelector()) sinSelector += id
             } catch (e: Throwable) {
                 throw AssertionError("La pantalla '$id' falló al abrirse", e)
             }
@@ -97,7 +104,15 @@ class RecorridoPantallasTest {
         Log.i("Recorrido", "Pantallas abiertas: ${pantallas.size}")
         pequenos.forEach { (id, n) -> Log.i("Recorrido", "Tocables de menos de 48dp en '$id': $n") }
         assertTrue("Áreas táctiles de menos de 48dp en: $pequenos", pequenos.isEmpty())
+        assertTrue("Modos con niveles sin selector de nivel: $sinSelector", sinSelector.isEmpty())
     }
+
+    /** Modos que el menú presenta con "100 niveles progresivos". */
+    private val conNiveles = CATALOGO.filter { !it.libre && it.area != Area.COMPANIA }.map { it.id }.toSet()
+
+    private fun tieneSelector() =
+        regla.onAllNodes(hasContentDescription("Toca para elegir otro nivel", substring = true))
+            .fetchSemanticsNodes().isNotEmpty()
 
     /** Elementos con acción de toque cuyo lado menor mide menos de 48dp. */
     private fun tocablesPequenos(): Int {
