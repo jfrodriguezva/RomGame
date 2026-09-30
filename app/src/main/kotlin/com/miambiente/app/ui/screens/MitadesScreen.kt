@@ -26,7 +26,6 @@ fun MitadesScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("mitades")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("entera", "Entera", Color(0xFFFBE9E7)),
             DefCanasta("mitad", "Mitad", Color(0xFFEAF1F8)),

@@ -22,7 +22,6 @@ fun TexturaScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("textura")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("aspero", "Áspero", Color(0xFFFDF1E4)),
             DefCanasta("liso", "Liso", Color(0xFFEAF1F8)),

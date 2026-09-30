@@ -22,7 +22,6 @@ fun DiaNocheScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("dia-noche")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("dia", "Día", Color(0xFFF6F0E4)),
             DefCanasta("noche", "Noche", Color(0xFFEAF1F8)),

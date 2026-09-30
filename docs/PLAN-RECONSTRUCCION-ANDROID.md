@@ -41,8 +41,10 @@ historia de las decisiones.
 2. Fase 4 sobre Compose: revisar cada material uno por uno (curva de
    dificultad, instrucciones interactivas, mejor marca), empezando por los
    que el resumen del adulto muestre como más difíciles.
-3. Llevar a funciones puras con pruebas la lógica que aún vive dentro de las
-   pantallas (quiz, clasificación y juegos individuales).
+3. Seriación, transferencia, clasificación y rompecabezas ya tienen sus
+   reglas en funciones puras con pruebas y su dificultad sale del nivel.
+   Falta hacer lo mismo con los juegos individuales que todavía guardan su
+   lógica dentro de la pantalla (pizarra, collage, xilófono, coordinación).
 
 > **Cierre de recuperación — versión 1.0.0 (24 de septiembre de 2026).** Tras
 > detectar regresiones de navegación, pantallas en blanco y pérdida de juegos,

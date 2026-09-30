@@ -32,7 +32,6 @@ fun LadosScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("lados")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("3", "3 lados", Color(0xFFFBE9E7)),
             DefCanasta("4", "4 lados", Color(0xFFEAF1F8)),

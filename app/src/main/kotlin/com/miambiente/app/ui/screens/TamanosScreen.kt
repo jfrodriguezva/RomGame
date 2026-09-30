@@ -26,7 +26,6 @@ fun TamanosScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("tamanos")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("grande", "Grande", Color(0xFFE9F0E4)),
             DefCanasta("mediano", "Mediano", Color(0xFFEAF1F8)),

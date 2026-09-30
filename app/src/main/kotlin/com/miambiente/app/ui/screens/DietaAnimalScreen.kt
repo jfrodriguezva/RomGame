@@ -23,7 +23,6 @@ fun DietaAnimalScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("dieta-animal")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("herbivoro", "Herbívoro", Color(0xFFE9F0E4)),
             DefCanasta("carnivoro", "Carnívoro", Color(0xFFFBE9E7)),

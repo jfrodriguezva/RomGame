@@ -115,6 +115,67 @@ class LogicaMaterialesTest {
         }
     }
 
+    private val pool = (1..10).map { "obj$it" to if (it % 2 == 0) "par" else "impar" }
+
+    @Test
+    fun `clasificar en la canasta correcta es acierto y en otra es error`() {
+        val ronda = RondaClasificar(listOf("a" to "x", "b" to "y"))
+        val (tras, r) = ronda.clasificar("a", "y")
+        assertEquals(Resultado.ERROR, r)
+        assertEquals(ronda, tras)
+        val (bien, r2) = ronda.clasificar("a", "x")
+        assertEquals(Resultado.ACIERTO, r2)
+        assertEquals(listOf("b" to "y"), bien.pendientes)
+        assertEquals(1, bien.acertados)
+    }
+
+    @Test
+    fun `el ultimo objeto completa la ronda`() {
+        val (ronda, r) = RondaClasificar(listOf("a" to "x")).clasificar("a", "x")
+        assertEquals(Resultado.COMPLETO, r)
+        assertTrue(ronda.completa)
+    }
+
+    @Test
+    fun `un objeto ya clasificado no cuenta dos veces`() {
+        val (ronda, _) = RondaClasificar(listOf("a" to "x", "b" to "x")).clasificar("a", "x")
+        assertEquals(ronda to Resultado.NADA, ronda.clasificar("a", "x"))
+    }
+
+    @Test
+    fun `la ronda toma tantos objetos como pide el nivel sin pasarse del material`() {
+        val (elegidos, ronda) = RondaClasificar.nueva(pool, 4, semilla = 1) { it }
+        assertEquals(4, elegidos.size)
+        assertEquals(4, ronda.pendientes.size)
+        assertEquals(10, RondaClasificar.nueva(pool, 50, 1) { it }.first.size)
+    }
+
+    @Test
+    fun `repetir un nivel da la misma ronda`() {
+        assertEquals(
+            RondaClasificar.nueva(pool, 5, 7) { it }.first,
+            RondaClasificar.nueva(pool, 5, 7) { it }.first,
+        )
+    }
+
+    @Test
+    fun `clasificar crece de 3 a 8 objetos con el nivel`() {
+        assertEquals(3, phasedInt(1, CURVA_CLASIFICAR))
+        assertEquals(8, phasedInt(100, CURVA_CLASIFICAR))
+        val tamanos = (1..100).map { phasedInt(it, CURVA_CLASIFICAR) }
+        assertTrue(tamanos.zipWithNext().all { (a, b) -> b >= a })
+    }
+
+    @Test
+    fun `el rompecabezas crece de 2x2 a 4x4 con piezas distintas`() {
+        assertEquals(2, escenaRompecabezas(1).lado)
+        assertEquals(4, escenaRompecabezas(100).lado)
+        (1..100).map(::escenaRompecabezas).forEach { e ->
+            assertEquals(e.lado * e.lado, e.piezas.size)
+            assertEquals("piezas repetidas en ${e.lado}x${e.lado}", e.piezas.size, e.piezas.toSet().size)
+        }
+    }
+
     @Test
     fun `la torre rosa va de 3 a 10 cubos`() {
         assertEquals(3, phasedInt(1, CURVA_TORRE_ROSA))

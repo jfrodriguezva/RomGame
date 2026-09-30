@@ -76,14 +76,22 @@ La mayoría de los modos se arman con un patrón de `ui/materials`:
   tocar su lugar. Reglas en `SerieOrdenar` (`model/LogicaMateriales.kt`).
 - **MaterialTransferir** — pasar de uno en uno hasta un objetivo exacto;
   pasarse reinicia la bandeja. Reglas en `Transferencia`.
-- **MaterialQuiz**, **MaterialClasificar** — nomenclatura y clasificación.
+- **MaterialClasificar** — arrastrar cada objeto a su canasta. Reglas en
+  `RondaClasificar`; los objetos por ronda salen de `CURVA_CLASIFICAR` (3 a 8,
+  sin pasar del total del material).
+- **MaterialQuiz** — nomenclatura en tres periodos (`periodoPara`,
+  `generarOpciones`).
+- **Rompecabezas** usa `SerieOrdenar` (pieza k en casilla k) y
+  `escenaRompecabezas(nivel)`: 2×2, 3×3 o 4×4 con piezas distintas.
 - **MaterialState** — nivel, acierto, intento y completar; registra aciertos
   y errores para el resumen del adulto.
 
 Las pantallas no deben calcular la dificultad fuera del nivel: los patrones
 reciben una función del nivel (`calcularN`, `calcularObjetivo`) y las curvas
 viven con nombre en `LogicaMateriales.kt` (`CURVA_TORRE_ROSA`, etc.). Antes
-seis pantallas llamaban `phasedInt(1, …)` y quedaban siempre en el nivel 1.
+seis pantallas llamaban `phasedInt(1, …)` y quedaban siempre en el nivel 1,
+los 24 materiales de clasificación pedían siempre 6 objetos y el
+rompecabezas era siempre de 4 piezas.
 
 ## 6. Motor de niveles
 

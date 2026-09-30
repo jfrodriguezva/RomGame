@@ -23,7 +23,6 @@ fun SingularPluralScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("singular-plural")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("singular", "Singular", Color(0xFFEAF1F8)),
             DefCanasta("plural", "Plural", Color(0xFFF3ECF8)),

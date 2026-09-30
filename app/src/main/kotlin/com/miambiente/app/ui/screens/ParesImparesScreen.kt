@@ -23,7 +23,6 @@ fun ParesImparesScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("pares-impares")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("par", "Par", Color(0xFFE9F0E4)),
             DefCanasta("impar", "Impar", Color(0xFFF3ECF8)),

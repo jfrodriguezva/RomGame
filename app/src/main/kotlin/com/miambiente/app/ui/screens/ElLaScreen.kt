@@ -23,7 +23,6 @@ fun ElLaScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("el-la")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("el", "El", Color(0xFFEAF1F8)),
             DefCanasta("la", "La", Color(0xFFFBE9E7)),

@@ -2,12 +2,15 @@ package com.miambiente.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,49 +26,59 @@ import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miambiente.app.model.Resultado
+import com.miambiente.app.model.SerieOrdenar
 import com.miambiente.app.model.buscarJuego
+import com.miambiente.app.model.escenaRompecabezas
 import com.miambiente.app.theme.coloresDe
 import com.miambiente.app.ui.GameShell
 import com.miambiente.app.ui.materials.PiezaArrastrable
 import com.miambiente.app.ui.materials.ZonaSoltar
 import com.miambiente.app.ui.materials.rememberMaterialState
 
-private val PIEZAS = listOf("🌞" to 0, "☁️" to 1, "🌳" to 2, "🏠" to 3)
-
-/** Rompecabezas — arrastra cada pieza a su lugar exacto (relación parte-todo). */
+/**
+ * Rompecabezas — arrastra cada pieza a su lugar exacto (relación parte-todo).
+ * Crece con el nivel (2×2, 3×3, 4×4) y muestra arriba el modelo terminado:
+ * antes era siempre la misma cuadrícula de 4 y sin modelo, así que no había
+ * forma de saber dónde iba cada pieza más que probando.
+ */
 @Composable
 fun RompecabezasScreen(onVolver: () -> Unit) {
     val juego = buscarJuego("rompecabezas")!!
     val estado = rememberMaterialState(juego)
     val colores = coloresDe(juego.area)
 
-    var colocadas by remember(estado.nivel) { mutableStateOf(setOf<Int>()) }
-    val piezasRevueltas = remember(estado.nivel) { PIEZAS.shuffled() }
+    val escena = remember(estado.nivel) { escenaRompecabezas(estado.nivel) }
+    val lado = escena.lado
+    val total = lado * lado
+    // Pieza k (1..total) va en la casilla k: misma regla que la seriación.
+    var armado by remember(estado.nivel) { mutableStateOf(SerieOrdenar.nueva(total)) }
     val ranuraRects = remember(estado.nivel) { mutableStateMapOf<Int, Rect>() }
     var rectArrastre by remember(estado.nivel) { mutableStateOf<Rect?>(null) }
-    val completo = colocadas.size == PIEZAS.size
 
-    // Mismo bug de fondo del arrastre que en MaterialOrdenar: solapamiento
-    // de rectángulos en vez de exigir el punto central exacto.
-    fun colocar(posicionCorrecta: Int, ranura: Int?) {
-        if (ranura == posicionCorrecta) {
-            estado.acierto("¡Ahí va!")
-            colocadas = colocadas + posicionCorrecta
-            if (colocadas.size == PIEZAS.size) estado.completar()
-        } else if (ranura != null) {
-            estado.intento()
+    fun colocar(pieza: Int, ranura: Int?) {
+        if (ranura == null) return
+        val (nuevo, resultado) = armado.tocarPieza(pieza).tocarLugar(ranura)
+        armado = nuevo
+        when (resultado) {
+            Resultado.ACIERTO -> estado.acierto("¡Ahí va!")
+            Resultado.COMPLETO -> { estado.acierto("¡Ahí va!"); estado.completar() }
+            Resultado.ERROR -> estado.intento()
+            else -> Unit
         }
     }
 
-    fun soltar(posicionCorrecta: Int, rectPieza: Rect) {
-        colocar(posicionCorrecta, ranuraRects.entries.find { (_, rect) -> rect.overlaps(rectPieza) }?.key)
+    fun soltar(pieza: Int, rectPieza: Rect) {
+        colocar(pieza, ranuraRects.entries.find { (_, rect) -> rect.overlaps(rectPieza) }?.key)
     }
 
     GameShell(
         juego = juego,
-        consigna = if (completo) "¡Armaste la imagen!" else "Arrastra cada pieza a su lugar",
+        consigna = if (armado.completa) "¡Armaste la imagen!" else "Arrastra cada pieza a su lugar, como en el modelo",
         nota = estado.nota,
         celebrar = estado.logrado,
         onVolver = onVolver,
@@ -74,53 +87,74 @@ fun RompecabezasScreen(onVolver: () -> Unit) {
             { com.miambiente.app.ui.materials.BotonSiguienteNivel(colores, onClick = estado::siguiente) }
         } else null,
     ) {
-        Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Row(
-                modifier = Modifier.shadow(4.dp, RoundedCornerShape(10.dp)).clip(RoundedCornerShape(10.dp)).background(colores.fondo.copy(alpha = 0.3f)).padding(2.dp),
+        Column(Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            // Modelo: la imagen terminada, en chico.
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(colores.fondo.copy(alpha = 0.5f))
+                    .padding(4.dp)
+                    .semantics { contentDescription = "Modelo del rompecabezas terminado" },
             ) {
-                for (fila in 0..1) {
-                    Column {
-                        for (col in 0..1) {
-                            val posicion = fila * 2 + col
-                            val llena = posicion in colocadas
-                            val rect = ranuraRects[posicion]
+                for (fila in 0 until lado) {
+                    Row { for (col in 0 until lado) Box(Modifier.size(26.dp), contentAlignment = Alignment.Center) { Text(escena.piezas[fila * lado + col], fontSize = 16.sp) } }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .shadow(4.dp, RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(colores.fondo.copy(alpha = 0.3f))
+                    .padding(2.dp),
+            ) {
+                for (fila in 0 until lado) {
+                    Row {
+                        for (col in 0 until lado) {
+                            val casilla = fila * lado + col + 1
+                            val llena = casilla in armado.colocadas
+                            val rect = ranuraRects[casilla]
                             ZonaSoltar(
-                                modifier = Modifier.size(70.dp),
+                                modifier = Modifier.size(64.dp),
                                 resaltado = rectArrastre != null && rect?.overlaps(rectArrastre!!) == true,
                                 formaResaltado = RoundedCornerShape(6.dp),
-                                onPosicion = { r -> ranuraRects[posicion] = r },
+                                onPosicion = { r -> ranuraRects[casilla] = r },
                             ) {
                                 Box(
                                     Modifier
-                                        .size(70.dp)
+                                        .size(64.dp)
                                         .clip(RoundedCornerShape(6.dp))
                                         .background(colores.fondo)
                                         .then(if (llena) Modifier else Modifier.border(2.dp, colores.acento.copy(alpha = 0.3f), RoundedCornerShape(6.dp))),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    if (llena) Text(PIEZAS.first { it.second == posicion }.first, fontSize = 28.sp)
+                                    if (llena) Text(escena.piezas[casilla - 1], fontSize = 28.sp)
                                 }
                             }
                         }
                     }
                 }
             }
-            // key(posicion): mismo bug de "acomodar" encontrado en
+            // key(pieza): mismo bug de "acomodar" encontrado en
             // MaterialOrdenar/MaterialClasificar — sin él, al colocar una
             // pieza el resto se recorría un lugar y heredaba el arrastre a
             // medias de la pieza anterior en esa posición.
-            Row(modifier = Modifier.padding(top = 32.dp)) {
-                piezasRevueltas.filter { it.second !in colocadas }.forEach { (emoji, posicion) ->
-                    key(posicion) {
+            Row(
+                modifier = Modifier.padding(top = 20.dp).horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                armado.enCanasto.forEach { pieza ->
+                    key(pieza) {
                         PiezaArrastrable(
                             tamano = 56.dp,
-                            clave = posicion,
+                            clave = pieza,
                             onArrastrar = { rect -> rectArrastre = rect },
-                            onSoltar = { rect -> soltar(posicion, rect) },
-                            accionesAccesibles = PIEZAS.indices.filterNot { it in colocadas }.map { ranura ->
-                                CustomAccessibilityAction("Poner en la casilla ${ranura + 1}") { colocar(posicion, ranura); true }
+                            onSoltar = { rect -> soltar(pieza, rect) },
+                            accionesAccesibles = (1..total).filterNot { it in armado.colocadas }.map { ranura ->
+                                CustomAccessibilityAction("Poner en la casilla $ranura") { colocar(pieza, ranura); true }
                             },
-                        ) { Text(emoji, fontSize = 26.sp) }
+                        ) { Text(escena.piezas[pieza - 1], fontSize = 26.sp) }
                     }
                 }
             }

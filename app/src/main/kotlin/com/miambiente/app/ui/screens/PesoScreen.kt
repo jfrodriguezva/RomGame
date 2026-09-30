@@ -22,7 +22,6 @@ fun PesoScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("peso")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("pesado", "Pesado", Color(0xFFF3ECF8)),
             DefCanasta("ligero", "Ligero", Color(0xFFE8F2F5)),

@@ -22,7 +22,6 @@ fun ContinentesScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("continentes")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("america", "América", Color(0xFFFBE9E7)),
             DefCanasta("africa", "África", Color(0xFFFDF1E4)),

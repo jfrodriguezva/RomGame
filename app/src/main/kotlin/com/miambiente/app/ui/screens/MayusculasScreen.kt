@@ -23,7 +23,6 @@ fun MayusculasScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("mayusculas")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("mayuscula", "Mayúscula", Color(0xFFEAF1F8)),
             DefCanasta("minuscula", "minúscula", Color(0xFFF3ECF8)),

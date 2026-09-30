@@ -35,7 +35,9 @@ se limitaron a los infantiles.
   cruces rojas: si la pieza no es la que toca, vuelve al canasto con un
   mensaje amable.
 - **Aislar la dificultad.** Cada etapa cambia una sola cosa. En la torre rosa
-  crece el número de cubos (de 3 a 10); en Contar y los husos, la cantidad.
+  crece el número de cubos (de 3 a 10); en Contar y los husos, la cantidad;
+  en los materiales de clasificar, los objetos por ronda (de 3 a 8); el
+  rompecabezas pasa de 2×2 a 3×3 y 4×4, siempre con el modelo a la vista.
 - **Repetir no es retroceder.** Las estrellas se dan una sola vez por nivel.
 - **Ambiente preparado.** Paleta de papel, madera y lino; el modo calma quita
   animaciones y confeti y hace la voz más pausada.

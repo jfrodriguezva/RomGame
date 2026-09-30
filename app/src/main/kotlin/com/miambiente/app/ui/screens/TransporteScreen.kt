@@ -24,7 +24,6 @@ fun TransporteScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("transporte")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("tierra", "Tierra", Color(0xFFE9F0E4)),
             DefCanasta("aire", "Aire", Color(0xFFEAF1F8)),

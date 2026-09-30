@@ -22,7 +22,6 @@ fun SeresVivosScreen(onVolver: () -> Unit) {
     MaterialClasificar(
         juego = buscarJuego("seres-vivos")!!,
         pool = POOL,
-        cantidadPorRonda = 6,
         canastas = listOf(
             DefCanasta("vivo", "Vivo", Color(0xFFEAF3EF)),
             DefCanasta("no-vivo", "No vivo", Color(0xFFF3ECF8)),
