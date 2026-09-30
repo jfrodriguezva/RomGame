@@ -40,6 +40,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -80,6 +82,7 @@ import com.miambiente.app.data.guardarBorrador
 import com.miambiente.app.data.guardarEnGaleria
 import com.miambiente.app.data.leerBorrador
 import com.miambiente.app.data.leerGaleria
+import com.miambiente.app.data.leerMiniatura
 import com.miambiente.app.data.uriCompartible
 import com.miambiente.app.model.GameDef
 import com.miambiente.app.model.buscarJuego
@@ -90,7 +93,9 @@ import com.miambiente.app.ui.materials.conSimetria
 import com.miambiente.app.ui.materials.rellenar
 import com.miambiente.app.ui.materials.sellar
 import com.miambiente.app.ui.materials.trazar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private data class DefHerramienta(val id: Herramienta, val icono: String, val nombre: String)
 
@@ -237,22 +242,31 @@ fun PizarraScreen(onVolver: () -> Unit) {
 
     fun guardar() {
         val bmp = bitmap ?: return
-        galeria = guardarEnGaleria(context, componerConFondo(bmp, fondo.base.toArgb()))
+        // La copia se toma aquí (rápido); comprimir el PNG va fuera del hilo
+        // principal para no trabar la pizarra mientras se sigue dibujando.
+        val compuesto = componerConFondo(bmp, fondo.base.toArgb())
         services.sound.tocar(Efecto.WIN)
         services.haptics.vibrar(Patron.LOGRO)
-        mostrarAviso("Guardado en la galería")
+        scope.launch {
+            galeria = withContext(Dispatchers.IO) { guardarEnGaleria(context, compuesto) }
+            mostrarAviso("Guardado en la galería")
+        }
     }
 
     fun compartir() {
         val bmp = bitmap ?: return
-        val archivo = exportarParaCompartir(context, bmp, fondo.base.toArgb())
-        val uri = uriCompartible(context, archivo)
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "image/png"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        val copia = bmp.copy(Bitmap.Config.ARGB_8888, false)
+        val colorFondo = fondo.base.toArgb()
+        scope.launch {
+            val archivo = withContext(Dispatchers.IO) { exportarParaCompartir(context, copia, colorFondo) }
+            val uri = uriCompartible(context, archivo)
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "image/png"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            context.startActivity(Intent.createChooser(intent, "Compartir mi dibujo"))
         }
-        context.startActivity(Intent.createChooser(intent, "Compartir mi dibujo"))
     }
 
     fun abrirDibujo(d: DibujoGuardado) {
@@ -465,6 +479,17 @@ private fun androidx.compose.foundation.layout.ColumnScope.CajonAnimado(visible:
     ) { contenido() }
 }
 
+/** Miniatura de la galería: se decodifica reducida y fuera del hilo principal. */
+@Composable
+private fun MiniaturaDibujo(d: DibujoGuardado, modifier: Modifier) {
+    val miniatura by produceState<ImageBitmap?>(null, d.archivo, d.fecha) {
+        value = withContext(Dispatchers.IO) { leerMiniatura(d.archivo, 200)?.asImageBitmap() }
+    }
+    Box(modifier.background(Color(0xFFF1ECE4))) {
+        miniatura?.let { androidx.compose.foundation.Image(bitmap = it, contentDescription = "Dibujo guardado", modifier = Modifier.fillMaxSize()) }
+    }
+}
+
 private fun dibujarPatronFondo(scope: androidx.compose.ui.graphics.drawscope.DrawScope, fondoId: String) {
     val nativo = scope.drawContext.canvas.nativeCanvas
     val paint = Paint().apply { style = Paint.Style.STROKE; strokeWidth = 1f }
@@ -648,11 +673,7 @@ private fun CajonHerramientas(
                     } else {
                         Fila { galeria.forEach { d ->
                             Box {
-                                androidx.compose.foundation.Image(
-                                    bitmap = android.graphics.BitmapFactory.decodeFile(d.archivo.absolutePath).asImageBitmap(),
-                                    contentDescription = "Dibujo guardado",
-                                    modifier = Modifier.size(width = 100.dp, height = 76.dp).clip(RoundedCornerShape(12.dp)).clickable { onAbrirDibujo(d) },
-                                )
+                                MiniaturaDibujo(d, Modifier.size(width = 100.dp, height = 76.dp).clip(RoundedCornerShape(12.dp)).clickable { onAbrirDibujo(d) })
                                 Box(
                                     Modifier.align(Alignment.TopEnd).size(22.dp).clip(CircleShape).background(Color.White).clickable { onBorrarDibujo(d) },
                                     contentAlignment = Alignment.Center,

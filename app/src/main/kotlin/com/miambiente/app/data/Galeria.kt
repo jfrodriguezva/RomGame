@@ -2,6 +2,7 @@ package com.miambiente.app.data
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.core.content.FileProvider
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.createBitmap
@@ -39,6 +40,20 @@ fun guardarEnGaleria(context: Context, bitmap: Bitmap): List<DibujoGuardado> {
         lista.drop(MAX_DIBUJOS).forEach { it.archivo.delete() }
     }
     return leerGaleria(context)
+}
+
+/**
+ * Miniatura reducida para la tira de la galería. Decodificar los PNG a
+ * tamaño completo (hasta 12, en cada recomposición) trababa la pizarra.
+ * Devuelve null si el archivo ya no existe o está dañado.
+ */
+fun leerMiniatura(archivo: File, anchoMax: Int): Bitmap? {
+    val opciones = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    BitmapFactory.decodeFile(archivo.absolutePath, opciones)
+    if (opciones.outWidth <= 0) return null
+    var muestra = 1
+    while (opciones.outWidth / (muestra * 2) >= anchoMax) muestra *= 2
+    return BitmapFactory.decodeFile(archivo.absolutePath, BitmapFactory.Options().apply { inSampleSize = muestra })
 }
 
 fun borrarDeGaleria(context: Context, archivo: File): List<DibujoGuardado> {
@@ -90,4 +105,4 @@ fun guardarBorrador(context: Context, bitmap: Bitmap) {
 }
 
 fun leerBorrador(context: Context): Bitmap? =
-    archivoBorrador(context).takeIf { it.exists() }?.let { android.graphics.BitmapFactory.decodeFile(it.absolutePath) }
+    archivoBorrador(context).takeIf { it.exists() }?.let { BitmapFactory.decodeFile(it.absolutePath) }

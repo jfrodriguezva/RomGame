@@ -24,7 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,9 +82,17 @@ fun AjustesScreen(onVolver: () -> Unit, onVerProgreso: () -> Unit) {
         )
 
         // El nombre del saludo del inicio. Se guarda solo, como todo aqui.
+        // El texto en edición vive en estado local: si el campo leyera
+        // directo de DataStore, cada tecla haría ida y vuelta al disco y al
+        // escribir rápido se perdían letras ("Romina" quedaba "Roa").
+        var nombreEditado by remember { mutableStateOf<String?>(null) }
         OutlinedTextField(
-            value = ajustes.nombre,
-            onValueChange = { nuevo -> scope.launch { services.settings.setNombre(nuevo.take(20)) } },
+            value = nombreEditado ?: ajustes.nombre,
+            onValueChange = { nuevo ->
+                val recortado = nuevo.take(20)
+                nombreEditado = recortado
+                scope.launch { services.settings.setNombre(recortado) }
+            },
             label = { Text("¿Cómo se llama?") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
