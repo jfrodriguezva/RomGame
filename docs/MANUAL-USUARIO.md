@@ -1,6 +1,6 @@
 # RominaGame (Mi Ambiente) — Manual de usuario
 
-Versión 1.1.0 · actualizado el 30 de septiembre de 2026.
+Versión 1.2.0 · actualizado el 2 de octubre de 2026.
 
 Ambiente Montessori digital para niñas y niños de 2 a 6 años, para Android.
 Todo en español, sin conexión, sin cuentas, sin publicidad y sin enviar un
@@ -8,8 +8,8 @@ solo dato fuera del dispositivo.
 
 ## 1. Qué es
 
-Una réplica digital de un salón Montessori. El catálogo tiene **19 materiales**
-agrupados en seis categorías; cada material reúne varios **modos** (89 en
+Una réplica digital de un salón Montessori. El catálogo tiene **21 materiales**
+agrupados en seis categorías; cada material reúne varios **modos** (94 en
 total). Cada modo conserva su pantalla, sus niveles y su progreso propio.
 
 Al entrar se abre el inicio: arriba se elige la categoría, abajo aparecen sus
@@ -23,8 +23,8 @@ xilófono están además en **Acceso rápido**.
 | 🔢 Números | Números y cantidades |
 | 🌍 Mundo y naturaleza | Clasifica el mundo, Naturaleza y planeta, Personas y comunidad |
 | 🎨 Creatividad y música | Taller creativo y musical |
-| 🎯 Coordinación y vida práctica | Vida práctica, Coordinación y reflejos |
-| 🎲 Juegos de mesa | Alineación y duelo (gato; piedra, papel o tijera), Memoria por turnos, Dominó, Encuentra los objetos, Encuentra las diferencias |
+| 🎯 Coordinación y vida práctica | Vida práctica, Coordinación y reflejos (con Atrapa al topo), Juegos clásicos (La víbora, Acomoda las piezas, Rompe ladrillos) |
+| 🎲 Juegos de mesa | Alineación y duelo (gato; piedra, papel o tijera), Memoria por turnos, Dominó, Encuentra los objetos, Encuentra las diferencias, Palillos chinos |
 
 No hay categoría Arcade: se retiró en septiembre de 2026. Los juegos de mesa
 se limitaron a los infantiles.

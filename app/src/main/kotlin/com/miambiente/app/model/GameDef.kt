@@ -130,6 +130,7 @@ val CATALOGO = listOf(
     GameDef("domino", "Dominó", "🀄", "Encaja tu ficha por número", Area.COMPANIA, 2, "Juego de mesa", "Correspondencia numérica y esperar el turno."),
     GameDef("diez-objetos", "Encuentra los objetos", "🔟", "Busca los diez objetos escondidos en la escena", Area.COMPANIA, 3, "Juego de buscar y encontrar", "Atención selectiva y rastreo visual ordenado sobre una escena completa."),
     GameDef("diez-diferencias", "Encuentra las diferencias", "🖼️", "Compara dos imágenes y halla las diez diferencias", Area.COMPANIA, 3, "Juego de comparar imágenes", "Discriminación visual fina y atención al detalle entre dos escenas casi iguales."),
+    GameDef("palillos", "Palillos chinos", "🥢", "Saca varillas sin mover las demás", Area.COMPANIA, 4, "Juego de destreza", "Pulso firme, paciencia y esperar el turno del rival."),
 
     // --- Movimiento y coordinación (independientes) ---
     GameDef("laberinto", "Laberinto", "🌀", "Encuentra la salida", Area.MOVIMIENTO, 4, "Control del movimiento", "Planear una ruta y seguirla sin chocar."),
@@ -141,6 +142,12 @@ val CATALOGO = listOf(
     // --- Exclusivos de la versión nativa (no existen en la web) ---
     GameDef("vibra-adivina", "Vibra y adivina", "📳", "Siente los pulsos y cuenta", Area.SENSORIAL, 4, "Percepción táctil", "Refinar el tacto sintiendo patrones de vibración reales — imposible en la versión web."),
     GameDef("reflejo-color", "Reflejo de color", "⚡", "Toca en cuanto cambie de color", Area.MOVIMIENTO, 4, "Tiempo de reacción", "Medir el tiempo de reacción real en milisegundos — solo posible con entrada táctil nativa."),
+    // Rescatados del archivo de arcades (etiqueta archivo/arcades), ahora con
+    // 100 niveles reales como el resto de los modos.
+    GameDef("topo", "Atrapa al topo", "🐹", "Tócalo antes de que se esconda", Area.MOVIMIENTO, 3, "Juego de reacción", "Tiempo de reacción y atención sostenida."),
+    GameDef("snake", "La víbora", "🐍", "Come y no choques", Area.MOVIMIENTO, 4, "Juego clásico", "Planeación de ruta, reflejos y control del error."),
+    GameDef("tetris", "Acomoda las piezas", "🧱", "Gira y encaja las piezas para completar líneas", Area.MOVIMIENTO, 5, "Juego clásico", "Rotación mental, planeación espacial y reflejos."),
+    GameDef("arkanoid", "Rompe ladrillos", "🏓", "Rebota la pelota y rompe todos los ladrillos", Area.MOVIMIENTO, 4, "Juego clásico", "Coordinación ojo-mano y anticipar trayectorias."),
 )
 
 fun buscarJuego(id: String): GameDef? = CATALOGO.find { it.id == id }

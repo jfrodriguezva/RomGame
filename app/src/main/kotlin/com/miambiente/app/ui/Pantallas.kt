@@ -102,4 +102,9 @@ val PANTALLAS: Map<String, Pantalla> = mapOf(
     "arana" to { v -> AranaScreen(v) },
     "vibra-adivina" to { v -> VibraAdivinaScreen(v) },
     "reflejo-color" to { v -> ReflejoColorScreen(v) },
+    "topo" to { v -> TopoScreen(v) },
+    "snake" to { v -> SnakeScreen(v) },
+    "tetris" to { v -> TetrisScreen(v) },
+    "arkanoid" to { v -> ArkanoidScreen(v) },
+    "palillos" to { v -> PalillosScreen(v) },
 )
