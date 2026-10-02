@@ -13,7 +13,7 @@ historia de las decisiones.
 
 - Fases 0 y 1: la aplicación web y Capacitor se retiraron; el proyecto
   Android vive en la raíz.
-- Fase 2: el catálogo se consolidó en **19 materiales con 89 modos**, en siete
+- Fase 2: el catálogo se consolidó en **21 materiales con 94 modos**, en siete
   categorías (Lógica y rompecabezas, Palabras e idiomas, Números, Mundo y
   naturaleza, Creatividad y música, Coordinación y vida práctica, Juegos de
   mesa). Cada modo conserva su pantalla, sus niveles y su progreso.
@@ -23,15 +23,15 @@ historia de las decisiones.
   release, CI en cada PR.
 - Calidad: reglas puras con pruebas unitarias para los patrones de
   seriación y transferencia, el progreso y el resumen del adulto; recorrido
-  instrumentado que abre las 111 pantallas y exige áreas táctiles de 48dp.
+  instrumentado que abre las 118 pantallas y exige áreas táctiles de 48dp.
 
 **Decisiones que reemplazan a las originales:**
 
 | Original | Vigente |
 |---|---|
 | Juegos normales y de mesa en LibGDX (fases 3 a 5) | **Se quedan en Jetpack Compose.** La migración a LibGDX produjo pantallas en blanco y se revirtió en la versión 1.0.0; no se retoma salvo que un juego concreto lo necesite y alcance paridad verificable. |
-| Categoría Arcade en Godot (fase 6) | **Retirada.** Los 11 arcade se eliminaron el 28 de septiembre por no superar la validación; no hay integración con Godot. |
-| Juegos de mesa completos (ajedrez, damas, oca, lotería…) | **Solo infantiles:** gato, piedra papel o tijera, memoria por turnos, dominó, Encuentra los objetos y Encuentra las diferencias. |
+| Categoría Arcade en Godot (fase 6) | **Retirada.** Los 11 arcade se eliminaron el 28 de septiembre; no hay integración con Godot. El 2 de octubre se rescataron cuatro en Compose con niveles y pruebas: Atrapa al topo, La víbora, Acomoda las piezas y Rompe ladrillos. El resto queda en la etiqueta `archivo/arcades`. |
+| Juegos de mesa completos (ajedrez, damas, oca, lotería…) | **Solo infantiles:** gato, piedra papel o tijera, memoria por turnos, dominó, Encuentra los objetos, Encuentra las diferencias y Palillos chinos. |
 | Sin selector ni ajuste de edad | **La edad existe solo para elegir el nivel inicial** (etapa 1 hasta 3 años, una etapa más por año hasta la 4). No oculta, filtra ni bloquea contenido, y los niveles anteriores siguen abiertos. |
 
 **Siguiente trabajo:**
@@ -42,7 +42,7 @@ historia de las decisiones.
    dificultad, instrucciones interactivas, mejor marca), empezando por los
    que el resumen del adulto muestre como más difíciles.
 3. Hecho en la versión 1.1.0: todos los modos con niveles (patrones
-   compartidos y 17 juegos con pantalla propia) toman su dificultad del
+   compartidos, 17 juegos con pantalla propia y 4 clásicos rescatados) toman su dificultad del
    nivel desde funciones puras con pruebas, guardan el nivel real y tienen
    selector. Quedan con lógica en pantalla solo las actividades libres
    (pizarra, collage, xilófono, colorear, silencio) y los juegos de mesa,

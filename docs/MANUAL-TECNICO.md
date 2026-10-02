@@ -43,7 +43,7 @@ app/src/main/kotlin/com/miambiente/app/
   RominaApp.kt           dueña única de Services durante la vida del proceso
   data/                  Services, ProgressStore, SettingsStore, ResumenAdulto,
                          Galeria (pizarra), Speech, Sound, AmbientMusic, Haptics, Guias
-  model/                 GameDef (catálogo de 89 modos), CatalogoConsolidado (19 materiales),
+  model/                 GameDef (catálogo de 94 modos), CatalogoConsolidado (21 materiales),
                          Levels (motor de niveles), LogicaMateriales (reglas puras)
   theme/                 colores por área y tema
   ui/GameShell.kt        marco común: volver, selector de nivel, consigna, celebración
@@ -57,8 +57,8 @@ app/src/androidTest/     recorrido instrumentado de todas las pantallas
 
 ## 4. Catálogo
 
-- `GameDef.kt` define los 89 modos (id, título, emoji, área, objetivo).
-- `CatalogoConsolidado.kt` agrupa los modos en 19 materiales y 7 categorías.
+- `GameDef.kt` define los 94 modos (id, título, emoji, área, objetivo).
+- `CatalogoConsolidado.kt` agrupa los modos en 21 materiales y 7 categorías.
   El inicio muestra materiales; cada material muestra sus modos.
 - `Pantallas.kt` asocia cada id con su composable. `PantallasTest` falla si
   un modo no tiene pantalla, si hay pantallas huérfanas o si un id choca con
@@ -151,7 +151,7 @@ Todo es local; se borra al desinstalar.
 | Tipo | Dónde | Qué cubre |
 |---|---|---|
 | Unitarias (JVM) | `app/src/test` | niveles, progreso, resumen del adulto, seriación y transferencia, catálogo y pantallas, dominó, gato, laberinto, quiz, objetos y diferencias |
-| Instrumentada | `app/src/androidTest/RecorridoPantallasTest` | abre las 111 pantallas (inicio, ajustes, progreso, 19 materiales y 89 modos), deja correr su reloj y exige áreas táctiles de al menos 48dp |
+| Instrumentada | `app/src/androidTest/RecorridoPantallasTest` | abre las 118 pantallas (inicio, ajustes, progreso, 21 materiales y 94 modos), deja correr su reloj y exige áreas táctiles de al menos 48dp |
 
 La instrumentada necesita un emulador o dispositivo. Una prueba de estrés
 opcional con `monkey`:
