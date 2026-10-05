@@ -17,7 +17,9 @@
 <!-- La app real de Android (el mismo APK de main) en un emulador de Appetize.io. -->
 <script src="config.js"></script>
 <script>
-  const clave = (window.ROMINA || {}).appetizeKey;
+  // Clave pública (no es secreta) de la app en Appetize; config.js la
+  // repite en cada publicación, pero la página no depende de él.
+  const clave = (window.ROMINA || {}).appetizeKey || "s4v4lmeetggd2mdu4d2rwbqkue";
   if (clave) {
     const f = document.createElement("iframe");
     f.src = "https://appetize.io/embed/" + encodeURIComponent(clave) + "?orientation=landscape&scale=auto";
