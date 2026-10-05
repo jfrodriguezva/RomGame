@@ -1,0 +1,96 @@
+name: Página de pruebas
+
+# Publica https://jfrodriguezva.github.io/RomGame: la app corriendo en un
+# emulador en la nube (Appetize.io) más la lista de lo que hay que revisar.
+# Se vuelve a publicar sola en cada cambio de main.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "pagina/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - ".github/workflows/pagina-pruebas.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pagina-pruebas
+  cancel-in-progress: true
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Install Android platform
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" > /dev/null
+      # La prueba ExportarCatalogoTest deja build/pagina/catalogo.json con el
+      # catálogo real de la app.
+      - name: Build APK and catalog
+        run: |
+          chmod +x gradlew
+          ./gradlew testDebugUnitTest assembleDebug --no-daemon
+      # Sube el APK a Appetize. Con la variable APPETIZE_PUBLIC_KEY se
+      # actualiza siempre la misma app (la URL no cambia); sin ella se crea
+      # una nueva y su clave aparece en el resumen de la ejecución.
+      - name: Upload to Appetize
+        id: appetize
+        env:
+          APPETIZE_API_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
+          APPETIZE_PUBLIC_KEY: ${{ vars.APPETIZE_PUBLIC_KEY }}
+        run: |
+          if [ -z "$APPETIZE_API_TOKEN" ]; then
+            echo "Sin APPETIZE_API_TOKEN: la página se publica sin la vista en vivo." >> "$GITHUB_STEP_SUMMARY"
+            echo "key=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          URL="https://api.appetize.io/v1/apps"
+          [ -n "$APPETIZE_PUBLIC_KEY" ] && URL="$URL/$APPETIZE_PUBLIC_KEY"
+          RESP=$(curl -sS --fail-with-body -X POST "$URL" \
+            -H "X-API-KEY: $APPETIZE_API_TOKEN" \
+            -F "file=@app/build/outputs/apk/debug/app-debug.apk" \
+            -F "platform=android" \
+            -F "note=RominaGame ${GITHUB_SHA::7}")
+          KEY=$(echo "$RESP" | jq -r .publicKey)
+          echo "key=$KEY" >> "$GITHUB_OUTPUT"
+          echo "Clave pública de Appetize: \`$KEY\`" >> "$GITHUB_STEP_SUMMARY"
+          if [ -z "$APPETIZE_PUBLIC_KEY" ]; then
+            echo "Para fijar la URL: \`gh variable set APPETIZE_PUBLIC_KEY --body $KEY\`" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp pagina/index.html _site/
+          cp app/build/pagina/catalogo.json _site/
+          VERSION=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
+          cat > _site/config.js <<EOF
+          window.ROMINA = {
+            appetizeKey: "${{ steps.appetize.outputs.key }}",
+            version: "$VERSION",
+            commit: "$GITHUB_SHA",
+            fecha: "$(date -u +%Y-%m-%d)"
+          };
+          EOF
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  publicar:
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

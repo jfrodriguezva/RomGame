@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RominaGame · Pruebas</title>
+<meta name="description" content="Prueba la app RominaGame en el navegador y anota mejoras antes de generar el instalable.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+<style>
+  :root {
+    --papel: #fbf7f0; --tarjeta: #ffffff; --tinta: #3f342c; --suave: #7a6e63;
+    --borde: #e8dfd2; --acento: #8a5a2b; --ok: #4c7a3a; --okfondo: #e8f2e1; --aviso: #fff5dc;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --papel: #1d1a17; --tarjeta: #27231f; --tinta: #f1e9de; --suave: #b3a798;
+      --borde: #3a342d; --acento: #e0a96a; --ok: #9cc983; --okfondo: #26331f; --aviso: #3a321f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --papel: #1d1a17; --tarjeta: #27231f; --tinta: #f1e9de; --suave: #b3a798;
+    --borde: #3a342d; --acento: #e0a96a; --ok: #9cc983; --okfondo: #26331f; --aviso: #3a321f;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--papel); color: var(--tinta); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { padding: 20px 16px 8px; max-width: 1400px; margin: 0 auto; }
+  h1 { margin: 0; font-size: 1.6rem; }
+  .sub { color: var(--suave); margin: 4px 0 0; }
+  main { max-width: 1400px; margin: 0 auto; padding: 8px 16px 40px; display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 1000px) { main { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; } .app { position: sticky; top: 12px; } }
+  .panel { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 16px; padding: 16px; }
+  .app iframe { width: 100%; aspect-ratio: 16 / 10; border: 0; border-radius: 12px; background: #000; }
+  .aviso { background: var(--aviso); border-radius: 12px; padding: 14px; }
+  .aviso ol { margin: 8px 0 0; padding-left: 20px; }
+  code { background: var(--borde); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+  .barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .progreso { flex: 1 1 200px; height: 10px; background: var(--borde); border-radius: 99px; overflow: hidden; }
+  .progreso > div { height: 100%; background: var(--ok); width: 0; transition: width .3s; }
+  button, .boton { font: inherit; border: 1px solid var(--borde); background: var(--papel); color: var(--tinta); border-radius: 10px; padding: 8px 12px; cursor: pointer; min-height: 40px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+  button:hover, .boton:hover { border-color: var(--acento); }
+  input[type="search"] { font: inherit; flex: 1 1 180px; min-height: 40px; border: 1px solid var(--borde); border-radius: 10px; padding: 6px 10px; background: var(--papel); color: var(--tinta); }
+  details.material { border-top: 1px solid var(--borde); padding: 8px 0; }
+  details.material > summary { cursor: pointer; list-style: none; display: flex; gap: 8px; align-items: baseline; font-weight: 700; }
+  details.material > summary::-webkit-details-marker { display: none; }
+  .cat { color: var(--suave); font-size: .8rem; font-weight: 600; margin: 14px 0 2px; text-transform: uppercase; letter-spacing: .04em; }
+  .cuenta { margin-left: auto; color: var(--suave); font-weight: 400; font-size: .85rem; white-space: nowrap; }
+  .modo { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; padding: 8px 4px 8px 8px; border-radius: 10px; margin-top: 4px; }
+  .modo.hecho { background: var(--okfondo); }
+  .modo input[type="checkbox"] { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--ok); }
+  .modo .tit { font-weight: 600; }
+  .modo .desc { color: var(--suave); font-size: .85rem; }
+  .etq { font-size: .72rem; border: 1px solid var(--borde); border-radius: 99px; padding: 0 7px; margin-left: 6px; color: var(--suave); white-space: nowrap; }
+  .modo textarea { grid-column: 2; width: 100%; min-height: 38px; resize: vertical; font: inherit; font-size: .9rem; border: 1px solid var(--borde); border-radius: 8px; padding: 6px 8px; background: var(--papel); color: var(--tinta); }
+  .modo .acciones { grid-column: 2; display: flex; gap: 8px; flex-wrap: wrap; }
+  .modo .acciones a { font-size: .85rem; color: var(--acento); }
+  footer { max-width: 1400px; margin: 0 auto; padding: 0 16px 30px; color: var(--suave); font-size: .85rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🧩 RominaGame · Pruebas</h1>
+  <p class="sub" id="version">Revisa la app en el navegador y anota mejoras antes de generar el instalable.</p>
+</header>
+<main>
+  <section class="panel app" aria-labelledby="t-app">
+    <h2 id="t-app" style="margin:0 0 10px;font-size:1.1rem">La app, en vivo</h2>
+    <div id="vivo"></div>
+    <p class="sub" style="font-size:.85rem">Corre la app real de Android en un emulador en la nube (Appetize.io). La vibración no se siente y la voz depende del emulador; todo lo demás es igual que en la tableta.</p>
+  </section>
+  <section class="panel" aria-labelledby="t-rev">
+    <h2 id="t-rev" style="margin:0 0 10px;font-size:1.1rem">Qué revisar</h2>
+    <div class="barra">
+      <div class="progreso" role="progressbar" aria-label="Modos revisados"><div id="barra"></div></div>
+      <span id="contador"></span>
+    </div>
+    <div class="barra">
+      <input type="search" id="filtro" placeholder="Buscar un material o modo…" aria-label="Buscar">
+      <button id="copiar" title="Copia todas las notas en formato Markdown">📋 Copiar notas</button>
+      <button id="borrar" title="Desmarca todo y borra las notas de este navegador">↺ Empezar de nuevo</button>
+    </div>
+    <p class="sub" style="font-size:.85rem;margin-top:0">Para cada modo: ábrelo, juega un nivel completo, cambia de nivel con el selector y vuelve. Marca la casilla cuando funcione y anota lo que mejorarías. Las marcas y notas se guardan solo en este navegador.</p>
+    <div id="lista">Cargando catálogo…</div>
+  </section>
+</main>
+<footer id="pie"></footer>
+<script src="config.js"></script>
+<script>
+(() => {
+  const cfg = window.ROMINA || {};
+  const REPO = "https://github.com/jfrodriguezva/RomGame";
+  const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+  const leer = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
+  let estado = leer("romina-pruebas", { hecho: {}, notas: {} });
+
+  document.getElementById("version").textContent =
+    `Versión ${cfg.version || "?"}` + (cfg.commit ? ` · commit ${cfg.commit.slice(0, 7)}` : "") + (cfg.fecha ? ` · publicada ${cfg.fecha}` : "");
+  document.getElementById("pie").innerHTML =
+    `Código en <a href="${REPO}">GitHub</a>. La página se vuelve a publicar sola en cada cambio de <code>main</code>.`;
+
+  const vivo = document.getElementById("vivo");
+  if (cfg.appetizeKey) {
+    const f = document.createElement("iframe");
+    f.src = `https://appetize.io/embed/${encodeURIComponent(cfg.appetizeKey)}?orientation=landscape&scale=auto&autoplay=false`;
+    f.title = "RominaGame en un emulador de Android";
+    f.allow = "autoplay; clipboard-write";
+    vivo.appendChild(f);
+  } else {
+    vivo.innerHTML = `<div class="aviso"><strong>La vista en vivo todavía no está conectada.</strong>
+      <ol>
+        <li>Crea una cuenta gratuita en <a href="https://appetize.io" target="_blank" rel="noopener">appetize.io</a> y genera una <em>API token</em>.</li>
+        <li>Guárdala como secreto del repositorio: <code>gh secret set APPETIZE_API_TOKEN</code></li>
+        <li>Vuelve a ejecutar el flujo «Página de pruebas» en GitHub Actions.</li>
+      </ol></div>`;
+  }
+
+  const lista = document.getElementById("lista");
+  const etiqueta = { niveles: "100 niveles", libre: "libre", partida: "partida" };
+  let modos = [];
+
+  function pintarProgreso() {
+    const total = modos.length, hechos = modos.filter(m => estado.hecho[m.id]).length;
+    document.getElementById("barra").style.width = total ? (100 * hechos / total) + "%" : "0";
+    document.getElementById("contador").textContent = `${hechos} de ${total} modos`;
+    document.querySelectorAll("details.material").forEach(d => {
+      const ids = d.dataset.modos.split(",");
+      d.querySelector(".cuenta").textContent = `${ids.filter(i => estado.hecho[i]).length}/${ids.length}`;
+    });
+  }
+
+  function urlIssue(m) {
+    const nota = estado.notas[m.id] || "";
+    const cuerpo = `**Modo:** ${m.emoji} ${m.titulo} (\`${m.id}\`)\n**Versión:** ${cfg.version || "?"}\n\n${nota || "Describe la mejora…"}`;
+    return `${REPO}/issues/new?labels=mejora&title=${encodeURIComponent(`[${m.titulo}] `)}&body=${encodeURIComponent(cuerpo)}`;
+  }
+
+  function pintar(datos) {
+    lista.innerHTML = "";
+    let categoria = "";
+    for (const mat of datos.materiales) {
+      if (mat.categoria !== categoria) {
+        categoria = mat.categoria;
+        const c = document.createElement("div"); c.className = "cat"; c.textContent = categoria; lista.appendChild(c);
+      }
+      const d = document.createElement("details");
+      d.className = "material";
+      d.dataset.modos = mat.modos.map(m => m.id).join(",");
+      d.dataset.buscar = (mat.titulo + " " + mat.modos.map(m => m.titulo).join(" ")).toLowerCase();
+      d.innerHTML = `<summary>${mat.emoji} ${mat.titulo}<span class="cuenta"></span></summary>`;
+      for (const m of mat.modos) {
+        modos.push(m);
+        const fila = document.createElement("div");
+        fila.className = "modo" + (estado.hecho[m.id] ? " hecho" : "");
+        const idc = "c-" + m.id;
+        fila.innerHTML = `
+          <input type="checkbox" id="${idc}" ${estado.hecho[m.id] ? "checked" : ""}>
+          <label for="${idc}"><span class="tit">${m.emoji} ${m.titulo}</span><span class="etq">${etiqueta[m.tipo] || m.tipo}</span><br><span class="desc">${m.descripcion}</span></label>
+          <textarea placeholder="¿Qué mejorarías?" aria-label="Nota sobre ${m.titulo}"></textarea>
+          <div class="acciones"><a target="_blank" rel="noopener">Reportar como mejora en GitHub ↗</a></div>`;
+        const caja = fila.querySelector("input"), nota = fila.querySelector("textarea"), enlace = fila.querySelector("a");
+        nota.value = estado.notas[m.id] || "";
+        enlace.href = urlIssue(m);
+        caja.addEventListener("change", () => { estado.hecho[m.id] = caja.checked; fila.classList.toggle("hecho", caja.checked); guardar("romina-pruebas", estado); pintarProgreso(); });
+        nota.addEventListener("input", () => { estado.notas[m.id] = nota.value; guardar("romina-pruebas", estado); enlace.href = urlIssue(m); });
+        d.appendChild(fila);
+      }
+      lista.appendChild(d);
+    }
+    pintarProgreso();
+  }
+
+  document.getElementById("filtro").addEventListener("input", e => {
+    const q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll("details.material").forEach(d => {
+      const coincide = !q || d.dataset.buscar.includes(q);
+      d.style.display = coincide ? "" : "none";
+      if (q && coincide) d.open = true;
+    });
+  });
+
+  document.getElementById("copiar").addEventListener("click", async () => {
+    const lineas = [`# Notas de prueba · RominaGame ${cfg.version || ""}`, ""];
+    for (const m of modos) {
+      const n = (estado.notas[m.id] || "").trim();
+      if (n || estado.hecho[m.id]) lineas.push(`- ${estado.hecho[m.id] ? "✅" : "⬜"} ${m.emoji} ${m.titulo}${n ? ": " + n : ""}`);
+    }
+    const texto = lineas.join("\n");
+    try { await navigator.clipboard.writeText(texto); alert("Notas copiadas."); } catch (e) { prompt("Copia las notas:", texto); }
+  });
+
+  document.getElementById("borrar").addEventListener("click", () => {
+    if (!confirm("¿Desmarcar todo y borrar las notas de este navegador?")) return;
+    estado = { hecho: {}, notas: {} }; guardar("romina-pruebas", estado);
+    modos = []; fetch("catalogo.json").then(r => r.json()).then(pintar);
+  });
+
+  fetch("catalogo.json").then(r => r.json()).then(pintar)
+    .catch(() => { lista.textContent = "No se pudo cargar el catálogo."; });
+})();
+</script>
+</body>
+</html>
