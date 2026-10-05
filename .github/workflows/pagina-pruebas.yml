@@ -1,7 +1,7 @@
 name: Página de pruebas
 
-# Publica https://jfrodriguezva.github.io/RomGame: la app corriendo en un
-# emulador en la nube (Appetize.io) más la lista de lo que hay que revisar.
+# Publica https://jfrodriguezva.github.io/RomGame: el mismo APK de main
+# corriendo en un emulador de Android en la nube (Appetize.io).
 # Se vuelve a publicar sola en cada cambio de main.
 on:
   workflow_dispatch:
@@ -34,12 +34,10 @@ jobs:
           java-version: "21"
       - name: Install Android platform
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" > /dev/null
-      # La prueba ExportarCatalogoTest deja build/pagina/catalogo.json con el
-      # catálogo real de la app.
-      - name: Build APK and catalog
+      - name: Build APK
         run: |
           chmod +x gradlew
-          ./gradlew testDebugUnitTest assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon
       # Sube el APK a Appetize. Con la variable APPETIZE_PUBLIC_KEY se
       # actualiza siempre la misma app (la URL no cambia); sin ella se crea
       # una nueva y su clave aparece en el resumen de la ejecución.
@@ -71,7 +69,6 @@ jobs:
         run: |
           mkdir -p _site
           cp pagina/index.html _site/
-          cp app/build/pagina/catalogo.json _site/
           VERSION=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
           cat > _site/config.js <<EOF
           window.ROMINA = {

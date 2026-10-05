@@ -7,4 +7,4 @@
 - Keep game rules independent from rendering whenever practical so they can be unit tested.
 - The long-term architecture is documented in `docs/PLAN-RECONSTRUCCION-ANDROID.md`.
 - React, Next.js, Capacitor and WebView are not part of the product and must not be reintroduced.
-- `pagina/` is a static HTML test page (GitHub Pages) that embeds the real APK through Appetize.io and lists what to review; it is not a web version of the app. Its catalog comes from `ExportarCatalogoTest`.
+- `pagina/` is a static page (GitHub Pages) that only embeds the real APK running on an Appetize.io Android emulator; it is not a web version of the app.
