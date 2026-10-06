@@ -7,4 +7,5 @@
 - Keep game rules independent from rendering whenever practical so they can be unit tested.
 - The long-term architecture is documented in `docs/PLAN-RECONSTRUCCION-ANDROID.md`.
 - React, Next.js, Capacitor and WebView are not part of the product and must not be reintroduced.
-- `pagina/` is a static page (GitHub Pages) that only embeds the real APK running on an Appetize.io Android emulator; it is not a web version of the app.
+- `web/` is the browser build (Kotlin/Wasm + Compose Multiplatform). It compiles the same `model/`, `theme/` and `ui/` folders of `:app` without copying them; browser replacements for Android services live only in `web/` (`data/web`, `ui/web`). Never change `:app` code just to please the web build: shared code must keep compiling for both (CI runs `:web:compileKotlinWasmJs`). Locally, behind the office proxy, set `ROMINA_NODE_LOCAL=1` to use the installed Node.
+- `pagina/` is served at `/emulador/`: the real APK on an Appetize.io Android emulator, for the final check before release.

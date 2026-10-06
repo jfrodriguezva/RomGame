@@ -1,7 +1,9 @@
 name: Página de pruebas
 
-# Publica https://jfrodriguezva.github.io/RomGame: el mismo APK de main
-# corriendo en un emulador de Android en la nube (Appetize.io).
+# Publica https://jfrodriguezva.github.io/RomGame:
+#   /           la versión web (módulo :web, las mismas pantallas del APK
+#               compiladas para el navegador), jugable directo como Arcade.
+#   /emulador/  el APK real de main en un emulador de Android (Appetize.io).
 # Se vuelve a publicar sola en cada cambio de main.
 on:
   workflow_dispatch:
@@ -9,6 +11,7 @@ on:
     branches: [main]
     paths:
       - "app/**"
+      - "web/**"
       - "pagina/**"
       - "gradle/**"
       - "*.gradle.kts"
@@ -34,10 +37,10 @@ jobs:
           java-version: "21"
       - name: Install Android platform
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.0" > /dev/null
-      - name: Build APK
+      - name: Build APK and web version
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew :app:assembleDebug :web:wasmJsBrowserDistribution --no-daemon
       # Sube el APK a Appetize. Con la variable APPETIZE_PUBLIC_KEY se
       # actualiza siempre la misma app (la URL no cambia); sin ella se crea
       # una nueva y su clave aparece en el resumen de la ejecución.
@@ -67,10 +70,11 @@ jobs:
           fi
       - name: Assemble site
         run: |
-          mkdir -p _site
-          cp pagina/index.html _site/
+          mkdir -p _site/emulador
+          cp -r web/build/dist/wasmJs/productionExecutable/. _site/
+          cp pagina/index.html _site/emulador/
           VERSION=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
-          cat > _site/config.js <<EOF
+          cat > _site/emulador/config.js <<EOF
           window.ROMINA = {
             appetizeKey: "${{ steps.appetize.outputs.key }}",
             version: "$VERSION",

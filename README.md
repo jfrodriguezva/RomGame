@@ -77,6 +77,21 @@ pantallas y verifica áreas táctiles de 48dp:
 ./gradlew connectedDebugAndroidTest
 ```
 
+## Versión web (para revisar antes del APK)
+
+https://jfrodriguezva.github.io/RomGame se juega directo en el navegador.
+El módulo `web/` compila las mismas pantallas de `app/` para el navegador
+(Kotlin/Wasm + Compose Multiplatform) sin modificarlas. La pizarra todavía
+no está en la web. En https://jfrodriguezva.github.io/RomGame/emulador está
+el APK real en un emulador de Android (Appetize.io), para la revisión final.
+
+```bash
+./gradlew :web:wasmJsBrowserDistribution   # deja la web en web/build/dist/wasmJs/productionExecutable
+```
+
+Detrás de un proxy que bloquee nodejs.org, define `ROMINA_NODE_LOCAL=1` para
+usar el Node instalado.
+
 ## Instalar mediante ADB
 
 ```bash
