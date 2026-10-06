@@ -21,6 +21,23 @@ internal fun almacenCantidad(): Int =
 internal fun almacenClave(indice: Int): String? =
     js("(() => { try { return window.localStorage.key(indice); } catch (e) { return null; } })()")
 
+internal fun almacenBorrar(clave: String): Unit =
+    js("(() => { try { window.localStorage.removeItem(clave); } catch (e) {} })()")
+
+/** Descarga un archivo (base64) con el nombre dado: "compartir" en el navegador. */
+internal fun descargarNavegador(base64: String, nombre: String, tipo: String): Unit = js(
+    """(() => { try {
+        const a = document.createElement('a');
+        a.href = 'data:' + tipo + ';base64,' + base64;
+        a.download = nombre.endsWith('.png') || nombre.endsWith('.jpg') ? nombre : nombre + '.jpg';
+        document.body.appendChild(a); a.click(); a.remove();
+    } catch (e) {} })()"""
+)
+
+internal fun ahoraMsEpoch(): Long = fechaMs().toLong()
+
+private fun fechaMs(): Double = js("Date.now()")
+
 // ---- Fecha local, en días desde la época ----
 internal fun diaLocalNavegador(): Double =
     js("(() => { const d = new Date(); return Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000); })()")

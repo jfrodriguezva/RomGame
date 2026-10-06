@@ -55,10 +55,10 @@ kotlin {
                 "com/miambiente/app/web/**",
                 "com/miambiente/app/data/web/**",
                 "com/miambiente/app/ui/web/**",
+                // Las clases de Android que usa la pizarra, reconstruidas
+                // sobre Skia (paquetes android.* y androidx.*).
+                "com/miambiente/app/web/compat/**",
             )
-            // La pizarra dibuja con Bitmap/Canvas de Android: en la web, por
-            // ahora, se reemplaza por ui/web/PizarraWeb.kt.
-            kotlin.exclude("**/ui/screens/PizarraScreen.kt", "**/ui/materials/PizarraMotor.kt")
         }
     }
 }
