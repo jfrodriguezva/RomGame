@@ -33,7 +33,10 @@ import com.miambiente.app.ui.screens.MaterialConsolidadoScreen
 import com.miambiente.app.ui.screens.ProgresoScreen
 import com.miambiente.app.web.recursos.Res
 import com.miambiente.app.web.recursos.noto_emoji
+import android.graphics.FuentesWeb
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.skia.Data
+import org.jetbrains.skia.FontMgr
 import org.jetbrains.compose.resources.preloadFont
 
 /** Arranque en el navegador: el equivalente de MainActivity del APK. */
@@ -54,6 +57,11 @@ private fun App() {
     LaunchedEffect(emoji) {
         emoji?.let {
             resolver.preload(FontFamily(it))
+            // La pizarra dibuja texto directo con Skia (letras guía y
+            // sellos), que necesita sus propias fuentes cargadas.
+            val mgr = FontMgr.default
+            FuentesWeb.emoji = mgr.makeFromData(Data.makeFromBytes(Res.readBytes("font/noto_emoji.ttf")))
+            FuentesWeb.latina = mgr.makeFromData(Data.makeFromBytes(Res.readBytes("font/nunito.ttf")))
             fuentesListas = true
         }
     }

@@ -81,9 +81,12 @@ pantallas y verifica áreas táctiles de 48dp:
 
 https://jfrodriguezva.github.io/RomGame se juega directo en el navegador.
 El módulo `web/` compila las mismas pantallas de `app/` para el navegador
-(Kotlin/Wasm + Compose Multiplatform) sin modificarlas. La pizarra todavía
-no está en la web. En https://jfrodriguezva.github.io/RomGame/emulador está
-el APK real en un emulador de Android (Appetize.io), para la revisión final.
+(Kotlin/Wasm + Compose Multiplatform) sin modificarlas, incluida la pizarra:
+`web/.../compat` reconstruye sobre Skia las clases de dibujo de Android que
+usa (Bitmap, Canvas, Paint, Path). En la web la galería se guarda en el
+navegador y "compartir" descarga el dibujo. En
+https://jfrodriguezva.github.io/RomGame/emulador está el APK real en un
+emulador de Android (Appetize.io), para la revisión final.
 
 ```bash
 ./gradlew :web:wasmJsBrowserDistribution   # deja la web en web/build/dist/wasmJs/productionExecutable
