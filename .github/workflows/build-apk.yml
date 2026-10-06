@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "app/**"
+      - "web/**"
       - "gradle/**"
       - "*.gradle.kts"
       - "gradle.properties"
@@ -14,6 +15,7 @@ on:
   pull_request:
     paths:
       - "app/**"
+      - "web/**"
       - "gradle/**"
       - "*.gradle.kts"
       - "gradle.properties"
@@ -39,7 +41,7 @@ jobs:
       - name: Build, test and lint
         run: |
           chmod +x gradlew
-          ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease --no-daemon
+          ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease :web:compileKotlinWasmJs --no-daemon
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
